@@ -95,33 +95,6 @@
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* Cursor-driven glitch state (applied by useCursorGlitch)             */
-/* ------------------------------------------------------------------ */
-
-/* When .glitching is present on the card, the text glitches via CSS   */
-/* custom props set by the hook (--glitch-x, --glitch-y, --glitch-i)  */
-/* useCursorGlitch adds the plain "glitching" class — use :global      */
-.centerCard:global(.glitching) {
-  /* RGB-split / chromatic aberration via text-shadow — stronger than before */
-  text-shadow:
-    var(--glitch-x, 6px) 0 rgba(255, 50, 50, 0.80),
-    calc(-1 * var(--glitch-x, 6px)) 0 rgba(50, 120, 255, 0.80),
-    0 var(--glitch-dy, 0px) rgba(185, 108, 230, 0.45);
-  /* Lateral jitter */
-  transform: translate(
-    calc(-50% + var(--glitch-dx, 0px)),
-    calc(-50% + var(--glitch-dy, 0px))
-  );
-  filter: brightness(1.14) saturate(1.3);
-  transition: transform 30ms linear, filter 30ms linear;
-}
-
-.centerCard:not(:global(.glitching)) {
-  /* smooth decay back to rest */
-  transition: text-shadow 200ms ease-out, transform 200ms ease-out, filter 200ms ease-out;
-}
-
 /* Mobile: tighten card width and reduce font-size for comfortable reading */
 @media (max-width: 480px) {
   .centerCard {

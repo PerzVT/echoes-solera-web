@@ -21,7 +21,6 @@ export type PortalElements = {
 /* ------------------------------------------------------------------ */
 /* Entrance mode type                                                   */
 /* ------------------------------------------------------------------ */
-export type MedallionEntranceMode = "dissolve";
 
 /* ------------------------------------------------------------------ */
 /* Per-medallion ignite stagger/power                                  */
@@ -226,22 +225,12 @@ function GemMedallion({ groupRef }: { groupRef: MedRef }) {
 /* ------------------------------------------------------------------ */
 export interface PortalFrameProps {
   ref?: Ref<PortalElements>;
-  /**
-   * How medallions enter on "awaken".
-   * Locked to "dissolve" — dissolve + stroke-draw combo driven by useBootSequence rAF.
-   * The boot hook animates stroke-draw with a dissolve glow swell baked in.
-   */
-  entranceMode?: MedallionEntranceMode;
-  /**
-   * Set to true when the awaken phase begins.
-   */
-  awaken?: boolean;
 }
 
 /* ------------------------------------------------------------------ */
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
-export function PortalFrame({ ref, entranceMode = "dissolve", awaken = false }: PortalFrameProps) {
+export function PortalFrame({ ref }: PortalFrameProps) {
   // Root div — receives .live class from the boot hook; targeted by #art CSS selectors
   const artRef = useRef<HTMLDivElement>(null);
 
@@ -266,8 +255,7 @@ export function PortalFrame({ ref, entranceMode = "dissolve", awaken = false }: 
       art:    artRef.current as Element,
       ignite,
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entranceMode]);
+  }, []);
 
   // Dissolve+stroke is driven entirely by useBootSequence rAF — no CSS entrance needed.
 

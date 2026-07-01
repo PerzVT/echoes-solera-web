@@ -31,26 +31,20 @@ export default function DivePage() {
     replayDive();
   };
 
-  const sceneVisible =
+  const awakened =
     phase === "awaken" || phase === "welcome" || phase === "severed" || phase === "error";
   const cardVisible = phase === "error";
   const glitchEnabled = phase === "error" && bootPhase === "idle";
   const isSevered = phase === "severed";
-
-  const awakened =
-    phase === "awaken" || phase === "welcome" || phase === "severed" || phase === "error";
 
   return (
     <main className={styles.diveStage} data-idle="rich" data-phase={phase}>
       {/* Atmos #1 — always on */}
       <div className={styles.dotsAtmos} />
 
-      <div className={`${styles.scene} ${sceneVisible ? styles.sceneIn : ""}`}>
+      <div className={`${styles.scene} ${awakened ? styles.sceneIn : ""}`}>
         <Starfield density={DENSITY} />
-        <PortalFrame
-          ref={frameRef}
-          awaken={awakened}
-        />
+        <PortalFrame ref={frameRef} />
       </div>
 
       <DiveTerminal phase={phase} />

@@ -53,15 +53,3 @@ html, body { height: 100%; background: #050208; overflow: hidden; color: #B96CE6
   text-shadow: none !important;
 }
 
-/* GL canvas fade-in — applied as inline animation when GL components mount */
-@keyframes glitch-gl-fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  @keyframes glitch-gl-fadein {
-    from { opacity: 1; }
-    to   { opacity: 1; }
-  }
-}

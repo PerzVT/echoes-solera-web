@@ -30,7 +30,7 @@ export function DiveTerminal({ phase }: { phase: DivePhase }) {
   const [revealed, setRevealed] = useState(0);
   // how many masked chars of the access key have filled
   const [keyFilled, setKeyFilled] = useState(0);
-  const [authed, setAuthed] = useState(false);
+  const [authFailed, setAuthFailed] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   // Reveal the black-phase lines one by one
@@ -53,7 +53,7 @@ export function DiveTerminal({ phase }: { phase: DivePhase }) {
     for (let i = 1; i <= KEY_LENGTH; i++) {
       timers.push(setTimeout(() => setKeyFilled(i), 250 + i * 95));
     }
-    timers.push(setTimeout(() => setAuthed(true), 250 + KEY_LENGTH * 95 + 350));
+    timers.push(setTimeout(() => setAuthFailed(true), 250 + KEY_LENGTH * 95 + 350));
     return () => timers.forEach(clearTimeout);
   }, [phase]);
 
@@ -86,9 +86,9 @@ export function DiveTerminal({ phase }: { phase: DivePhase }) {
             <span className={styles.auto}>{keyFilled >= KEY_LENGTH ? " [auto]" : ""}</span>
           </div>
           <div className={`${styles.line} ${styles.lineShow} ${styles.authing}`}>
-            {authed ? "" : "> authenticating"}
-            {authed && <span className={styles.desync}>{"> S.I.M.U DESYNC ERROR"}</span>}
-            {!authed && <span className={styles.caret}>_</span>}
+            {authFailed ? "" : "> authenticating"}
+            {authFailed && <span className={styles.desync}>{"> S.I.M.U DESYNC ERROR"}</span>}
+            {!authFailed && <span className={styles.caret}>_</span>}
           </div>
         </>
       )}

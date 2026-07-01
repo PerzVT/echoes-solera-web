@@ -17,8 +17,6 @@ interface CenterCardProps {
  * The cardRef is attached to the root div so the boot hook (useBootSequence)
  * can call card.classList.add("on") / remove("on") and card.style.opacity="1"
  * to drive the signalLock animation.
- *
- * useCursorGlitch may also add/remove the "glitching" class on the same element.
  */
 export function CenterCard({ cardRef }: CenterCardProps) {
   // Split body on highlight to inject the span — no dangerouslySetInnerHTML
