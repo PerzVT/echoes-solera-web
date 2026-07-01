@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import styles from "./DiveTerminal.module.css";
 import type { DivePhase } from "@/hooks/useDiveSequence";
 
@@ -62,6 +63,15 @@ export function DiveTerminal({ phase }: { phase: DivePhase }) {
 
   return (
     <div className={`${styles.terminal} ${visible ? styles.show : styles.hide}`} aria-hidden>
+      <div className={styles.logo}>
+        <Image
+          src="/logo-solera.svg"
+          alt="Echoes of Solera"
+          width={140}
+          height={77}
+          priority
+        />
+      </div>
       {BLACK_LINES.map((l, i) => (
         <div key={i} className={`${styles.line} ${i < revealed ? styles.lineShow : ""}`}>
           {l.text}

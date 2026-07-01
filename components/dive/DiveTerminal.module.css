@@ -20,18 +20,30 @@
   text-shadow: 0 0 2px rgba(185, 108, 230, 0.15);
 }
 
-/* Mobile: centered, bottom. */
+/* Logo sits inline above the terminal text, same alignment */
+.logo {
+  margin-bottom: 20px;
+  opacity: 0.75;
+  filter: drop-shadow(0 0 6px rgba(229, 179, 87, 0.12));
+}
+
+/* Mobile: left-aligned for consistency */
 @media (max-width: 640px) {
   .terminal {
-    left: 50%;
+    left: clamp(16px, 4vw, 32px);
     right: auto;
-    transform: translateX(-50%);
     bottom: clamp(48px, 12vh, 120px);
-    border-left: none;
-    padding-left: 0;
-    text-align: center;
     font-size: 12px;
   }
+  .logo img { width: 100px; height: auto; }
+}
+
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .terminal {
+    left: clamp(24px, 4vw, 64px);
+  }
+  .logo img { width: 120px; height: auto; }
 }
 
 .show { opacity: 1; }

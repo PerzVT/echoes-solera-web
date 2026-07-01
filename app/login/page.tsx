@@ -9,7 +9,6 @@ import { DiveTerminal } from "@/components/dive/DiveTerminal";
 import { DiveWelcome } from "@/components/dive/DiveWelcome";
 import { DiveStatusBar } from "@/components/dive/DiveStatusBar";
 import { SubtleCrtGlitch } from "@/components/dive/SubtleCrtGlitch";
-import Image from "next/image";
 import styles from "./page.module.css";
 
 const DENSITY = 14;
@@ -40,17 +39,6 @@ export default function DivePage() {
 
   return (
     <main className={styles.diveStage} data-idle="rich" data-phase={phase}>
-      {/* Logo watermark - top-left, fades in during boot, fades out on error */}
-      <div className={`${styles.logo} ${phase === "error" ? styles.logoOut : ""}`}>
-        <Image
-          src="/logo-solera.svg"
-          alt="Echoes of Solera"
-          width={160}
-          height={88}
-          priority
-        />
-      </div>
-
       {/* Atmos #1 — always on */}
       <div className={styles.dotsAtmos} />
 
