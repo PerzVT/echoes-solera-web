@@ -17,7 +17,7 @@ export const DIVE_SCRIPT: Cue[] = [
 
   // ACT 2: Awaken
   { id: "scene-fade",        after: "autofill",                                 duration: 1400 },
-  { id: "medallion-ignite",  after: "scene-fade", trigger: "start", delay: 300, duration: 1200 },
+  { id: "medallion-ignite",  after: "scene-fade", trigger: "start", delay: 300, duration: 1400 },
 
   // ACT 3: Peak + sever
   { id: "welcome",           after: "medallion-ignite",              delay: 400, duration: 1200 },
@@ -37,6 +37,5 @@ export function derivePhase(engine: CueEngine): DivePhase {
   if (engine.isActive("scene-fade") || engine.isActive("medallion-ignite"))
                                                                     return "awaken";
   if (engine.isActive("autofill") || engine.isComplete("autofill")) return "autofill";
-  if (engine.isActive("terminal-type"))                             return "autofill";
   return "black";
 }
