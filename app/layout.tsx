@@ -19,7 +19,13 @@ export const metadata: Metadata = {
   description:
     "Access terminal for the world of Solera. Identity verification required. Proceed with caution.",
   icons: {
-    icon: "/favicon.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "Echoes of Solera ✦ Authentication",
