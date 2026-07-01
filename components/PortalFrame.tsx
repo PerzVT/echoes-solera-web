@@ -5,15 +5,14 @@ import {
   type Ref,
 } from "react";
 import styles from "./PortalFrame.module.css";
-import { BOOT } from "@/lib/content";
 
 /* ------------------------------------------------------------------ */
-/* Public type — consumed by useBootSequence                           */
+/* Public type — consumed by the dive director                         */
 /* Compass + sonar removed; rails removed; 4 corner medallions + gem.  */
 /* ------------------------------------------------------------------ */
 export type PortalElements = {
   art: Element;            // root element that receives .live class & data-idle targeting
-  ignite: { el: SVGGElement; power: number; start: number; dur: number }[];
+  ignite: { el: SVGGElement; power: number; start: number; dur: number }[]; // start: placeholder 0; director overrides with i*140
 };
 
 /* ------------------------------------------------------------------ */
@@ -25,11 +24,11 @@ export type PortalElements = {
 /* med-compass and its entry removed.                                  */
 /* ------------------------------------------------------------------ */
 const IGNITE_META = [
-  { id: "med-sun",   start: BOOT.igniteStart,        dur: 780, power: 2.4 },
-  { id: "med-moon",  start: BOOT.igniteStart + 140,  dur: 780, power: 2.4 },
-  { id: "med-orb",   start: BOOT.igniteStart + 280,  dur: 780, power: 2.4 },
-  { id: "med-tower", start: BOOT.igniteStart + 420,  dur: 780, power: 2.4 },
-  { id: "med-gem",   start: BOOT.igniteStart + 560,   dur: 760, power: 2.6 },
+  { id: "med-sun",   dur: 780, power: 2.4 },
+  { id: "med-moon",  dur: 780, power: 2.4 },
+  { id: "med-orb",   dur: 780, power: 2.4 },
+  { id: "med-tower", dur: 780, power: 2.4 },
+  { id: "med-gem",   dur: 760, power: 2.6 },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -242,11 +241,11 @@ export function PortalFrame({ ref }: PortalFrameProps) {
   const allMedRefs = [sunRef, moonRef, orbRef, towerRef, gemRef];
 
   useImperativeHandle(ref, () => {
-    // Always use rAF stroke-draw + dissolve glow (baked into useBootSequence)
+    // Stagger handled by the director (i * 140ms); start: 0 is a placeholder
     const ignite = IGNITE_META.map((m, i) => ({
       el:    allMedRefs[i].current as SVGGElement,
       power: m.power,
-      start: m.start,
+      start: 0,
       dur:   m.dur,
     }));
     return {
@@ -255,7 +254,7 @@ export function PortalFrame({ ref }: PortalFrameProps) {
     };
   }, []);
 
-  // Dissolve+stroke is driven entirely by useBootSequence rAF — no CSS entrance needed.
+  // Dissolve+stroke is driven entirely by the dive director rAF — no CSS entrance needed.
 
   return (
     <div className={styles.frameRoot} id="art" ref={artRef}>

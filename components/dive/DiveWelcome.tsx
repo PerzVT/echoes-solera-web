@@ -1,6 +1,6 @@
 "use client";
 import styles from "./DiveWelcome.module.css";
-import type { DivePhase } from "@/hooks/useDiveSequence";
+import type { DivePhase } from "@/lib/diveScript";
 import { PixelScanVfx } from "./PixelScanVfx";
 
 /**
