@@ -128,7 +128,7 @@ export class CueEngine {
     this.onChange?.();
     // Schedule completion after duration (if set)
     if (cue.duration !== undefined && cue.duration > 0) {
-      // Safety margin: if the cue hasn't completed by 1.5x duration, force it
+      // Duration fallback: force-complete if the action didn't call done() early
       const timerId = setTimeout(() => {
         this.timers.delete(cue.id);
         if (this.active.has(cue.id)) {

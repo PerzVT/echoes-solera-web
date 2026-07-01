@@ -30,7 +30,8 @@ export const DIVE_SCRIPT: Cue[] = [
 ];
 
 export function derivePhase(engine: CueEngine): DivePhase {
-  if (engine.isComplete("idle") || engine.isActive("error-card"))  return "error";
+  if (engine.isComplete("idle") || engine.isActive("error-card") || engine.isActive("crt-enable") || engine.isComplete("error-card"))
+    return "error";
   if (engine.isActive("sever"))                                     return "severed";
   if (engine.isActive("welcome"))                                   return "welcome";
   if (engine.isActive("scene-fade") || engine.isActive("medallion-ignite"))
