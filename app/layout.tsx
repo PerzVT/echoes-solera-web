@@ -15,9 +15,26 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Echoes of Solera — Authentication",
+  title: "Echoes of Solera ✦ Authentication",
   description:
     "Access terminal for the world of Solera. Identity verification required. Proceed with caution.",
+  icons: {
+    icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "Echoes of Solera ✦ Authentication",
+    description:
+      "Access terminal for the world of Solera. Identity verification required. Proceed with caution.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Echoes of Solera ✦ Authentication",
+    description:
+      "Access terminal for the world of Solera. Identity verification required. Proceed with caution.",
+    images: ["/og-image.png"],
+  },
 };
 
 export const viewport: Viewport = {

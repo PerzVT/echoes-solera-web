@@ -7,6 +7,31 @@
   background: #050208;
 }
 
+/* Logo watermark - top-left, subtle, fades in early and out on error phase */
+.logo {
+  position: fixed;
+  top: clamp(16px, 3vh, 32px);
+  left: clamp(20px, 3vw, 40px);
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0;
+  animation: logo-in 1200ms ease 600ms forwards;
+  filter: drop-shadow(0 0 8px rgba(229, 179, 87, 0.15));
+}
+.logoOut {
+  opacity: 0 !important;
+  animation: none;
+  transition: opacity 800ms ease;
+}
+@keyframes logo-in {
+  from { opacity: 0; filter: blur(2px) drop-shadow(0 0 8px rgba(229, 179, 87, 0.15)); }
+  to   { opacity: 0.7; filter: blur(0) drop-shadow(0 0 8px rgba(229, 179, 87, 0.15)); }
+}
+@media (max-width: 640px) {
+  .logo { top: 12px; left: 16px; }
+  .logo img { width: 110px; height: auto; }
+}
+
 /* The particle + medallion scene — hidden until "awaken", then fades up. */
 .scene {
   position: absolute;
