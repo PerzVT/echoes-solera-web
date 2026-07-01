@@ -28,12 +28,6 @@ const SAFETY_MS = 5400;
 const FLICKER_MIN = 2200;
 const FLICKER_RANGE = 4200;
 
-// Rail stroke-draw constants
-const EDGE_DUR = 920;
-const EDGE_STAGGER = 30; // per i%8
-const ACCENT_START_BASE = 1180;
-const ACCENT_STAGGER = 22;
-const ACCENT_DUR = 520;
 
 // ---------------------------------------------------------------------------
 // Easing helpers
@@ -43,19 +37,6 @@ function clamp(v: number): number {
 }
 function outCubic(p: number): number {
   return 1 - Math.pow(1 - p, 3);
-}
-function smooth(p: number): number {
-  return p * p * (3 - 2 * p);
-}
-
-// ---------------------------------------------------------------------------
-// DrawSeg — one animated rail segment
-// ---------------------------------------------------------------------------
-interface DrawSeg {
-  el: SVGPathElement;
-  start: number;
-  dur: number;
-  len: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -80,9 +61,6 @@ export function useBootSequence(
   const liveOnRef = useRef(false);
   // phase flip deferred to a ref to avoid mid-frame setState issues
   const idleFiredRef = useRef(false);
-
-  // Rail stroke-draw segments
-  const drawSegsRef = useRef<DrawSeg[]>([]);
 
   // ---------------------------------------------------------------------------
   // startFlicker — artifact lines 342-356, gated on flickerEnabledRef
@@ -141,38 +119,7 @@ export function useBootSequence(
 
       const t = now - bootT0Ref.current;
 
-      // BEAT 1 — rail stroke-draw
-      for (const d of drawSegsRef.current) {
-        const p = clamp((t - d.start) / d.dur);
-        if (p <= 0) {
-          d.el.style.strokeDashoffset = String(d.len);
-          continue;
-        }
-        if (p >= 1) {
-          d.el.style.strokeDasharray = "none";
-          d.el.style.strokeDashoffset = "0";
-          d.el.style.filter = "none";
-          continue;
-        }
-        const e = smooth(p);
-        d.el.style.strokeDashoffset = String(d.len * (1 - e));
-        if (p > 0.55) {
-          const shimmer = 1 + (1 - Math.abs((p - 0.78) / 0.22)) * 1.6 * (p > 0.56 && p < 1 ? 1 : 0);
-          d.el.style.filter = `brightness(${shimmer})`;
-        } else {
-          d.el.style.filter = "none";
-        }
-      }
-
-      // accent bloom
-      const accentBase = ACCENT_START_BASE;
-      if (els.accents) {
-        els.accents.forEach((a, i) => {
-          a.style.opacity = String(clamp((t - (accentBase + i * ACCENT_STAGGER)) / ACCENT_DUR));
-        });
-      }
-
-      // BEAT 2/3 — medallions + gem ignite
+      // Medallions + gem ignite (dissolve + glow swell)
       for (const g of els.ignite) {
         const p = clamp((t - g.start) / g.dur);
         if (p <= 0) {
@@ -273,27 +220,6 @@ export function useBootSequence(
     if (card) {
       card.classList.remove("on");
       card.style.opacity = "";
-    }
-
-    // Build drawSegs from edges
-    const segs: DrawSeg[] = [];
-    if (els.edges) {
-      els.edges.forEach((el, i) => {
-        segs.push({ el, start: BOOT.edgeStart + (i % 8) * EDGE_STAGGER, dur: EDGE_DUR, len: el.getTotalLength() });
-      });
-    }
-    drawSegsRef.current = segs;
-
-    // Pre-boot state for all draw segments
-    segs.forEach((d) => {
-      d.el.style.strokeDasharray = String(d.len);
-      d.el.style.strokeDashoffset = String(d.len);
-      d.el.style.filter = "none";
-    });
-
-    // Reset accents
-    if (els.accents) {
-      els.accents.forEach((a) => { a.style.opacity = "0"; });
     }
 
     // Reset medallions

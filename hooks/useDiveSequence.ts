@@ -30,9 +30,9 @@ export const DIVE_TIMING: Record<DivePhase, number> = {
   black:    0,
   autofill: 2200,
   awaken:   4600,
-  welcome:  6400,
-  severed:  8000,
-  error:    8500,
+  welcome:  7000,
+  severed:  8600,
+  error:    9100,
 };
 
 const PHASE_ORDER: DivePhase[] = [

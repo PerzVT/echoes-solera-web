@@ -14,8 +14,6 @@ import { BOOT } from "@/lib/content";
 export type PortalElements = {
   art: Element;            // root element that receives .live class & data-idle targeting
   ignite: { el: SVGGElement; power: number; start: number; dur: number }[];
-  edges?: SVGPathElement[];    // legacy/optional — rails removed, hook guards on these
-  accents?: SVGPathElement[];
 };
 
 /* ------------------------------------------------------------------ */
@@ -31,7 +29,7 @@ const IGNITE_META = [
   { id: "med-moon",  start: BOOT.igniteStart + 140,  dur: 780, power: 2.4 },
   { id: "med-orb",   start: BOOT.igniteStart + 280,  dur: 780, power: 2.4 },
   { id: "med-tower", start: BOOT.igniteStart + 420,  dur: 780, power: 2.4 },
-  { id: "med-gem",   start: 1980,                    dur: 760, power: 2.6 },
+  { id: "med-gem",   start: BOOT.igniteStart + 560,   dur: 760, power: 2.6 },
 ] as const;
 
 /* ------------------------------------------------------------------ */
