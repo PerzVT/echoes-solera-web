@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./DiveTerminal.module.css";
-import type { DivePhase } from "@/hooks/useDiveSequence";
+import type { DivePhase } from "@/lib/diveScript";
 
 /**
  * DiveTerminal — sparse monospace terminal text typed directly on the black
@@ -26,7 +26,13 @@ const AUTH_LINES: Line[] = [
 
 const KEY_LENGTH = 12;
 
-export function DiveTerminal({ phase }: { phase: DivePhase }) {
+interface DiveTerminalProps {
+  phase: DivePhase;
+  onTypeComplete?: () => void;
+  onAutofillComplete?: () => void;
+}
+
+export function DiveTerminal({ phase, onTypeComplete, onAutofillComplete }: DiveTerminalProps) {
   // how many of the static lines are revealed
   const [revealed, setRevealed] = useState(0);
   // how many masked chars of the access key have filled
@@ -41,6 +47,10 @@ export function DiveTerminal({ phase }: { phase: DivePhase }) {
     BLACK_LINES.forEach((_, i) => {
       timers.push(setTimeout(() => setRevealed((r) => Math.max(r, i + 1)), 350 + i * 480));
     });
+    timers.push(setTimeout(() => {
+      setRevealed((r) => Math.max(r, BLACK_LINES.length));
+      onTypeComplete?.();
+    }, 350 + (BLACK_LINES.length - 1) * 480));
     return () => {
       timers.forEach(clearTimeout);
       timersRef.current = [];
@@ -54,7 +64,10 @@ export function DiveTerminal({ phase }: { phase: DivePhase }) {
     for (let i = 1; i <= KEY_LENGTH; i++) {
       timers.push(setTimeout(() => setKeyFilled(i), 250 + i * 95));
     }
-    timers.push(setTimeout(() => setAuthFailed(true), 250 + KEY_LENGTH * 95 + 350));
+    timers.push(setTimeout(() => {
+      setAuthFailed(true);
+      onAutofillComplete?.();
+    }, 250 + KEY_LENGTH * 95 + 350));
     return () => timers.forEach(clearTimeout);
   }, [phase]);
 
