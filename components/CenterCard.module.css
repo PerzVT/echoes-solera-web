@@ -26,7 +26,7 @@
   font-size: clamp(26px, 2.5vw, 40px);
   letter-spacing: 0.16em;
   color: #e2d5ee;
-  margin-bottom: 0.6em;
+  margin-bottom: 0.35em;
   text-shadow: 0 0 14px rgba(168, 100, 210, 0.32);
   white-space: nowrap;
 }
