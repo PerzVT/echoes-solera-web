@@ -34,8 +34,8 @@ export function derivePhase(engine: CueEngine): DivePhase {
     return "error";
   if (engine.isActive("sever"))                                     return "severed";
   if (engine.isActive("welcome"))                                   return "welcome";
-  if (engine.isActive("scene-fade") || engine.isActive("medallion-ignite"))
-                                                                    return "awaken";
+  if (engine.isActive("scene-fade") || engine.isComplete("scene-fade") || engine.isActive("medallion-ignite") || engine.isComplete("medallion-ignite"))
+    return "awaken";
   if (engine.isActive("autofill") || engine.isComplete("autofill")) return "autofill";
   return "black";
 }
