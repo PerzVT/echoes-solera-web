@@ -1,0 +1,141 @@
+/* SubtleCrtGlitch — low-glow CRT variant for /dive Variant B.
+   Same structure as CrtGlitch.module.css but with intensity tuned way down.
+   Does NOT affect /baseline CrtGlitch (separate file + class names). */
+
+/* ---- Layer 1: Scanlines — halved opacity vs original ---- */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.07) 2px,
+    rgba(0, 0, 0, 0.07) 3px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanlines { display: none; }
+}
+
+/* ---- Layer 2: Chromatic aberration — very faint ---- */
+.chrom {
+  position: fixed;
+  inset: 0;
+  z-index: 51;
+  pointer-events: none;
+  /* No brightness flicker — clamped to 1 always */
+  filter: brightness(1);
+  opacity: var(--scrt-opacity, 0.07);
+  will-change: opacity;
+}
+
+.chrom::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Narrower, lower-opacity red channel */
+  background: linear-gradient(
+    90deg,
+    rgba(185, 108, 230, 0.4) 0%,
+    rgba(185, 108, 230, 0.0) 35%,
+    rgba(185, 108, 230, 0.0) 65%,
+    rgba(185, 108, 230, 0.2) 100%
+  );
+  transform: translateX(var(--scrt-r-x, 0.8px));
+  mix-blend-mode: screen;
+}
+
+.chrom::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Cyan-lavender channel instead of pure cyan */
+  background: linear-gradient(
+    90deg,
+    rgba(140, 180, 255, 0.35) 0%,
+    rgba(140, 180, 255, 0.0) 35%,
+    rgba(140, 180, 255, 0.0) 65%,
+    rgba(140, 180, 255, 0.15) 100%
+  );
+  transform: translateX(var(--scrt-b-x, -0.8px));
+  mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chrom { display: none; }
+}
+
+/* ---- Layer 3: Horizontal tear — subdued ---- */
+.tear {
+  position: fixed;
+  inset: 0;
+  z-index: 52;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.tear::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--scrt-tear-y, 50%);
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(185, 108, 230, 0.3) 0%,
+    rgba(140, 180, 255, 0.35) 50%,
+    rgba(224, 64, 251, 0.25) 100%
+  );
+  transform: translateX(var(--scrt-tear-shift, 0px));
+  mix-blend-mode: screen;
+}
+
+.tear::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--scrt-tear-y, 50%) + 6px);
+  height: 1px;
+  background: rgba(140, 180, 255, 0.3);
+  transform: translateX(calc(-1 * var(--scrt-tear-shift, 0px) * 0.4));
+  mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tear { display: none; }
+}
+
+/* ---- Layer 4: Blocks container ---- */
+.blocks {
+  position: fixed;
+  inset: 0;
+  z-index: 53;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Individual blocks — very short flash, no border glow */
+.block {
+  position: absolute;
+  will-change: opacity;
+  animation: subtleBlockFlash 0.14s steps(2) forwards;
+}
+
+@keyframes subtleBlockFlash {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blocks { display: none; }
+}

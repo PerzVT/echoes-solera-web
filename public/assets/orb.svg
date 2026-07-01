@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#B96CE6">
+  <g id="orb-ring" data-name="ring">
+    <circle cx="100" cy="100" r="94"></circle>
+    <circle cx="100" cy="100" r="88"></circle>
+  </g>
+  <g id="orb-planets" data-name="planets">
+    <circle cx="84" cy="112" r="40"></circle>
+    <circle cx="120" cy="78" r="24"></circle>
+    <circle cx="134" cy="132" r="11"></circle>
+    <path d="M115.21,129.61 A20 7 0 0 1 154,132"></path>
+    <path d="M152.79,134.39 A20 7 0 0 1 115.21,134.39"></path>
+  </g>
+  <g id="orb-nebula" data-name="nebula-dots">
+    <circle cx="60" cy="150" r="1.4"></circle>
+    <circle cx="74" cy="88" r="1.4"></circle>
+    <circle cx="100" cy="140" r="1.4"></circle>
+    <circle cx="112" cy="116" r="1.4"></circle>
+    <circle cx="150" cy="100" r="1.4"></circle>
+    <circle cx="64" cy="118" r="1.4"></circle>
+    <circle cx="96" cy="72" r="1.4"></circle>
+    <circle cx="128" cy="104" r="1.4"></circle>
+    <circle cx="80" cy="134" r="1.4"></circle>
+    <circle cx="118" cy="148" r="1.4"></circle>
+    <circle cx="140" cy="72" r="1.4"></circle>
+    <circle cx="56" cy="98" r="1.4"></circle>
+    <path d="M145,118 L155,118"></path>
+    <path d="M150,113 L150,123"></path>
+    <path d="M65,70 L75,70"></path>
+    <path d="M70,65 L70,75"></path>
+  </g>
+
+</svg>

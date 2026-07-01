@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#B96CE6">
+  <g id="tower-ring" data-name="ring">
+    <circle cx="100" cy="100" r="94"></circle>
+    <circle cx="100" cy="100" r="88"></circle>
+  </g>
+  <g id="tower-halo" data-name="halo-ring" opacity="0.85">
+    <path d="M58.65,79.55 A44 13 0 0 1 141.35,79.55" transform="rotate(-14 100 84)"></path>
+    <path d="M141.35,88.45 A44 13 0 0 1 58.65,88.45" transform="rotate(-14 100 84)"></path>
+  </g>
+  <g id="tower-spire" data-name="cathedral">
+    <path d="M100,40 L90,150 L110,150 Z"></path>
+    <path d="M95,150 L95,124 Q100,112 105,124 L105,150"></path>
+    <path d="M80,150 L74,98 L86,150"></path>
+    <path d="M120,150 L126,98 L114,150"></path>
+    <path d="M62,150 L138,150"></path>
+    <path d="M66,157 L134,157"></path>
+    <path d="M70,164 L130,164"></path>
+  </g>
+  <g id="tower-light" data-name="apex-star">
+    <path d="M100,21 L102.12,27.88 L109,30 L102.12,32.12 L100,39 L97.88,32.12 L91,30 L97.88,27.88 Z"></path>
+    <path d="M100,150 L68,170" opacity="0.5"></path>
+    <path d="M100,150 L84,170" opacity="0.5"></path>
+    <path d="M100,150 L100,170" opacity="0.5"></path>
+    <path d="M100,150 L116,170" opacity="0.5"></path>
+    <path d="M100,150 L132,170" opacity="0.5"></path>
+  </g>
+
+</svg>

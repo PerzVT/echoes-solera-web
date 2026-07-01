@@ -1,0 +1,185 @@
+/* PortalFrame.module.css — frameless corner-anchored responsive layout */
+
+/* -----------------------------------------------------------------------
+   frameRoot — the invisible div#art that wraps all medallion SVGs.
+   It sits over the stage and receives the .live class from the boot hook.
+   The globals.css [data-idle="subtle"] #art rules target this element.
+   ----------------------------------------------------------------------- */
+.frameRoot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* -----------------------------------------------------------------------
+   artGroup — the per-SVG <g> that carries stroke/fill/glow.
+   Mirrors what the old .art group did on the monolithic SVG.
+   ----------------------------------------------------------------------- */
+.artGroup {
+  color: #B96CE6;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 2px rgba(185, 108, 230, 0.4))
+          drop-shadow(0 0 6px rgba(185, 108, 230, 0.15));
+}
+
+.artGroup * {
+  vector-effect: non-scaling-stroke;
+}
+
+/* -----------------------------------------------------------------------
+   Breathing animation — applied when #art gains .live class.
+   Since the hook does  els.art.classList.add("live")  on the div#art,
+   we use a :global combinator to target child .artGroup elements.
+   The globals.css Subtle override also targets #art.live.
+   ----------------------------------------------------------------------- */
+:global(#art.live) .artGroup {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(185, 108, 230, 0.35))
+            drop-shadow(0 0 5px rgba(185, 108, 230, 0.15));
+  }
+  50% {
+    filter: drop-shadow(0 0 4px rgba(185, 108, 230, 0.5))
+            drop-shadow(0 0 11px rgba(185, 108, 230, 0.22));
+  }
+}
+
+/* -----------------------------------------------------------------------
+   medallion <g> — starts invisible; boot hook reveals via inline style
+   ----------------------------------------------------------------------- */
+.medallion {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+/* -----------------------------------------------------------------------
+   sonar ring
+   ----------------------------------------------------------------------- */
+.sonar {
+  opacity: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
+/* -----------------------------------------------------------------------
+   medallionSvg — base for all corner/center SVG elements
+   pointer-events: none so they never block clicks to the card
+   ----------------------------------------------------------------------- */
+.medallionSvg {
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* -----------------------------------------------------------------------
+   Corner positions — medallions hug the 4 corners with padding.
+   clamp() scales from mobile (~100px) to desktop (~200px).
+   The padding uses a vmin-based value so proportions hold at any ratio.
+   ----------------------------------------------------------------------- */
+.cornerTL {
+  top: clamp(20px, 4vmin, 52px);
+  left: clamp(20px, 4vmin, 52px);
+  width: clamp(90px, 15vmin, 200px);
+  height: clamp(90px, 15vmin, 200px);
+}
+
+.cornerTR {
+  top: clamp(20px, 4vmin, 52px);
+  right: clamp(20px, 4vmin, 52px);
+  width: clamp(90px, 15vmin, 200px);
+  height: clamp(90px, 15vmin, 200px);
+}
+
+.cornerBL {
+  bottom: clamp(20px, 4vmin, 52px);
+  left: clamp(20px, 4vmin, 52px);
+  width: clamp(90px, 15vmin, 200px);
+  height: clamp(90px, 15vmin, 200px);
+}
+
+.cornerBR {
+  bottom: clamp(20px, 4vmin, 52px);
+  right: clamp(20px, 4vmin, 52px);
+  width: clamp(90px, 15vmin, 200px);
+  height: clamp(90px, 15vmin, 200px);
+}
+
+/* -----------------------------------------------------------------------
+   Gem — TOP-center, above the AUTHENTICATION ERROR heading.
+   viewBox is 60x88; slim vertical shape.
+   ----------------------------------------------------------------------- */
+.cornerBC {
+  top: clamp(60px, 22vh, 240px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(24px, 3.5vmin, 52px);
+  height: auto;
+}
+
+/* -----------------------------------------------------------------------
+   Mobile / portrait — medallions already scale via clamp(vmin),
+   but add an extra media-query floor so they don't get too small
+   on very narrow screens.
+   ----------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .cornerTL,
+  .cornerTR,
+  .cornerBL,
+  .cornerBR {
+    width: clamp(64px, 20vmin, 110px);
+    height: clamp(64px, 20vmin, 110px);
+  }
+
+  .cornerBC {
+    width: clamp(18px, 5vmin, 36px);
+  }
+}
+
+/* -----------------------------------------------------------------------
+   InsetRails — open-rail SVG sitting in the inset band
+   ----------------------------------------------------------------------- */
+.railsSvg {
+  position: absolute;
+  /* inset from the viewport edges, sitting between medallions and center card */
+  top: clamp(20px, 4vmin, 52px);
+  left: clamp(20px, 4vmin, 52px);
+  right: clamp(20px, 4vmin, 52px);
+  bottom: clamp(20px, 4vmin, 52px);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.railsGroup {
+  color: #B96CE6;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 2px rgba(185, 108, 230, 0.4))
+          drop-shadow(0 0 6px rgba(185, 108, 230, 0.15));
+}
+
+.railsGroup * {
+  vector-effect: non-scaling-stroke;
+}
+
+:global(#art.live) .railsGroup {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+/* accent paths — midpoint diamonds; opacity driven by boot hook */
+.accent {
+  /* fill driven by stroke/color inheritance from railsGroup */
+  fill: currentColor;
+}

@@ -1,0 +1,85 @@
+"use client";
+import { useRef } from "react";
+import { PortalFrame, type PortalElements } from "@/components/PortalFrame";
+import { Starfield } from "@/components/Starfield";
+import { CenterCard } from "@/components/CenterCard";
+import { useBootSequence } from "@/hooks/useBootSequence";
+import { useDiveSequence } from "@/hooks/useDiveSequence";
+import { DiveTerminal } from "@/components/dive/DiveTerminal";
+import { DiveWelcome } from "@/components/dive/DiveWelcome";
+import { DiveStatusBar } from "@/components/dive/DiveStatusBar";
+import { SubtleCrtGlitch } from "@/components/dive/SubtleCrtGlitch";
+import styles from "./page.module.css";
+
+const DENSITY = 14;
+
+export default function DivePage() {
+  const frameRef = useRef<PortalElements>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const flickerEnabledRef = useRef<boolean>(true);
+
+  const { phase, replay: replayDive } = useDiveSequence(true);
+
+  const { phase: bootPhase, replay: replayBoot } = useBootSequence(
+    frameRef,
+    cardRef,
+    flickerEnabledRef
+  );
+
+  const replay = () => {
+    replayBoot();
+    replayDive();
+  };
+
+  const sceneVisible =
+    phase === "awaken" || phase === "welcome" || phase === "severed" || phase === "error";
+  const cardVisible = phase === "error";
+  const glitchEnabled = phase === "error" && bootPhase === "idle";
+  const isSevered = phase === "severed";
+
+  const awakened =
+    phase === "awaken" || phase === "welcome" || phase === "severed" || phase === "error";
+
+  return (
+    <main className={styles.diveStage} data-idle="rich" data-phase={phase}>
+      {/* Atmos #1 — always on */}
+      <div className={styles.dotsAtmos} />
+
+      <div className={`${styles.scene} ${sceneVisible ? styles.sceneIn : ""}`}>
+        <Starfield density={DENSITY} />
+        <PortalFrame
+          ref={frameRef}
+          awaken={awakened}
+        />
+      </div>
+
+      <DiveTerminal phase={phase} />
+
+      {(phase === "black" || phase === "autofill") && <DiveStatusBar phase={phase} />}
+
+      <DiveWelcome phase={phase} />
+
+      <div className={`${styles.card} ${cardVisible ? styles.cardIn : ""}`}>
+        <CenterCard cardRef={cardRef} />
+      </div>
+
+      <div className={styles.vignette} />
+
+      {/* CRT always-on during error phase, cursor-reactive */}
+      <SubtleCrtGlitch enabled={glitchEnabled} />
+
+      {isSevered && <div className={styles.severWash} />}
+
+      {/* REPLAY button — bottom-center, error phase only */}
+      {phase === "error" && (
+        <button
+          className={styles.replayBtn}
+          onClick={replay}
+          aria-label="Replay the dive"
+        >
+          REPLAY
+        </button>
+      )}
+    </main>
+  );
+}

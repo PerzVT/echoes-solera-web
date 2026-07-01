@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#B96CE6">
+  <g id="frame-outer" data-name="outer-border">
+    <rect x="14" y="14" width="972" height="532"></rect>
+  </g>
+  <g id="frame-inner" data-name="inner-border">
+    <rect x="24" y="24" width="952" height="512"></rect>
+  </g>
+  <g id="frame-corners" data-name="corner-brackets">
+    <path d="M70,162 L70,70 L162,70"></path>
+    <path d="M78,162 L78,78 L162,78"></path>
+    <path d="M184,175 L186.12,181.88 L193,184 L186.12,186.12 L184,193 L181.88,186.12 L175,184 L181.88,181.88 Z"></path>
+    <path d="M930,162 L930,70 L838,70"></path>
+    <path d="M922,162 L922,78 L838,78"></path>
+    <path d="M816,175 L818.12,181.88 L825,184 L818.12,186.12 L816,193 L813.88,186.12 L807,184 L813.88,181.88 Z"></path>
+    <path d="M930,398 L930,490 L838,490"></path>
+    <path d="M922,398 L922,482 L838,482"></path>
+    <path d="M816,367 L818.12,373.88 L825,376 L818.12,378.12 L816,385 L813.88,378.12 L807,376 L813.88,373.88 Z"></path>
+    <path d="M70,398 L70,490 L162,490"></path>
+    <path d="M78,398 L78,482 L162,482"></path>
+    <path d="M184,367 L186.12,373.88 L193,376 L186.12,378.12 L184,385 L181.88,378.12 L175,376 L181.88,373.88 Z"></path>
+  </g>
+  <g id="frame-accents" data-name="edge-diamonds">
+    <path d="M500,5 L509,19 L500,33 L491,19 Z"></path>
+    <path d="M500,12 L504,19 L500,26 L496,19 Z"></path>
+    <path d="M500,527 L509,541 L500,555 L491,541 Z"></path>
+    <path d="M500,534 L504,541 L500,548 L496,541 Z"></path>
+    <path d="M19,264 L21.83,277.17 L35,280 L21.83,282.83 L19,296 L16.17,282.83 L3,280 L16.17,277.17 Z"></path>
+    <path d="M19,276 L23,280 L19,284 L15,280 Z"></path>
+    <path d="M981,264 L983.83,277.17 L997,280 L983.83,282.83 L981,296 L978.17,282.83 L965,280 L978.17,277.17 Z"></path>
+    <path d="M981,276 L985,280 L981,284 L977,280 Z"></path>
+  </g>
+
+</svg>

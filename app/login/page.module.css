@@ -1,0 +1,122 @@
+/* /dive promoted to root — full-screen cinematic entry. Black void first; layers reveal by phase. */
+
+.diveStage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #050208;
+}
+
+/* The particle + medallion scene — hidden until "awaken", then fades up. */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1400ms ease;
+  pointer-events: none;
+}
+.sceneIn {
+  opacity: 1;
+}
+
+/* Purple nebula infusion appears with the scene */
+.scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 32% 42%, rgba(58, 8, 92, 0.4) 0%, transparent 65%),
+    radial-gradient(ellipse 75% 55% at 68% 60%, rgba(22, 4, 52, 0.55) 0%, transparent 75%);
+  opacity: 0;
+  transition: opacity 1800ms ease;
+}
+.sceneIn::before {
+  opacity: 1;
+}
+
+/* The error card */
+.card {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 900ms ease 200ms;
+  pointer-events: none;
+}
+.cardIn {
+  opacity: 1;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Full-screen magenta/violet wash at the moment of severance */
+.severWash {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background: rgba(192, 38, 211, 0.5);
+  animation: sever-wash 500ms steps(1, end) forwards;
+}
+@keyframes sever-wash {
+  0%   { opacity: 1; }
+  20%  { opacity: 0.5; }
+  55%  { opacity: 0.22; }
+  100% { opacity: 0; }
+}
+
+/* ── Atmos #1: halftone dots + duotone across the whole bg ── */
+.dotsAtmos {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(rgba(185, 108, 230, 0.10) 0.6px, transparent 0.7px) 0 0 / 6px 6px,
+    radial-gradient(rgba(230, 184, 255, 0.05) 0.5px, transparent 0.6px) 3px 3px / 12px 12px,
+    linear-gradient(125deg, rgba(40, 8, 70, 0.22), transparent 55%),
+    linear-gradient(300deg, rgba(20, 4, 48, 0.30), transparent 60%);
+  opacity: 0;
+  animation: atmos-in 700ms ease forwards;
+}
+@keyframes atmos-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── REPLAY button — fixed bottom-center ── */
+.replayBtn {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(215, 194, 236, 0.85);
+  background: rgba(5, 2, 10, 0.55);
+  border: 1px solid rgba(185, 108, 230, 0.45);
+  border-radius: 8px;
+  padding: 10px 28px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.replayBtn:hover {
+  background: rgba(185, 108, 230, 0.18);
+  border-color: rgba(185, 108, 230, 0.75);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene, .card { transition: opacity 300ms ease; }
+  .severWash { animation: sever-wash 500ms steps(1) forwards; }
+}

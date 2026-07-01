@@ -1,0 +1,67 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: #050208; overflow: hidden; color: #B96CE6; }
+
+/* ===========================================================================
+   CSS custom properties for idle-mode — consumed by component modules via var()
+   Set on the stage root element (.portalStage) via data-idle attribute.
+   =========================================================================== */
+
+/* Rich (default) values */
+:root {
+  --grain-opacity: 0.05;
+}
+
+/* Subtle overrides */
+[data-idle="subtle"] {
+  --grain-opacity: 0.015;
+}
+
+/* ===========================================================================
+   Idle-mode A/B rules for SVG elements (not CSS-Module-scoped)
+   #art is the div.frameRoot — its child .artGroup elements carry the animation.
+   =========================================================================== */
+
+/* --- SUBTLE: override the breathe animation on child art groups --- */
+[data-idle="subtle"] #art.live [class*="artGroup"] {
+  animation: subtleBreathe 8s ease-in-out infinite !important;
+}
+
+@keyframes subtleBreathe {
+  0%,  100% {
+    filter: drop-shadow(0 0 2px rgba(185, 108, 230, 0.28))
+            drop-shadow(0 0 5px rgba(185, 108, 230, 0.10));
+  }
+  50% {
+    filter: drop-shadow(0 0 4px rgba(185, 108, 230, 0.40))
+            drop-shadow(0 0 9px rgba(185, 108, 230, 0.18));
+  }
+}
+
+/* --- GLITCH BURST: kill the scene glow while a CRT burst is active ---
+   CrtGlitch sets data-glitching on the stage root during each burst.
+   Zero out the medallion drop-shadow (override breathe) and the card
+   text glow so the scene doesn't bloom hot during the glitch. --- */
+[data-glitching] #art,
+[data-glitching] #art.live,
+[data-glitching] #art.live [class*="artGroup"] {
+  filter: none !important;
+  animation: none !important;
+}
+[data-glitching] [class*="centerCard"] h1,
+[data-glitching] [class*="centerCard"] p,
+[data-glitching] [class*="centerCard"] :is(.hl, [class*="hl"]) {
+  text-shadow: none !important;
+}
+
+/* GL canvas fade-in — applied as inline animation when GL components mount */
+@keyframes glitch-gl-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes glitch-gl-fadein {
+    from { opacity: 1; }
+    to   { opacity: 1; }
+  }
+}

@@ -1,0 +1,20 @@
+/* PixelScanVfx — fallback for no-WebGL / prefers-reduced-motion */
+
+/* Source element is hidden by default so there is NO frame where the raw
+   text is visible before VFX-JS has captured + started rendering its canvas.
+   VFX-JS reads geometry/styles from the element but does NOT need it visible.
+   The VFX canvas overlay is a separate element positioned over the source. */
+.sourceHidden {
+  opacity: 0;
+}
+
+/* When VFX-JS is unavailable, a simple opacity fade is added via JS */
+.fadeFallback {
+  opacity: 1 !important;
+  animation: vfx-fade-in 800ms ease both;
+}
+
+@keyframes vfx-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -1,0 +1,209 @@
+/* DiveWelcome — welcome peak + violent sever. Floats on the glowing center. */
+
+.wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.welcome {
+  position: relative;
+  font-family: "Cinzel", "Georgia", serif;
+  font-weight: 600;
+  font-size: clamp(34px, 5.4vw, 84px);
+  letter-spacing: 0.07em;
+  line-height: 1;
+  white-space: nowrap;
+  display: flex;
+  align-items: baseline;
+}
+
+/* ── Glitch-assemble animate-in (codrops CSSGlitchEffect technique) ─────── */
+/*
+  The .welcomeIn class wraps a container that holds:
+    .main   — the real text layer
+    .glitchA — cyan-lavender ghost (::before / span)
+    .glitchB — magenta ghost
+  Both ghosts cycle clip-path: inset() bands at steps(1) for digital snapping.
+  The main text fades in starting ~200ms in. Total: ~750ms, plays once.
+*/
+.welcomeIn {
+  color: #EFE0FF;
+  text-shadow: 0 0 50px rgba(185, 108, 230, 0.55), 0 0 100px rgba(185, 108, 230, 0.24);
+  animation: glitch-assemble-main 750ms steps(1) both;
+}
+
+@keyframes glitch-assemble-main {
+  0%   { opacity: 0; }
+  18%  { opacity: 0.05; }
+  30%  { opacity: 0.6; }
+  42%  { opacity: 0.45; }
+  55%  { opacity: 0.85; }
+  68%  { opacity: 0.72; }
+  80%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* Ghost A: cyan-lavender channel */
+.glitchA {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+  color: rgba(170, 210, 255, 0.75);
+  pointer-events: none;
+  transform: translateX(-7px);
+  animation: glitch-band-a 750ms steps(1) both;
+}
+
+@keyframes glitch-band-a {
+  0%   { clip-path: inset(0 0 100% 0); opacity: 1; transform: translateX(-7px); }
+  6%   { clip-path: inset(70% 0 0% 0);  transform: translateX(-10px); }
+  12%  { clip-path: inset(40% 0 45% 0); transform: translateX(-5px); }
+  18%  { clip-path: inset(10% 0 75% 0); transform: translateX(-12px); }
+  24%  { clip-path: inset(55% 0 20% 0); transform: translateX(-4px); }
+  30%  { clip-path: inset(20% 0 60% 0); transform: translateX(-9px); }
+  36%  { clip-path: inset(80% 0 5%  0); transform: translateX(-6px); }
+  42%  { clip-path: inset(5%  0 80% 0); transform: translateX(-11px); }
+  48%  { clip-path: inset(35% 0 40% 0); transform: translateX(-3px); }
+  54%  { clip-path: inset(65% 0 15% 0); transform: translateX(-8px); }
+  60%  { clip-path: inset(15% 0 70% 0); transform: translateX(-5px); }
+  66%  { clip-path: inset(50% 0 30% 0); transform: translateX(-10px); }
+  72%  { clip-path: inset(25% 0 55% 0); transform: translateX(-4px); }
+  78%  { clip-path: inset(85% 0 2%  0); transform: translateX(-7px); }
+  84%  { clip-path: inset(0 0 100% 0);  opacity: 0.6; }
+  92%  { clip-path: inset(0 0 100% 0);  opacity: 0; }
+  100% { clip-path: inset(0 0 100% 0);  opacity: 0; transform: translateX(0); }
+}
+
+/* Ghost B: on-brand magenta channel */
+.glitchB {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+  color: rgba(224, 90, 210, 0.7);
+  pointer-events: none;
+  transform: translateX(7px);
+  animation: glitch-band-b 750ms steps(1) both;
+}
+
+@keyframes glitch-band-b {
+  0%   { clip-path: inset(100% 0 0 0); opacity: 1; transform: translateX(7px); }
+  8%   { clip-path: inset(0% 0 70% 0); transform: translateX(10px); }
+  15%  { clip-path: inset(60% 0 15% 0); transform: translateX(5px); }
+  22%  { clip-path: inset(20% 0 55% 0); transform: translateX(13px); }
+  29%  { clip-path: inset(45% 0 30% 0); transform: translateX(4px); }
+  36%  { clip-path: inset(10% 0 75% 0); transform: translateX(8px); }
+  43%  { clip-path: inset(75% 0 10% 0); transform: translateX(6px); }
+  50%  { clip-path: inset(30% 0 45% 0); transform: translateX(11px); }
+  57%  { clip-path: inset(55% 0 20% 0); transform: translateX(3px); }
+  64%  { clip-path: inset(5%  0 80% 0); transform: translateX(9px); }
+  71%  { clip-path: inset(80% 0 5%  0); transform: translateX(5px); }
+  78%  { clip-path: inset(40% 0 35% 0); transform: translateX(7px); }
+  84%  { clip-path: inset(0 0 100% 0); opacity: 0.5; }
+  92%  { clip-path: inset(0 0 100% 0); opacity: 0; }
+  100% { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateX(0); }
+}
+
+.main { position: relative; z-index: 2; }
+
+.cut {
+  opacity: 0.5;
+  margin-left: 2px;
+  animation: dive-blink 0.9s step-end infinite;
+}
+
+/* ── Severed state ─────────────────────────────────────────── */
+.severed .main {
+  color: rgba(255, 210, 255, 0.9);
+  filter: brightness(1.4) contrast(1.1);
+  animation: sever-shake 90ms steps(2) 6;
+}
+
+.ghost {
+  position: absolute;
+  z-index: 1;
+  filter: blur(1.2px);
+  white-space: nowrap;
+}
+.cyan {
+  color: rgba(0, 210, 255, 0.6);
+  transform: translate(-9px, 4px);
+  animation: sever-shake 70ms steps(2) 7;
+}
+.red {
+  color: rgba(255, 59, 208, 0.72);
+  transform: translate(9px, -3px);
+  animation: sever-shake 80ms steps(2) 6 reverse;
+}
+
+@keyframes sever-shake {
+  0%   { transform: translate(-9px, 4px); }
+  25%  { transform: translate(-14px, 2px) skewX(-3deg); }
+  50%  { transform: translate(-4px, 6px); }
+  75%  { transform: translate(-12px, 3px) skewX(2deg); }
+  100% { transform: translate(-9px, 4px); }
+}
+
+.redFlash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 59, 208, 0.55);
+  animation: red-flash 420ms steps(1, end) forwards;
+}
+
+@keyframes red-flash {
+  0%   { opacity: 1; }
+  18%  { opacity: 0.6; }
+  45%  { opacity: 0.28; }
+  100% { opacity: 0; }
+}
+
+.severBanner {
+  position: absolute;
+  top: calc(50% - clamp(90px, 12vh, 160px));
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Space Mono", monospace;
+  font-size: clamp(10px, 1vw, 13px);
+  letter-spacing: 0.38em;
+  color: rgba(255, 59, 208, 0.85);
+  white-space: nowrap;
+  animation: dive-blink 0.3s step-end infinite;
+}
+
+@keyframes dive-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Mobile: scale down WELCOME text so it fits 375px without clipping */
+@media (max-width: 480px) {
+  .welcome {
+    font-size: clamp(22px, 5.8vw, 34px);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .welcome {
+    font-size: 18px;
+    letter-spacing: 0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcomeIn { animation: none; opacity: 1; }
+  .glitchA, .glitchB { display: none; }
+  .severed .main, .cyan, .red { animation: none; }
+  .redFlash { animation: red-flash 420ms steps(1) forwards; }
+  .severBanner, .cut { animation: none; }
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#B96CE6">
+  <g id="moon-ring" data-name="ring">
+    <circle cx="100" cy="100" r="94"></circle>
+    <circle cx="100" cy="100" r="88"></circle>
+  </g>
+  <g id="moon-crescent" data-name="crescent">
+    <path d="M156.02,128.69 A54 54 0 1 1 93.3,52.04 A50 50 0 0 0 156.02,128.69 Z"></path>
+  </g>
+  <g id="moon-stars" data-name="stars">
+    <path d="M64,62 L65.92,68.08 L72,70 L65.92,71.92 L64,78 L62.08,71.92 L56,70 L62.08,68.08 Z"></path>
+    <path d="M78,122 L79.44,126.56 L84,128 L79.44,129.44 L78,134 L76.56,129.44 L72,128 L76.56,126.56 Z"></path>
+    <path d="M120,145 L121.2,148.8 L125,150 L121.2,151.2 L120,155 L118.8,151.2 L115,150 L118.8,148.8 Z"></path>
+  </g>
+
+</svg>

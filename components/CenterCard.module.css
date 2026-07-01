@@ -1,0 +1,142 @@
+/* ------------------------------------------------------------------ */
+/* CenterCard — ported from artifact CSS lines 46-80                   */
+/* ------------------------------------------------------------------ */
+
+.centerCard {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  width: min(620px, 72vw);
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+/* Boot hook adds/removes the plain "on" class — use :global so the scoped
+   .centerCard can combine with the unscoped "on" string the hook injects. */
+.centerCard:global(.on) {
+  animation: signalLock 1000ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.centerCard h1 {
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+  font-size: clamp(26px, 2.5vw, 40px);
+  letter-spacing: 0.16em;
+  color: #e2d5ee;
+  margin-bottom: 0.6em;
+  text-shadow: 0 0 14px rgba(168, 100, 210, 0.32);
+  white-space: nowrap;
+}
+
+.centerCard p {
+  font-size: clamp(17px, 1.55vw, 23px);
+  line-height: 1.62;
+  color: #90809f;
+  letter-spacing: 0.01em;
+}
+
+.centerCard .hl {
+  color: #b277dc;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(178, 119, 220, 0.4);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* signalLock keyframes — ported verbatim from artifact lines 66-80    */
+/* ------------------------------------------------------------------ */
+@keyframes signalLock {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 9px));
+    filter: blur(3px);
+  }
+  8% {
+    opacity: 0.55;
+    transform: translate(calc(-50% - 4px), -50%);
+    filter: blur(1.5px);
+    text-shadow: 3px 0 rgba(255, 70, 70, 0.7), -3px 0 rgba(70, 130, 255, 0.7);
+  }
+  18% {
+    opacity: 0.7;
+    transform: translate(calc(-50% + 4px), calc(-50% - 2px));
+    text-shadow: -4px 0 rgba(255, 70, 70, 0.7), 4px 0 rgba(70, 130, 255, 0.7);
+  }
+  30% {
+    opacity: 0.55;
+    transform: translate(calc(-50% - 3px), -50%);
+    filter: blur(0.6px);
+    text-shadow: 3px 0 rgba(255, 70, 70, 0.6), -3px 0 rgba(70, 130, 255, 0.6);
+  }
+  44% {
+    opacity: 0.92;
+    transform: translate(calc(-50% + 2px), -50%);
+    text-shadow: -2px 0 rgba(255, 70, 70, 0.5), 2px 0 rgba(70, 130, 255, 0.5);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translate(calc(-50% - 1px), -50%);
+    text-shadow: 1px 0 rgba(255, 70, 70, 0.35), -1px 0 rgba(70, 130, 255, 0.35);
+  }
+  78% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    filter: blur(0);
+    text-shadow: none;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    filter: none;
+    text-shadow: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Cursor-driven glitch state (applied by useCursorGlitch)             */
+/* ------------------------------------------------------------------ */
+
+/* When .glitching is present on the card, the text glitches via CSS   */
+/* custom props set by the hook (--glitch-x, --glitch-y, --glitch-i)  */
+/* useCursorGlitch adds the plain "glitching" class — use :global      */
+.centerCard:global(.glitching) {
+  /* RGB-split / chromatic aberration via text-shadow — stronger than before */
+  text-shadow:
+    var(--glitch-x, 6px) 0 rgba(255, 50, 50, 0.80),
+    calc(-1 * var(--glitch-x, 6px)) 0 rgba(50, 120, 255, 0.80),
+    0 var(--glitch-dy, 0px) rgba(185, 108, 230, 0.45);
+  /* Lateral jitter */
+  transform: translate(
+    calc(-50% + var(--glitch-dx, 0px)),
+    calc(-50% + var(--glitch-dy, 0px))
+  );
+  filter: brightness(1.14) saturate(1.3);
+  transition: transform 30ms linear, filter 30ms linear;
+}
+
+.centerCard:not(:global(.glitching)) {
+  /* smooth decay back to rest */
+  transition: text-shadow 200ms ease-out, transform 200ms ease-out, filter 200ms ease-out;
+}
+
+/* Mobile: tighten card width and reduce font-size for comfortable reading */
+@media (max-width: 480px) {
+  .centerCard {
+    width: min(340px, 88vw);
+    padding: 0 4px;
+  }
+
+  .centerCard h1 {
+    font-size: clamp(18px, 5vw, 26px);
+    letter-spacing: 0.1em;
+    white-space: normal;
+  }
+
+  .centerCard p {
+    font-size: clamp(13px, 3.5vw, 17px);
+    line-height: 1.55;
+  }
+}

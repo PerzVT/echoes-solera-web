@@ -1,0 +1,80 @@
+/* DiveTerminal — sparse monospace text floating on the black void. No panel. */
+
+/* Desktop: anchored bottom-left like a booting system console. */
+.terminal {
+  position: fixed;
+  left: clamp(28px, 5vw, 96px);
+  /* sits above the status footer bar (~44px) with clearance */
+  bottom: clamp(72px, 11vh, 140px);
+  z-index: 30;
+  font-family: "Space Mono", "Courier New", monospace;
+  font-size: clamp(11px, 1vw, 14px);
+  line-height: 2.0;
+  letter-spacing: 0.02em;
+  color: #B96CE6;
+  pointer-events: none;
+  transition: opacity 700ms ease, filter 700ms ease;
+  /* modern: thin accent rail on the left, tighter, much less glow */
+  padding-left: 16px;
+  border-left: 1px solid rgba(185, 108, 230, 0.25);
+  text-shadow: 0 0 2px rgba(185, 108, 230, 0.15);
+}
+
+/* Mobile: centered, bottom. */
+@media (max-width: 640px) {
+  .terminal {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    bottom: clamp(48px, 12vh, 120px);
+    border-left: none;
+    padding-left: 0;
+    text-align: center;
+    font-size: 12px;
+  }
+}
+
+.show { opacity: 1; }
+.hide { opacity: 0; filter: blur(2px); }
+
+.line {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 280ms ease, transform 280ms ease;
+  white-space: nowrap;
+}
+.lineShow {
+  opacity: 0.82;
+  transform: translateX(0);
+}
+
+.key {
+  color: #E6B8FF;
+  letter-spacing: 0.12em;
+}
+.keyEmpty {
+  color: rgba(185, 108, 230, 0.3);
+}
+.auto {
+  color: rgba(230, 184, 255, 0.55);
+}
+.authing {
+  color: rgba(230, 184, 255, 0.9);
+}
+.desync {
+  color: #ff4444;
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.5);
+}
+.caret {
+  animation: dive-blink 1s step-end infinite;
+}
+
+@keyframes dive-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line { transition: opacity 120ms ease; transform: none; }
+  .caret { animation: none; }
+}

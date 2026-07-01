@@ -1,0 +1,86 @@
+/* DiveStatusBar — techy duotone status footer bar (matches reference design).
+   // -separated mono labels, dithered glyph accents, colored alert states.
+   Alert states use bright lavender (not red) to stay cohesive with the purple scene. */
+
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px clamp(20px, 4vw, 56px);
+  font-family: "Space Mono", "Courier New", monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.18em;
+  border-top: 1px solid rgba(185, 108, 230, 0.18);
+  /* duotone halftone-dot texture along the bar */
+  background:
+    radial-gradient(rgba(185, 108, 230, 0.10) 0.5px, transparent 0.6px) 0 0 / 5px 5px,
+    linear-gradient(to top, rgba(8, 3, 16, 0.85), rgba(8, 3, 16, 0.35));
+  pointer-events: none;
+  transition: border-color 400ms ease, background 400ms ease;
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.brand {
+  color: #B96CE6;
+  font-weight: 700;
+}
+.sep {
+  color: rgba(185, 108, 230, 0.35);
+}
+.dim {
+  color: rgba(230, 184, 255, 0.4);
+}
+.state {
+  color: rgba(230, 184, 255, 0.78);
+  letter-spacing: 0.24em;
+}
+
+/* Alert state text — bright lavender (readable as "different state", no red) */
+.stateAlert {
+  color: #e2b4ff;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+.glyph {
+  color: rgba(185, 108, 230, 0.5);
+  font-size: 0.9em;
+  letter-spacing: -0.1em;
+}
+
+/* Alert bar — brighter lavender border + dots, NOT red */
+.alert {
+  border-top-color: rgba(200, 130, 255, 0.55);
+  background:
+    radial-gradient(rgba(185, 108, 230, 0.18) 0.5px, transparent 0.6px) 0 0 / 5px 5px,
+    linear-gradient(to top, rgba(12, 4, 24, 0.9), rgba(12, 4, 24, 0.45));
+}
+.alert .glyph {
+  color: rgba(210, 150, 255, 0.7);
+}
+
+@media (max-width: 640px) {
+  .bar {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    padding: 9px 14px;
+    gap: 8px;
+  }
+  /* hide the middle metadata on narrow screens, keep brand + state */
+  .left .dim,
+  .left .sep {
+    display: none;
+  }
+}
