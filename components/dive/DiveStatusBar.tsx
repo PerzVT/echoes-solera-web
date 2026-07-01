@@ -1,6 +1,6 @@
 "use client";
 import styles from "./DiveStatusBar.module.css";
-import type { DivePhase } from "@/hooks/useDiveSequence";
+import type { DivePhase } from "@/lib/diveScript";
 
 /**
  * DiveStatusBar — a techy status footer bar in the duotone/dithered "tech panel"

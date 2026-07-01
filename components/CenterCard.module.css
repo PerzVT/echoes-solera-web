@@ -23,7 +23,7 @@
 .centerCard h1 {
   font-family: "Cinzel", serif;
   font-weight: 600;
-  font-size: clamp(26px, 2.5vw, 40px);
+  font-size: clamp(26px, 3vw, 44px);
   letter-spacing: 0.16em;
   color: #e2d5ee;
   margin-bottom: 0.35em;

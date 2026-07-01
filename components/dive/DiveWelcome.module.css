@@ -14,7 +14,7 @@
   position: relative;
   font-family: "Cinzel", "Georgia", serif;
   font-weight: 600;
-  font-size: clamp(34px, 5.4vw, 84px);
+  font-size: clamp(30px, 4vw, 60px);
   letter-spacing: 0.07em;
   line-height: 1;
   white-space: nowrap;
@@ -187,7 +187,7 @@
 /* Mobile: scale down WELCOME text so it fits 375px without clipping */
 @media (max-width: 480px) {
   .welcome {
-    font-size: clamp(22px, 5.8vw, 34px);
+    font-size: clamp(22px, 5vw, 32px);
     letter-spacing: 0.04em;
     white-space: nowrap;
   }

@@ -1,10 +1,9 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { PortalFrame, type PortalElements } from "@/components/PortalFrame";
 import { Starfield } from "@/components/Starfield";
 import { CenterCard } from "@/components/CenterCard";
-import { useBootSequence } from "@/hooks/useBootSequence";
-import { useDiveSequence } from "@/hooks/useDiveSequence";
+import { useDiveDirector } from "@/hooks/useDiveDirector";
 import { DiveTerminal } from "@/components/dive/DiveTerminal";
 import { DiveWelcome } from "@/components/dive/DiveWelcome";
 import { DiveStatusBar } from "@/components/dive/DiveStatusBar";
@@ -18,28 +17,29 @@ export default function DivePage() {
   const cardRef = useRef<HTMLDivElement>(null);
   const flickerEnabledRef = useRef<boolean>(true);
 
-  const { phase, replay: replayDive } = useDiveSequence(true);
-
-  const { phase: bootPhase, replay: replayBoot } = useBootSequence(
+  const { phase, cueActive, cueComplete, replay } = useDiveDirector({
     frameRef,
     cardRef,
-    flickerEnabledRef
-  );
+    flickerEnabledRef,
+  });
 
-  const replay = () => {
-    replayBoot();
-    replayDive();
-  };
+  const handleTypeComplete = useCallback(() => {
+    // Signal the director that terminal typing finished early
+    // (The cue engine will use this or fall back to duration timeout)
+  }, []);
+
+  const handleAutofillComplete = useCallback(() => {
+    // Signal autofill finished
+  }, []);
 
   const awakened =
     phase === "awaken" || phase === "welcome" || phase === "severed" || phase === "error";
   const cardVisible = phase === "error";
-  const glitchEnabled = phase === "error" && bootPhase === "idle";
+  const glitchEnabled = phase === "error" && cueComplete("idle");
   const isSevered = phase === "severed";
 
   return (
     <main className={styles.diveStage} data-idle="rich" data-phase={phase}>
-      {/* Atmos #1 — always on */}
       <div className={styles.dotsAtmos} />
 
       <div className={`${styles.scene} ${awakened ? styles.sceneIn : ""}`}>
@@ -47,7 +47,11 @@ export default function DivePage() {
         <PortalFrame ref={frameRef} />
       </div>
 
-      <DiveTerminal phase={phase} />
+      <DiveTerminal
+        phase={phase}
+        onTypeComplete={handleTypeComplete}
+        onAutofillComplete={handleAutofillComplete}
+      />
 
       {(phase === "black" || phase === "autofill") && <DiveStatusBar phase={phase} />}
 
@@ -59,12 +63,10 @@ export default function DivePage() {
 
       <div className={styles.vignette} />
 
-      {/* CRT always-on during error phase, cursor-reactive */}
       <SubtleCrtGlitch enabled={glitchEnabled} />
 
       {isSevered && <div className={styles.severWash} />}
 
-      {/* REPLAY button — bottom-center, error phase only */}
       {phase === "error" && (
         <button
           className={styles.replayBtn}
