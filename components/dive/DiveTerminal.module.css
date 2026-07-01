@@ -13,7 +13,7 @@
   letter-spacing: 0.02em;
   color: #B96CE6;
   pointer-events: none;
-  transition: opacity 700ms ease, filter 700ms ease;
+  transition: opacity 300ms ease, filter 300ms ease;
   /* modern: thin accent rail on the left, tighter, much less glow */
   padding-left: 16px;
   border-left: 1px solid rgba(185, 108, 230, 0.25);
