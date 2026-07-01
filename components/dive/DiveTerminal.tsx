@@ -45,12 +45,16 @@ export function DiveTerminal({ phase, onTypeComplete, onAutofillComplete }: Dive
     if (phase !== "black" && phase !== "autofill") return;
     const timers = timersRef.current;
     BLACK_LINES.forEach((_, i) => {
-      timers.push(setTimeout(() => setRevealed((r) => Math.max(r, i + 1)), 350 + i * 480));
+      const delay = 350 + i * 480;
+      if (i === BLACK_LINES.length - 1) {
+        timers.push(setTimeout(() => {
+          setRevealed((r) => Math.max(r, i + 1));
+          onTypeComplete?.();
+        }, delay));
+      } else {
+        timers.push(setTimeout(() => setRevealed((r) => Math.max(r, i + 1)), delay));
+      }
     });
-    timers.push(setTimeout(() => {
-      setRevealed((r) => Math.max(r, BLACK_LINES.length));
-      onTypeComplete?.();
-    }, 350 + (BLACK_LINES.length - 1) * 480));
     return () => {
       timers.forEach(clearTimeout);
       timersRef.current = [];
