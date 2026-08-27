@@ -3,6 +3,7 @@ import { useRef, useCallback } from "react";
 import { PortalFrame, type PortalElements } from "@/components/PortalFrame";
 import { Starfield } from "@/components/Starfield";
 import { CenterCard } from "@/components/CenterCard";
+import { SiteCredit } from "@/components/SiteCredit";
 import { useDiveDirector } from "@/hooks/useDiveDirector";
 import { DiveTerminal } from "@/components/dive/DiveTerminal";
 import { DiveWelcome } from "@/components/dive/DiveWelcome";
@@ -62,6 +63,8 @@ export default function DivePage() {
       </div>
 
       <div className={styles.vignette} />
+
+      <SiteCredit visible={awakened} />
 
       <SubtleCrtGlitch enabled={glitchEnabled} />
 

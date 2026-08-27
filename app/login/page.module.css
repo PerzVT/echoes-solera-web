@@ -116,6 +116,13 @@
   color: #fff;
 }
 
+/* Lift the button clear of the bottom credit line on narrow screens. */
+@media (max-width: 480px) {
+  .replayBtn {
+    bottom: 52px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scene, .card { transition: opacity 300ms ease; }
   .severWash { animation: sever-wash 500ms steps(1) forwards; }

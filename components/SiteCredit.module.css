@@ -1,0 +1,38 @@
+.credit {
+  position: fixed;
+  bottom: 12px;
+  left: 18px;
+  z-index: 5;
+  max-width: min(60vw, 420px);
+  margin: 0;
+  font-family: "Space Mono", monospace;
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 0.09em;
+  color: rgba(185, 108, 230, 0.42);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1400ms ease 400ms;
+}
+
+.creditIn {
+  opacity: 1;
+}
+
+/* Narrow screens: the REPLAY button owns the bottom-centre, so the credit
+   spans the full width beneath it and the button lifts clear of it. */
+@media (max-width: 480px) {
+  .credit {
+    left: 0;
+    right: 0;
+    max-width: none;
+    padding: 0 12px;
+    text-align: center;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .credit { transition: opacity 300ms ease; }
+}
