@@ -1,0 +1,8 @@
+.shell { height: 100dvh; overflow-y: auto; background: #f7f7f2; color: #252823; font-family: Arial, Helvetica, sans-serif; color-scheme: light; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; max-width: 1200px; margin: auto; padding: 24px; }
+.style { min-width: 0; scroll-margin-top: 24px; }
+.style h2 { margin: 0 0 10px; font-size: 16px; font-weight: 500; line-height: 1.4; }
+.style video { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: contain; background: #111; border-radius: 6px; }
+.style video:focus-visible { outline: 2px solid #526b3a; outline-offset: 4px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { .grid { grid-template-columns: 1fr; padding: 16px; gap: 28px; } }
