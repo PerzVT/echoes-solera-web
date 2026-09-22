@@ -16,7 +16,7 @@ export const scenes = [
 ];
 export const byId=new Map(scenes.map(s=>[s.id,s]));
 export function nextScene(id,index){const s=byId.get(id);if(!s)return null;if(s.choices){const c=s.choices[index??s.choices.findIndex(c=>!c.locked)];return c&&!c.locked?c.to:null;}return s.next??null;}
-export const validScene=id=>byId.has(id)?id:'spawn';
+export const validScene=id=>byId.has(id)?id:'selection';
 
 
 
