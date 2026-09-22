@@ -1,0 +1,23 @@
+export const mediaAssets = {
+  "arena-ready.png": "assets/arena-ready-3adbdf6464fd.webp",
+  "classes.png": "assets/classes-2c5a4d220ee5.webp",
+  "foyer-crowded.png": "assets/foyer-crowded-29ba3df1b17a.webp",
+  "lobby.png": "assets/lobby-0c39b08989e2.webp",
+  "mana-attack.png": "assets/mana-attack-fa072c725234.webp",
+  "mana-sword.png": "assets/mana-sword-80bbd6341b31.webp",
+  "selection-highlight.png": "assets/selection-highlight-b714739437b4.webp",
+  "selection-neutral.png": "assets/selection-neutral-54aa6addbf12.webp",
+  "spawn-exit.png": "assets/spawn-exit-3c028fbedf1d.webp",
+  "spawn.png": "assets/spawn-2e46aa1185a5.webp",
+  "training-ready.png": "assets/training-ready-0de3dd1ef2da.webp",
+  "loaderLogo": "assets/percy-avatar-70fd09118d03.svg",
+  "favicon.ico": "assets/favicon-c468d846d8b8.ico",
+  "favicon.svg": "assets/favicon-96f3c74c7cd8.svg",
+  "favicon-16x16.png": "assets/favicon-16x16-eb0ae242eb54.png",
+  "favicon-32x32.png": "assets/favicon-32x32-05a70b6f57cc.png",
+  "apple-touch-icon.png": "assets/apple-touch-icon-dedf7d052911.png",
+  "android-chrome-192x192.png": "assets/android-chrome-192x192-814e6b88a317.png",
+  "android-chrome-512x512.png": "assets/android-chrome-512x512-2d3d32bbbf06.png",
+  "ogImage": "assets/og-475bf5b6c732.jpg",
+  "videos/capsule-intro-v001-16x9.mp4": "videos/capsule-intro-97cd5b9fbe5c.mp4"
+};
