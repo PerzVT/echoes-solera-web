@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {existsSync,readFileSync} from 'node:fs';
 import {scenes,byId,validScene,storyState,enterScene,characterNames} from '../public/story-lab/solera/scenes.js';
 import {mediaAssets} from '../public/story-lab/solera/assets.generated.js';
+import {clips,audio} from '../public/story-lab/solera/media.js';
 
 test('unique scenes and complete static transitions',()=>{
  assert.equal(new Set(scenes.map(s=>s.id)).size,scenes.length);
@@ -48,6 +49,15 @@ test('all scene and gallery assets exist, only Nova has the capsule movie',()=>{
  const gallery=readFileSync(new URL('../public/story-lab/solera/review.html',import.meta.url),'utf8');
  const frames=JSON.parse(gallery.match(/const frames=(\[.*?\]);const \$/s)[1]);assert.equal(frames.length,90);
  for(const f of frames){assert.ok(mediaAssets[f.image]);assert.ok(byId.has(f.scene),f.scene);}
- assert.equal(scenes.filter(s=>s.clip).length,1);assert.equal(byId.get('spawn').clip,'spawn');
+ assert.deepEqual(scenes.filter(s=>s.clip).map(s=>s.id),['spawn','nova-threshold','nova-greeting']);assert.equal(byId.get('spawn').clip,'spawn');
  assert.equal(byId.get('spawn').videoNext,'nova-threshold');
+ assert.equal(byId.get('nova-threshold').videoNext,'nova-greeting');
+ assert.equal(byId.get('nova-greeting').videoNext,'nova-scan');
+ assert.ok(!byId.get('nova-scan').clip);
+ for(const s of scenes.filter(s=>s.clip)){
+  assert.ok(clips[s.clip]?.landscape,s.clip);
+  const path=mediaAssets[clips[s.clip].landscape]||clips[s.clip].landscape;
+  assert.ok(existsSync(new URL('../public/story-lab/solera/'+path,import.meta.url)),path);
+ }
+ assert.equal(audio.greeting,'');
 });

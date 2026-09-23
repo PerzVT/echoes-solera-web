@@ -134,5 +134,7 @@ export const mediaAssets = {
   "expanded/oren-village-departure.png": "assets/oren-village-departure-21efd1543071.webp",
   "expanded/oren-city-sneak.png": "assets/oren-city-sneak-b718f4ef2523.webp",
   "expanded/oren-guild-sneak.png": "assets/oren-guild-sneak-a62d58f7467d.webp",
-  "expanded/oren-lobby-wait.png": "assets/oren-lobby-wait-086b4c06f6eb.webp"
+  "expanded/oren-lobby-wait.png": "assets/oren-lobby-wait-086b4c06f6eb.webp",
+  "videos/nova-threshold-v001-16x9.mp4": "videos/nova-threshold-ee0d7c781d75.mp4",
+  "videos/nova-greeting-v001-16x9.mp4": "videos/nova-greeting-6d49aef9b643.mp4"
 };

@@ -1,8 +1,8 @@
-import {cue,unlockSound,setSoundEnabled} from './sound.js?v=art-native-1';
-import {scenes,byId,validScene,storyState,enterScene,characterNames} from './scenes.js?v=art-native-1';
-import {clips,audio as audioFiles} from './media.js?v=art-native-1';
-import {mediaAssets} from './assets.generated.js?v=art-native-1';
-import {preloadImage,preloadVideoMetadata,waitForVideo} from './media-loader.js?v=art-native-1';
+import {cue,unlockSound,setSoundEnabled} from './sound.js?v=nova-motion-1';
+import {scenes,byId,validScene,storyState,enterScene,characterNames} from './scenes.js?v=nova-motion-1';
+import {clips,audio as audioFiles} from './media.js?v=nova-motion-1';
+import {mediaAssets} from './assets.generated.js?v=nova-motion-1';
+import {preloadImage,preloadVideoMetadata,waitForVideo} from './media-loader.js?v=nova-motion-1';
 const $=id=>document.getElementById(id),video=$('video'),voice=new Audio(),reduced=matchMedia('(prefers-reduced-motion:reduce)');
 const spatialIds=new Set(['selection','classes']);
 let current=validScene(location.hash.slice(1)),history=[],epoch=0,controller,timer,confirmTimer,loaderTimer,auto=false,sound=true,confirming=false,activeVideo=false,phase='loading',firstPaint=true,inputMode='pointer',resumeVisible=false;
@@ -32,7 +32,7 @@ function worldChoices(s){const spatial=spatialIds.has(s.id);$('stage').classList
 function reflow(){const p=document.querySelector('.picture').getBoundingClientRect(),stage=$('stage').getBoundingClientRect(),space=stage.bottom-p.bottom-64,compact=(stage.width<1100||document.body.classList.contains('portrait'))&&space>90;const tight=compact&&space<210;$('stage').classList.toggle('compact',compact);$('stage').classList.toggle('tight',tight);(compact?$('letterboxActions'):$('imageActions')).append($('choices'));(compact&&!tight?$('letterboxDetails'):$('identityHome')).append($('identity'));$('letterboxDock').hidden=!compact;$('stage').classList.toggle('has-dialogue',Boolean(byId.get(current).caption));$('letterboxDock').style.top=(p.bottom-stage.top+14)+'px';$('letterboxDock').style.maxHeight=Math.max(60,space)+'px';$('hotspots').setAttribute('aria-hidden',String(compact));$('hotspots').querySelectorAll('button').forEach(b=>b.tabIndex=compact?-1:0);}
 new ResizeObserver(reflow).observe(document.querySelector('.picture'));window.addEventListener('resize',reflow);
 function warmNext(s){if(navigator.connection?.saveData||/2g/.test(navigator.connection?.effectiveType||''))return;const ids=s.choices?s.choices.filter(c=>!c.locked).map(c=>c.to):[s.videoNext||s.next];for(const id of ids){const n=byId.get(id);if(n)preloadImage(imageURL(n.image)).catch(()=>{});}if(s.id==='selection'&&clips.spawn?.landscape)preloadVideoMetadata(mediaURL(clips.spawn.landscape));}
-function showPlayButton(){const b=document.createElement('button');b.textContent='▶ Play intro';b.className='primary';b.onclick=()=>playVideo();$('choices').replaceChildren(b);$('choices').hidden=false;$('stage').classList.remove('clip-playing');}
+function showPlayButton(){const b=document.createElement('button');b.textContent=byId.get(current).clip==='spawn'?'▶ Play intro':'▶ Play scene';b.className='primary';b.onclick=()=>playVideo();$('choices').replaceChildren(b);$('choices').hidden=false;$('stage').classList.remove('clip-playing');}
 function playVideo(){const token=epoch;if(!activeVideo)return;clearTimeout(timer);phase='playing';$('stage').classList.add('clip-playing');$('choices').hidden=true;syncControls();video.play().then(()=>{if(token===epoch)syncControls();}).catch(()=>{if(token!==epoch)return;phase='paused';showPlayButton();syncControls();});}
 function finishVideo(){phase='ended';$('stage').classList.remove('clip-playing');$('buffering').hidden=true;renderActions(byId.get(current));$('choices').hidden=false;cue('ready');syncControls();if(auto)advance();}
 function videoFallback(){activeVideo=false;phase='ready';video.hidden=true;$('stage').classList.remove('cinematic','portrait-video','clip-playing');$('buffering').hidden=true;$('mediaStatus').textContent='Comic preview';$('feedback').textContent='Animation unavailable. Replay to retry, or continue with the comic.';renderActions(byId.get(current));$('choices').hidden=false;reflow();syncControls();schedule();}

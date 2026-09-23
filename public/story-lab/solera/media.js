@@ -1,5 +1,14 @@
-// Empty slots intentionally use storyboard stills. Add final video paths here.
-// Example: spawn: {landscape:'videos/spawn-16x9.mp4',portrait:'videos/spawn-9x16.mp4'}
-export const clips = {spawn:{landscape:'videos/capsule-intro-v001-16x9.mp4'}};
-// The editor supplies the existing game recording. No synthetic replacement.
+// Reviewed landscape clips; empty slots use storyboard stills.
+export const clips = {
+  "spawn": {
+    "landscape": "videos/capsule-intro-v001-16x9.mp4"
+  },
+  "nova-threshold": {
+    "landscape": "videos/nova-threshold-v001-16x9.mp4"
+  },
+  "nova-greeting": {
+    "landscape": "videos/nova-greeting-v001-16x9.mp4"
+  }
+};
+// The existing greeting recording remains reserved for the editor.
 export const audio = {greeting:''};

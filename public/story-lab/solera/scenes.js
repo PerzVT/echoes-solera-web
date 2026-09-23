@@ -44,9 +44,13 @@ export const scenes = [
     "caption": "Footsteps, conversation and the faint hum of magic fill the hall.",
     "alt": "Footsteps, conversation and the faint hum of magic fill the hall.",
     "chapter": "03 / ARRIVAL",
-    "seconds": 6,
+    "seconds": 8,
     "character": "nova",
-    "next": "nova-greeting"
+    "next": "nova-greeting",
+    "clip": "nova-threshold",
+    "videoNext": "nova-greeting",
+    "videoAction": "Meet the guide",
+    "cinematic": true
   },
   {
     "id": "nova-greeting",
@@ -59,7 +63,10 @@ export const scenes = [
     "character": "nova",
     "next": "nova-scan",
     "speaker": "SOLERA",
-    "audio": "greeting"
+    "audio": "greeting",
+    "clip": "nova-greeting",
+    "videoNext": "nova-scan",
+    "videoAction": "Continue"
   },
   {
     "id": "nova-scan",
