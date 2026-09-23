@@ -11,3 +11,18 @@
 .stage[data-scene=classes] .vignette{background:linear-gradient(transparent 70%,#06121a33)}.stage[data-scene=classes] .world-label{text-shadow:none;color:#283538}
 
 .identity[data-character=oren] .id-portrait #identityPortrait{transform:scale(1.6) translateY(-29%);transform-origin:50% 0}.identity[data-character=ya] .id-portrait #identityPortrait{transform:scale(2.1) translateY(-14%);transform-origin:50% 0}
+/* UI review: keep card typography inside its blank name panel. */
+.stage .identity{container-type:inline-size}
+.stage .identity .id-type{top:57%;font-size:clamp(6px,2.1cqw,11px);line-height:1;letter-spacing:.04em}
+.stage .identity #identityName{top:64%;font-size:clamp(14px,5.5cqw,27px);line-height:1}
+.stage .identity small{top:75%;font-size:clamp(6px,1.8cqw,9px);line-height:1;letter-spacing:.06em}
+/* Letterbox actions fill the available width instead of shrink-wrapping. */
+.stage .letterbox-dock #letterboxActions{width:100%}
+.stage.selection.compact .letterbox-dock .choices{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}
+.stage.selection.compact .letterbox-dock .choices button{padding:10px 6px}
+/* Align labels to the signboard interiors and arrows to their doors. */
+.stage[data-scene=classes] .world-label{top:0;height:12%;width:74%;min-width:0;padding:0;display:flex;align-items:center;justify-content:center;font-size:clamp(6px,1.35cqw,21px);line-height:1;white-space:nowrap}
+.stage[data-scene=classes] .world-glyph{top:22%;bottom:auto;left:50%;margin:0}
+.stage[data-scene=classes] .world-target:hover .world-label,.stage[data-scene=classes] .world-target:focus-visible .world-label{background:transparent;color:#163e46;text-shadow:none}
+.stage .world-target:focus-visible{outline:2px solid #c4ffff;outline-offset:3px;box-shadow:inset 0 0 30px #c4fbff30}
+.stage[data-scene=classes] .world-target:focus-visible{background:#70dfe61a}
