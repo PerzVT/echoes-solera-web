@@ -1,24 +1,1659 @@
 export const scenes = [
- {id:'selection',chapter:'01 / CHARACTER',title:'Choose your character',image:'selection-neutral.png',alt:'Ya, Nova and teal Or-en in three alcoves',caption:'Choose who you will become.',choices:[{label:'Ya',locked:true},{label:'Select Nova',to:'spawn'},{label:'Or-en',locked:true}],seconds:5},
- {id:'spawn',chapter:'02 / ARRIVAL',title:'Spawning in Solera',image:'spawn.png',alt:'Nova in profile in a sealed capsule facing the aisle, with the foyer beyond',caption:'Inside a sealed capsule, Nova stirs. The printing ring lowers with the liquid; the chamber drains before the door opens.',next:'spawn-exit',action:'Continue',seconds:7,clip:'spawn',cinematic:true,videoNext:'greeting',videoAction:'Enter the foyer'},
- {id:'spawn-exit',chapter:'02 / ARRIVAL',title:'A first step',image:'spawn-exit.png',alt:'Nova outside her drained capsule beside its open door, facing the aisle toward the foyer',caption:'The ring docks. The glass door swings clear. Nova steps into the aisle and turns toward the sunlit foyer.',next:'greeting',action:'Enter the foyer',seconds:6,clip:'spawn-exit'},
- {id:'greeting',chapter:'03 / IDENTIFICATION',title:'Welcome, traveler',image:'foyer-crowded.png',alt:'Nova in the foyer with the capsule room behind her',speaker:'SOLERA',caption:'Salutations, Traveler.',next:'identify',seconds:4,clip:'greeting',audio:'greeting'},
- {id:'identify',chapter:'03 / IDENTIFICATION',title:'Identification required',image:'foyer-crowded.png',alt:'Nova listens to the guidance system',speaker:'SOLERA',caption:'It seems you don’t have any identification. We will have to fix that. Your usernames on other accounts are Nova.',next:'username',seconds:8,clip:'identify'},
- {id:'username',chapter:'03 / IDENTIFICATION',title:'Welcome, Novva',image:'foyer-crowded.png',alt:'Nova receives her Solera username',speaker:'SOLERA',caption:'Nova is taken here in Solera, so I have updated your username to Novva.',identity:true,next:'guidance',seconds:7,clip:'username'},
- {id:'guidance',chapter:'03 / GUIDANCE',title:'Find your class',image:'foyer-crowded.png',alt:'A glowing direction marker points ahead through the foyer',speaker:'SOLERA',caption:'You are now required to pick a class. Move forward towards the glowing arrow!',arrow:true,next:'classes',action:'Follow the arrow',seconds:6,clip:'guidance'},
- {id:'classes',chapter:'03 / CLASS',title:'Choose your class',image:'classes.png',alt:'Archery left, training grounds centre, summoning right',caption:'Nova surveys the three entrances. The Training Grounds are open.',choices:[{label:'Archery Range',locked:true},{label:'Training Grounds',to:'training'},{label:'Summoner’s Lair',locked:true}],seconds:5,clip:'classes'},
- {id:'training',chapter:'04 / TRAINING',title:'Training Grounds',image:'training-ready.png',alt:'The training court and weapon table',caption:'Nova approaches the weapon table. A mana sword is ready for her.',choices:[{label:'Pick up mana sword',to:'mana-sword'}],seconds:5,clip:'training'},
- {id:'mana-sword',chapter:'04 / TRAINING',title:'Mana awakened',image:'mana-sword.png',alt:'Nova holding her sword as cyan mana lights the blade',caption:'She lifts the blade and adjusts to its weight. Cyan mana travels through the sword; a ribbon of energy curls along its edge.',next:'arena-intro',action:'Enter the practice arena',seconds:6,clip:'mana-sword'},
- {id:'arena-intro',chapter:'05 / PRACTICE',title:'Meet your practice partner',image:'arena-ready.png',alt:'Nova faces a floating ADA practice bot holding out its target pad',caption:'The practice bot steadies itself and raises its target. Nova plants her feet and readies the mana sword.',next:'practice',action:'Try your mana strike',seconds:5,clip:'arena-intro'},
- {id:'practice',chapter:'05 / PRACTICE',title:'Your first ability',image:'mana-attack.png',alt:'Nova sends a cyan mana crescent into the floating ADA bot’s target pad',caption:'Nova channels mana into one controlled swing. A crescent of energy strikes the bot’s target pad. The bot recoils, stabilizes and resets.',next:'lobby',action:'Return to the lobby',seconds:7,clip:'practice'},
- {id:'lobby',chapter:'06 / COMPANION',title:'Find a companion',image:'lobby.png',alt:'Nova with her sword meets Ya and Or-en among three travelers',caption:'Travelers pass through the lobby. Ya waves beside the bench; Or-en looks up. Nova approaches, her sword lowered.',choices:[{label:'Meet Ya',to:'end-ya'},{label:'Meet Or-en',to:'end-oren'}],seconds:6,clip:'lobby'},
- {id:'end-ya',chapter:'06 / COMPANION',title:'Companion found: Ya',image:'lobby.png',alt:'Ya welcomes Nova in the lobby',speaker:'YA',caption:'“Looking for company?” Nova nods. Ya joins her, and they turn toward the next adventure.',end:true,seconds:6,clip:'meet-ya'},
- {id:'end-oren',chapter:'06 / COMPANION',title:'Companion found: Or-en',image:'lobby.png',alt:'Or-en waits beside Ya as Nova approaches',caption:'Nova crouches and offers her free hand. Or-en leans into it. She smiles; he trots beside her as they turn toward the exit.',end:true,seconds:6,clip:'meet-oren'}
+  {
+    "id": "selection",
+    "title": "Choose your character",
+    "image": "expanded/selection-room.png",
+    "caption": "",
+    "alt": "Choose your character",
+    "chapter": "01 / CHARACTER",
+    "seconds": 6,
+    "choices": [
+      {
+        "label": "Ya",
+        "to": "ya-spawn"
+      },
+      {
+        "label": "Nova",
+        "to": "spawn"
+      },
+      {
+        "label": "Or-en",
+        "to": "oren-spawn"
+      }
+    ]
+  },
+  {
+    "id": "spawn",
+    "title": "Spawning in Solera",
+    "image": "spawn.png",
+    "caption": "The capsule drains. The door opens into a new world.",
+    "alt": "The capsule drains. The door opens into a new world.",
+    "chapter": "02 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "clip": "spawn",
+    "cinematic": true,
+    "next": "nova-threshold",
+    "videoNext": "nova-threshold",
+    "videoAction": "Enter the foyer"
+  },
+  {
+    "id": "nova-threshold",
+    "title": "The guild foyer",
+    "image": "expanded/nova-threshold.png",
+    "caption": "Footsteps, conversation and the faint hum of magic fill the hall.",
+    "alt": "Footsteps, conversation and the faint hum of magic fill the hall.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-greeting"
+  },
+  {
+    "id": "nova-greeting",
+    "title": "Welcome, traveler",
+    "image": "expanded/nova-greeting.png",
+    "caption": "Salutations, Traveler.",
+    "alt": "Salutations, Traveler.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-scan",
+    "speaker": "SOLERA",
+    "audio": "greeting"
+  },
+  {
+    "id": "nova-scan",
+    "title": "Identification required",
+    "image": "expanded/nova-scan.png",
+    "caption": "It seems you don’t have any identification. We will have to fix that.",
+    "alt": "It seems you don’t have any identification. We will have to fix that.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-registered",
+    "speaker": "SOLERA"
+  },
+  {
+    "id": "nova-registered",
+    "title": "Your Solera ID",
+    "image": "expanded/nova-registered.png",
+    "caption": "Nova is taken here in Solera, so I have updated your username to Novva.",
+    "alt": "Nova is taken here in Solera, so I have updated your username to Novva.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-reaction",
+    "speaker": "SOLERA",
+    "identity": true
+  },
+  {
+    "id": "nova-reaction",
+    "title": "Officially here",
+    "image": "expanded/nova-reaction.png",
+    "caption": "“Novva. With two v’s. Right.”",
+    "alt": "“Novva. With two v’s. Right.”",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-guidance"
+  },
+  {
+    "id": "nova-guidance",
+    "title": "Follow the light",
+    "image": "expanded/nova-guidance.png",
+    "caption": "Follow the glowing marker. The guild’s training rooms are just ahead.",
+    "alt": "Follow the glowing marker. The guild’s training rooms are just ahead.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "nova",
+    "next": "classes",
+    "speaker": "SOLERA",
+    "arrow": true
+  },
+  {
+    "id": "nova-sword-start",
+    "title": "Training Grounds",
+    "image": "expanded/training-room.png",
+    "caption": "“Pick a practice blade. We’ll start with a little control.”",
+    "alt": "“Pick a practice blade. We’ll start with a little control.”",
+    "chapter": "04 / TRAINING GROUNDS",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "nova",
+    "route": "sword",
+    "next": "nova-sword-pickup"
+  },
+  {
+    "id": "nova-bow-start",
+    "title": "Archery Range",
+    "image": "expanded/archery-room.png",
+    "caption": "“Stay behind the line until your lane is clear.”",
+    "alt": "“Stay behind the line until your lane is clear.”",
+    "chapter": "04 / ARCHERY RANGE",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "nova",
+    "route": "bow",
+    "next": "nova-bow-pickup"
+  },
+  {
+    "id": "nova-summon-start",
+    "title": "Summoner’s Lair",
+    "image": "expanded/summoning-room.png",
+    "caption": "“A summon is a partnership. Let it come to you.”",
+    "alt": "“A summon is a partnership. Let it come to you.”",
+    "chapter": "04 / SUMMONER’S LAIR",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "nova",
+    "route": "summon",
+    "next": "nova-summon-focus"
+  },
+  {
+    "id": "nova-sword-pickup",
+    "title": "Choose a blade",
+    "image": "expanded/nova-sword-pickup.png",
+    "caption": "Nova reaches for the practice blade. The instructor watches the grip.",
+    "alt": "Nova reaches for the practice blade. The instructor watches the grip.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-sword-awaken"
+  },
+  {
+    "id": "nova-sword-awaken",
+    "title": "Mana awakened",
+    "image": "expanded/nova-sword-awaken.png",
+    "caption": "“Easy. Let the mana settle before you move.”",
+    "alt": "“Easy. Let the mana settle before you move.”",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-sword-ready",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "nova-sword-ready",
+    "title": "Your practice partner",
+    "image": "expanded/nova-sword-ready.png",
+    "caption": "The ADA bot raises its padded target. The lane is clear.",
+    "alt": "The ADA bot raises its padded target. The lane is clear.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-sword-strike",
+    "action": "Try a mana strike"
+  },
+  {
+    "id": "nova-sword-strike",
+    "title": "A first ability",
+    "image": "expanded/nova-sword-strike.png",
+    "caption": "A crescent of mana crosses the lane and flashes against the target.",
+    "alt": "A crescent of mana crosses the lane and flashes against the target.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-sword-reset"
+  },
+  {
+    "id": "nova-sword-reset",
+    "title": "Control before power",
+    "image": "expanded/nova-sword-reset.png",
+    "caption": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
+    "alt": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-sword-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "nova-bow-pickup",
+    "title": "Find your aim",
+    "image": "expanded/nova-bow-pickup.png",
+    "caption": "The bow’s crystal wakes; a thread of light forms its string.",
+    "alt": "The bow’s crystal wakes; a thread of light forms its string.",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-bow-draw"
+  },
+  {
+    "id": "nova-bow-draw",
+    "title": "Hold your focus",
+    "image": "expanded/nova-bow-draw.png",
+    "caption": "“Breathe. Look at the target, then let the string go.”",
+    "alt": "“Breathe. Look at the target, then let the string go.”",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-bow-release",
+    "speaker": "INSTRUCTOR",
+    "action": "Release the arrow"
+  },
+  {
+    "id": "nova-bow-release",
+    "title": "A clear shot",
+    "image": "expanded/nova-bow-release.png",
+    "caption": "The luminous arrow streaks downrange. A spark answers from the target.",
+    "alt": "The luminous arrow streaks downrange. A spark answers from the target.",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-bow-reset"
+  },
+  {
+    "id": "nova-bow-reset",
+    "title": "Back behind the line",
+    "image": "expanded/nova-bow-reset.png",
+    "caption": "“That’s a start. Rack the bow before you leave the range.”",
+    "alt": "“That’s a start. Rack the bow before you leave the range.”",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-bow-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "nova-summon-focus",
+    "title": "A small invitation",
+    "image": "expanded/nova-summon-focus.png",
+    "caption": "“Touch the focus. Let the circle do the rest.”",
+    "alt": "“Touch the focus. Let the circle do the rest.”",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-summon-arrive",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "nova-summon-arrive",
+    "title": "Someone answers",
+    "image": "expanded/nova-summon-arrive.png",
+    "caption": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
+    "alt": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-summon-bond"
+  },
+  {
+    "id": "nova-summon-bond",
+    "title": "An introduction",
+    "image": "expanded/nova-summon-bond.png",
+    "caption": "The dragon leans closer. Curiosity wins over caution.",
+    "alt": "The dragon leans closer. Curiosity wins over caution.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-summon-command"
+  },
+  {
+    "id": "nova-summon-command",
+    "title": "Try it together",
+    "image": "expanded/nova-summon-command.png",
+    "caption": "One small signal. One little puff of magic. The practice disc glows.",
+    "alt": "One small signal. One little puff of magic. The practice disc glows.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-summon-recall"
+  },
+  {
+    "id": "nova-summon-recall",
+    "title": "A place to rest",
+    "image": "expanded/nova-summon-recall.png",
+    "caption": "“The focus lets your summon rest. Call it back when you need it.”",
+    "alt": "“The focus lets your summon rest. Call it back when you need it.”",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "nova",
+    "next": "nova-summon-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "nova-sword-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/nova-sword-reset.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "sword",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "nova-bow-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/nova-bow-reset.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "bow",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "nova-summon-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/nova-summon-recall.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "summon",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "nova-challenge-entry",
+    "title": "Quiet in here",
+    "image": "expanded/nova-challenge-entry.png",
+    "caption": "The guild noise fades behind the open door.",
+    "alt": "The guild noise fades behind the open door.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "next": "challenge-empty"
+  },
+  {
+    "id": "nova-boss-reaction",
+    "title": "That is not a practice target",
+    "image": "expanded/nova-boss-reaction.png",
+    "caption": "Confidence makes a very quick exit.",
+    "alt": "Confidence makes a very quick exit.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "next": "titan-step"
+  },
+  {
+    "id": "nova-dragon-reaction",
+    "title": "A shared opinion",
+    "image": "expanded/nova-dragon-reaction.png",
+    "caption": "The dragon looks up. Its partner looks down. Neither needs convincing.",
+    "alt": "The dragon looks up. Its partner looks down. Neither needs convincing.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "summon",
+    "next": "titan-step"
+  },
+  {
+    "id": "nova-boss-run",
+    "title": "Time to leave",
+    "image": "expanded/nova-boss-run.png",
+    "caption": "The exit is still open. That seems worth taking.",
+    "alt": "The exit is still open. That seems worth taking.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "next": "door-sealed"
+  },
+  {
+    "id": "nova-dragon-run",
+    "title": "Absolutely not",
+    "image": "expanded/nova-dragon-run.png",
+    "caption": "Two very determined adventurers make for the door.",
+    "alt": "Two very determined adventurers make for the door.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "summon",
+    "next": "door-sealed"
+  },
+  {
+    "id": "nova-boss-gulp",
+    "title": "A sensible retreat",
+    "image": "expanded/nova-boss-gulp.png",
+    "caption": "Perhaps this is a job for more than one adventurer.",
+    "alt": "Perhaps this is a job for more than one adventurer.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "next": "lobby",
+    "outcome": "escaped",
+    "action": "Find some help"
+  },
+  {
+    "id": "nova-dragon-gulp",
+    "title": "Still here",
+    "image": "expanded/nova-dragon-gulp.png",
+    "caption": "A gulp. A look at the door. Then a very firm decision to leave.",
+    "alt": "A gulp. A look at the door. Then a very firm decision to leave.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "summon",
+    "next": "nova-dragon-recall"
+  },
+  {
+    "id": "nova-dragon-recall",
+    "title": "Take a breather",
+    "image": "expanded/nova-dragon-recall.png",
+    "caption": "The dragon returns to its focus. Time to find some help.",
+    "alt": "The dragon returns to its focus. Time to find some help.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "nova",
+    "route": "summon",
+    "next": "lobby",
+    "outcome": "escaped"
+  },
+  {
+    "id": "nova-meet-ya",
+    "title": "A little company",
+    "image": "expanded/nova-meet-ya.png",
+    "caption": "“Looking for company?”",
+    "alt": "“Looking for company?”",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "nova",
+    "speaker": "Ya",
+    "next": "nova-leave-ya"
+  },
+  {
+    "id": "nova-leave-ya",
+    "title": "Better together",
+    "image": "expanded/nova-leave-ya.png",
+    "caption": "Nova and Ya head toward their next adventure together.",
+    "alt": "Nova and Ya head toward their next adventure together.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "nova",
+    "end": true
+  },
+  {
+    "id": "nova-meet-oren",
+    "title": "A little company",
+    "image": "expanded/nova-meet-oren.png",
+    "caption": "Or-en leans forward with an interested chirp.",
+    "alt": "Or-en leans forward with an interested chirp.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "nova",
+    "speaker": "",
+    "next": "nova-leave-oren"
+  },
+  {
+    "id": "nova-leave-oren",
+    "title": "Better together",
+    "image": "expanded/nova-leave-oren.png",
+    "caption": "Nova and Or-en head toward their next adventure together.",
+    "alt": "Nova and Or-en head toward their next adventure together.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "nova",
+    "end": true
+  },
+  {
+    "id": "ya-spawn",
+    "title": "A new arrival",
+    "image": "expanded/ya-spawn.png",
+    "caption": "Ya stirs inside the capsule. Light ripples across the glass.",
+    "alt": "Ya stirs inside the capsule. Light ripples across the glass.",
+    "chapter": "02 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-exit"
+  },
+  {
+    "id": "ya-exit",
+    "title": "First steps",
+    "image": "expanded/ya-exit.png",
+    "caption": "The liquid drains, the ring docks, and the open door reveals a path into Solera.",
+    "alt": "The liquid drains, the ring docks, and the open door reveals a path into Solera.",
+    "chapter": "02 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-threshold"
+  },
+  {
+    "id": "ya-threshold",
+    "title": "The guild foyer",
+    "image": "expanded/ya-threshold.png",
+    "caption": "Footsteps, conversation and the faint hum of magic fill the hall.",
+    "alt": "Footsteps, conversation and the faint hum of magic fill the hall.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-greeting"
+  },
+  {
+    "id": "ya-greeting",
+    "title": "Welcome, traveler",
+    "image": "expanded/ya-greeting.png",
+    "caption": "Salutations, Traveler.",
+    "alt": "Salutations, Traveler.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-scan",
+    "speaker": "SOLERA",
+    "audio": "greeting"
+  },
+  {
+    "id": "ya-scan",
+    "title": "Identification required",
+    "image": "expanded/ya-scan.png",
+    "caption": "It seems you don’t have any identification. We will have to fix that.",
+    "alt": "It seems you don’t have any identification. We will have to fix that.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-registered",
+    "speaker": "SOLERA"
+  },
+  {
+    "id": "ya-registered",
+    "title": "Your Solera ID",
+    "image": "expanded/ya-registered.png",
+    "caption": "Welcome to Solera, Ya. Your identification is ready.",
+    "alt": "Welcome to Solera, Ya. Your identification is ready.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-reaction",
+    "speaker": "SOLERA",
+    "identity": true
+  },
+  {
+    "id": "ya-reaction",
+    "title": "Officially here",
+    "image": "expanded/ya-reaction.png",
+    "caption": "Ya turns the card in her hand, then grins.",
+    "alt": "Ya turns the card in her hand, then grins.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-guidance"
+  },
+  {
+    "id": "ya-guidance",
+    "title": "Follow the light",
+    "image": "expanded/ya-guidance.png",
+    "caption": "Follow the glowing marker. The guild’s training rooms are just ahead.",
+    "alt": "Follow the glowing marker. The guild’s training rooms are just ahead.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "ya",
+    "next": "classes",
+    "speaker": "SOLERA",
+    "arrow": true
+  },
+  {
+    "id": "ya-sword-start",
+    "title": "Training Grounds",
+    "image": "expanded/training-room.png",
+    "caption": "“Pick a practice blade. We’ll start with a little control.”",
+    "alt": "“Pick a practice blade. We’ll start with a little control.”",
+    "chapter": "04 / TRAINING GROUNDS",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "ya",
+    "route": "sword",
+    "next": "ya-sword-pickup"
+  },
+  {
+    "id": "ya-bow-start",
+    "title": "Archery Range",
+    "image": "expanded/archery-room.png",
+    "caption": "“Stay behind the line until your lane is clear.”",
+    "alt": "“Stay behind the line until your lane is clear.”",
+    "chapter": "04 / ARCHERY RANGE",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "ya",
+    "route": "bow",
+    "next": "ya-bow-pickup"
+  },
+  {
+    "id": "ya-summon-start",
+    "title": "Summoner’s Lair",
+    "image": "expanded/summoning-room.png",
+    "caption": "“A summon is a partnership. Let it come to you.”",
+    "alt": "“A summon is a partnership. Let it come to you.”",
+    "chapter": "04 / SUMMONER’S LAIR",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "ya",
+    "route": "summon",
+    "next": "ya-summon-focus"
+  },
+  {
+    "id": "ya-sword-pickup",
+    "title": "Choose a blade",
+    "image": "expanded/ya-sword-pickup.png",
+    "caption": "Ya reaches for the practice blade. The instructor watches the grip.",
+    "alt": "Ya reaches for the practice blade. The instructor watches the grip.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-sword-awaken"
+  },
+  {
+    "id": "ya-sword-awaken",
+    "title": "Mana awakened",
+    "image": "expanded/ya-sword-awaken.png",
+    "caption": "“Easy. Let the mana settle before you move.”",
+    "alt": "“Easy. Let the mana settle before you move.”",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-sword-ready",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "ya-sword-ready",
+    "title": "Your practice partner",
+    "image": "expanded/ya-sword-ready.png",
+    "caption": "The ADA bot raises its padded target. The lane is clear.",
+    "alt": "The ADA bot raises its padded target. The lane is clear.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-sword-strike",
+    "action": "Try a mana strike"
+  },
+  {
+    "id": "ya-sword-strike",
+    "title": "A first ability",
+    "image": "expanded/ya-sword-strike.png",
+    "caption": "A crescent of mana crosses the lane and flashes against the target.",
+    "alt": "A crescent of mana crosses the lane and flashes against the target.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-sword-reset"
+  },
+  {
+    "id": "ya-sword-reset",
+    "title": "Control before power",
+    "image": "expanded/ya-sword-reset.png",
+    "caption": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
+    "alt": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-sword-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "ya-bow-pickup",
+    "title": "Find your aim",
+    "image": "expanded/ya-bow-pickup.png",
+    "caption": "The bow’s crystal wakes; a thread of light forms its string.",
+    "alt": "The bow’s crystal wakes; a thread of light forms its string.",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-bow-draw"
+  },
+  {
+    "id": "ya-bow-draw",
+    "title": "Hold your focus",
+    "image": "expanded/ya-bow-draw.png",
+    "caption": "“Breathe. Look at the target, then let the string go.”",
+    "alt": "“Breathe. Look at the target, then let the string go.”",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-bow-release",
+    "speaker": "INSTRUCTOR",
+    "action": "Release the arrow"
+  },
+  {
+    "id": "ya-bow-release",
+    "title": "A clear shot",
+    "image": "expanded/ya-bow-release.png",
+    "caption": "The luminous arrow streaks downrange. A spark answers from the target.",
+    "alt": "The luminous arrow streaks downrange. A spark answers from the target.",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-bow-reset"
+  },
+  {
+    "id": "ya-bow-reset",
+    "title": "Back behind the line",
+    "image": "expanded/ya-bow-reset.png",
+    "caption": "“That’s a start. Rack the bow before you leave the range.”",
+    "alt": "“That’s a start. Rack the bow before you leave the range.”",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-bow-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "ya-summon-focus",
+    "title": "A small invitation",
+    "image": "expanded/ya-summon-focus.png",
+    "caption": "“Touch the focus. Let the circle do the rest.”",
+    "alt": "“Touch the focus. Let the circle do the rest.”",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-summon-arrive",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "ya-summon-arrive",
+    "title": "Someone answers",
+    "image": "expanded/ya-summon-arrive.png",
+    "caption": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
+    "alt": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-summon-bond"
+  },
+  {
+    "id": "ya-summon-bond",
+    "title": "An introduction",
+    "image": "expanded/ya-summon-bond.png",
+    "caption": "The dragon leans closer. Curiosity wins over caution.",
+    "alt": "The dragon leans closer. Curiosity wins over caution.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-summon-command"
+  },
+  {
+    "id": "ya-summon-command",
+    "title": "Try it together",
+    "image": "expanded/ya-summon-command.png",
+    "caption": "One small signal. One little puff of magic. The practice disc glows.",
+    "alt": "One small signal. One little puff of magic. The practice disc glows.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-summon-recall"
+  },
+  {
+    "id": "ya-summon-recall",
+    "title": "A place to rest",
+    "image": "expanded/ya-summon-recall.png",
+    "caption": "“The focus lets your summon rest. Call it back when you need it.”",
+    "alt": "“The focus lets your summon rest. Call it back when you need it.”",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "ya",
+    "next": "ya-summon-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "ya-sword-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/ya-sword-reset.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "sword",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "ya-bow-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/ya-bow-reset.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "bow",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "ya-summon-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/ya-summon-recall.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "summon",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "ya-challenge-entry",
+    "title": "Quiet in here",
+    "image": "expanded/ya-challenge-entry.png",
+    "caption": "The guild noise fades behind the open door.",
+    "alt": "The guild noise fades behind the open door.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "next": "challenge-empty"
+  },
+  {
+    "id": "ya-boss-reaction",
+    "title": "That is not a practice target",
+    "image": "expanded/ya-boss-reaction.png",
+    "caption": "Confidence makes a very quick exit.",
+    "alt": "Confidence makes a very quick exit.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "next": "titan-step"
+  },
+  {
+    "id": "ya-dragon-reaction",
+    "title": "A shared opinion",
+    "image": "expanded/ya-dragon-reaction.png",
+    "caption": "The dragon looks up. Its partner looks down. Neither needs convincing.",
+    "alt": "The dragon looks up. Its partner looks down. Neither needs convincing.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "summon",
+    "next": "titan-step"
+  },
+  {
+    "id": "ya-boss-run",
+    "title": "Time to leave",
+    "image": "expanded/ya-boss-run.png",
+    "caption": "The exit is still open. That seems worth taking.",
+    "alt": "The exit is still open. That seems worth taking.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "next": "door-sealed"
+  },
+  {
+    "id": "ya-dragon-run",
+    "title": "Absolutely not",
+    "image": "expanded/ya-dragon-run.png",
+    "caption": "Two very determined adventurers make for the door.",
+    "alt": "Two very determined adventurers make for the door.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "summon",
+    "next": "door-sealed"
+  },
+  {
+    "id": "ya-boss-gulp",
+    "title": "A sensible retreat",
+    "image": "expanded/ya-boss-gulp.png",
+    "caption": "Perhaps this is a job for more than one adventurer.",
+    "alt": "Perhaps this is a job for more than one adventurer.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "next": "lobby",
+    "outcome": "escaped",
+    "action": "Find some help"
+  },
+  {
+    "id": "ya-dragon-gulp",
+    "title": "Still here",
+    "image": "expanded/ya-dragon-gulp.png",
+    "caption": "A gulp. A look at the door. Then a very firm decision to leave.",
+    "alt": "A gulp. A look at the door. Then a very firm decision to leave.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "summon",
+    "next": "ya-dragon-recall"
+  },
+  {
+    "id": "ya-dragon-recall",
+    "title": "Take a breather",
+    "image": "expanded/ya-dragon-recall.png",
+    "caption": "The dragon returns to its focus. Time to find some help.",
+    "alt": "The dragon returns to its focus. Time to find some help.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "ya",
+    "route": "summon",
+    "next": "lobby",
+    "outcome": "escaped"
+  },
+  {
+    "id": "ya-meet-nova",
+    "title": "A little company",
+    "image": "expanded/ya-meet-nova.png",
+    "caption": "“Looking for company?”",
+    "alt": "“Looking for company?”",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "ya",
+    "speaker": "Nova",
+    "next": "ya-leave-nova"
+  },
+  {
+    "id": "ya-leave-nova",
+    "title": "Better together",
+    "image": "expanded/ya-leave-nova.png",
+    "caption": "Ya and Nova head toward their next adventure together.",
+    "alt": "Ya and Nova head toward their next adventure together.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "ya",
+    "end": true
+  },
+  {
+    "id": "ya-meet-oren",
+    "title": "A little company",
+    "image": "expanded/ya-meet-oren.png",
+    "caption": "Or-en leans forward with an interested chirp.",
+    "alt": "Or-en leans forward with an interested chirp.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "ya",
+    "speaker": "",
+    "next": "ya-leave-oren"
+  },
+  {
+    "id": "ya-leave-oren",
+    "title": "Better together",
+    "image": "expanded/ya-leave-oren.png",
+    "caption": "Ya and Or-en head toward their next adventure together.",
+    "alt": "Ya and Or-en head toward their next adventure together.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "ya",
+    "end": true
+  },
+  {
+    "id": "oren-spawn",
+    "title": "A new arrival",
+    "image": "expanded/oren-spawn.png",
+    "caption": "Or-en stirs inside the capsule. Light ripples across the glass.",
+    "alt": "Or-en stirs inside the capsule. Light ripples across the glass.",
+    "chapter": "02 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-exit"
+  },
+  {
+    "id": "oren-exit",
+    "title": "First steps",
+    "image": "expanded/oren-exit.png",
+    "caption": "The liquid drains, the ring docks, and the open door reveals a path into Solera.",
+    "alt": "The liquid drains, the ring docks, and the open door reveals a path into Solera.",
+    "chapter": "02 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-threshold"
+  },
+  {
+    "id": "oren-threshold",
+    "title": "The guild foyer",
+    "image": "expanded/oren-threshold.png",
+    "caption": "Footsteps, conversation and the faint hum of magic fill the hall.",
+    "alt": "Footsteps, conversation and the faint hum of magic fill the hall.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-greeting"
+  },
+  {
+    "id": "oren-greeting",
+    "title": "Welcome, traveler",
+    "image": "expanded/oren-greeting.png",
+    "caption": "Salutations, Traveler.",
+    "alt": "Salutations, Traveler.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-scan",
+    "speaker": "SOLERA",
+    "audio": "greeting"
+  },
+  {
+    "id": "oren-scan",
+    "title": "Identification required",
+    "image": "expanded/oren-scan.png",
+    "caption": "It seems you don’t have any identification. We will have to fix that.",
+    "alt": "It seems you don’t have any identification. We will have to fix that.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-registered",
+    "speaker": "SOLERA"
+  },
+  {
+    "id": "oren-registered",
+    "title": "Your Solera ID",
+    "image": "expanded/oren-registered.png",
+    "caption": "Welcome to Solera, Or-en. Your identification is ready.",
+    "alt": "Welcome to Solera, Or-en. Your identification is ready.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-reaction",
+    "speaker": "SOLERA",
+    "identity": true
+  },
+  {
+    "id": "oren-reaction",
+    "title": "Officially here",
+    "image": "expanded/oren-reaction.png",
+    "caption": "Or-en tilts his head at the portrait. A satisfied chirp follows.",
+    "alt": "Or-en tilts his head at the portrait. A satisfied chirp follows.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-guidance"
+  },
+  {
+    "id": "oren-guidance",
+    "title": "Follow the light",
+    "image": "expanded/oren-guidance.png",
+    "caption": "Follow the glowing marker. The guild’s training rooms are just ahead.",
+    "alt": "Follow the glowing marker. The guild’s training rooms are just ahead.",
+    "chapter": "03 / ARRIVAL",
+    "seconds": 6,
+    "character": "oren",
+    "next": "classes",
+    "speaker": "SOLERA",
+    "arrow": true
+  },
+  {
+    "id": "oren-sword-start",
+    "title": "Training Grounds",
+    "image": "expanded/training-room.png",
+    "caption": "“Pick a practice blade. We’ll start with a little control.”",
+    "alt": "“Pick a practice blade. We’ll start with a little control.”",
+    "chapter": "04 / TRAINING GROUNDS",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "oren",
+    "route": "sword",
+    "next": "oren-sword-pickup"
+  },
+  {
+    "id": "oren-bow-start",
+    "title": "Archery Range",
+    "image": "expanded/archery-room.png",
+    "caption": "“Stay behind the line until your lane is clear.”",
+    "alt": "“Stay behind the line until your lane is clear.”",
+    "chapter": "04 / ARCHERY RANGE",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "oren",
+    "route": "bow",
+    "next": "oren-bow-pickup"
+  },
+  {
+    "id": "oren-summon-start",
+    "title": "Summoner’s Lair",
+    "image": "expanded/summoning-room.png",
+    "caption": "“A summon is a partnership. Let it come to you.”",
+    "alt": "“A summon is a partnership. Let it come to you.”",
+    "chapter": "04 / SUMMONER’S LAIR",
+    "seconds": 6,
+    "speaker": "INSTRUCTOR",
+    "character": "oren",
+    "route": "summon",
+    "next": "oren-summon-focus"
+  },
+  {
+    "id": "oren-sword-pickup",
+    "title": "Choose a blade",
+    "image": "expanded/oren-sword-pickup.png",
+    "caption": "A cyan guide adjusts the weapon to Or-en’s reach.",
+    "alt": "A cyan guide adjusts the weapon to Or-en’s reach.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-sword-awaken"
+  },
+  {
+    "id": "oren-sword-awaken",
+    "title": "Mana awakened",
+    "image": "expanded/oren-sword-awaken.png",
+    "caption": "“Easy. Let the mana settle before you move.”",
+    "alt": "“Easy. Let the mana settle before you move.”",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-sword-ready",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "oren-sword-ready",
+    "title": "Your practice partner",
+    "image": "expanded/oren-sword-ready.png",
+    "caption": "The ADA bot raises its padded target. The lane is clear.",
+    "alt": "The ADA bot raises its padded target. The lane is clear.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-sword-strike",
+    "action": "Try a mana strike"
+  },
+  {
+    "id": "oren-sword-strike",
+    "title": "A first ability",
+    "image": "expanded/oren-sword-strike.png",
+    "caption": "A crescent of mana crosses the lane and flashes against the target.",
+    "alt": "A crescent of mana crosses the lane and flashes against the target.",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-sword-reset"
+  },
+  {
+    "id": "oren-sword-reset",
+    "title": "Control before power",
+    "image": "expanded/oren-sword-reset.png",
+    "caption": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
+    "alt": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
+    "chapter": "04 / TRAINING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-sword-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "oren-bow-pickup",
+    "title": "Find your aim",
+    "image": "expanded/oren-bow-pickup.png",
+    "caption": "An adaptive mana guide steadies the bow at Or-en’s height.",
+    "alt": "An adaptive mana guide steadies the bow at Or-en’s height.",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-bow-draw"
+  },
+  {
+    "id": "oren-bow-draw",
+    "title": "Hold your focus",
+    "image": "expanded/oren-bow-draw.png",
+    "caption": "“Breathe. Look at the target, then let the string go.”",
+    "alt": "“Breathe. Look at the target, then let the string go.”",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-bow-release",
+    "speaker": "INSTRUCTOR",
+    "action": "Release the arrow"
+  },
+  {
+    "id": "oren-bow-release",
+    "title": "A clear shot",
+    "image": "expanded/oren-bow-release.png",
+    "caption": "The luminous arrow streaks downrange. A spark answers from the target.",
+    "alt": "The luminous arrow streaks downrange. A spark answers from the target.",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-bow-reset"
+  },
+  {
+    "id": "oren-bow-reset",
+    "title": "Back behind the line",
+    "image": "expanded/oren-bow-reset.png",
+    "caption": "“That’s a start. Rack the bow before you leave the range.”",
+    "alt": "“That’s a start. Rack the bow before you leave the range.”",
+    "chapter": "04 / ARCHERY",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-bow-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "oren-summon-focus",
+    "title": "A small invitation",
+    "image": "expanded/oren-summon-focus.png",
+    "caption": "“Touch the focus. Let the circle do the rest.”",
+    "alt": "“Touch the focus. Let the circle do the rest.”",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-summon-arrive",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "oren-summon-arrive",
+    "title": "Someone answers",
+    "image": "expanded/oren-summon-arrive.png",
+    "caption": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
+    "alt": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-summon-bond"
+  },
+  {
+    "id": "oren-summon-bond",
+    "title": "An introduction",
+    "image": "expanded/oren-summon-bond.png",
+    "caption": "The dragon leans closer. Curiosity wins over caution.",
+    "alt": "The dragon leans closer. Curiosity wins over caution.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-summon-command"
+  },
+  {
+    "id": "oren-summon-command",
+    "title": "Try it together",
+    "image": "expanded/oren-summon-command.png",
+    "caption": "One small signal. One little puff of magic. The practice disc glows.",
+    "alt": "One small signal. One little puff of magic. The practice disc glows.",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-summon-recall"
+  },
+  {
+    "id": "oren-summon-recall",
+    "title": "A place to rest",
+    "image": "expanded/oren-summon-recall.png",
+    "caption": "“The focus lets your summon rest. Call it back when you need it.”",
+    "alt": "“The focus lets your summon rest. Call it back when you need it.”",
+    "chapter": "04 / SUMMONING",
+    "seconds": 6,
+    "character": "oren",
+    "next": "oren-summon-choice",
+    "speaker": "INSTRUCTOR"
+  },
+  {
+    "id": "oren-sword-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/oren-sword-reset.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "sword",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "oren-bow-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/oren-bow-reset.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "bow",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "oren-summon-choice",
+    "title": "Ready for something bigger?",
+    "image": "expanded/oren-summon-recall.png",
+    "caption": "Try the challenge room, or head back and find company.",
+    "alt": "Try the challenge room, or head back and find company.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "summon",
+    "choices": [
+      {
+        "label": "Enter the challenge room",
+        "to": "challenge-door",
+        "outcome": "entered"
+      },
+      {
+        "label": "Return to lobby",
+        "to": "lobby",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  {
+    "id": "oren-challenge-entry",
+    "title": "Quiet in here",
+    "image": "expanded/oren-challenge-entry.png",
+    "caption": "The guild noise fades behind the open door.",
+    "alt": "The guild noise fades behind the open door.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "next": "challenge-empty"
+  },
+  {
+    "id": "oren-boss-reaction",
+    "title": "That is not a practice target",
+    "image": "expanded/oren-boss-reaction.png",
+    "caption": "Confidence makes a very quick exit.",
+    "alt": "Confidence makes a very quick exit.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "next": "titan-step"
+  },
+  {
+    "id": "oren-dragon-reaction",
+    "title": "A shared opinion",
+    "image": "expanded/oren-dragon-reaction.png",
+    "caption": "The dragon looks up. Its partner looks down. Neither needs convincing.",
+    "alt": "The dragon looks up. Its partner looks down. Neither needs convincing.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "summon",
+    "next": "titan-step"
+  },
+  {
+    "id": "oren-boss-run",
+    "title": "Time to leave",
+    "image": "expanded/oren-boss-run.png",
+    "caption": "The exit is still open. That seems worth taking.",
+    "alt": "The exit is still open. That seems worth taking.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "next": "door-sealed"
+  },
+  {
+    "id": "oren-dragon-run",
+    "title": "Absolutely not",
+    "image": "expanded/oren-dragon-run.png",
+    "caption": "Two very determined adventurers make for the door.",
+    "alt": "Two very determined adventurers make for the door.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "summon",
+    "next": "door-sealed"
+  },
+  {
+    "id": "oren-boss-gulp",
+    "title": "A sensible retreat",
+    "image": "expanded/oren-boss-gulp.png",
+    "caption": "Perhaps this is a job for more than one adventurer.",
+    "alt": "Perhaps this is a job for more than one adventurer.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "next": "lobby",
+    "outcome": "escaped",
+    "action": "Find some help"
+  },
+  {
+    "id": "oren-dragon-gulp",
+    "title": "Still here",
+    "image": "expanded/oren-dragon-gulp.png",
+    "caption": "A gulp. A look at the door. Then a very firm decision to leave.",
+    "alt": "A gulp. A look at the door. Then a very firm decision to leave.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "summon",
+    "next": "oren-dragon-recall"
+  },
+  {
+    "id": "oren-dragon-recall",
+    "title": "Take a breather",
+    "image": "expanded/oren-dragon-recall.png",
+    "caption": "The dragon returns to its focus. Time to find some help.",
+    "alt": "The dragon returns to its focus. Time to find some help.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "character": "oren",
+    "route": "summon",
+    "next": "lobby",
+    "outcome": "escaped"
+  },
+  {
+    "id": "oren-meet-nova",
+    "title": "A little company",
+    "image": "expanded/oren-meet-nova.png",
+    "caption": "“Looking for company?”",
+    "alt": "“Looking for company?”",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "oren",
+    "speaker": "Nova",
+    "next": "oren-leave-nova"
+  },
+  {
+    "id": "oren-leave-nova",
+    "title": "Better together",
+    "image": "expanded/oren-leave-nova.png",
+    "caption": "Or-en and Nova head toward their next adventure together.",
+    "alt": "Or-en and Nova head toward their next adventure together.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "oren",
+    "end": true
+  },
+  {
+    "id": "oren-meet-ya",
+    "title": "A little company",
+    "image": "expanded/oren-meet-ya.png",
+    "caption": "“Looking for company?”",
+    "alt": "“Looking for company?”",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "oren",
+    "speaker": "Ya",
+    "next": "oren-leave-ya"
+  },
+  {
+    "id": "oren-leave-ya",
+    "title": "Better together",
+    "image": "expanded/oren-leave-ya.png",
+    "caption": "Or-en and Ya head toward their next adventure together.",
+    "alt": "Or-en and Ya head toward their next adventure together.",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "character": "oren",
+    "end": true
+  },
+  {
+    "id": "classes",
+    "title": "Where do you want to go next?",
+    "image": "expanded/hall.png",
+    "caption": "",
+    "alt": "Where do you want to go next?",
+    "chapter": "03 / DESTINATIONS",
+    "seconds": 6,
+    "choices": []
+  },
+  {
+    "id": "challenge-door",
+    "title": "The challenge room",
+    "image": "expanded/challenge-door.png",
+    "caption": "Training equipment stays in its rack. Beyond this door, the guild’s challenge awaits.",
+    "alt": "Training equipment stays in its rack. Beyond this door, the guild’s challenge awaits.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "challenge-empty"
+  },
+  {
+    "id": "challenge-empty",
+    "title": "A little too quiet",
+    "image": "expanded/challenge-empty.png",
+    "caption": "The lights dim. Something beneath the smoke begins to move.",
+    "alt": "The lights dim. Something beneath the smoke begins to move.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "titan-reveal"
+  },
+  {
+    "id": "titan-reveal",
+    "title": "Titan Truffle",
+    "image": "expanded/titan-reveal.png",
+    "caption": "A bellow rolls through the chamber.",
+    "alt": "A bellow rolls through the chamber.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "titan-step"
+  },
+  {
+    "id": "titan-step",
+    "title": "Something much bigger",
+    "image": "expanded/titan-step.png",
+    "caption": "Stone grinds beneath a massive planted fist.",
+    "alt": "Stone grinds beneath a massive planted fist.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "door-sealed"
+  },
+  {
+    "id": "door-sealed",
+    "title": "Safely outside",
+    "image": "expanded/door-sealed.png",
+    "caption": "The doors slam shut. A last puff of purple smoke slips through.",
+    "alt": "The doors slam shut. A last puff of purple smoke slips through.",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "lobby"
+  },
+  {
+    "id": "lobby",
+    "title": "Who should you ask for help?",
+    "image": "expanded/nova-lobby.png",
+    "caption": "",
+    "alt": "Who should you ask for help?",
+    "chapter": "06 / COMPANION",
+    "seconds": 6,
+    "choices": []
+  },
+  {
+    "id": "nova-dragon-call",
+    "title": "One more invitation",
+    "image": "expanded/nova-dragon-call.png",
+    "caption": "The focus glows. The dragon returns at its partner’s side.",
+    "alt": "The dragon is summoned inside the challenge doorway before the boss appears.",
+    "character": "nova",
+    "route": "summon",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "challenge-empty"
+  },
+  {
+    "id": "ya-dragon-call",
+    "title": "One more invitation",
+    "image": "expanded/ya-dragon-call.png",
+    "caption": "The focus glows. The dragon returns at its partner’s side.",
+    "alt": "The dragon is summoned inside the challenge doorway before the boss appears.",
+    "character": "ya",
+    "route": "summon",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "challenge-empty"
+  },
+  {
+    "id": "oren-dragon-call",
+    "title": "One more invitation",
+    "image": "expanded/oren-dragon-call.png",
+    "caption": "The focus glows. The dragon returns at its partner’s side.",
+    "alt": "The dragon is summoned inside the challenge doorway before the boss appears.",
+    "character": "oren",
+    "route": "summon",
+    "chapter": "05 / CHALLENGE",
+    "seconds": 6,
+    "next": "challenge-empty"
+  }
 ];
-export const byId=new Map(scenes.map(s=>[s.id,s]));
-export function nextScene(id,index){const s=byId.get(id);if(!s)return null;if(s.choices){const c=s.choices[index??s.choices.findIndex(c=>!c.locked)];return c&&!c.locked?c.to:null;}return s.next??null;}
-export const validScene=id=>byId.has(id)?id:'selection';
-
-
-
-
+export const characterNames={nova:'Nova',ya:'Ya',oren:'Or-en'};
+export const storyState={character:'nova',route:'sword',outcome:'skipped'};
+const raw=new Map(scenes.map(s=>[s.id,s]));
+export function enterScene(id){const s=raw.get(id);if(!s)return;if(id==='selection'){Object.assign(storyState,{character:'nova',route:'sword',outcome:'skipped'});}if(s.character)storyState.character=s.character;if(s.route)storyState.route=s.route;else if(id.includes('-sword-'))storyState.route='sword';else if(id.includes('-bow-'))storyState.route='bow';else if(id.includes('-summon-')||id.includes('-dragon-'))storyState.route='summon';else if(id.includes('-boss-')&&storyState.route==='summon')storyState.route='sword';if(s.outcome)storyState.outcome=s.outcome;}
+export function resolveScene(id){const base=raw.get(id);if(!base)return;const s={...base},c=storyState.character,summon=storyState.route==='summon';
+ if(id==='classes')s.choices=[{label:'Archery Range',to:c+'-bow-start'},{label:'Training Grounds',to:c+'-sword-start'},{label:'Summoner’s Lair',to:c+'-summon-start'}];
+ if(id===c+'-challenge-entry'&&summon)s.next=c+'-dragon-call';
+ if(id==='challenge-door')s.next=c+'-challenge-entry';
+ if(id==='titan-reveal')s.next=c+(summon?'-dragon-reaction':'-boss-reaction');
+ if(id==='titan-step')s.next=c+(summon?'-dragon-run':'-boss-run');
+ if(id==='door-sealed')s.next=c+(summon?'-dragon-gulp':'-boss-gulp');
+ if(id==='lobby'){s.image='expanded/'+c+'-lobby.png';s.caption=storyState.outcome==='escaped'?'That challenge calls for a little help. Familiar faces wait by the bench.':'Practice is a start. The next adventure could use some company.';s.choices=Object.entries(characterNames).filter(([k])=>k!==c).map(([k,n])=>({label:'Ask '+n,to:c+'-meet-'+k}));}
+ s.alt=s.alt||s.title;return s;
+}
+export const byId={has:id=>raw.has(id),get:resolveScene};
+export const validScene=id=>raw.has(id)?id:'selection';
+export function nextScene(id,index=0){const s=resolveScene(id);return s?.choices?s.choices[index]?.to:s?.next;}
