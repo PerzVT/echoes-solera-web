@@ -1,12 +1,12 @@
-import {cue,unlockSound,setSoundEnabled} from './sound.js?v=expanded-1';
-import {scenes,byId,validScene,storyState,enterScene,characterNames} from './scenes.js?v=expanded-1';
-import {clips,audio as audioFiles} from './media.js?v=expanded-1';
-import {mediaAssets} from './assets.generated.js?v=expanded-1';
-import {preloadImage,preloadVideoMetadata,waitForVideo} from './media-loader.js?v=expanded-1';
+import {cue,unlockSound,setSoundEnabled} from './sound.js?v=art-native-1';
+import {scenes,byId,validScene,storyState,enterScene,characterNames} from './scenes.js?v=art-native-1';
+import {clips,audio as audioFiles} from './media.js?v=art-native-1';
+import {mediaAssets} from './assets.generated.js?v=art-native-1';
+import {preloadImage,preloadVideoMetadata,waitForVideo} from './media-loader.js?v=art-native-1';
 const $=id=>document.getElementById(id),video=$('video'),voice=new Audio(),reduced=matchMedia('(prefers-reduced-motion:reduce)');
 const spatialIds=new Set(['selection','classes']);
 let current=validScene(location.hash.slice(1)),history=[],epoch=0,controller,timer,confirmTimer,loaderTimer,auto=false,sound=true,confirming=false,activeVideo=false,phase='loading',firstPaint=true,inputMode='pointer',resumeVisible=false;
-try{if(location.hash){const saved=JSON.parse(sessionStorage.getItem('solera-story-context')||'null');if(saved&&['nova','ya','oren'].includes(saved.character)&&['sword','bow','summon'].includes(saved.route))Object.assign(storyState,saved);}}catch{}
+try{if(location.hash){const saved=JSON.parse(sessionStorage.getItem('solera-story-context')||'null');if(saved&&['nova','ya','oren'].includes(saved.character)&&['sword','bow','summon','native'].includes(saved.route))Object.assign(storyState,saved);}}catch{}
 const requestedCharacter=new URLSearchParams(location.search).get('character');if(['nova','ya','oren'].includes(requestedCharacter))storyState.character=requestedCharacter;
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const imageURL=name=>mediaAssets[name]||'assets/'+name;

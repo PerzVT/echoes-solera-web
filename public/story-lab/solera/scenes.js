@@ -18,7 +18,7 @@ export const scenes = [
       },
       {
         "label": "Or-en",
-        "to": "oren-spawn"
+        "to": "oren-village-departure"
       }
     ]
   },
@@ -514,8 +514,8 @@ export const scenes = [
     "id": "nova-leave-oren",
     "title": "Better together",
     "image": "expanded/nova-leave-oren.png",
-    "caption": "Nova and Or-en head toward their next adventure together.",
-    "alt": "Nova and Or-en head toward their next adventure together.",
+    "caption": "Nova and Or-en head into the city together.",
+    "alt": "Nova and Or-en head into the city together.",
     "chapter": "06 / COMPANION",
     "seconds": 6,
     "character": "nova",
@@ -1020,472 +1020,64 @@ export const scenes = [
     "id": "ya-leave-oren",
     "title": "Better together",
     "image": "expanded/ya-leave-oren.png",
-    "caption": "Ya and Or-en head toward their next adventure together.",
-    "alt": "Ya and Or-en head toward their next adventure together.",
+    "caption": "Ya and Or-en head into the city together.",
+    "alt": "Ya and Or-en head into the city together.",
     "chapter": "06 / COMPANION",
     "seconds": 6,
     "character": "ya",
     "end": true
   },
   {
-    "id": "oren-spawn",
-    "title": "A new arrival",
-    "image": "expanded/oren-spawn.png",
-    "caption": "Or-en stirs inside the capsule. Light ripples across the glass.",
-    "alt": "Or-en stirs inside the capsule. Light ripples across the glass.",
-    "chapter": "02 / ARRIVAL",
-    "seconds": 6,
+    "id": "oren-village-departure",
+    "title": "A world beyond the village",
+    "caption": "Or-en slips away while the village is busy with its morning repairs.",
+    "alt": "Or-en slips away while the village is busy with its morning repairs.",
+    "image": "expanded/oren-village-departure.png",
     "character": "oren",
-    "next": "oren-exit"
+    "route": "native",
+    "outcome": "native",
+    "chapter": "02 / A LOCAL ARRIVAL",
+    "seconds": 6,
+    "next": "oren-city-sneak"
   },
   {
-    "id": "oren-exit",
-    "title": "First steps",
-    "image": "expanded/oren-exit.png",
-    "caption": "The liquid drains, the ring docks, and the open door reveals a path into Solera.",
-    "alt": "The liquid drains, the ring docks, and the open door reveals a path into Solera.",
-    "chapter": "02 / ARRIVAL",
-    "seconds": 6,
+    "id": "oren-city-sneak",
+    "title": "A small gap in a big city",
+    "caption": "At Solera's gate, a delivery gives him just enough cover.",
+    "alt": "At Solera's gate, a delivery gives him just enough cover.",
+    "image": "expanded/oren-city-sneak.png",
     "character": "oren",
-    "next": "oren-threshold"
+    "route": "native",
+    "outcome": "native",
+    "chapter": "02 / A LOCAL ARRIVAL",
+    "seconds": 6,
+    "next": "oren-guild-sneak"
   },
   {
-    "id": "oren-threshold",
-    "title": "The guild foyer",
-    "image": "expanded/oren-threshold.png",
-    "caption": "Footsteps, conversation and the faint hum of magic fill the hall.",
-    "alt": "Footsteps, conversation and the faint hum of magic fill the hall.",
-    "chapter": "03 / ARRIVAL",
-    "seconds": 6,
+    "id": "oren-guild-sneak",
+    "title": "An uninvited guest",
+    "caption": "He follows the bustle to the guild and slips through a side door.",
+    "alt": "He follows the bustle to the guild and slips through a side door.",
+    "image": "expanded/oren-guild-sneak.png",
     "character": "oren",
-    "next": "oren-greeting"
+    "route": "native",
+    "outcome": "native",
+    "chapter": "02 / A LOCAL ARRIVAL",
+    "seconds": 6,
+    "next": "oren-lobby-wait"
   },
   {
-    "id": "oren-greeting",
-    "title": "Welcome, traveler",
-    "image": "expanded/oren-greeting.png",
-    "caption": "Salutations, Traveler.",
-    "alt": "Salutations, Traveler.",
-    "chapter": "03 / ARRIVAL",
-    "seconds": 6,
+    "id": "oren-lobby-wait",
+    "title": "A place to sit",
+    "caption": "For now, the lobby is a comfortable place to watch the world go by.",
+    "alt": "For now, the lobby is a comfortable place to watch the world go by.",
+    "image": "expanded/oren-lobby-wait.png",
     "character": "oren",
-    "next": "oren-scan",
-    "speaker": "SOLERA",
-    "audio": "greeting"
-  },
-  {
-    "id": "oren-scan",
-    "title": "Identification required",
-    "image": "expanded/oren-scan.png",
-    "caption": "It seems you don’t have any identification. We will have to fix that.",
-    "alt": "It seems you don’t have any identification. We will have to fix that.",
-    "chapter": "03 / ARRIVAL",
+    "route": "native",
+    "outcome": "native",
+    "chapter": "02 / A LOCAL ARRIVAL",
     "seconds": 6,
-    "character": "oren",
-    "next": "oren-registered",
-    "speaker": "SOLERA"
-  },
-  {
-    "id": "oren-registered",
-    "title": "Your Solera ID",
-    "image": "expanded/oren-registered.png",
-    "caption": "Welcome to Solera, Or-en. Your identification is ready.",
-    "alt": "Welcome to Solera, Or-en. Your identification is ready.",
-    "chapter": "03 / ARRIVAL",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-reaction",
-    "speaker": "SOLERA",
-    "identity": true
-  },
-  {
-    "id": "oren-reaction",
-    "title": "Officially here",
-    "image": "expanded/oren-reaction.png",
-    "caption": "Or-en tilts his head at the portrait. A satisfied chirp follows.",
-    "alt": "Or-en tilts his head at the portrait. A satisfied chirp follows.",
-    "chapter": "03 / ARRIVAL",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-guidance"
-  },
-  {
-    "id": "oren-guidance",
-    "title": "Follow the light",
-    "image": "expanded/oren-guidance.png",
-    "caption": "Follow the glowing marker. The guild’s training rooms are just ahead.",
-    "alt": "Follow the glowing marker. The guild’s training rooms are just ahead.",
-    "chapter": "03 / ARRIVAL",
-    "seconds": 6,
-    "character": "oren",
-    "next": "classes",
-    "speaker": "SOLERA",
-    "arrow": true
-  },
-  {
-    "id": "oren-sword-start",
-    "title": "Training Grounds",
-    "image": "expanded/training-room.png",
-    "caption": "“Pick a practice blade. We’ll start with a little control.”",
-    "alt": "“Pick a practice blade. We’ll start with a little control.”",
-    "chapter": "04 / TRAINING GROUNDS",
-    "seconds": 6,
-    "speaker": "INSTRUCTOR",
-    "character": "oren",
-    "route": "sword",
-    "next": "oren-sword-pickup"
-  },
-  {
-    "id": "oren-bow-start",
-    "title": "Archery Range",
-    "image": "expanded/archery-room.png",
-    "caption": "“Stay behind the line until your lane is clear.”",
-    "alt": "“Stay behind the line until your lane is clear.”",
-    "chapter": "04 / ARCHERY RANGE",
-    "seconds": 6,
-    "speaker": "INSTRUCTOR",
-    "character": "oren",
-    "route": "bow",
-    "next": "oren-bow-pickup"
-  },
-  {
-    "id": "oren-summon-start",
-    "title": "Summoner’s Lair",
-    "image": "expanded/summoning-room.png",
-    "caption": "“A summon is a partnership. Let it come to you.”",
-    "alt": "“A summon is a partnership. Let it come to you.”",
-    "chapter": "04 / SUMMONER’S LAIR",
-    "seconds": 6,
-    "speaker": "INSTRUCTOR",
-    "character": "oren",
-    "route": "summon",
-    "next": "oren-summon-focus"
-  },
-  {
-    "id": "oren-sword-pickup",
-    "title": "Choose a blade",
-    "image": "expanded/oren-sword-pickup.png",
-    "caption": "A cyan guide adjusts the weapon to Or-en’s reach.",
-    "alt": "A cyan guide adjusts the weapon to Or-en’s reach.",
-    "chapter": "04 / TRAINING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-sword-awaken"
-  },
-  {
-    "id": "oren-sword-awaken",
-    "title": "Mana awakened",
-    "image": "expanded/oren-sword-awaken.png",
-    "caption": "“Easy. Let the mana settle before you move.”",
-    "alt": "“Easy. Let the mana settle before you move.”",
-    "chapter": "04 / TRAINING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-sword-ready",
-    "speaker": "INSTRUCTOR"
-  },
-  {
-    "id": "oren-sword-ready",
-    "title": "Your practice partner",
-    "image": "expanded/oren-sword-ready.png",
-    "caption": "The ADA bot raises its padded target. The lane is clear.",
-    "alt": "The ADA bot raises its padded target. The lane is clear.",
-    "chapter": "04 / TRAINING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-sword-strike",
-    "action": "Try a mana strike"
-  },
-  {
-    "id": "oren-sword-strike",
-    "title": "A first ability",
-    "image": "expanded/oren-sword-strike.png",
-    "caption": "A crescent of mana crosses the lane and flashes against the target.",
-    "alt": "A crescent of mana crosses the lane and flashes against the target.",
-    "chapter": "04 / TRAINING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-sword-reset"
-  },
-  {
-    "id": "oren-sword-reset",
-    "title": "Control before power",
-    "image": "expanded/oren-sword-reset.png",
-    "caption": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
-    "alt": "“Good. Return the loaner here. There’s a challenge room if you’re feeling brave.”",
-    "chapter": "04 / TRAINING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-sword-choice",
-    "speaker": "INSTRUCTOR"
-  },
-  {
-    "id": "oren-bow-pickup",
-    "title": "Find your aim",
-    "image": "expanded/oren-bow-pickup.png",
-    "caption": "An adaptive mana guide steadies the bow at Or-en’s height.",
-    "alt": "An adaptive mana guide steadies the bow at Or-en’s height.",
-    "chapter": "04 / ARCHERY",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-bow-draw"
-  },
-  {
-    "id": "oren-bow-draw",
-    "title": "Hold your focus",
-    "image": "expanded/oren-bow-draw.png",
-    "caption": "“Breathe. Look at the target, then let the string go.”",
-    "alt": "“Breathe. Look at the target, then let the string go.”",
-    "chapter": "04 / ARCHERY",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-bow-release",
-    "speaker": "INSTRUCTOR",
-    "action": "Release the arrow"
-  },
-  {
-    "id": "oren-bow-release",
-    "title": "A clear shot",
-    "image": "expanded/oren-bow-release.png",
-    "caption": "The luminous arrow streaks downrange. A spark answers from the target.",
-    "alt": "The luminous arrow streaks downrange. A spark answers from the target.",
-    "chapter": "04 / ARCHERY",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-bow-reset"
-  },
-  {
-    "id": "oren-bow-reset",
-    "title": "Back behind the line",
-    "image": "expanded/oren-bow-reset.png",
-    "caption": "“That’s a start. Rack the bow before you leave the range.”",
-    "alt": "“That’s a start. Rack the bow before you leave the range.”",
-    "chapter": "04 / ARCHERY",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-bow-choice",
-    "speaker": "INSTRUCTOR"
-  },
-  {
-    "id": "oren-summon-focus",
-    "title": "A small invitation",
-    "image": "expanded/oren-summon-focus.png",
-    "caption": "“Touch the focus. Let the circle do the rest.”",
-    "alt": "“Touch the focus. Let the circle do the rest.”",
-    "chapter": "04 / SUMMONING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-summon-arrive",
-    "speaker": "INSTRUCTOR"
-  },
-  {
-    "id": "oren-summon-arrive",
-    "title": "Someone answers",
-    "image": "expanded/oren-summon-arrive.png",
-    "caption": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
-    "alt": "A phthalo-green dragon gathers out of the light, blinking at its new partner.",
-    "chapter": "04 / SUMMONING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-summon-bond"
-  },
-  {
-    "id": "oren-summon-bond",
-    "title": "An introduction",
-    "image": "expanded/oren-summon-bond.png",
-    "caption": "The dragon leans closer. Curiosity wins over caution.",
-    "alt": "The dragon leans closer. Curiosity wins over caution.",
-    "chapter": "04 / SUMMONING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-summon-command"
-  },
-  {
-    "id": "oren-summon-command",
-    "title": "Try it together",
-    "image": "expanded/oren-summon-command.png",
-    "caption": "One small signal. One little puff of magic. The practice disc glows.",
-    "alt": "One small signal. One little puff of magic. The practice disc glows.",
-    "chapter": "04 / SUMMONING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-summon-recall"
-  },
-  {
-    "id": "oren-summon-recall",
-    "title": "A place to rest",
-    "image": "expanded/oren-summon-recall.png",
-    "caption": "“The focus lets your summon rest. Call it back when you need it.”",
-    "alt": "“The focus lets your summon rest. Call it back when you need it.”",
-    "chapter": "04 / SUMMONING",
-    "seconds": 6,
-    "character": "oren",
-    "next": "oren-summon-choice",
-    "speaker": "INSTRUCTOR"
-  },
-  {
-    "id": "oren-sword-choice",
-    "title": "Ready for something bigger?",
-    "image": "expanded/oren-sword-reset.png",
-    "caption": "Try the challenge room, or head back and find company.",
-    "alt": "Try the challenge room, or head back and find company.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "sword",
-    "choices": [
-      {
-        "label": "Enter the challenge room",
-        "to": "challenge-door",
-        "outcome": "entered"
-      },
-      {
-        "label": "Return to lobby",
-        "to": "lobby",
-        "outcome": "skipped"
-      }
-    ]
-  },
-  {
-    "id": "oren-bow-choice",
-    "title": "Ready for something bigger?",
-    "image": "expanded/oren-bow-reset.png",
-    "caption": "Try the challenge room, or head back and find company.",
-    "alt": "Try the challenge room, or head back and find company.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "bow",
-    "choices": [
-      {
-        "label": "Enter the challenge room",
-        "to": "challenge-door",
-        "outcome": "entered"
-      },
-      {
-        "label": "Return to lobby",
-        "to": "lobby",
-        "outcome": "skipped"
-      }
-    ]
-  },
-  {
-    "id": "oren-summon-choice",
-    "title": "Ready for something bigger?",
-    "image": "expanded/oren-summon-recall.png",
-    "caption": "Try the challenge room, or head back and find company.",
-    "alt": "Try the challenge room, or head back and find company.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "summon",
-    "choices": [
-      {
-        "label": "Enter the challenge room",
-        "to": "challenge-door",
-        "outcome": "entered"
-      },
-      {
-        "label": "Return to lobby",
-        "to": "lobby",
-        "outcome": "skipped"
-      }
-    ]
-  },
-  {
-    "id": "oren-challenge-entry",
-    "title": "Quiet in here",
-    "image": "expanded/oren-challenge-entry.png",
-    "caption": "The guild noise fades behind the open door.",
-    "alt": "The guild noise fades behind the open door.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "next": "challenge-empty"
-  },
-  {
-    "id": "oren-boss-reaction",
-    "title": "That is not a practice target",
-    "image": "expanded/oren-boss-reaction.png",
-    "caption": "Confidence makes a very quick exit.",
-    "alt": "Confidence makes a very quick exit.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "next": "titan-step"
-  },
-  {
-    "id": "oren-dragon-reaction",
-    "title": "A shared opinion",
-    "image": "expanded/oren-dragon-reaction.png",
-    "caption": "The dragon looks up. Its partner looks down. Neither needs convincing.",
-    "alt": "The dragon looks up. Its partner looks down. Neither needs convincing.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "summon",
-    "next": "titan-step"
-  },
-  {
-    "id": "oren-boss-run",
-    "title": "Time to leave",
-    "image": "expanded/oren-boss-run.png",
-    "caption": "The exit is still open. That seems worth taking.",
-    "alt": "The exit is still open. That seems worth taking.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "next": "door-sealed"
-  },
-  {
-    "id": "oren-dragon-run",
-    "title": "Absolutely not",
-    "image": "expanded/oren-dragon-run.png",
-    "caption": "Two very determined adventurers make for the door.",
-    "alt": "Two very determined adventurers make for the door.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "summon",
-    "next": "door-sealed"
-  },
-  {
-    "id": "oren-boss-gulp",
-    "title": "A sensible retreat",
-    "image": "expanded/oren-boss-gulp.png",
-    "caption": "Perhaps this is a job for more than one adventurer.",
-    "alt": "Perhaps this is a job for more than one adventurer.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "next": "lobby",
-    "outcome": "escaped",
-    "action": "Find some help"
-  },
-  {
-    "id": "oren-dragon-gulp",
-    "title": "Still here",
-    "image": "expanded/oren-dragon-gulp.png",
-    "caption": "A gulp. A look at the door. Then a very firm decision to leave.",
-    "alt": "A gulp. A look at the door. Then a very firm decision to leave.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "summon",
-    "next": "oren-dragon-recall"
-  },
-  {
-    "id": "oren-dragon-recall",
-    "title": "Take a breather",
-    "image": "expanded/oren-dragon-recall.png",
-    "caption": "The dragon returns to its focus. Time to find some help.",
-    "alt": "The dragon returns to its focus. Time to find some help.",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "character": "oren",
-    "route": "summon",
-    "next": "lobby",
-    "outcome": "escaped"
+    "next": "lobby"
   },
   {
     "id": "oren-meet-nova",
@@ -1503,8 +1095,8 @@ export const scenes = [
     "id": "oren-leave-nova",
     "title": "Better together",
     "image": "expanded/oren-leave-nova.png",
-    "caption": "Or-en and Nova head toward their next adventure together.",
-    "alt": "Or-en and Nova head toward their next adventure together.",
+    "caption": "Nova and Or-en head into the city together.",
+    "alt": "Nova and Or-en head into the city together.",
     "chapter": "06 / COMPANION",
     "seconds": 6,
     "character": "oren",
@@ -1526,8 +1118,8 @@ export const scenes = [
     "id": "oren-leave-ya",
     "title": "Better together",
     "image": "expanded/oren-leave-ya.png",
-    "caption": "Or-en and Ya head toward their next adventure together.",
-    "alt": "Or-en and Ya head toward their next adventure together.",
+    "caption": "Ya and Or-en head into the city together.",
+    "alt": "Ya and Or-en head into the city together.",
     "chapter": "06 / COMPANION",
     "seconds": 6,
     "character": "oren",
@@ -1626,24 +1218,12 @@ export const scenes = [
     "chapter": "05 / CHALLENGE",
     "seconds": 6,
     "next": "challenge-empty"
-  },
-  {
-    "id": "oren-dragon-call",
-    "title": "One more invitation",
-    "image": "expanded/oren-dragon-call.png",
-    "caption": "The focus glows. The dragon returns at its partner’s side.",
-    "alt": "The dragon is summoned inside the challenge doorway before the boss appears.",
-    "character": "oren",
-    "route": "summon",
-    "chapter": "05 / CHALLENGE",
-    "seconds": 6,
-    "next": "challenge-empty"
   }
 ];
 export const characterNames={nova:'Nova',ya:'Ya',oren:'Or-en'};
 export const storyState={character:'nova',route:'sword',outcome:'skipped'};
 const raw=new Map(scenes.map(s=>[s.id,s]));
-export function enterScene(id){const s=raw.get(id);if(!s)return;if(id==='selection'){Object.assign(storyState,{character:'nova',route:'sword',outcome:'skipped'});}if(s.character)storyState.character=s.character;if(s.route)storyState.route=s.route;else if(id.includes('-sword-'))storyState.route='sword';else if(id.includes('-bow-'))storyState.route='bow';else if(id.includes('-summon-')||id.includes('-dragon-'))storyState.route='summon';else if(id.includes('-boss-')&&storyState.route==='summon')storyState.route='sword';if(s.outcome)storyState.outcome=s.outcome;}
+export function enterScene(id){const s=raw.get(id);if(!s)return;if(id==='selection'){Object.assign(storyState,{character:'nova',route:'sword',outcome:'skipped'});}if(s.character)storyState.character=s.character;if(storyState.character==='oren'&&['classes','challenge-door','challenge-empty','titan-reveal','titan-step','door-sealed'].includes(id))Object.assign(storyState,{character:'nova',route:'sword',outcome:'skipped'});if(s.route)storyState.route=s.route;else if(id.includes('-sword-'))storyState.route='sword';else if(id.includes('-bow-'))storyState.route='bow';else if(id.includes('-summon-')||id.includes('-dragon-'))storyState.route='summon';else if(id.includes('-boss-')&&storyState.route==='summon')storyState.route='sword';if(s.outcome)storyState.outcome=s.outcome;}
 export function resolveScene(id){const base=raw.get(id);if(!base)return;const s={...base},c=storyState.character,summon=storyState.route==='summon';
  if(id==='classes')s.choices=[{label:'Archery Range',to:c+'-bow-start'},{label:'Training Grounds',to:c+'-sword-start'},{label:'Summoner’s Lair',to:c+'-summon-start'}];
  if(id===c+'-challenge-entry'&&summon)s.next=c+'-dragon-call';
@@ -1651,8 +1231,8 @@ export function resolveScene(id){const base=raw.get(id);if(!base)return;const s=
  if(id==='titan-reveal')s.next=c+(summon?'-dragon-reaction':'-boss-reaction');
  if(id==='titan-step')s.next=c+(summon?'-dragon-run':'-boss-run');
  if(id==='door-sealed')s.next=c+(summon?'-dragon-gulp':'-boss-gulp');
- if(id==='lobby'){s.image='expanded/'+c+'-lobby.png';s.caption=storyState.outcome==='escaped'?'That challenge calls for a little help. Familiar faces wait by the bench.':'Practice is a start. The next adventure could use some company.';s.choices=Object.entries(characterNames).filter(([k])=>k!==c).map(([k,n])=>({label:'Ask '+n,to:c+'-meet-'+k}));}
- s.alt=s.alt||s.title;return s;
+ if(id==='lobby'){s.image='expanded/'+c+'-lobby.png';s.title=c==='oren'?'A little company':'Who should you ask for help?';s.caption=c==='oren'?'Two travelers pause near the bench. Or-en looks up.':storyState.outcome==='escaped'?'That challenge calls for a little help. Familiar faces wait by the bench.':'Practice is a start. The next adventure could use some company.';s.choices=Object.entries(characterNames).filter(([k])=>k!==c).map(([k,n])=>({label:'Ask '+n,to:c+'-meet-'+k}));}
+ s.alt=id==='lobby'?s.caption:s.alt||s.title;return s;
 }
 export const byId={has:id=>raw.has(id),get:resolveScene};
 export const validScene=id=>raw.has(id)?id:'selection';
