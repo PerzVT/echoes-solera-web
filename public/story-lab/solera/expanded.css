@@ -26,3 +26,23 @@
 .stage[data-scene=classes] .world-target:hover .world-label,.stage[data-scene=classes] .world-target:focus-visible .world-label{background:transparent;color:#163e46;text-shadow:none}
 .stage .world-target:focus-visible{outline:2px solid #c4ffff;outline-offset:3px;box-shadow:inset 0 0 30px #c4fbff30}
 .stage[data-scene=classes] .world-target:focus-visible{background:#70dfe61a}
+
+/* Shared pitch controls retain the same placement in both view modes. */
+.playback-nav{right:max(12px,env(safe-area-inset-right));left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));align-items:center;gap:6px;pointer-events:none}
+.playback-nav button,.video-controls{pointer-events:auto}.playback-nav button{min-height:44px;padding:8px 12px;white-space:nowrap;border-radius:6px}
+.video-controls{display:flex;gap:6px;margin-left:auto}.video-controls #clipSkip{background:#164150ef;border-color:#a8e7ee88}
+#app[data-ready=false] .playback-nav:has(.video-controls:not([hidden])){visibility:visible;z-index:110}
+#app[data-ready=false] .playback-nav>button{visibility:hidden}
+.game-menu{max-height:calc(100dvh - 88px - env(safe-area-inset-top));overflow:auto;overscroll-behavior:contain}
+.game-menu>summary{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end}
+.game-menu button,.game-menu select,.review-link{min-height:44px;border-radius:6px}.game-menu select{width:100%;max-width:100%;min-width:0}.scene-jump{min-width:0}.scene-jump select{flex:1}
+.sound-cue{min-height:44px;top:max(14px,env(safe-area-inset-top));right:max(72px,calc(env(safe-area-inset-right) + 66px));font-size:12px}
+button{touch-action:manipulation}.picture img,.picture video,.picture,.identity{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
+.stage .choices button{min-height:44px}.playback-nav button:focus-visible,.sound-cue:focus-visible{outline:2px solid #c4ffff;outline-offset:3px}
+@media(max-width:480px){.playback-nav{gap:4px;left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}.playback-nav button{padding:8px;font-size:12px}.video-controls{gap:4px}.sound-cue{right:62px;font-size:11px;padding:6px 8px}}
+
+.game-menu,.sound-cue,.playback-nav{position:absolute}.game-menu{max-width:min(380px,calc(100% - 24px))}.playback-nav{flex-wrap:wrap}
+
+.playback-nav button{min-width:44px}.playback-nav #clipPlay{min-width:64px}
+
+.stage[data-scene=classes].compact .letterbox-dock .choices{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}.stage[data-scene=classes].compact .letterbox-dock .choices button{padding:8px 6px;font-size:12px;min-height:50px}
