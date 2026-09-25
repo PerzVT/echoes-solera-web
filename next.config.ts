@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       { key: "X-Content-Type-Options", value: "nosniff" },
     ];
     return [
+      { source: "/studio/media-6e4b9a", headers: catalogHeaders },
+      { source: "/media-preview/:path*", headers: catalogHeaders },
       { source: "/studio/styles-7c9e4a2b", headers: catalogHeaders },
       { source: "/style-library/:path*", headers: catalogHeaders },
     ];
@@ -16,3 +18,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
