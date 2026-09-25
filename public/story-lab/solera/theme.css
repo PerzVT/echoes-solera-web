@@ -84,3 +84,23 @@ button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible{
 .app-layout .stage.selection .choices .button-arrow{margin-left:auto;width:18px;height:18px;flex:0 0 18px;color:var(--gold)}
 
 .choice-portrait[data-character=ya] img{transform:scale(3.1) translateY(-19%)}
+
+/* Media framing: full compositions by default; reviewed mobile crops only. */
+#app:not(.app-layout) .picture{width:min(100%,calc(100svh * 16 / 9));aspect-ratio:16/9}
+.picture>img,.picture>video{object-fit:contain;object-position:center}
+.app-layout #storyContent{padding:0;min-height:100%}
+.app-layout .picture{width:100%;aspect-ratio:16/9;overflow:hidden}
+.app-layout .stage[data-scene=nova-scan] .picture,
+.app-layout .stage[data-scene=ya-scan] .picture{aspect-ratio:4/3}
+.app-layout .stage[data-scene=nova-scan] .picture>#poster{object-fit:cover;object-position:35% center}
+.app-layout .stage[data-scene=ya-scan] .picture>#poster{object-fit:cover;object-position:25% center}
+.app-layout .picture:has(video:not([hidden])){aspect-ratio:16/9}
+.app-layout .picture>video{object-fit:contain}
+.app-layout .mobile-reading{flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 20px;gap:0}
+.app-layout #storyText .scene-heading{margin-bottom:12px}
+.app-layout #storyText .scene-heading h1{font-size:clamp(19px,5vw,24px)}
+.app-layout .stage.selection .mobile-reading{justify-content:flex-start;padding-top:20px}
+.app-layout .stage.selection #storyContent{padding-bottom:16px}
+.app-layout #mobileArtifact:empty{display:none}
+@media(max-height:650px){.app-layout .mobile-reading{padding:18px 20px}.app-layout #storyText .scene-heading{margin-bottom:8px}}
+@media(max-width:600px){.app-layout .stage[data-scene=nova-scan] .picture,.app-layout .stage[data-scene=ya-scan] .picture{aspect-ratio:1/1}}
