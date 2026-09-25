@@ -1,12 +1,11 @@
-* {
+:root{color-scheme:light;--dd-font-display:Arial,Helvetica,sans-serif;--dd-font-label:Arial,Helvetica,sans-serif;--dd-font-body:Arial,Helvetica,sans-serif;--dd-bg:#fff;--dd-bg-cinema:#111116;--dd-surface:#f6f6f7;--dd-surface-raised:#eeeef1;--dd-surface-inset:#fff;--dd-surface-hover:#f0f0f2;--dd-text:#17171b;--dd-text-body:#2a2a31;--dd-text-muted:#66666f;--dd-accent:#d92349;--dd-accent-strong:#b71c3e;--dd-focus:#d92349;--dd-border:#e5e5e9;--dd-border-subtle:#eeeeF1;--dd-border-hover:#bbbbc3;--dd-action-bg:#d92349;--dd-action-end:#d92349;--dd-action-hover:#be193c;--dd-action-border-hover:#be193c;--dd-action-text-hover:#fff;--dd-action-fill:#d92349;--dd-radius-control:6px;--dd-radius-panel:8px;--dd-target-min:44px;--dd-space-unit:8px;--dd-ease-out:cubic-bezier(.23,1,.32,1);--dd-label-size:11px}* {
   box-sizing: border-box
 }
 html {
   scroll-behavior: smooth
 }
 body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased
+  margin: 0
 }
 h1,h2,h3,p {
   margin: 0
@@ -47,28 +46,22 @@ svg {
   vertical-align: middle
 }
 a,button {
-  transition: background-color 160ms ease,transform 160ms var(--solera-ease-out)
+  transition: background-color 160ms ease,transform 160ms var(--dd-ease-out)
 }
 .skip {
   position: fixed;
   top: -100px;
   z-index: 50;
-  background: var(--solera-surface);
+  background: var(--dd-surface);
   padding: 14px
 }
 .skip:focus {
   top: 0
 }
 .siteHeader {
-  height: 86px;
   display: flex;
   align-items: center;
-  gap: 64px;
   padding: 0 max(4.5%,calc((100% - 1310px)/2))
-}
-.logo {
-  display: inline-flex;
-  line-height: 1
 }
 .siteHeader nav {
   display: flex;
@@ -95,8 +88,7 @@ a,button {
 .headerTools {
   margin-left: auto;
   display: flex;
-  align-items: center;
-  gap: 19px
+  align-items: center
 }
 .studioLink {
   font-size: 12px;
@@ -107,7 +99,7 @@ a,button {
 .avatar {
   width: 34px;
   height: 34px;
-  background: var(--solera-surface);
+  background: var(--dd-surface);
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -142,22 +134,19 @@ main {
   padding: 33px 0 18px
 }
 .desktopIntro .overline {
-  color: var(--solera-text-muted);
-  font-size: var(--solera-label-size)
+  color: var(--dd-text-muted);
+  font-size: var(--dd-label-size)
 }
 .desktopIntro h1 {
-  font-weight: 500;
   margin-top: 9px
 }
 .homeTop {
   display: flex;
-  align-items: flex-end;
   justify-content: space-between;
   gap: 20px
 }
 .chips {
   display: flex;
-  gap: 6px;
   overflow-x: auto;
   scrollbar-width: none;
   padding: 15px 0;
@@ -166,7 +155,6 @@ main {
 }
 .chip {
   min-height: 44px;
-  padding: 10px 17px;
   white-space: nowrap
 }
 .featureWrap {
@@ -184,8 +172,7 @@ main {
   min-width: 0;
   scroll-snap-align: start;
   position: relative;
-  min-height: 405px;
-  color: var(--solera-text);
+  color: var(--dd-text);
   overflow: hidden;
   border-radius: 12px
 }
@@ -202,32 +189,26 @@ main {
   inset: 0
 }
 .feature.rose .featureShade {
-  background: linear-gradient(90deg,#14131f 20%,#14131fdc 40%,#14131f00 72%)
+  background: linear-gradient(90deg,#fff 20%,#14131fdc 40%,#14131f00 72%)
 }
 .feature.violet .featureShade {
-  background: linear-gradient(90deg,#14131f 20%,#14131fdc 40%,#14131f00 72%)
+  background: linear-gradient(90deg,#fff 20%,#14131fdc 40%,#14131f00 72%)
 }
 .featureCopy {
   position: relative;
-  padding: 50px 48px;
   max-width: 55%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-height: 405px;
   justify-content: center
 }
 .featureCopy .overline {
-  color: var(--solera-text-body);
-  font-size: var(--solera-label-size)
+  color: var(--dd-text-body);
+  font-size: var(--dd-label-size)
 }
 .featureCopy h1 {
   font: 400 52px/1.03 Georgia,serif;
-  letter-spacing: -1.8px;
   margin: 17px 0
-}
-.featureCopy p {
-  font-size: 14px
 }
 .featureActions {
   display: flex;
@@ -298,10 +279,6 @@ main {
   min-width: 0;
   flex: 1
 }
-.continueCard .overline {
-  font-size: var(--solera-label-size);
-  letter-spacing: 1.4px
-}
 .continueCard h3 {
   font-size: 15px;
   margin: 6px 0;
@@ -322,7 +299,7 @@ main {
 }
 .progressTrack span {
   display: block;
-  background: var(--solera-gold);
+  background: var(--dd-accent);
   height: 100%
 }
 .roundPlay {
@@ -330,11 +307,8 @@ main {
   place-items: center;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--solera-border);
+  border: 1px solid var(--dd-border);
   border-radius: 50%
-}
-.shelf {
-  margin: 36px 0 45px
 }
 .sectionTitle {
   display: flex;
@@ -349,7 +323,7 @@ main {
 }
 .sectionTitle p {
   font-size: 13px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 6px
 }
 .viewAll {
@@ -362,7 +336,6 @@ main {
 }
 .rail {
   display: flex;
-  gap: 23px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
@@ -371,30 +344,26 @@ main {
 .storyCard {
   display: block;
   min-width: 0;
-  flex: 0 0 calc((100% - 92px)/5);
   scroll-snap-align: start
 }
 .poster {
   position: relative;
   aspect-ratio: 2/3;
   overflow: hidden;
-  background: var(--solera-surface)
+  background: var(--dd-surface)
 }
 .poster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 220ms var(--solera-ease-out)
+  transition: transform 220ms var(--dd-ease-out)
 }
 .storyCard h3 {
-  font-size: 15px;
-  line-height: 1.35;
   letter-spacing: -.15px;
   margin-top: 12px
 }
 .storyCard p {
-  font-size: 12px;
   margin-top: 4px
 }
 .posterLabel {
@@ -408,8 +377,7 @@ main {
   bottom: 24px;
   left: 22px;
   right: 18px;
-  font: 32px/1 Georgia,serif;
-  letter-spacing: -1px
+  font: 32px/1 Georgia,serif
 }
 .posterText span {
   display: block;
@@ -434,7 +402,7 @@ main {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: var(--solera-surface);
+  background: var(--dd-surface);
   min-height: 290px;
   margin: 0 0 42px
 }
@@ -450,7 +418,7 @@ main {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,var(--solera-surface) 20%,#171622de 35%,transparent 80%)
+  background: linear-gradient(90deg,var(--dd-surface) 20%,#171622de 35%,transparent 80%)
 }
 .interactiveBanner>div {
   position: relative;
@@ -470,7 +438,7 @@ main {
   font-size: 13px
 }
 .siteFooter {
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   display: flex;
   align-items: center;
   gap: 30px;
@@ -480,7 +448,7 @@ main {
 }
 .siteFooter p {
   font-size: 12px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .siteFooter>a:last-child {
   margin-left: auto;
@@ -494,7 +462,7 @@ main {
 }
 .pageHeading p {
   font-size: 14px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 10px
 }
 .searchField {
@@ -522,12 +490,12 @@ main {
 .tabBar {
   display: flex;
   gap: 25px;
-  border-bottom: 1px solid var(--solera-border);
+  border-bottom: 1px solid var(--dd-border);
   margin-bottom: 25px
 }
 .tabBar button {
   font-size: 15px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   padding: 14px 0;
   position: relative
 }
@@ -554,7 +522,7 @@ main {
 }
 .empty p {
   font-size: 14px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin: 15px 0 25px
 }
 .profileGrid {
@@ -575,7 +543,7 @@ main {
   place-items: center;
   width: 64px;
   height: 64px;
-  background: var(--solera-surface);
+  background: var(--dd-surface);
   border-radius: 50%;
   font: 26px Georgia,serif
 }
@@ -586,15 +554,15 @@ main {
 }
 .profileIdentity p {
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 5px
 }
 .accountBalance {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid var(--solera-border);
-  background: var(--solera-surface);
+  border: 1px solid var(--dd-border);
+  background: var(--dd-surface);
   border-radius: 8px;
   padding: 24px
 }
@@ -605,7 +573,7 @@ main {
 }
 .accountBalance>span>span {
   font-size: 12px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .accountBalance strong {
   display: block;
@@ -621,7 +589,7 @@ main {
   align-items: center;
   gap: 16px;
   min-height: 63px;
-  border-bottom: 1px solid var(--solera-border);
+  border-bottom: 1px solid var(--dd-border);
   width: 100%;
   font-size: 14px;
   text-align: left;
@@ -632,7 +600,7 @@ main {
 }
 .aboutPreview {
   padding: 30px;
-  background: var(--solera-surface);
+  background: var(--dd-surface);
   border-radius: 9px;
   align-self: start
 }
@@ -643,10 +611,10 @@ main {
 }
 .aboutPreview p {
   font-size: 14px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .previewNote {
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   padding-top: 24px;
   margin-top: 28px;
   font-size: 12px
@@ -675,16 +643,12 @@ main {
 .seriesCopy {
   align-self: center
 }
-.seriesCopy>.overline {
-  color: var(--solera-gold)
-}
 .seriesCopy h1 {
   font: 400 47px/1.05 Georgia,serif;
   margin: 17px 0
 }
 .seriesMeta {
-  font-size: 13px;
-  color: var(--solera-text-muted)
+  font-size: 13px
 }
 .seriesMeta span {
   margin: 0 6px
@@ -701,7 +665,7 @@ main {
 }
 .conceptNote {
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 20px
 }
 .episodeSection {
@@ -710,13 +674,13 @@ main {
 }
 .quietLabel {
   font-size: 12px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .episode {
   display: flex;
   align-items: center;
   gap: 20px;
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   padding: 16px 0;
   min-height: 90px
 }
@@ -739,15 +703,14 @@ main {
   position: absolute;
   top: 23px;
   left: 21px;
-  color: var(--solera-text)
+  color: var(--dd-text)
 }
 .episode h3 {
-  font-size: 15px;
-  font-weight: 500
+  font-size: 15px
 }
 .episode p {
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 6px
 }
 .episodeRight {
@@ -758,7 +721,7 @@ main {
 .episodeRight small {
   display: block;
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 5px
 }
 .episode .iconButton {
@@ -769,12 +732,10 @@ main {
   height: 64px;
   display: grid;
   place-items: center;
-  background: var(--solera-surface);
-  border-radius: 5px;
-  color: var(--solera-text-muted)
+  border-radius: 5px
 }
 .comingPanel {
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   padding: 40px 0;
   max-width: 800px
 }
@@ -785,7 +746,7 @@ main {
 }
 .comingPanel p {
   font-size: 14px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .watching .siteHeader,.watching .siteFooter,.watching .bottomNav {
   display: none
@@ -820,7 +781,7 @@ main {
   margin-top: 5px
 }
 .watchHeader .iconButton:hover {
-  background: var(--solera-surface-raised)
+  background: var(--dd-surface-raised)
 }
 .watchStage {
   flex: 1;
@@ -888,8 +849,8 @@ main {
   max-width: 1080px
 }
 .walletPanel {
-  background: var(--solera-surface);
-  border: 1px solid var(--solera-border);
+  background: var(--dd-surface);
+  border: 1px solid var(--dd-border);
   border-radius: 10px;
   padding: 35px;
   align-self: start
@@ -904,13 +865,13 @@ main {
 }
 .walletPanel h2>span {
   font-size: 18px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   letter-spacing: 0;
   margin-top: 15px
 }
 .walletPanel>p {
   font-size: 13px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .walletPanel .primary {
   margin-top: 25px
@@ -922,7 +883,7 @@ main {
 }
 .walletExplainer>p {
   font-size: 14px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-bottom: 25px
 }
 .ruleRow {
@@ -935,7 +896,7 @@ main {
 .walletExplainer>small {
   display: block;
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   line-height: 1.6;
   margin-top: 30px
 }
@@ -948,14 +909,13 @@ main {
   align-items: center;
   width: 100%;
   padding: 22px 0;
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   text-align: left
 }
 .receiptIcon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--solera-surface);
   display: grid;
   place-items: center
 }
@@ -966,7 +926,7 @@ main {
 .receiptRow small {
   display: block;
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 6px
 }
 .receiptRow>b {
@@ -979,7 +939,7 @@ main {
 }
 .activityEmpty {
   padding: 28px;
-  border: 1px dashed var(--solera-border);
+  border: 1px dashed var(--dd-border);
   border-radius: 8px;
   font-size: 14px
 }
@@ -988,20 +948,15 @@ main {
   align-items: center;
   gap: 12px;
   margin-top: 15px;
-  color: var(--solera-text)
+  color: var(--dd-text)
 }
 dialog {
   width: min(530px,calc(100% - 32px));
   max-height: 94dvh;
   padding: 0;
   margin: auto;
-  border: 0;
-  background: var(--solera-bg);
-  color: var(--solera-text);
-  border-radius: 14px;
   overflow-y: auto;
-  overscroll-behavior: contain;
-  box-shadow: 0 20px 80px #0003
+  overscroll-behavior: contain
 }
 dialog .close {
   position: absolute;
@@ -1045,7 +1000,7 @@ dialog .close {
 }
 .checkoutStory p {
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin: 7px 0
 }
 .checkoutStory span {
@@ -1069,7 +1024,7 @@ dialog .close {
 .purchaseChoice span {
   display: block;
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 5px
 }
 .priceRows {
@@ -1088,7 +1043,7 @@ dialog .close {
   white-space: nowrap
 }
 .priceRows .priceTotal {
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   padding-top: 19px;
   font-size: 17px
 }
@@ -1097,7 +1052,7 @@ dialog .close {
   align-items: center;
   gap: 13px;
   padding: 14px 0;
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   margin-bottom: 14px
 }
 .paymentMethod>div {
@@ -1109,7 +1064,7 @@ dialog .close {
 .paymentMethod span {
   display: block;
   font-size: 11px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 4px
 }
 .full {
@@ -1128,11 +1083,10 @@ dialog .close {
   font-size: 11px!important;
   line-height: 1.55;
   text-align: center;
-  color: var(--solera-text-muted);
   margin: 13px 0 0!important
 }
 .muted {
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   font-size: 13px
 }
 .successContent {
@@ -1151,7 +1105,7 @@ dialog .close {
 }
 .successContent>p {
   font-size: 14px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .supportReceipt {
   display: grid;
@@ -1184,7 +1138,7 @@ dialog .close {
 }
 .coinOptions span {
   font-size: 12px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .studioToolbar {
   display: flex;
@@ -1203,7 +1157,7 @@ dialog .close {
 }
 .studioAside {
   padding: 26px;
-  background: var(--solera-surface);
+  background: var(--dd-surface);
   border-radius: 8px;
   align-self: start
 }
@@ -1214,7 +1168,7 @@ dialog .close {
 }
 .studioAside p {
   font-size: 13px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin: 14px 0 24px
 }
 .studioAside>div {
@@ -1227,9 +1181,9 @@ dialog .close {
 .studioAside small {
   display: block;
   font-size: 11px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   line-height: 1.6;
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   padding-top: 20px;
   margin-top: 25px
 }
@@ -1255,7 +1209,7 @@ dialog .close {
   flex-shrink: 0
 }
 .projectHeader .overline {
-  font-size: var(--solera-label-size);
+  font-size: var(--dd-label-size);
   letter-spacing: 1px
 }
 .projectHeader h2 {
@@ -1265,7 +1219,7 @@ dialog .close {
 }
 .projectHeader p {
   font-size: 12px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .projectHeader .iconButton {
   margin-left: auto
@@ -1278,7 +1232,7 @@ dialog .close {
   align-items: center;
   gap: 14px;
   padding: 16px 0;
-  border-top: 1px solid var(--solera-border)
+  border-top: 1px solid var(--dd-border)
 }
 .projectEpisode strong {
   font-size: 13px;
@@ -1287,7 +1241,7 @@ dialog .close {
 .projectEpisode small {
   display: block;
   font-size: 11px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin-top: 6px
 }
 .status {
@@ -1319,7 +1273,7 @@ dialog .close {
   display: block;
   width: 100%;
   font-size: 14px;
-  border: 1px solid var(--solera-border);
+  border: 1px solid var(--dd-border);
   padding: 12px;
   margin-top: 8px;
   min-width: 0
@@ -1331,7 +1285,7 @@ dialog .close {
 .editorForm label small {
   font-size: 11px;
   font-weight: 400;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   line-height: 1.5;
   display: block;
   margin-top: 9px
@@ -1342,7 +1296,7 @@ dialog .close {
   gap: 20px
 }
 .fileDrop {
-  border: 1px dashed var(--solera-border);
+  border: 1px dashed var(--dd-border);
   padding: 20px
 }
 .fileDrop>svg {
@@ -1368,7 +1322,7 @@ dialog .close {
   margin: 20px 0
 }
 .draftPreviewEpisode {
-  border-top: 1px solid var(--solera-border);
+  border-top: 1px solid var(--dd-border);
   padding: 25px 0
 }
 .draftPreviewEpisode h3 {
@@ -1376,17 +1330,17 @@ dialog .close {
 }
 .draftPreviewEpisode p {
   font-size: 12px;
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   margin: 10px 0
 }
 .draftPreviewEpisode video {
   width: 100%;
   max-height: 55dvh;
-  background: var(--solera-bg)
+  background: var(--dd-bg)
 }
 .editorForm>p {
   font-size: 14px;
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 #toast {
   position: fixed;
@@ -1400,7 +1354,7 @@ dialog .close {
   opacity: 0;
   pointer-events: none;
   z-index: 30;
-  transition: opacity 180ms var(--solera-ease-out),transform 180ms var(--solera-ease-out)
+  transition: opacity 180ms var(--dd-ease-out),transform 180ms var(--dd-ease-out)
 }
 #toast.show {
   opacity: 1;
@@ -1456,7 +1410,6 @@ dialog .close {
 }
 @media(max-width:800px) {
   .siteHeader {
-    height: 66px;
     padding: 0 24px;
     border: 0
   }
@@ -1484,18 +1437,14 @@ dialog .close {
     justify-content: space-around;
     height: calc(64px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
-    border-top: 1px solid var(--solera-border);
+    border-top: 1px solid var(--dd-border);
     backdrop-filter: blur(15px)
   }
   .bottomNav .navItem {
     flex-direction: column;
     gap: 5px;
     justify-content: center;
-    min-width: 65px;
-    font-weight: 400
-  }
-  .bottomNav .active {
-    font-weight: 600
+    min-width: 65px
   }
   .bottomNav .active svg {
     border-radius: 4px
@@ -1512,14 +1461,12 @@ dialog .close {
   }
   .chips {
     padding: 5px 0 15px;
-    gap: 3px;
     margin: 0 -24px 0 0;
     padding-right: 24px
   }
   .chip {
     min-height: 41px;
-    padding: 10px 15px;
-    font-size: 13px
+    padding: 10px 15px
   }
   .featureWrap {
     margin: 2px 0 0
@@ -1547,7 +1494,7 @@ dialog .close {
     gap: 15px
   }
   .continueCard .overline {
-    font-size: var(--solera-label-size)
+    font-size: var(--dd-label-size)
   }
   .continueCard p {
     font-size: 12px
@@ -1601,7 +1548,7 @@ dialog .close {
     font-size: 31px
   }
   .interactiveBanner .overline {
-    font-size: var(--solera-label-size)
+    font-size: var(--dd-label-size)
   }
   .pageHeading {
     padding: 23px 0
@@ -1681,8 +1628,7 @@ dialog .close {
 }
 @media(max-width:560px) {
   .siteHeader {
-    padding: 0 18px;
-    height: 61px
+    padding: 0 18px
   }
   main {
     padding: 0 18px 88px
@@ -1701,29 +1647,23 @@ dialog .close {
   .featureTrack {
     border-radius: 10px
   }
-  .feature {
-    min-height: 335px
-  }
   .featureImage {
     width: 100%;
     height: 100%;
     opacity: .9
   }
   .featureCopy {
-    padding: 22px;
-    min-height: 335px;
     max-width: 100%;
     justify-content: flex-end
   }
   .featureCopy .overline {
-    font-size: var(--solera-label-size);
     letter-spacing: 1.6px
   }
   .featureCopy h1 {
     margin: 12px 0 8px
   }
   .featureCopy p {
-    color: var(--solera-text-body)
+    color: var(--dd-text-body)
   }
   .featureActions {
     margin-top: 17px;
@@ -1754,7 +1694,6 @@ dialog .close {
     height: 59px
   }
   .continueCard .overline {
-    font-size: var(--solera-label-size);
     letter-spacing: 1.1px
   }
   .continueCard h3 {
@@ -1803,20 +1742,17 @@ dialog .close {
     padding-right: 18px
   }
   .storyCard {
-    flex: 0 0 140px;
-    min-width: 140px
+    flex: 0 0 140px
   }
   .storyCard h3 {
-    font-size: 14px;
     margin-top: 10px;
     line-height: 1.35
   }
   .storyCard p {
-    font-size: 12px;
     margin-top: 4px
   }
   .posterLabel {
-    font-size: var(--solera-label-size);
+    font-size: var(--dd-label-size);
     padding: 5px 6px;
     top: 8px;
     left: 8px
@@ -1863,9 +1799,6 @@ dialog .close {
   }
   .pageHeading {
     padding: 23px 0 22px
-  }
-  .pageHeading h1 {
-    letter-spacing: -1px
   }
   .pageHeading p {
     font-size: 13px;
@@ -1970,7 +1903,7 @@ dialog .close {
     width: 100%
   }
   .seriesCopy>.overline {
-    font-size: var(--solera-label-size)
+    font-size: var(--dd-label-size)
   }
   .seriesCopy h1 {
     margin: 13px auto;
@@ -2089,7 +2022,7 @@ dialog .close {
     width: 34px;
     height: 4px;
     border-radius: 3px;
-    background: var(--solera-border);
+    background: var(--dd-border);
     margin: 10px auto 0
   }
   .checkoutContent,.successContent,.editorForm {
@@ -2100,7 +2033,7 @@ dialog .close {
     margin-bottom: 22px
   }
   .checkoutContent>.overline,.successContent>.overline,.editorForm>.overline {
-    font-size: var(--solera-label-size)
+    font-size: var(--dd-label-size)
   }
   .checkoutStory {
     gap: 14px;
@@ -2186,7 +2119,7 @@ dialog .close {
     margin: 7px 0
   }
   .projectHeader .overline {
-    font-size: var(--solera-label-size);
+    font-size: var(--dd-label-size);
     letter-spacing: .7px
   }
   .projectHeader .iconButton {
@@ -2280,7 +2213,6 @@ dialog .close {
     padding: 18px 28px
   }
   .lockedScreen h2 {
-    font-size: 24px;
     margin: 12px 0
   }
   .lockedScreen p {
@@ -2304,150 +2236,72 @@ dialog .close {
   .featureImage {
     object-position: center 15%
   }
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) {
-    display: grid;
-    grid-template-columns: 230px minmax(0,1fr);
-    gap: 45px;
-    align-items: start
-  }
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) .sectionTitle {
-    display: block;
-    padding-top: 28px
-  }
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) .sectionTitle h2 {
-    line-height: 1.1;
-    max-width: 210px
-  }
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) .sectionTitle p {
-    margin-top: 15px;
-    line-height: 1.7
-  }
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) .viewAll {
-    margin-top: 20px;
-    padding-left: 0
-  }
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) .storyCard {
-    flex-basis: calc((100% - 46px)/3)
-  }
 }
 /* Typography and interface tokens aligned with the existing Solera player theme. */
-body {
-  font-family: var(--solera-font-body);
-  background: radial-gradient(ellipse at 50% 0,#242035 0,transparent 65%),var(--solera-bg);
-  color: var(--solera-text)
-}
-.siteHeader {
-  background: #14121ef2;
-  border-bottom: 1px solid var(--solera-border)
-}
-.logo {
-  font-family: var(--solera-font-display);
-  font-size: 29px;
-  font-weight: 500;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  color: var(--solera-text);
-  gap: 10px;
-  align-items: center
-}
 .logoDot {
   width: 8px;
   height: 8px;
   border-radius: 0;
-  border: 1px solid var(--solera-gold);
+  border: 1px solid var(--dd-accent);
   background: transparent;
   transform: rotate(45deg);
   margin: 0;
   order: -1;
-  box-shadow: 0 0 10px #c8ac751a
+  box-shadow: 0 0 10px #0000
 }
 .logoDot:after {
   content: '';
   display: block;
   width: 1px;
   height: 8px;
-  background: var(--solera-gold);
+  background: var(--dd-accent);
   transform: rotate(-45deg) translate(3px,-1px);
   opacity: .6
 }
-.avatar,.largeAvatar {
-  background: #282336;
-  color: var(--solera-gold);
-  border: 1px solid var(--solera-border);
-  font-family: var(--solera-font-display)
-}
 .navItem {
-  color: var(--solera-text-muted);
+  color: var(--dd-text-muted);
   font-weight: 400
 }
 .navItem.active {
-  color: var(--solera-gold)
-}
-.siteHeader .navItem.active:after {
-  background: var(--solera-gold);
-  height: 1px
+  color: var(--dd-accent)
 }
 .siteHeader .navItem:hover {
-  color: var(--solera-text)
+  color: var(--dd-text)
 }
 .overline,.quietLabel,.sampleBadge,.posterLabel {
-  font-family: var(--solera-font-label);
+  font-family: var(--dd-font-label);
   font-weight: 400;
   letter-spacing: .09em;
-  color: var(--solera-gold)
+  color: var(--dd-accent)
 }
 .desktopIntro h1,.pageHeading h1,.sectionTitle h2,.seriesCopy h1,.featureCopy h1,.comingPanel h2,.walletExplainer h2,.aboutPreview h2,.checkoutContent h2,.successContent h2,.editorForm h2,.lockedScreen h2 {
-  font-family: var(--solera-font-display);
+  font-family: var(--dd-font-display);
   font-weight: 500;
   letter-spacing: .025em;
-  color: var(--solera-text)
-}
-.desktopIntro h1 {
-  font-size: 32px
-}
-.pageHeading h1 {
-  font-size: 34px
-}
-.sectionTitle h2 {
-  font-size: 24px
+  color: var(--dd-text)
 }
 .sectionTitle p,.pageHeading p {
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .featureCopy h1 {
-  font-size: 43px;
-  line-height: 1.16;
   text-wrap: balance
 }
-.seriesCopy h1 {
-  font-size: 39px;
-  line-height: 1.2
-}
 .featureCopy>.overline,.seriesCopy>.overline {
-  color: var(--solera-gold)
-}
-.featureCopy p {
-  color: #d6ccd9
-}
-.feature,.featureTrack {
-  border-radius: 5px
+  color: var(--dd-accent)
 }
 .feature {
-  border: 1px solid var(--solera-border);
-  background: #12101b
+  border: 1px solid var(--dd-border);
+  background: #14141a
 }
 .feature:after {
   content: '';
   position: absolute;
   inset: 12px;
-  border: 1px solid #c7a87326;
+  border: 1px solid #0000;
   pointer-events: none
 }
 .featureCopy {
   z-index: 1
-}
-.featureImage {
-  opacity: .83
 }
 .featureShade {
   background: linear-gradient(90deg,#100d1af5 18%,#14101ed4 43%,#14101e12 78%)
@@ -2455,518 +2309,176 @@ body {
 .feature.rose .featureShade,.feature.violet .featureShade {
   background: linear-gradient(90deg,#100d1af5 18%,#14101ed4 43%,#14101e12 78%)
 }
-.primary {
-  background: var(--solera-action-fill);
-  color: var(--solera-text);
-  border: 1px solid var(--solera-gold);
-  border-radius: var(--solera-radius-control);
-  box-shadow: 0 6px 20px #0002;
-  font-weight: 500;
-  letter-spacing: .01em
-}
-.primary svg {
-  color: var(--solera-gold)
-}
-.primary:hover {
-  background: var(--solera-action-hover);
-  border-color: var(--solera-action-border-hover);
-  color: var(--solera-action-text-hover)
-}
-.secondary {
-  background: #151722d9;
-  border: 1px solid var(--solera-border);
-  color: var(--solera-text);
-  border-radius: var(--solera-radius-control);
-  font-weight: 500
-}
-.secondary:hover {
-  background: var(--solera-surface-hover);
-  border-color: var(--solera-border-hover)
-}
-.featureMore {
-  border-radius: 4px;
-  background: #171623ba;
-  border: 1px solid var(--solera-border);
-  color: var(--solera-gold)
-}
-.featureMore:hover {
-  border-color: var(--solera-mana)
-}
-.chip {
-  border-radius: 4px;
-  border: 1px solid transparent;
-  color: var(--solera-text-muted);
-  font-size: 13px
-}
 .chip.selected {
-  background: var(--solera-action-fill);
-  border-color: var(--solera-gold);
-  color: var(--solera-text)
-}
-.chip:hover:not(.selected) {
-  background: #211d2d;
-  color: var(--solera-text)
+  border-color: var(--dd-accent)
 }
 :focus-visible {
-  outline: 2px solid var(--solera-mana);
+  outline: 2px solid var(--dd-focus);
   outline-offset: 3px
 }
 .iconButton:hover {
-  background: #292537;
-  color: var(--solera-mana)
-}
-.viewAll,.textButton {
-  color: var(--solera-gold);
-  font-weight: 400
-}
-.viewAll:hover,.textButton:hover {
-  color: var(--solera-mana)
-}
-.continueCard {
-  background: linear-gradient(120deg,#1e1a2a,#171d28);
-  border: 1px solid var(--solera-border);
-  border-radius: 5px
-}
-.continueCard h3 {
-  color: var(--solera-text);
-  font-weight: 500
-}
-.continueCard .overline {
-  color: var(--solera-gold)
+  background: #f5f5f6;
+  color: var(--dd-focus)
 }
 .continueCard p {
-  color: var(--solera-text-muted)
-}
-.progressTrack {
-  background: #c7b28622
-}
-.progressTrack>span {
-  background: var(--solera-mana)
-}
-.roundPlay {
-  border-color: #a6e8e444;
-  color: var(--solera-mana)
-}
-.poster {
-  border-radius: 4px;
-  border: 1px solid #c7b28640;
-  box-shadow: 0 8px 25px #0002
+  color: var(--dd-text-muted)
 }
 .storyCard h3 {
-  font-weight: 500;
-  color: var(--solera-text)
-}
-.storyCard p {
-  color: var(--solera-text-muted)
+  color: var(--dd-text)
 }
 .posterLabel {
-  border: 1px solid var(--solera-border);
-  background: #171623ed;
-  color: var(--solera-text);
-  font-size: var(--solera-label-size);
   letter-spacing: 0;
   border-radius: 3px
 }
-.posterText {
-  color: var(--solera-text);
-  font-family: var(--solera-font-display)
-}
-.featureDots button:after {
-  background: #b8adbd55
-}
-.featureDots button.active:after {
-  background: var(--solera-gold)
-}
-.siteFooter {
-  border-color: var(--solera-border)
-}
-.siteFooter .logo {
-  font-size: 22px
-}
 .siteFooter>a:last-child {
-  color: var(--solera-text-muted)
-}
-.searchField {
-  background: var(--solera-surface);
-  border: 1px solid var(--solera-border);
-  border-radius: 4px;
-  color: var(--solera-text-muted)
-}
-.searchField:focus-within {
-  border-color: var(--solera-mana)
-}
-.searchField input {
-  color: var(--solera-text)
+  color: var(--dd-text-muted)
 }
 .searchField input::placeholder {
-  color: #a298aa
+  color: #75757d
 }
 .tabBar {
-  border-color: var(--solera-border)
-}
-.tabBar .active {
-  color: var(--solera-gold)
-}
-.tabBar .active:after {
-  background: var(--solera-gold);
-  height: 1px
-}
-.profileIdentity h2,.projectHeader h2,.studioAside h3 {
-  font-family: var(--solera-font-display);
-  letter-spacing: .02em;
-  font-weight: 500
-}
-.accountBalance,.walletPanel {
-  background: linear-gradient(120deg,#292235,#171d28);
-  border: 1px solid var(--solera-border);
-  border-radius: 5px
-}
-.accountBalance svg,.walletPanel h2>svg {
-  color: var(--solera-gold)
+  border-color: var(--dd-border)
 }
 .accountBalance strong {
-  color: var(--solera-text)
+  color: var(--dd-text)
 }
 .accountBalance>span>span,.walletPanel h2>span {
-  color: var(--solera-text-muted)
-}
-.aboutPreview,.studioAside {
-  background: var(--solera-surface);
-  border: 1px solid var(--solera-border);
-  border-radius: 5px
+  color: var(--dd-text-muted)
 }
 .aboutPreview .previewNote {
-  border-color: var(--solera-border)
+  border-color: var(--dd-border)
 }
 .previewNote strong {
-  color: var(--solera-text)
+  color: var(--dd-text)
 }
 .accountLinks {
-  color: var(--solera-text)
-}
-.accountLinks svg:first-child {
-  color: var(--solera-gold)
-}
-.walletPanel .primary {
-  background: var(--solera-action-fill);
-  color: var(--solera-text)
-}
-.ruleRow svg {
-  color: var(--solera-mana)
+  color: var(--dd-text)
 }
 .receiptIcon,.upcomingIcon {
-  background: var(--solera-surface-raised);
-  color: var(--solera-gold);
-  border: 1px solid var(--solera-border)
+  background: var(--dd-surface-raised);
+  color: var(--dd-accent);
+  border: 1px solid var(--dd-border)
 }
 .receiptRow strong,.receiptRow b {
-  color: var(--solera-text)
+  color: var(--dd-text)
 }
 .activityEmpty {
-  border-color: var(--solera-border);
-  background: var(--solera-surface);
-  color: var(--solera-text-muted)
-}
-.activityEmpty>a {
-  color: var(--solera-gold)
+  color: var(--dd-text-muted)
 }
 .episode {
-  border-color: var(--solera-border)
+  border-color: var(--dd-border)
 }
 .episode h3 {
-  color: var(--solera-text)
-}
-.episodeRight {
-  color: var(--solera-gold)
+  color: var(--dd-text)
 }
 .episodeThumb {
-  border: 1px solid var(--solera-border)
+  border: 1px solid var(--dd-border)
 }
 .upcoming h3 {
-  color: var(--solera-text-muted)
-}
-.watching {
-  background: #0b0912;
-  color: var(--solera-text)
-}
-.watchStage {
-  background: #08070e
+  color: var(--dd-text-muted)
 }
 .watchHeader {
-  border-bottom: 1px solid var(--solera-border-subtle)
-}
-.watchHeader h1 {
-  font-family: var(--solera-font-body);
-  color: var(--solera-text)
-}
-.watchHeader p {
-  color: var(--solera-text-muted)
-}
-.watchControls .secondary {
-  border-color: var(--solera-border);
-  color: var(--solera-text)
-}
-.watchControls .secondary:hover {
-  background: var(--solera-surface-raised)
+  border-bottom: 1px solid var(--dd-border-subtle)
 }
 .lockedScreen .overline {
-  color: var(--solera-gold)
+  color: var(--dd-accent)
 }
 .lockedScreen p {
-  color: var(--solera-text-muted)
+  color: var(--dd-text-muted)
 }
 .dialog,dialog {
-  background: var(--solera-surface);
-  border: 1px solid var(--solera-border);
+  background: var(--dd-surface);
+  border: 1px solid var(--dd-border);
   border-radius: 6px;
   box-shadow: 0 24px 90px #0009
 }
-dialog::backdrop {
-  background: #090711bd;
-  backdrop-filter: blur(5px)
-}
 .sheetHandle {
-  background: #c7b28655
+  background: #dedee3
 }
 .checkoutContent h2,.successContent h2,.editorForm h2 {
   font-size: 27px;
   line-height: 1.25
 }
-.checkoutContent>.overline,.successContent>.overline,.editorForm>.overline {
-  color: var(--solera-gold)
-}
-.checkoutStory h3 {
-  color: var(--solera-text);
-  font-weight: 500
-}
 .checkoutStory span {
-  color: var(--solera-text-muted)
-}
-.purchaseChoice {
-  background: linear-gradient(120deg,#272235,#192330);
-  border: 1px solid var(--solera-gold);
-  border-radius: 4px
+  color: var(--dd-text-muted)
 }
 .purchaseChoice>svg {
-  color: var(--solera-gold)
+  color: var(--dd-accent)
 }
 .purchaseChoice>svg:last-child {
-  color: var(--solera-mana)
+  color: var(--dd-focus)
 }
 .priceRows .priceTotal {
-  border-color: var(--solera-border)
-}
-.priceRows b,.priceRows strong {
-  color: var(--solera-text)
+  border-color: var(--dd-border)
 }
 .paymentMethod {
-  border-color: var(--solera-border)
-}
-.paymentMethod>svg {
-  color: var(--solera-gold)
-}
-.paymentMethod strong {
-  color: var(--solera-text)
-}
-.waitButton {
-  color: var(--solera-mana)
-}
-.successIcon {
-  background: #223239;
-  border: 1px solid #a6e8e455;
-  color: var(--solera-mana)
+  border-color: var(--dd-border)
 }
 .supportReceipt {
-  background: var(--solera-surface-raised);
-  border: 1px solid var(--solera-border);
-  border-radius: 4px;
-  color: var(--solera-text-muted)
-}
-.supportReceipt strong {
-  color: var(--solera-text)
-}
-.coinOptions button {
-  background: #14131f;
-  border: 1px solid var(--solera-border);
-  border-radius: 4px;
-  color: var(--solera-text)
-}
-.coinOptions button.selected {
-  background: #292336;
-  border-color: var(--solera-gold)
-}
-.coinOptions svg {
-  color: var(--solera-gold)
+  border-radius: 4px
 }
 .sampleBadge {
-  background: #242031;
-  color: var(--solera-gold);
-  border: 1px solid var(--solera-border);
-  border-radius: 3px;
   font-size: 10px
-}
-.projectCard {
-  background: var(--solera-surface);
-  border: 1px solid var(--solera-border);
-  border-radius: 5px
 }
 .projectHeader h2 {
   font-size: 22px;
-  color: var(--solera-text)
-}
-.projectHeader .overline {
-  color: var(--solera-gold)
-}
-.projectPlaceholder {
-  background: #252132;
-  color: var(--solera-gold)
-}
-.projectEpisode>span:first-child {
-  color: var(--solera-mana)
-}
-.status {
-  background: #252132;
-  color: var(--solera-text-muted)
-}
-.status.scheduled {
-  background: #223239;
-  color: var(--solera-mana)
+  color: var(--dd-text)
 }
 .projectFooter {
-  background: var(--solera-surface-inset);
-  border-top: 1px solid var(--solera-border)
+  border-top: 1px solid var(--dd-border)
 }
 .studioAside small {
-  border-color: var(--solera-border)
+  border-color: var(--dd-border)
 }
 .editorForm input,.editorForm textarea,.editorForm select {
-  background: var(--solera-surface-inset);
-  color: var(--solera-text);
-  border-color: var(--solera-border);
   border-radius: 4px
 }
 .editorForm input::placeholder,.editorForm textarea::placeholder {
-  color: #9e92aa
+  color: #75757d
 }
 .fileDrop {
-  background: #201d2b;
-  border-color: #c8ac7566;
   border-radius: 4px
-}
-.fileDrop>svg {
-  color: var(--solera-gold)
 }
 .fileDrop input {
   background: transparent
 }
-.checkboxLabel input {
-  accent-color: var(--solera-violet)
-}
 #toast {
-  background: var(--solera-surface-raised);
-  color: var(--solera-text);
-  border: 1px solid var(--solera-border);
-  border-radius: 4px;
   box-shadow: 0 12px 30px #0006
 }
 @media(hover:hover) and (pointer:fine) {
   .episode:hover {
-    background: #1b1927
+    background: #f7f7f8
   }
   .storyCard:hover .poster {
-    border-color: #c8ac7588
+    border-color: #bbb
   }
 }
 @media(min-width:1000px) {
-  .shelf:has(.rail>.storyCard:nth-child(3):last-child) .sectionTitle h2 {
-    font-size: 30px
-  }
 }
 @media(max-width:800px) {
-  .siteHeader {
-    border-bottom: 1px solid var(--solera-border-subtle)
-  }
   .logo {
     font-size: 26px
   }
-  .bottomNav {
-    background: #15131ff5;
-    border-color: var(--solera-border)
-  }
   .bottomNav .navItem {
-    color: var(--solera-text-muted);
     font-size: 11px
   }
-  .bottomNav .active {
-    color: var(--solera-gold)
-  }
-  .bottomNav .active svg {
-    background: var(--solera-action-bg);
-    box-shadow: 0 0 0 5px var(--solera-action-bg)
-  }
   .chip.selected {
-    background: var(--solera-action-fill);
-    border-color: var(--solera-gold);
-    color: var(--solera-text)
-  }
-  .featureCopy h1 {
-    font-size: 34px
-  }
-  .sectionTitle h2 {
-    font-size: 22px
-  }
-  .pageHeading h1 {
-    font-size: 28px
+    border-color: var(--dd-accent)
   }
 }
 @media(max-width:560px) {
-  .siteHeader .logo {
-    font-size: 25px
-  }
   .logoDot {
     width: 7px;
     height: 7px
   }
-  .featureCopy h1 {
-    font-size: 29px;
-    line-height: 1.15;
-    max-width: 300px;
-    letter-spacing: .015em
-  }
-  .featureShade,.feature.rose .featureShade,.feature.violet .featureShade {
-    background: linear-gradient(0deg,#100d1a 0%,#100d1ae6 30%,#100d1a33 80%)
-  }
-  .featureCopy p {
-    font-size: 12px
-  }
-  .feature {
-    border-radius: 4px
-  }
-  .sectionTitle h2 {
-    font-size: 21px
-  }
-  .seriesCopy h1 {
-    font-size: 30px;
-    line-height: 1.2
-  }
-  .pageHeading h1 {
-    font-size: 28px
-  }
   .seriesActions .primary,.seriesActions .secondary {
     font-size: 14px
-  }
-  .checkoutContent h2,.successContent h2,.editorForm h2 {
-    font-size: 25px
   }
   .poster {
     border-radius: 4px
   }
   dialog {
-    border-radius: 12px 12px 0 0;
     border-bottom: 0
-  }
-  .lockedScreen h2 {
-    font-size: 27px
   }
   .walletExplainer h2,.aboutPreview h2 {
     font-size: 25px
@@ -2974,20 +2486,140 @@ dialog::backdrop {
   .projectHeader h2 {
     font-size: 19px
   }
-  .continueCard h3 {
-    font-size: 13px
-  }
-  .siteHeader .logo {
-    letter-spacing: .1em
-  }
-}
-.featureActions .primary,.seriesActions .primary {
-  font-family: var(--solera-font-display);
-  font-size: 14px;
-  letter-spacing: .025em
 }
 @media (max-height:500px) {
-  .lockedScreen h2 {
-    font-size: 24px;
-  }
 }
+body{font-family:var(--dd-font-body);background:#fff;color:var(--dd-text);-webkit-font-smoothing:antialiased}
+.siteHeader{height:88px;background:#fff;border-bottom:1px solid #eee;gap:56px}
+.logo{display:flex;flex-direction:column;align-items:flex-start;gap:0;font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:23px;line-height:.88;letter-spacing:-1.1px;text-transform:uppercase;color:#111}
+.brandTop b{color:#d92349;font-weight:900}
+.brandBottom{margin-top:3px}
+.logoDot{display:none}
+.siteHeader .navItem{color:#5d5d65;font-weight:600}
+.siteHeader .navItem.active{color:#111}
+.siteHeader .navItem.active:after{background:#111;height:3px}
+.studioLink{color:#333}
+.avatar,.largeAvatar{font-family:Arial,Helvetica,sans-serif;background:#f6edf0;color:#b71c3e;border:0}
+.headerTools{gap:14px}
+.desktopIntro{padding-top:30px}
+.desktopIntro .overline{display:none}
+.desktopIntro h1{font-family:Arial,Helvetica,sans-serif;font-size:34px;font-weight:800;letter-spacing:-1.1px}
+.homeTop{align-items:center}
+.chips{gap:22px;padding-bottom:12px}
+.chip{border:0;border-radius:0;padding:12px 2px;font-size:15px;color:#777;position:relative;font-weight:600;background:transparent}
+.chip.selected{color:#111;background:transparent;border:0}
+.chip.selected:after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:#d92349}
+.chip:hover:not(.selected){background:transparent;color:#111}
+.feature,.featureTrack{border-radius:9px;border:0}
+.feature:after{display:none}
+.featureCopy h1{font-family:Arial,Helvetica,sans-serif;font-size:49px;line-height:1.02;letter-spacing:-1.8px;font-weight:800;color:#fff}
+.featureCopy p{color:#fff;font-size:15px}
+.featureCopy>.overline{color:#fff;letter-spacing:1px;font-weight:700;font-size:11px}
+.featureImage{opacity:1}
+.featureShade,.feature.rose .featureShade,.feature.violet .featureShade{background:linear-gradient(90deg,#15151d 17%,#15151dda 43%,#15151d00 85%)}
+.featureCopy{padding:38px 44px;min-height:360px}
+.feature{min-height:360px}
+.featureMore{background:#ffffff18;color:#fff;border:1px solid #ffffff50;border-radius:6px}
+.featureMore:hover{background:#ffffff30;border-color:#fff}
+.primary{background:#d92349;border:1px solid #d92349;color:#fff;box-shadow:none;font-weight:700;border-radius:6px;font-family:Arial,Helvetica,sans-serif;letter-spacing:0}
+.primary svg{color:inherit}
+.primary:hover{background:#be193c;border-color:#be193c;color:#fff}
+.secondary{background:#fff;border:1px solid #dddde2;color:#29292f;font-weight:600;border-radius:6px}
+.secondary:hover{background:#f6f6f8;border-color:#bbb}
+.featureActions .primary,.seriesActions .primary{font-family:Arial,Helvetica,sans-serif;font-size:14px;letter-spacing:0}
+.featureDots button:after{background:#d8d8dc}
+.featureDots button.active:after{background:#d92349}
+.continueCard{border:0;background:#f5f5f7;border-radius:8px}
+.continueCard .overline{color:#777;font-weight:700;letter-spacing:.8px;font-size:10px}
+.continueCard h3{color:#18181d;font-weight:700}
+.progressTrack{background:#e0e0e5}
+.progressTrack>span{background:#d92349}
+.roundPlay{color:#333;border-color:#d8d8df}
+.sectionTitle h2,.pageHeading h1,.seriesCopy h1,.comingPanel h2,.walletExplainer h2,.aboutPreview h2,.checkoutContent h2,.successContent h2,.editorForm h2{font-family:Arial,Helvetica,sans-serif;font-weight:750;letter-spacing:-.7px;color:#17171b}
+.sectionTitle h2{font-size:25px}
+.pageHeading h1{font-size:34px}
+.seriesCopy h1{font-size:41px;line-height:1.08}
+.viewAll,.textButton{color:#5f5f67;font-weight:500}
+.viewAll:hover,.textButton:hover{color:#d92349}
+.shelf{margin:32px 0 42px}
+.rail{gap:24px}
+.storyCard{flex:0 0 225px}
+.poster{border-radius:6px;border:0;box-shadow:none}
+.storyCard h3{font-size:16px;font-weight:700;line-height:1.3}
+.storyCard p{color:#777;font-size:13px}
+.posterLabel{background:#fffffff0;border:0;color:#333;font-family:Arial,Helvetica,sans-serif;font-size:10px}
+.posterText{font-family:Arial,Helvetica,sans-serif;color:#fff;font-weight:800;letter-spacing:-1px}
+.posterText i{font-style:normal}
+.posterText span{color:#fff}
+.overline,.quietLabel,.sampleBadge{font-family:Arial,Helvetica,sans-serif;letter-spacing:.7px}
+.seriesCopy>.overline{color:#d92349;font-weight:700}
+.seriesMeta{color:#73737b}
+.seriesCover{box-shadow:none}
+.episodeRight{color:#d92349}
+.episode:hover{background:#fafafa}
+.episode h3{font-weight:600}
+.upcomingIcon{background:#f2f2f4;color:#999;border:0}
+.tabBar .active{color:#111}
+.tabBar .active:after{background:#d92349;height:3px}
+.profileIdentity h2,.projectHeader h2,.studioAside h3{font-family:Arial,Helvetica,sans-serif;font-weight:700;letter-spacing:-.4px}
+.accountBalance,.walletPanel{background:#fff3f5;border:1px solid #f5e1e7;border-radius:8px}
+.accountBalance svg,.walletPanel h2>svg{color:#d92349}
+.aboutPreview,.studioAside{background:#f7f7f9;border:0;border-radius:8px}
+.accountLinks svg:first-child{color:#555}
+.walletPanel .primary{background:#d92349;color:#fff}
+.ruleRow svg{color:#d92349}
+.receiptIcon{border:0;background:#f5f5f7;color:#333}
+.activityEmpty{background:#fafafa;border-color:#ddd}
+.activityEmpty>a{color:#d92349}
+dialog{background:#fff;color:#17171b;border:0;border-radius:12px;box-shadow:0 20px 70px #0003}
+dialog::backdrop{background:#11111688;backdrop-filter:blur(3px)}
+.checkoutContent>.overline,.successContent>.overline,.editorForm>.overline{color:#d92349;font-weight:700}
+.checkoutStory h3{color:#17171b;font-weight:700}
+.purchaseChoice{background:#fff5f7;border:1px solid #e590a4;border-radius:7px}
+.purchaseChoice>svg,.purchaseChoice>svg:last-child{color:#d92349}
+.priceRows b,.priceRows strong{color:#17171b}
+.paymentMethod>svg{color:#555}
+.paymentMethod strong{color:#17171b}
+.waitButton{color:#65656e}
+.successIcon{background:#fff0f4;border:0;color:#d92349}
+.supportReceipt{background:#f6f6f8;border:0;color:#666}
+.supportReceipt strong{color:#17171b}
+.coinOptions button{background:#fff;border:1px solid #ddd;color:#17171b;border-radius:7px}
+.coinOptions button.selected{background:#fff5f7;border-color:#d92349}
+.coinOptions svg{color:#d92349}
+.fineprint{color:#777}
+.sampleBadge{background:#f3f3f6;color:#777;border:0;border-radius:4px}
+.projectCard{background:#fff;border:1px solid #e5e5ea;border-radius:8px}
+.projectHeader .overline{color:#999}
+.projectPlaceholder{background:#f6f6f8;color:#777}
+.projectEpisode>span:first-child{color:#999}
+.status{background:#f3f3f6;color:#777}
+.status.scheduled{background:#eaf7f0;color:#277750}
+.projectFooter{background:#fafafa;border-color:#eee}
+.editorForm input,.editorForm textarea,.editorForm select{background:#fff;color:#17171b;border-color:#ddd}
+.fileDrop{background:#fafafa;border-color:#ccc}
+.fileDrop>svg{color:#777}
+.checkboxLabel input{accent-color:#d92349}
+.searchField{background:#f5f5f7;border:1px solid transparent;border-radius:8px;color:#888}
+.searchField:focus-within{border-color:#d92349}
+.searchField input{color:#17171b}
+.searchField input::placeholder,.editorForm input::placeholder,.editorForm textarea::placeholder{color:#888}
+.siteFooter{border-color:#eee}
+.siteFooter .logo{font-size:18px}
+.siteFooter p,.siteFooter>a:last-child{color:#888}
+.watching{background:#111116;color:#fff;color-scheme:dark}
+.watchStage{background:#08080b}
+.watchHeader{border-color:#303038}
+.watchHeader h1{color:#fff;font-family:Arial,Helvetica,sans-serif}
+.watchHeader p{color:#bcbcc5}
+.watchControls .secondary{color:#fff;background:#22222a;border-color:#3a3a44}
+.watchControls .secondary:hover{background:#303039}
+.lockedScreen h2{color:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:750;letter-spacing:-.6px}
+.lockedScreen .overline,.lockedScreen p{color:#eee}
+.watching dialog{color-scheme:light}
+#toast{background:#24242b;color:#fff;border:0;border-radius:8px}
+.watching .iconButton:hover{background:#33333c;color:#fff}
+@media(min-width:1000px){.shelf{display:block}.sectionTitle{display:flex}.rail{justify-content:flex-start}.storyCard{flex-basis:calc((100% - 48px)/3);max-width:300px}.sectionTitle h2{font-size:25px;max-width:none}.featureCopy h1{max-width:540px}}
+@media(max-width:800px){.siteHeader{height:66px;border-bottom:1px solid #eee}.siteHeader .logo{font-size:19px}.bottomNav{background:#fffffff5;border-color:#eee}.bottomNav .navItem{color:#8a8a92;font-weight:500}.bottomNav .active{color:#d92349;font-weight:700}.bottomNav .active svg{background:transparent;box-shadow:none}.chip.selected{background:transparent;border:0;color:#111}.chips{gap:25px;padding-top:3px;padding-bottom:13px}.chip{font-size:14px}.featureCopy h1{font-size:37px}.sectionTitle h2{font-size:23px}.pageHeading h1{font-size:30px}}
+@media(max-width:560px){.siteHeader .logo{font-size:18px;letter-spacing:-.6px}.siteHeader{height:64px}.logo .brandBottom{margin-top:2px}.featureCopy{min-height:315px;padding:22px}.feature{min-height:315px;border-radius:8px}.featureCopy h1{font-size:33px;line-height:1.04;font-weight:800;max-width:290px;letter-spacing:-1.1px}.featureCopy p{font-size:13px}.featureCopy .overline{font-size:10px}.featureShade,.feature.rose .featureShade,.feature.violet .featureShade{background:linear-gradient(0deg,#14141b 0%,#14141bbf 35%,#14141b00 90%)}.sectionTitle h2{font-size:23px;font-weight:750}.storyCard{flex-basis:145px;min-width:145px;max-width:none}.storyCard h3{font-size:14px;font-weight:700}.storyCard p{font-size:12px}.pageHeading h1{font-size:30px;letter-spacing:-.9px}.seriesCopy h1{font-size:31px;line-height:1.1}.checkoutContent h2,.successContent h2,.editorForm h2{font-size:27px}.profileIdentity h2,.projectHeader h2{font-size:21px}.continueCard .overline{font-size:9px}.continueCard h3{font-size:13px}.continueSection{margin-top:6px}.shelf{margin-top:28px}.featureActions .primary{font-size:14px}dialog{border-radius:15px 15px 0 0}.lockedScreen h2{font-size:29px}}
+@media(max-height:500px){.lockedScreen h2{font-size:24px}}

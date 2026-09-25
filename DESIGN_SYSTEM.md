@@ -1,6 +1,6 @@
 # Shared interface design
 
-The main website, studio library, Solera player, frame gallery and media platform share one foundation:
+The main website, studio library, Solera player and frame gallery share one foundation:
 
 `public/shared/solera-foundation.css`
 
@@ -39,3 +39,7 @@ Cinematic effects and supplied art can contain other colors. Cream portrait back
 ## Verification
 
 Check main entry, studio library, frame gallery, game title/selection/settings/dialogue, media Originals/Explore/detail/player, checkout and creator forms at desktop and mobile sizes. Include a narrow viewport and short landscape. Verify focus, dark native controls, no clipping, and no unresolved foundation variables.
+
+## Death & Desire
+
+The media platform uses a separate light, WEBTOON-inspired reader interface, per the latest product direction. Its own public/media-preview/style.css defines --dd-* semantic tokens. Do not load the Solera foundation into this iframe or apply fantasy display fonts to the media app. Its two category tabs are Originals and Explore. The earlier shared dark treatment was rejected for this platform.
