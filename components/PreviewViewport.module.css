@@ -1,0 +1,63 @@
+.shell {
+  --preview-bg: #f2f2f5;
+  --preview-surface: #fff;
+  --preview-text: #24242b;
+  --preview-muted: #777780;
+  --preview-line: #e0e0e6;
+  --preview-accent: #d92349;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--preview-bg);
+  color: var(--preview-text);
+  font: 13px/1.4 system-ui, sans-serif;
+}
+.shell[data-theme="dark"] {
+  --preview-bg: #090811;
+  --preview-surface: #171622;
+  --preview-text: #f3e7cd;
+  --preview-muted: #b8adbd;
+  --preview-line: #c7b28644;
+  --preview-accent: #c8ac75;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: calc(5px + env(safe-area-inset-top)) 16px 5px;
+  background: var(--preview-surface);
+  border-bottom: 1px solid var(--preview-line);
+  flex-shrink: 0;
+}
+.label { color: var(--preview-muted); font-size: 12px; }
+.switcher { display: flex; gap: 4px; }
+.switcher button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 9px 14px;
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--preview-muted);
+  cursor: pointer;
+}
+.switcher button[aria-pressed="true"] { color: var(--preview-accent); border-color: var(--preview-line); background: var(--preview-bg); }
+.switcher button:hover { color: var(--preview-text); }
+.switcher button:focus-visible { outline: 2px solid var(--preview-accent); outline-offset: 2px; }
+.switcher svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.stage { flex: 1; min-height: 0; min-width: 0; display: grid; place-items: center; overflow: hidden; }
+.viewport { position: relative; flex-shrink: 0; background: var(--preview-surface); }
+.viewport iframe { display: block; position: absolute; inset: 0; border: 0; transform-origin: top left; background: var(--preview-surface); }
+.stage[data-mode="app"] .viewport { box-shadow: 0 0 0 1px var(--preview-line), 0 8px 35px #0002; }
+@media (max-width: 450px) {
+  .toolbar { gap: 6px; padding-left: 10px; padding-right: 10px; }
+  .label { font-size: 11px; }
+  .switcher button { padding: 9px 10px; gap: 6px; font-size: 12px; }
+}

@@ -1,3 +1,4 @@
+import PreviewViewport from '@/components/PreviewViewport';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
  title: 'Death & Desire | Watch stories',
@@ -9,6 +10,6 @@ export const metadata: Metadata = {
  twitter: { title: 'Death & Desire | Watch stories', description: 'Stories worth staying for.', images: [] },
 };
 export default function Page() {
- return <iframe title="Death & Desire" src="/media-preview/index.html" allow="autoplay; fullscreen" style={{position:'fixed',inset:0,width:'100%',height:'100dvh',border:0,background:'#ffffff'}} />;
+ return <PreviewViewport title="Death & Desire" src="/media-preview/index.html" storageKey="death-desire-preview-layout" />;
 }
 
