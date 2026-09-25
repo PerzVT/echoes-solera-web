@@ -1,0 +1,86 @@
+
+@font-face{font-family:Solera Display;src:url('assets/fonts/cinzel-latin-cc014fcb.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
+@font-face{font-family:Solera Mono;src:url('assets/fonts/space-mono-latin-dc0d9adb.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+:root{--font-display:'Solera Display',Georgia,serif;--font-mono:'Solera Mono',monospace;--ink:#0e0d17;--surface:#171622;--surface-raised:#202130;--ivory:#f3e7cd;--muted:#b8adbd;--gold:#c8ac75;--violet:#b99bd9;--mana:#a6e8e4;--line:#c7b28644;--control-radius:4px;--space:8px}
+body{background:var(--ink);color:var(--ivory)}#app{background:radial-gradient(ellipse at 50% 0,#242035 0,transparent 65%),var(--ink)}
+.ui-icon{display:block;width:18px;height:18px;flex:0 0 18px}.button-label{min-width:0}.button-arrow{margin-left:auto;width:16px;height:16px;flex-basis:16px}
+.game-menu button,.playback-nav button,.sound-cue,.cover-sound,.stage .choices button,.letterbox-dock .choices button,.begin-journey{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border-radius:var(--control-radius);border:1px solid var(--line);background:#151722eb;color:var(--ivory);font:500 13px/1.35 system-ui,sans-serif;box-shadow:none;text-shadow:none;transition:background 150ms ease,border-color 150ms ease,color 150ms ease}
+.choices button .button-label{flex:1;text-align:left}.choices button::after{content:none!important}.choices button .ui-icon:first-child:not(.button-arrow){color:var(--mana)}
+.stage .choices button,.letterbox-dock .choices button{min-height:48px;padding:12px 20px;min-width:180px;font-size:14px;background:linear-gradient(135deg,#223239f2,#1a2431f2);border-color:#a6e8e466}
+.stage .choices[data-count="1"] button{min-width:220px}.choices button.primary{color:var(--ivory)}
+.choices button:hover,.choices button:focus-visible,.begin-journey:hover{background:#30434c;border-color:var(--mana);color:#fff6e6}
+.playback-nav button:hover:not(:disabled),.sound-cue:hover,.game-menu button:hover{background:#2b293a;border-color:#d7c39799}
+button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--mana)!important;outline-offset:3px}
+.stage .text-overlay .dialog.has-copy{border:1px solid var(--line);border-top:1px solid #d3b47b88;border-radius:4px;background:linear-gradient(120deg,#171623ef,#111b25ed);padding:16px 24px;box-shadow:0 8px 28px #0004}
+.stage .text-overlay .speaker{font:10px/1.4 var(--font-mono);letter-spacing:.1em;color:var(--gold);margin-bottom:8px}.stage .text-overlay .dialog.has-copy #caption{font:400 clamp(14px,1.3cqw,18px)/1.55 system-ui,sans-serif;color:#f0eced}
+.stage .scene-heading h1{font-family:var(--font-display);font-weight:500;letter-spacing:.02em;color:var(--ivory)}
+.stage .world-label{font-family:var(--font-display);border-radius:3px;background:#171824df;border-color:var(--line);color:var(--ivory);padding:8px 14px}
+.world-glyph .ui-icon{width:24px;height:24px}.stage[data-scene=classes] .world-glyph .ui-icon{width:28px;height:28px}.stage[data-scene=classes] .world-label{font-family:var(--font-display);font-size:clamp(6px,1.2cqw,19px);background:transparent}
+.stage[data-scene=classes] .scene-heading{background:#171623ec;border-color:var(--line);border-radius:4px;padding:12px 20px}
+.game-menu{background:none;color:var(--ivory)}.game-menu[open]{background:#14131ff5;border-color:var(--line);border-radius:6px;box-shadow:0 12px 40px #0006;padding:12px 16px}.game-menu>summary{width:44px;margin-left:auto}.game-menu .brand{font-family:var(--font-display);color:var(--ivory)}.game-menu .brand span{font-family:var(--font-mono);color:var(--muted)}
+.game-menu select{font:12px var(--font-mono);background:#201e2d;color:var(--ivory);border-color:var(--line)}.game-menu .review-link{color:var(--mana);display:inline-flex;align-items:center;padding:10px 0;text-decoration:none}.game-menu .review-link:hover{text-decoration:underline}
+.playback-nav #clipPlay{min-width:88px}.playback-nav #clipSkip{background:#26333d;border-color:#a6e8e477}.playback-nav button:disabled{opacity:.32}.playback-nav{gap:8px}.video-controls{gap:8px}
+.sound-cue,.cover-sound{font-size:12px;padding:10px 12px}.begin-journey{min-height:56px;min-width:250px;padding:14px 24px;border-color:var(--gold);font:500 15px var(--font-display);background:linear-gradient(120deg,#2a2535,#1a2430);gap:16px}.begin-journey .ui-icon{color:var(--gold)}
+.identity .id-type,.identity small{font-family:var(--font-mono)}
+#app[data-ready=false] .identity{visibility:hidden}
+@media(prefers-reduced-motion:reduce){button{transition:none!important}}
+
+/* Desktop: cinematic artwork, contextual overlays and in-world targets. */
+.story-content{display:contents}.mobile-reading{display:none}.stage::before{display:none}.stage{background:transparent}
+.experience-header{position:absolute;top:0;left:0;right:0;height:76px;z-index:24;padding:20px 24px;pointer-events:none;background:linear-gradient(#100d1aa8,transparent)}
+.experience-brand{display:flex;align-items:center;gap:12px;color:var(--ivory);font:500 18px/1 var(--font-display);letter-spacing:.07em}.experience-brand .ui-icon{width:26px;height:32px;color:var(--gold)}.experience-brand small{display:block;margin-top:6px;font:8px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+#app[data-screen=cover] .experience-header,#app[data-screen=cover] #letterboxDock{display:none!important}
+#app:not(.app-layout) .stage .text-overlay{bottom:152px;left:8%;right:8%}#app:not(.app-layout) .stage .action-dock{bottom:88px}
+#app:not(.app-layout) .stage.selection .text-overlay{top:12%;bottom:auto}#app:not(.app-layout) .stage[data-scene=classes] .text-overlay{bottom:9%;top:auto}
+#app[data-playing=true]:not(.app-layout) .experience-brand{opacity:0}
+.settings-heading{margin:8px 0 20px}.settings-heading h2{font:500 22px var(--font-display);margin:0;color:var(--ivory)}.settings-heading p{font:9px var(--font-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:6px 0 0}
+.player-settings{display:grid;gap:8px}.player-settings button{width:100%;justify-content:flex-start}.presenter-tools{border-top:1px solid var(--line);margin-top:20px;padding-top:12px}.presenter-tools>summary{font:12px system-ui;cursor:pointer;color:var(--muted);padding:10px 0;min-height:44px}.presenter-tools .tools{display:grid;grid-template-columns:1fr 1fr}.presenter-tools .review-link{grid-column:1/-1}.game-menu footer{font-size:10px;color:var(--muted)}.game-menu .scene-jump{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin-top:12px}.game-menu select{max-width:100%;width:100%;min-height:44px}
+.game-menu[open]{width:340px}.game-menu>summary{list-style:none}.game-menu>summary::-webkit-details-marker{display:none}
+/* Mobile and narrow windows: one app reading area with a persistent choice dock. */
+.app-layout{--nav-height:60px;--header-height:68px;--dock-height:80px;background:radial-gradient(ellipse at 50% 0,#262136 0,transparent 55%),#111019}
+.app-layout .experience-header{height:calc(68px + env(safe-area-inset-top));padding:calc(16px + env(safe-area-inset-top)) 16px 12px;background:#15131fea;border-bottom:1px solid #c7b2861c}
+.app-layout .experience-brand{font-size:17px;gap:9px}.app-layout .experience-brand small{font-size:8px;margin-top:5px}.app-layout .experience-brand .ui-icon{width:22px;height:28px}
+.app-layout .sound-cue{top:calc(10px + env(safe-area-inset-top));right:64px;min-width:44px;width:44px;height:44px;padding:0;background:transparent;border-color:transparent}.app-layout .sound-cue .button-label{display:none}
+.app-layout .game-menu{top:calc(10px + env(safe-area-inset-top));right:12px;max-height:calc(100% - 88px - env(safe-area-inset-top));z-index:40}.app-layout .game-menu>summary{padding:10px;color:var(--ivory)}
+.app-layout #stage{position:absolute;inset:var(--header-height) 0 calc(var(--nav-height) + var(--dock-height));display:block;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a992bb55 transparent}
+.app-layout #storyContent{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:12px 0 20px}
+.app-layout .picture{width:100%;aspect-ratio:16/9;flex:none;border-top:1px solid #c7b28626;border-bottom:1px solid #c7b28626}
+.app-layout .picture .vignette{background:linear-gradient(transparent 85%,#11101944)}
+.app-layout .mobile-reading{display:block;padding:20px 20px 0}.app-layout #storyText{position:static!important;display:block;max-height:none;text-align:left;pointer-events:auto;text-shadow:none;animation:none!important}
+.app-layout #storyText .scene-heading{display:block!important;background:none;border:0;padding:0;margin:0 0 12px}
+.app-layout #storyText .scene-heading h1{display:block!important;font:500 22px/1.3 var(--font-display);margin:0;color:var(--ivory);letter-spacing:0;text-shadow:none}
+.app-layout #storyText .dialog.has-copy{display:block;width:100%;max-width:none;padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none}
+.app-layout #storyText .dialog:not(.has-copy){display:none}.app-layout #storyText .speaker{font:10px/1.4 var(--font-mono);margin:0 0 8px;color:var(--gold)}
+.app-layout #storyText .dialog.has-copy #caption{display:block;font:400 15px/1.6 system-ui,sans-serif;margin:0;color:#dad5e0}
+.app-layout .stage.cinematic:has(video:not([hidden])) #storyText .dialog{display:none}.app-layout .stage.cinematic.clip-playing #storyText{display:block}
+.app-layout #mobileArtifact{margin:16px auto 0;width:min(280px,100%)}.app-layout #mobileArtifact .identity{width:100%;max-width:none;min-width:0;margin:0}
+.app-layout #identityHome,.app-layout #imageActions{display:none}.app-layout .hotspots,.app-layout .world-target{pointer-events:none}.app-layout .selection .world-label{display:none}.app-layout .stage[data-scene=classes] .world-glyph{display:none}
+.app-layout #letterboxDock{position:absolute;left:0;right:0;bottom:var(--nav-height);top:auto!important;max-height:none!important;display:block;padding:16px 16px 12px;background:linear-gradient(#15131feb,#171522);border-top:1px solid var(--line);z-index:22;overflow:visible}
+.app-layout #letterboxDetails{display:none}.app-layout #letterboxActions{width:100%}.app-layout #letterboxDock .choices{display:grid!important;grid-template-columns:1fr;gap:8px}
+.app-layout #letterboxDock .choices button{min-width:0;width:100%;min-height:52px;border-radius:4px;padding:12px 16px;font:500 14px/1.4 system-ui,sans-serif;background:#212b35;border:1px solid #a6e8e455;color:var(--ivory);box-shadow:none}
+.app-layout #letterboxDock .choices button .button-label{text-align:left}.app-layout #letterboxDock .choices button:hover{background:#2b3a45;border-color:var(--mana)}
+.app-layout:has(.stage.selection) #letterboxDock .choices{grid-template-columns:repeat(3,minmax(0,1fr))}.app-layout:has(.stage.selection) #letterboxDock .choices button{padding:12px 8px;gap:4px;min-height:60px}.app-layout:has(.stage.selection) #letterboxDock .choices button .button-label{text-align:center;font-family:var(--font-display);font-size:14px}.app-layout:has(.stage.selection) #letterboxDock .button-arrow{width:12px;flex-basis:12px}
+.app-layout .playback-nav{position:absolute;left:0;right:0;bottom:0;width:100%;min-height:60px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #c7b28624;background:#111019;gap:4px;z-index:25;flex-wrap:nowrap}
+.app-layout .playback-nav button{min-height:44px;min-width:44px;padding:8px;font:500 12px/1.3 system-ui,sans-serif;gap:6px;border-color:transparent;background:transparent;box-shadow:none}
+.app-layout .playback-nav .ui-icon{width:16px;height:16px;flex-basis:16px}.app-layout .playback-nav #clipPlay{min-width:44px}.app-layout .playback-nav #clipPlay .button-label{display:none}.app-layout .video-controls{gap:4px}.app-layout .playback-nav #clipSkip{border-color:#a6e8e455;background:#212b35}
+.app-layout[data-playing=true] #stage{bottom:var(--nav-height)}
+@media(max-height:480px) and (min-width:761px){.experience-header{height:56px;padding:12px 20px}.experience-brand{font-size:15px}.experience-brand small{display:none}#app:not(.app-layout) .stage.selection .text-overlay{top:14%}#app:not(.app-layout) .stage .text-overlay{bottom:124px}#app:not(.app-layout) .stage .action-dock{bottom:64px}.stage .text-overlay .dialog.has-copy{padding:12px 18px}}
+
+#app:not(.app-layout) .stage.selection .text-overlay{top:3%;bottom:auto}#app:not(.app-layout) .stage.selection .scene-heading h1{font-size:clamp(22px,2.2cqw,32px)}
+.stage.selection .world-label{min-width:104px}.game-menu>summary .ui-icon{width:22px;height:22px}
+.app-layout #stage{height:auto}.app-layout #storyContent{width:100%;align-items:stretch;justify-content:flex-start}
+.choice-portrait,.choice-role{display:none}
+.app-layout .stage.selection .picture{display:none}
+.app-layout .stage.selection .mobile-reading{padding-top:4px}
+.app-layout .stage.selection #storyText .scene-heading{margin-bottom:20px}
+.app-layout .stage.selection .choices{display:grid!important;grid-template-columns:1fr;gap:12px}
+.app-layout .stage.selection .choices button{width:100%;min-width:0;height:clamp(100px,18svh,156px);min-height:100px;display:flex;padding:0 16px 0 0;gap:20px;overflow:hidden;background:linear-gradient(120deg,#292737,#181d2a);border:1px solid var(--line);border-radius:6px;color:var(--ivory)}
+.app-layout .stage.selection .choices button:hover,.app-layout .stage.selection .choices button:focus-visible{border-color:var(--mana);background:#2a3543}
+.app-layout .stage.selection .choices .button-label{font:500 22px/1.25 var(--font-display);text-align:left}
+.app-layout .stage.selection .choices .choice-role{display:block;font:9px/1.5 var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:8px}
+.app-layout .stage.selection .choice-portrait{display:block;position:relative;align-self:stretch;width:32%;flex:0 0 32%;overflow:hidden;background:#e7dcc6;border-right:1px solid #bfa57488}
+.choice-portrait img{display:block;width:100%;height:auto;max-width:none;mix-blend-mode:multiply;transform-origin:50% 0;transform:scale(1.8) translateY(-2%)}
+.choice-portrait[data-character=ya] img{transform:scale(1.9) translateY(-17%)}.choice-portrait[data-character=oren] img{transform:scale(1.6) translateY(-29%)}
+.app-layout .stage.selection .choices .button-arrow{margin-left:auto;width:18px;height:18px;flex:0 0 18px;color:var(--gold)}
+
+.choice-portrait[data-character=ya] img{transform:scale(3.1) translateY(-19%)}
