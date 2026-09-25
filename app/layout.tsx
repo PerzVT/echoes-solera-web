@@ -1,20 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const cinzel = Cinzel({
-  variable: "--font-cinzel",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-});
-
 export const metadata: Metadata = {
+  metadataBase: new URL("https://9livesinnovation.com"),
   title: "Echoes of Solera ✦ Authentication",
   description:
     "Access terminal for the world of Solera. Identity verification required. Proceed with caution.",
@@ -54,10 +42,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${cinzel.variable} ${spaceMono.variable}`}
-    >
+    <html lang="en">
+      <head>
+        <link rel="stylesheet" href="/shared/solera-foundation.css?v=1" />
+        <link rel="preload" href="/shared/fonts/cinzel-latin-cc014fcb.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+      </head>
       <body>{children}</body>
     </html>
   );

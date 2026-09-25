@@ -7,11 +7,11 @@
   /* sits above the status footer bar (~44px) with clearance */
   bottom: clamp(72px, 11vh, 140px);
   z-index: 30;
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: var(--solera-font-label);
   font-size: clamp(11px, 1vw, 14px);
   line-height: 2.0;
   letter-spacing: 0.02em;
-  color: #B96CE6;
+  color: var(--solera-cinema-accent);
   pointer-events: none;
   transition: opacity 300ms ease, filter 300ms ease;
   /* modern: thin accent rail on the left, tighter, much less glow */

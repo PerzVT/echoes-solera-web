@@ -13,7 +13,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px clamp(20px, 4vw, 56px);
-  font-family: "Space Mono", "Courier New", monospace;
+  font-family: var(--solera-font-label);
   font-size: clamp(9px, 0.85vw, 11px);
   letter-spacing: 0.18em;
   border-top: 1px solid rgba(185, 108, 230, 0.18);
@@ -34,7 +34,7 @@
 }
 
 .brand {
-  color: #B96CE6;
+  color: var(--solera-cinema-accent);
   font-weight: 700;
 }
 .sep {

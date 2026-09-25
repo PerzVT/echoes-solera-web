@@ -17,7 +17,7 @@
    Mirrors what the old .art group did on the monolithic SVG.
    ----------------------------------------------------------------------- */
 .artGroup {
-  color: #B96CE6;
+  color: var(--solera-cinema-accent);
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;

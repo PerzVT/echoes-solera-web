@@ -5,6 +5,7 @@ import s from "./catalog.module.css";
 
 export default function Catalog() {
   return <main className={s.shell} aria-label="Style videos">
+    <header className={s.header}><h1>Style Library</h1><p>Visual directions for animation and storytelling.</p></header>
     <div className={s.grid}>
       {styles.map(style => <section className={s.style} key={style.id} id={style.id} aria-labelledby={`${style.id}-title`}>
         <h2 id={`${style.id}-title`}>{style.title}</h2>

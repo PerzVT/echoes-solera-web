@@ -1,0 +1,78 @@
+/* Shared interface foundation for the main site, studio, player and media catalog. */
+@font-face {
+  font-family: 'Solera Display';
+  src: url('/shared/fonts/cinzel-latin-cc014fcb.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Solera Mono';
+  src: url('/shared/fonts/space-mono-latin-dc0d9adb.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Solera Mono';
+  src: url('/shared/fonts/space-mono-latin-bold-8d05cfa5.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+:root {
+  color-scheme: dark;
+  --solera-font-display: 'Solera Display', Georgia, serif;
+  --solera-font-label: 'Solera Mono', 'Courier New', monospace;
+  --solera-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --solera-bg: #0e0d17;
+  --solera-bg-cinema: #050208;
+  --solera-surface: #171622;
+  --solera-surface-raised: #202130;
+  --solera-surface-inset: #11101b;
+  --solera-surface-hover: #2b293a;
+  --solera-text: #f3e7cd;
+  --solera-text-body: #f0eced;
+  --solera-text-muted: #b8adbd;
+  --solera-gold: #c8ac75;
+  --solera-violet: #b99bd9;
+  --solera-mana: #a6e8e4;
+  --solera-cinema-accent: #b96ce6;
+  --solera-border: #c7b28644;
+  --solera-border-subtle: #c7b2861c;
+  --solera-border-hover: #d7c39799;
+  --solera-action-bg: #2a2535;
+  --solera-action-end: #1a2430;
+  --solera-action-hover: #303047;
+  --solera-action-border-hover: #ffe1a0;
+  --solera-action-text-hover: #fff1d3;
+  --solera-action-fill: linear-gradient(120deg, var(--solera-action-bg), var(--solera-action-end));
+  --solera-atmosphere: radial-gradient(ellipse at 50% 0, #242035 0, transparent 65%);
+  --solera-radius-control: 4px;
+  --solera-radius-panel: 6px;
+  --solera-target-min: 44px;
+  --solera-label-size: 10px;
+  --solera-space-unit: 8px;
+  --solera-ease-out: cubic-bezier(.23, 1, .32, 1);
+  --solera-motion-fast: 150ms;
+}
+:where(body) {
+  margin: 0;
+  background: var(--solera-bg);
+  color: var(--solera-text);
+  font-family: var(--solera-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+:where(button, input, select, textarea) { font: inherit; }
+:where(button, a, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--solera-mana);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(html) { scroll-behavior: auto; }
+  :where(button, a, input, select, textarea) { transition-duration: 0s; }
+}
+:where(input, textarea)::placeholder {
+  color: var(--solera-text-muted);
+  opacity: 1;
+}

@@ -1,5 +1,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; background: #050208; overflow: hidden; color: #B96CE6; }
+html { min-height: 100%; }
+body { min-height: 100dvh; background: var(--solera-bg); color: var(--solera-text); font-family: var(--solera-font-body); }
 
 /* ===========================================================================
    CSS custom properties for idle-mode — consumed by component modules via var()

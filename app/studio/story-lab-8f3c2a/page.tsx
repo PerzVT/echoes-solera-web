@@ -11,5 +11,5 @@ export const metadata: Metadata = {
   twitter: {card:'summary_large_image',title:'Solera: First Arrival',description:'An interactive Solera adventure.',images:['/story-lab/solera/assets/og-c8d5a2b16d2e.jpg']},
 };
 export default function Page() {
-  return <><iframe title="Solera: First Arrival" src="/story-lab/solera/index.html" allow="autoplay; fullscreen" style={{position:'fixed',inset:0,width:'100%',height:'100dvh',border:0,background:'#10171b'}} /><Analytics /></>;
+  return <><iframe title="Solera: First Arrival" src="/story-lab/solera/index.html" allow="autoplay; fullscreen" style={{position:'fixed',inset:0,width:'100%',height:'100dvh',border:0,background:'var(--solera-bg)'}} /><Analytics /></>;
 }

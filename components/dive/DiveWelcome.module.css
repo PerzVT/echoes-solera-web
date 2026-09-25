@@ -12,7 +12,7 @@
 
 .welcome {
   position: relative;
-  font-family: "Cinzel", "Georgia", serif;
+  font-family: var(--solera-font-display);
   font-weight: 600;
   font-size: clamp(30px, 4vw, 60px);
   letter-spacing: 0.07em;
@@ -171,7 +171,7 @@
   top: calc(50% - clamp(90px, 12vh, 160px));
   left: 50%;
   transform: translateX(-50%);
-  font-family: "Space Mono", monospace;
+  font-family: var(--solera-font-label);
   font-size: clamp(10px, 1vw, 13px);
   letter-spacing: 0.38em;
   color: rgba(255, 59, 208, 0.85);

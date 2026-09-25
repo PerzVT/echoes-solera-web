@@ -1,10 +1,12 @@
 /* /dive promoted to root — full-screen cinematic entry. Black void first; layers reveal by phase. */
 
 .diveStage {
+  font-family: var(--solera-font-body);
+  color: var(--solera-text);
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #050208;
+  background: var(--solera-bg-cinema);
 }
 
 /* The particle + medallion scene — hidden until "awaken", then fades up. */
@@ -96,23 +98,24 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 70;
-  font-family: "Cinzel", serif;
+  font-family: var(--solera-font-display);
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(215, 194, 236, 0.85);
-  background: rgba(5, 2, 10, 0.55);
-  border: 1px solid rgba(185, 108, 230, 0.45);
-  border-radius: 8px;
+  color: var(--solera-text);
+  background: var(--solera-surface);
+  border: 1px solid var(--solera-border);
+  border-radius: var(--solera-radius-control);
   padding: 10px 28px;
+  min-height: var(--solera-target-min);
   cursor: pointer;
   backdrop-filter: blur(6px);
   transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 .replayBtn:hover {
-  background: rgba(185, 108, 230, 0.18);
-  border-color: rgba(185, 108, 230, 0.75);
+  background: var(--solera-surface-hover);
+  border-color: var(--solera-gold);
   color: #fff;
 }
 

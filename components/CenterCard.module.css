@@ -21,11 +21,11 @@
 }
 
 .centerCard h1 {
-  font-family: "Cinzel", serif;
+  font-family: var(--solera-font-display);
   font-weight: 600;
   font-size: clamp(26px, 3vw, 44px);
   letter-spacing: 0.16em;
-  color: #e2d5ee;
+  color: var(--solera-text);
   margin-bottom: 0.35em;
   text-shadow: 0 0 14px rgba(168, 100, 210, 0.32);
   white-space: nowrap;
@@ -34,12 +34,12 @@
 .centerCard p {
   font-size: clamp(17px, 1.55vw, 23px);
   line-height: 1.62;
-  color: #90809f;
+  color: var(--solera-text-muted);
   letter-spacing: 0.01em;
 }
 
 .centerCard .hl {
-  color: #b277dc;
+  color: var(--solera-violet);
   font-weight: 600;
   text-shadow: 0 0 10px rgba(178, 119, 220, 0.4);
   white-space: nowrap;
