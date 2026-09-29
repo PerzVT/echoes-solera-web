@@ -2779,3 +2779,38 @@ dialog { scrollbar-width:thin; scrollbar-color:var(--dd-border-hover) transparen
   *,*::before,*::after { scroll-behavior:auto!important; animation:none!important; transition:none!important; }
 }
 main:focus { outline:none; }
+
+/* Cover-led discovery keeps portrait artwork at its native proportions. */
+.homeTop { margin-bottom:18px; }
+.feature { min-height:300px; background:var(--dd-surface); }
+.featureCopy { min-height:300px; padding:28px 36px; width:60%; }
+.featureCopy h1 { color:var(--dd-text); font-size:36px; line-height:1.08; letter-spacing:-1px; max-width:470px; }
+.featureCopy p { color:var(--dd-text-muted); max-width:360px; }
+.featureCopy>.overline { color:var(--dd-accent); }
+.featureImage { left:auto; right:32px; top:16px; bottom:16px; width:35%; height:calc(100% - 32px); object-fit:contain; object-position:center; opacity:1; }
+.featureShade,.feature.rose .featureShade,.feature.violet .featureShade { background:none; }
+.featureMore { background:var(--dd-bg); color:var(--dd-text); border-color:var(--dd-border); }
+.featureMore:hover { background:var(--dd-surface-hover); border-color:var(--dd-border-hover); }
+.featureDots { margin:4px 0; }
+.continueSection { margin:12px 0 20px; }
+.continueCard { padding:12px 16px; }
+.shelf { margin:24px 0 32px; }
+@media(max-width:800px) {
+ .featureCopy { width:60%; padding:24px; }
+ .featureCopy h1 { font-size:30px; }
+ .featureImage { right:16px; width:36%; }
+}
+@media(max-width:560px) {
+ .homeTop { margin-bottom:12px; }
+ .feature,.featureCopy { min-height:278px; }
+ .featureCopy { width:57%; padding:20px 14px; justify-content:center; }
+ .featureCopy h1 { font-size:25px; line-height:1.08; letter-spacing:-.65px; }
+ .featureCopy p { font-size:12px; line-height:1.45; }
+ .featureCopy>.overline { font-size:9px; letter-spacing:.6px; }
+ .featureImage { right:10px; width:40%; top:18px; height:calc(100% - 36px); }
+ .featureActions { gap:6px; flex-wrap:wrap; margin-top:16px; }
+ .featureActions .primary { padding:10px 12px; font-size:12px; min-height:42px; }
+ .featureMore { width:36px; height:36px; min-width:36px; }
+ .featureCopy .featureMore { display:none; }
+ .shelf { margin-top:20px; }
+}
