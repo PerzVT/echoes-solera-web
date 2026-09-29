@@ -9,10 +9,7 @@ export const metadata: Metadata = {
  openGraph: { title: 'Death & Desire | Watch stories', description: 'Stories worth staying for.', images: [] },
  twitter: { title: 'Death & Desire | Watch stories', description: 'Stories worth staying for.', images: [] },
 };
-export default async function Page({ searchParams }: { searchParams: Promise<{ series?: string | string[] }> }) {
- const params = await searchParams;
- const series = typeof params.series === "string" && /^[a-z-]+$/.test(params.series) ? params.series : "";
- const src = "/media-preview/index.html" + (series ? "#series/" + encodeURIComponent(series) : "");
- return <PreviewViewport title="Death & Desire" src={src} storageKey="death-desire-preview-layout" />;
+export default function Page() {
+ return <PreviewViewport title="Death & Desire" src="/media-preview/index.html" storageKey="death-desire-preview-layout" />;
 }
 
