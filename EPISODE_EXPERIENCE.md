@@ -15,3 +15,5 @@ The pitch deck is being developed in a separate task from forthcoming Figma refe
 Tests: `node --test tests/episode-state.test.mjs tests/storylab-native-flow.test.mjs`.
 
 Production media remains the original full-length encoded clips. Short local verification fixtures are not deployable assets.
+
+Deployment: use the complete local checkout with Vercel CLI. Automatic master deployments are disabled because media is intentionally excluded from Git. The prebuild asset gate rejects missing assets and tiny video fixtures before publishing. After pushing code, verify the production alias still serves the covers, episode stills and full videos.
