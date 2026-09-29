@@ -14,6 +14,7 @@ type Props = {
 export default function PreviewViewport({ src, title, storageKey, theme = "light" }: Props) {
   const stage = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
+  const [appearance, setAppearance] = useState<"light" | "dark">(theme);
   const [choice, setChoice] = useState<Mode | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
 
@@ -24,12 +25,29 @@ export default function PreviewViewport({ src, title, storageKey, theme = "light
     } catch { /* Layout switching also works without browser storage. */ }
     const element = stage.current;
     if (!element) return;
-    const measure = () => setSize({ width: element.clientWidth, height: element.clientHeight });
+    const measure = () => {
+      const width = element.clientWidth, height = element.clientHeight;
+      if (width > 0 && height > 0) setSize({ width, height });
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
   }, [storageKey]);
+
+  useEffect(() => {
+    if (theme === "dark") return;
+    const system = matchMedia("(prefers-color-scheme: dark)");
+    const sync = () => {
+      let preference = "system";
+      try { preference = localStorage.getItem("dd-appearance") || "system"; } catch {}
+      setAppearance(preference === "dark" || (preference !== "light" && system.matches) ? "dark" : "light");
+    };
+    sync();
+    system.addEventListener("change", sync);
+    window.addEventListener("storage", sync);
+    return () => { system.removeEventListener("change", sync); window.removeEventListener("storage", sync); };
+  }, [theme]);
 
   const mode = choice ?? (size.width > 800 ? "web" : "app");
   const width = mode === "app" ? Math.min(390, size.width) : Math.max(1180, size.width);
@@ -53,7 +71,7 @@ export default function PreviewViewport({ src, title, storageKey, theme = "light
   }
 
   return (
-    <section className={styles.shell} data-theme={theme} aria-label={`${title} layout preview`}>
+    <section className={styles.shell} data-theme={appearance} data-brand={theme === "dark" ? "story" : "reader"} aria-label={`${title} layout preview`}>
       <div className={styles.toolbar}>
         <span className={styles.label}>Preview layout</span>
         <div className={styles.switcher} role="group" aria-label="Preview layout">

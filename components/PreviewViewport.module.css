@@ -61,3 +61,7 @@
   .label { font-size: 11px; }
   .switcher button { padding: 9px 10px; gap: 6px; font-size: 12px; }
 }
+
+.shell[data-brand="reader"][data-theme="dark"] { --preview-bg:#101014; --preview-surface:#202025; --preview-text:#f5f3f4; --preview-muted:#b0acb7; --preview-line:#3b3943; --preview-accent:#ff8aa5; color-scheme:dark; }
+.label { color:var(--preview-muted); }
+.shell[data-theme="light"] { --preview-muted:#60606b; }

@@ -279,3 +279,4 @@
     margin-bottom: 8px
   }
 }
+@media(max-height:600px){.start-screen{overflow-y:auto}.start-copy,.app-layout .start-copy{position:relative;top:auto;bottom:auto;left:auto;right:auto;transform:none;width:min(560px,100%);padding:75px 24px 20px;margin:0 auto}.start-footer,.app-layout .start-footer{position:relative;left:auto;right:auto;bottom:auto;padding:0 24px 24px;text-align:center}.start-copy .solera-wordmark,.app-layout .start-copy .solera-wordmark{width:160px;max-width:70%;margin-left:auto;margin-right:auto}.start-copy h1,.app-layout .start-copy h1{font-size:27px}.start-copy .start-description,.app-layout .start-copy .start-description{font-size:13px}.start-copy .begin-journey{min-height:46px}.cover-line{position:fixed}.cover-art,.app-layout .cover-art{position:fixed;height:100%}}
