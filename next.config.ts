@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   env: { NL_SERIES_BACKDROPS: backdrops.join(",") },
   images: { formats: ["image/avif", "image/webp"], minimumCacheTTL: 86400, qualities: [75, 90] },
+  // app/walk/route.ts serves the Tidebell Cove HTML; the game loads garments from /assets/wardrobe/.
+  outputFileTracingIncludes: { "/walk": ["./lib/labs/cove/tidebell-cove.html"] },
+  async rewrites() {
+    return [{ source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" }];
+  },
   async headers() {
     const catalogHeaders = [
       { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, nosnippet, noimageindex" },

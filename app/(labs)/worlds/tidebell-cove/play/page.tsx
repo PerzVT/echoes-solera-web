@@ -13,7 +13,7 @@ export default function PlayTidebellCove() {
         <h1 className={styles.title}>Tidebell Cove</h1>
         <iframe
           className={styles.frame}
-          src="/labs/worlds/play/index.html"
+          src="/walk"
           title="Tidebell Cove"
           allow="fullscreen; gamepad"
           allowFullScreen
