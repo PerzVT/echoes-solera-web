@@ -17,6 +17,9 @@ import styles from "./access.module.css";
 type Props = {
   slug: string;
   title: string;
+  /** The genre line under the title. */
+  genre?: string;
+  cover: string;
   episodes: Episode[];
   /** The episode in the URL, if any. Without one the visitor's last episode of this series is shown. */
   wanted?: number;
@@ -31,6 +34,9 @@ type Props = {
 };
 
 const nameOf = (e: Episode) => e.title ?? `Episode ${e.number}`;
+/** The chip's number: the title without "Episode", so 3.5 reads as 3.5. */
+const chipOf = (e: Episode) => (e.title ?? "").replace(/^episode\s+/i, "") || String(e.number);
+const padded = (x: string) => (/^\d$/.test(x) ? `0${x}` : x);
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const day = (ms: number) => new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 
@@ -40,12 +46,20 @@ export function lastEpisode(a: AccessState, slug: string) {
   return key ? Number(key.slice(slug.length + 1)) : undefined;
 }
 
-/** The series watch section: player or locked screen, the balance, the episode list and the early-access sheets. */
-export function SeriesWatch({ slug, title, episodes, wanted, sheet: fromUrl, t, base, seriesHref, backLabel, listLabel }: Props) {
+/**
+ * The watch page body from the design's Watch frame: the stage with the player and its rail, and the side
+ * panel with the series, the numbered episode chips, the balance and what plays next. Then the early-access sheets.
+ */
+export function SeriesWatch({ slug, title, genre, cover, episodes, wanted, sheet: fromUrl, t, base, seriesHref, backLabel, listLabel }: Props) {
   const access = useAccess();
   const isOpen = (e: Episode) => !e.early || access.unlocked.includes(episodeKey(slug, e.number));
 
-  const resumeNumber = wanted ?? lastEpisode(access, slug);
+  // Without an episode in the URL the visitor picks up where they were: the same episode part way through,
+  // or the one after it once it is watched.
+  const last = lastEpisode(access, slug);
+  const lastDone = last !== undefined && watched(access.progress[episodeKey(slug, last)]);
+  const after = lastDone ? episodes.find((e) => e.number === last + 1) : undefined;
+  const resumeNumber = wanted ?? after?.number ?? last;
   const item = episodes.find((e) => e.number === resumeNumber) ?? episodes[0];
   const key = episodeKey(slug, item.number);
   const next = episodes.find((e) => e.number === item.number + 1);
@@ -92,13 +106,16 @@ export function SeriesWatch({ slug, title, episodes, wanted, sheet: fromUrl, t, 
 
   return (
     <>
-      <div className={styles.watchRow}>
-        <div className={styles.player}>
+      <div className={styles.watch}>
+        <div id="watch" className={styles.stage}>
           <VerticalPlayer
             src={item.video}
             poster={item.poster}
             label={nameOf(item)}
             index={item.number}
+            kind="Episode"
+            shareTitle={`${title}, ${nameOf(item)}`}
+            resumeLabel={`Continue ${nameOf(item).replace(/^Episode/, "episode")}`}
             previous={previous && href(previous.number)}
             previousLabel={previous && nameOf(previous)}
             next={next && href(next.number)}
@@ -129,66 +146,72 @@ export function SeriesWatch({ slug, title, episodes, wanted, sheet: fromUrl, t, 
           />
         </div>
 
-        <div className={styles.side}>
-          <div className={styles.purse}>
-            <Button variant="secondary" size="small" icon={<Coin size={16} />} onClick={() => setSheet("wallet")} aria-label={`Your coins: ${coins(access.balance)}`}>
-              {coins(access.balance)}
-            </Button>
-            <Button variant="quiet" size="small" onClick={() => setSheet("how")}>
-              How early access works
-            </Button>
-          </div>
+        <aside className={styles.panel} aria-label={title}>
+          <header className={styles.head}>
+            <Image className={styles.poster} src={cover} alt="" width={112} height={168} sizes="56px" priority />
+            <div className={styles.headText}>
+              <h1 className="h2">{title}</h1>
+              {genre && <p className="small muted">{genre}</p>}
+            </div>
+          </header>
 
-          <h3 className="sr-only">{listLabel}</h3>
-          <ol className={styles.episodes}>
-            {episodes.map((e) => {
-              const k = episodeKey(slug, e.number);
-              const p = access.progress[k];
-              const locked = !isOpen(e);
-              const done = watched(p);
-              const part = p && !done ? Math.min(1, p.t / p.d) : done ? 1 : 0;
-              const status = locked
-                ? coins(e.price ?? 1)
-                : done
-                  ? "Watched"
-                  : p && p.t >= 3
-                    ? `${clock(Math.max(0, p.d - p.t))} left`
-                    : e.early
-                      ? "Unlocked"
-                      : clock(e.seconds);
-              return (
-                <li key={e.number}>
-                  <Link
-                    href={href(e.number)}
-                    scroll={false}
-                    data-episode={e.number}
-                    data-locked={locked || undefined}
-                    aria-current={e.number === item.number ? "true" : undefined}
-                  >
-                    <span className={styles.thumb}>
-                      <Image src={e.poster} alt="" width={200} height={356} sizes="120px" />
-                      {part > 0 && (
-                        <span className={styles.progress} aria-hidden="true">
-                          <span style={{ width: `${part * 100}%` }} />
-                        </span>
-                      )}
-                    </span>
-                    <span className={styles.epName}>
-                      <span>{nameOf(e)}</span>
-                      <span className="small muted">
-                        {locked || done || (p && p.t >= 3) || e.early ? `${clock(e.seconds)} · ${status}` : status}
-                      </span>
-                    </span>
-                    {locked && <span className="sr-only">, early access</span>}
-                    <span className={styles.epEnd} aria-hidden="true">
-                      {locked ? <Icon name="lock" size={18} /> : done ? <Icon name="check" size={18} /> : <Icon name="play" size={16} />}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
+          <h2 className={styles.tab}>{listLabel}</h2>
+
+          <div className={styles.panelBody}>
+            <ol className={styles.chips}>
+              {episodes.map((e) => {
+                const p = access.progress[episodeKey(slug, e.number)];
+                const locked = !isOpen(e);
+                const done = watched(p);
+                const extra = [locked && "early access", done && "watched", !done && p && p.t >= 3 && `${clock(Math.max(0, p.d - p.t))} left`]
+                  .filter(Boolean)
+                  .join(", ");
+                return (
+                  <li key={e.number}>
+                    <Link
+                      href={href(e.number)}
+                      scroll={false}
+                      className={styles.chip}
+                      data-episode={e.number}
+                      data-locked={locked || undefined}
+                      aria-current={e.number === item.number ? "true" : undefined}
+                      aria-label={extra ? `${nameOf(e)}, ${extra}` : nameOf(e)}
+                    >
+                      <span>{chipOf(e)}</span>
+                      {locked && <Icon name="lock" size={16} />}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ol>
+
+            <div className={styles.purse}>
+              <Button variant="quiet" size="small" icon={<Coin size={16} />} onClick={() => setSheet("wallet")} aria-label={`Your coins: ${coins(access.balance)}`}>
+                {coins(access.balance)}
+              </Button>
+              <Button variant="quiet" size="small" onClick={() => setSheet("how")}>
+                How early access works
+              </Button>
+            </div>
+
+            {next && (
+              <div className={styles.upNext}>
+                <h3 className="label muted">Up next</h3>
+                <Link href={href(next.number)} scroll={false} className={styles.nextRow}>
+                  <span className={styles.nextNumber}>{padded(chipOf(next))}</span>
+                  <Image className={styles.nextThumb} src={next.poster} alt="" width={112} height={199} sizes="56px" />
+                  <span className={styles.nextText}>
+                    <span className={styles.nextTitle}>{nameOf(next)}</span>
+                    <span className="small muted">{isOpen(next) ? clock(next.seconds) : `Early access, ${coins(next.price ?? 1)}`}</span>
+                  </span>
+                  <span className={styles.nextEnd} aria-hidden="true">
+                    <Icon name={isOpen(next) ? "play" : "lock"} size={20} />
+                  </span>
+                </Link>
+              </div>
+            )}
+          </div>
+        </aside>
       </div>
 
       <Sheet open={!!shown} title={shown ? titles[shown] : ""} onClose={closeSheet}>

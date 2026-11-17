@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation";
 import { ButtonLink, Button } from "./Button";
 import { Icon } from "./Icon";
-import { IconSwap, PlayPauseIcon, ReplayIcon, VolumeIcon } from "./fx/AnimatedIcon";
+import { IconSwap, ReplayIcon, VolumeIcon } from "./fx/AnimatedIcon";
 import { AnimatedMark } from "./fx/AnimatedMark";
 import styles from "./VerticalPlayer.module.css";
 
@@ -28,7 +28,22 @@ type Props = {
   start?: number;
   /** Called as the item plays, with the position and length in seconds. `done` is true on pause or end. */
   onProgress?: (time: number, length: number, done: boolean) => void;
+  /** What one item is called, such as "Episode". When set, a line over the title says whether it is playing. */
+  kind?: string;
+  /** The words on the start button when the visitor is part way through, such as "Continue episode 3". */
+  resumeLabel?: string;
+  /** The title a share carries. Defaults to the item's label. */
+  shareTitle?: string;
 };
+
+/* The share mark from the design file, drawn at its 22 px size. */
+function ShareIcon() {
+  return (
+    <svg width={22} height={22} viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11 13.75V2.75M14.67 6.42 11 2.75 7.33 6.42M4.58 11v6.42c0 1.01.82 1.83 1.84 1.83h9.16c1.02 0 1.84-.82 1.84-1.83V11" />
+    </svg>
+  );
+}
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const SEEK = 5;
@@ -54,6 +69,9 @@ export function VerticalPlayer({
   locked,
   start = 0,
   onProgress,
+  kind,
+  resumeLabel,
+  shareTitle,
 }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
@@ -68,6 +86,9 @@ export function VerticalPlayer({
   const [length, setLength] = useState(0);
   const [full, setFull] = useState(false);
   const [turns, setTurns] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef(0);
+  useEffect(() => () => clearTimeout(copiedTimer.current), []);
   // Which way the new item arrives: 1 from below (a later item), -1 from above, 0 on first load.
   const [came, setCame] = useState({ index, dir: 0 });
   if (came.index !== index) setCame({ index, dir: index > came.index ? 1 : -1 });
@@ -160,6 +181,23 @@ export function VerticalPlayer({
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
     else frame.current?.requestFullscreen?.().catch(() => {});
   }, []);
+
+  // The address without an open screen. The system share sheet where there is one, otherwise the clipboard.
+  const share = async () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("state");
+    url.hash = "";
+    if (navigator.share) {
+      await navigator.share({ title: shareTitle ?? label, url: url.toString() }).catch(() => {});
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      setCopied(true);
+      clearTimeout(copiedTimer.current);
+      copiedTimer.current = window.setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
 
   const replay = () => {
     const v = video.current;
@@ -295,11 +333,17 @@ export function VerticalPlayer({
           </span>
         )}
 
-        {!playing && !ended && !failed && !waiting && !locked && (
+        {!playing && !ended && !failed && !waiting && !locked && (resumeLabel && time >= 3 ? (
+          <span className={styles.resume}>
+            <Button onClick={toggle} icon={<Icon name="play" size={18} />}>
+              {resumeLabel}
+            </Button>
+          </span>
+        ) : (
           <button type="button" className={styles.bigPlay} onClick={toggle} aria-label="Play">
             <Icon name="play" size={32} />
           </button>
-        )}
+        ))}
 
         {failed && (
           <div className={styles.end} role="alert">
@@ -325,7 +369,15 @@ export function VerticalPlayer({
         )}
 
         <div className={styles.bar} data-hidden={ended || failed || !!locked}>
-          <p className={styles.label}>{label}</p>
+          <div className={styles.caption}>
+            {kind && (
+              <p className={styles.status}>
+                {playing ? "Playing" : "Paused"}
+                {label.toLowerCase().startsWith(kind.toLowerCase()) ? "" : `, ${kind} ${index}`}
+              </p>
+            )}
+            <p className={styles.label}>{label}</p>
+          </div>
           <input
             className={styles.scrub}
             type="range"
@@ -344,19 +396,19 @@ export function VerticalPlayer({
             style={{ "--p": length ? `${(Math.min(time, length) / length) * 100}%` : "0%" } as React.CSSProperties}
           />
           <div className={styles.controls}>
-            <button type="button" onClick={toggle} aria-label={playing ? "Pause" : "Play"} aria-keyshortcuts="K Space">
-              <PlayPauseIcon playing={playing} />
-            </button>
-            <button type="button" onClick={() => setMuted((m) => !m)} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-keyshortcuts="M">
-              <VolumeIcon muted={muted} />
-            </button>
-            <span className={styles.time}>
-              {length ? `${clock(time)} / ${clock(length)}` : "-:--"}
-            </span>
-            <span className={styles.grow} />
-            <button type="button" onClick={fullscreen} aria-label={full ? "Leave full screen" : "Full screen"} aria-keyshortcuts="F">
-              <IconSwap from="fullscreen" to="shrink" on={full} />
-            </button>
+            <div className={styles.group}>
+              <Button className={styles.pause} onClick={toggle} aria-keyshortcuts="K Space">
+                {playing ? "Pause" : "Play"}
+              </Button>
+              <button type="button" className={styles.iconButton} onClick={() => setMuted((m) => !m)} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-keyshortcuts="M">
+                <VolumeIcon muted={muted} />
+              </button>
+            </div>
+            <div className={styles.group}>
+              <button type="button" className={styles.iconButton} onClick={fullscreen} aria-label={full ? "Leave full screen" : "Full screen"} aria-keyshortcuts="F">
+                <IconSwap from="fullscreen" to="shrink" on={full} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -364,23 +416,27 @@ export function VerticalPlayer({
       <div className={styles.side}>
         {previous ? (
           <Link href={previous} scroll={false} className={styles.step} aria-label={previousLabel ? `Previous: ${previousLabel}` : "Previous"}>
-            <Icon name="up" />
+            <Icon name="up" size={22} />
             <span>Previous</span>
           </Link>
         ) : (
           <span className={styles.step} aria-disabled="true">
-            <Icon name="up" />
+            <Icon name="up" size={22} />
             <span>Previous</span>
           </span>
         )}
+        <button type="button" className={styles.step} onClick={share} aria-label={copied ? "Link copied" : "Share"}>
+          <ShareIcon />
+          <span aria-live="polite">{copied ? "Copied" : "Share"}</span>
+        </button>
         {next ? (
           <Link href={next} scroll={false} className={styles.step} aria-label={nextLabel ? `Next: ${nextLabel}` : "Next"}>
-            <Icon name="down" />
+            <Icon name="down" size={22} />
             <span>Next</span>
           </Link>
         ) : (
           <span className={styles.step} aria-disabled="true">
-            <Icon name="down" />
+            <Icon name="down" size={22} />
             <span>Next</span>
           </span>
         )}
