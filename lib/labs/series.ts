@@ -2,7 +2,22 @@ import catalogue from "./catalogue.json";
 
 const L = "/labs/mini-series";
 
-export type Episode = { number: number; title?: string; video: string; poster: string; seconds: number };
+export type Episode = {
+  number: number;
+  title?: string;
+  video: string;
+  poster: string;
+  seconds: number;
+  /** Early access: the episode is out before its free release and unlocks for `price` coins. */
+  early?: boolean;
+  /** The early-access price in coins. Set only when `early` is. */
+  price?: number;
+};
+
+/** The early-access price of one episode, in coins. Same as the earlier media-preview mock. */
+export const EARLY_PRICE = 1;
+/** How many of the newest episodes in a finished series are early access. */
+const EARLY_COUNT = 2;
 
 /** A still shown on a series page: a cover variant or a character sheet. */
 export type Still = { src: string; alt: string; width: number; height: number };
@@ -57,11 +72,21 @@ const finished: Record<string, [title: string, seconds: number][]> = {
   ],
 };
 
-const cut = (slug: string): Episode[] =>
-  (finished[slug] ?? []).map(([title, seconds], i) => {
+const cut = (slug: string): Episode[] => {
+  const all = finished[slug] ?? [];
+  return all.map(([title, seconds], i) => {
     const n = String(i + 1).padStart(2, "0");
-    return { number: i + 1, title, video: `${L}/${slug}/episodes/ep-${n}.mp4`, poster: `${L}/${slug}/episodes/ep-${n}.webp`, seconds };
+    const early = i >= all.length - EARLY_COUNT;
+    return {
+      number: i + 1,
+      title,
+      video: `${L}/${slug}/episodes/ep-${n}.mp4`,
+      poster: `${L}/${slug}/episodes/ep-${n}.webp`,
+      seconds,
+      ...(early ? { early: true, price: EARLY_PRICE } : {}),
+    };
   });
+};
 
 const sheet = (slug: string, file: string, name: string, wide = false): Still => ({
   src: `${L}/${slug}/cast/${file}.webp`,

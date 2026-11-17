@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ButtonLink, Button } from "./Button";
 import { Icon } from "./Icon";
@@ -22,6 +22,12 @@ type Props = {
   nextLabel?: string;
   seriesHref: string;
   backLabel: string;
+  /** Drawn over the poster in place of the video, for an episode that is not open to this visitor. */
+  locked?: ReactNode;
+  /** Seconds to start from, for resuming. Applied once per item. */
+  start?: number;
+  /** Called as the item plays, with the position and length in seconds. `done` is true on pause or end. */
+  onProgress?: (time: number, length: number, done: boolean) => void;
 };
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -34,7 +40,21 @@ function typingIn(target: EventTarget | null) {
   return el.isContentEditable || !!el.closest("input, textarea, select, [contenteditable]");
 }
 
-export function VerticalPlayer({ src, poster, label, index = 0, previous, previousLabel, next, nextLabel, seriesHref, backLabel }: Props) {
+export function VerticalPlayer({
+  src,
+  poster,
+  label,
+  index = 0,
+  previous,
+  previousLabel,
+  next,
+  nextLabel,
+  seriesHref,
+  backLabel,
+  locked,
+  start = 0,
+  onProgress,
+}: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
   const again = useRef<HTMLButtonElement>(null);
@@ -88,16 +108,34 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
 
   // The video is in the server HTML, so its metadata can arrive before React listens for it.
   // Read what is already known on mount; loadedmetadata and durationchange cover the rest.
+  // The resume position is applied once per item, as soon as both it and the metadata are known.
+  const resumed = useRef("");
+  const applyStart = useCallback(() => {
+    const v = video.current;
+    if (!v || !start || resumed.current === src || v.readyState < 1) return;
+    resumed.current = src;
+    if (v.currentTime < 1) {
+      v.currentTime = start;
+      setTime(start);
+    }
+  }, [src, start]);
+  useEffect(applyStart, [applyStart]);
+  const report = useRef(onProgress);
+  useEffect(() => {
+    report.current = onProgress;
+  }, [onProgress]);
+
   useEffect(() => {
     const v = video.current;
-    if (!v) return;
+    if (!v || locked) return;
     setEnded(false);
     setFailed(!!v.error);
     setTime(v.currentTime || 0);
     setLength(v.readyState >= 1 && Number.isFinite(v.duration) ? v.duration : 0);
     // A new item starts by itself when the browser allows it; otherwise the play button waits.
     v.play().catch(() => setPlaying(false));
-  }, [src]);
+    // An unlock mounts the video, so the lock state is a dependency.
+  }, [src, !!locked]);
 
   const readLength = (v: HTMLVideoElement) => {
     if (Number.isFinite(v.duration)) setLength(v.duration);
@@ -142,6 +180,8 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
   };
 
   const onEnded = () => {
+    const v = video.current;
+    if (v) report.current?.(v.duration, v.duration, true);
     if (next) router.push(next, { scroll: false });
     else setEnded(true);
   };
@@ -154,6 +194,7 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
   // Space or K plays and pauses, the arrows seek 5 seconds, M mutes, F goes full screen.
   // Keys typed into a field are left alone, and so is Space on a focused button or link.
   useEffect(() => {
+    if (locked) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || typingIn(e.target)) return;
       const onControl = !!(e.target as HTMLElement | null)?.closest?.("button, a, summary");
@@ -190,11 +231,17 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggle, seekBy, fullscreen]);
+  }, [toggle, seekBy, fullscreen, locked]);
 
   return (
     <div className={styles.wrap}>
       <div ref={frame} className={styles.frame}>
+        {locked ? (
+          <>
+            <img key={`lock-${src}`} className={styles.lockedPoster} src={poster} alt="" data-enter={came.dir || undefined} />
+            {locked}
+          </>
+        ) : (
         <video
           ref={video}
           key={src}
@@ -205,7 +252,11 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
           data-enter={came.dir || undefined}
           onClick={toggle}
           onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
+          onPause={(e) => {
+            setPlaying(false);
+            const v = e.currentTarget;
+            if (!v.ended) report.current?.(v.currentTime, v.duration, true);
+          }}
           onPlaying={endWait}
           onWaiting={startWait}
           onCanPlay={endWait}
@@ -215,11 +266,19 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
             endWait();
           }}
           onEnded={onEnded}
-          onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
-          onLoadedMetadata={(e) => readLength(e.currentTarget)}
+          onTimeUpdate={(e) => {
+            const v = e.currentTarget;
+            setTime(v.currentTime);
+            if (!v.paused) report.current?.(v.currentTime, v.duration, false);
+          }}
+          onLoadedMetadata={(e) => {
+            readLength(e.currentTarget);
+            applyStart();
+          }}
           onDurationChange={(e) => readLength(e.currentTarget)}
           aria-label={label}
         />
+        )}
         {hold && (
           <img
             className={styles.hold}
@@ -230,13 +289,13 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
           />
         )}
 
-        {waiting && !failed && !ended && (
+        {waiting && !failed && !ended && !locked && (
           <span className={styles.spinner} role="status" aria-label="Loading">
             <AnimatedMark variant="busy" size={44} />
           </span>
         )}
 
-        {!playing && !ended && !failed && !waiting && (
+        {!playing && !ended && !failed && !waiting && !locked && (
           <button type="button" className={styles.bigPlay} onClick={toggle} aria-label="Play">
             <Icon name="play" size={32} />
           </button>
@@ -265,7 +324,7 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
           </div>
         )}
 
-        <div className={styles.bar} data-hidden={ended || failed}>
+        <div className={styles.bar} data-hidden={ended || failed || !!locked}>
           <p className={styles.label}>{label}</p>
           <input
             className={styles.scrub}

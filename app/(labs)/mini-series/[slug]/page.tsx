@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { ButtonLink } from "@/components/labs/Button";
-import { Icon } from "@/components/labs/Icon";
 import { Nav } from "@/components/labs/Nav";
-import { VerticalPlayer } from "@/components/labs/VerticalPlayer";
-import { series, seriesBySlug, type Episode } from "@/lib/labs/series";
+import { ContinueLink } from "@/components/labs/access/ContinueLink";
+import { SeriesWatch } from "@/components/labs/access/SeriesWatch";
+import { asSheet } from "@/components/labs/access/sheets";
+import { series, seriesBySlug } from "@/lib/labs/series";
 import { og } from "@/lib/labs/og";
 import t from "@/components/labs/Title.module.css";
 import styles from "./series.module.css";
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ ep?: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ ep?: string; state?: string; t?: string }> };
 
 export function generateStaticParams() {
   return series.map((s) => ({ slug: s.slug }));
@@ -23,19 +23,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: s.title, ...og(s.title, "mini-series") };
 }
 
-const nameOf = (e: Episode) => e.title ?? `Episode ${e.number}`;
-const length = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-
-/** A series page: the hero, the hook, the actions, the episodes where there are any, and the other images. */
+/**
+ * A series page: the hero, the hook, the actions, the episodes where there are any, and the other images.
+ * Deep links: `?ep=N` opens an episode (locked ones show the locked screen), `&t=S` starts at S seconds,
+ * and `state=unlock|wallet|topup|how` opens that early-access screen.
+ */
 export default async function SeriesPage({ params, searchParams }: Props) {
   const s = seriesBySlug((await params).slug);
   if (!s) notFound();
 
   const base = `/mini-series/${s.slug}`;
-  const wanted = Number((await searchParams).ep ?? 1);
-  const item = s.episodes.find((e) => e.number === wanted) ?? s.episodes[0];
-  const next = item && s.episodes.find((e) => e.number === item.number + 1);
-  const previous = item && s.episodes.find((e) => e.number === item.number - 1);
+  const query = await searchParams;
+  const asked = Number(query.ep);
+  const wanted = s.episodes.some((e) => e.number === asked) ? asked : undefined;
+  const start = Number(query.t);
+  const item = s.episodes[0];
   const listLabel = s.listLabel ?? "Episodes";
 
   return (
@@ -58,9 +60,7 @@ export default async function SeriesPage({ params, searchParams }: Props) {
             {s.hook && <p className={styles.hook}>{s.hook}</p>}
             <div className={styles.actions}>
               {item ? (
-                <ButtonLink href={`${base}#watch`} icon={<Icon name="play" size={18} />}>
-                  Watch episode 1
-                </ButtonLink>
+                <ContinueLink slug={s.slug} base={base} episodes={s.episodes} />
               ) : null}
               {s.stills.length > 0 && (
                 <ButtonLink href={`${base}#images`} variant={item ? "secondary" : "primary"}>
@@ -86,35 +86,18 @@ export default async function SeriesPage({ params, searchParams }: Props) {
             <h2 id="watch-heading" className="h2">
               {listLabel}
             </h2>
-            <div className={styles.watchRow}>
-              <div className={styles.player}>
-                <VerticalPlayer
-                  src={item.video}
-                  poster={item.poster}
-                  label={nameOf(item)}
-                  index={item.number}
-                  previous={previous && `${base}?ep=${previous.number}#watch`}
-                  previousLabel={previous && nameOf(previous)}
-                  next={next && `${base}?ep=${next.number}#watch`}
-                  nextLabel={next && nameOf(next)}
-                  seriesHref={s.stills.length ? `${base}#images` : "/app"}
-                  backLabel={s.stills.length ? "See the images" : "Create a mini-series"}
-                />
-              </div>
-              <ol className={styles.episodes}>
-                {s.episodes.map((e) => (
-                  <li key={e.number}>
-                    <Link href={`${base}?ep=${e.number}#watch`} scroll={false} aria-current={e.number === item.number ? "true" : undefined}>
-                      <Image src={e.poster} alt="" width={200} height={356} sizes="120px" />
-                      <span className={styles.epName}>
-                        <span>{nameOf(e)}</span>
-                        <span className="small muted">{length(e.seconds)}</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            <SeriesWatch
+              slug={s.slug}
+              title={s.title}
+              episodes={s.episodes}
+              wanted={wanted}
+              sheet={asSheet(query.state)}
+              t={Number.isFinite(start) && start > 0 ? start : undefined}
+              base={base}
+              seriesHref={s.stills.length ? `${base}#images` : "/app"}
+              backLabel={s.stills.length ? "See the images" : "Create a mini-series"}
+              listLabel={listLabel}
+            />
           </section>
         )}
 
