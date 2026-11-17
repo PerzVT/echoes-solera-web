@@ -6,9 +6,12 @@ import { Icon } from "@/components/labs/Icon";
 import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
-import { shorts, solera } from "@/lib/labs/solera";
+import { LandscapePlayer } from "@/components/labs/LandscapePlayer";
+import { catalyst, dances, shorts, solera } from "@/lib/labs/solera";
 import styles from "@/components/labs/Title.module.css";
 import { og } from "@/lib/labs/og";
+import { Loop } from "./Loop";
+import loop from "./Loop.module.css";
 
 export const metadata: Metadata = { title: solera.title, ...og(solera.title, "anime") };
 
@@ -23,24 +26,46 @@ export default function EchoesOfSolera() {
       </BackLink>
       <main id="main" className={styles.main}>
         <section className={styles.hero}>
-          <Image className={styles.art} src={solera.art.bg} alt="" fill sizes="100vw" priority />
-          <Image
-            bare
-            className={styles.art}
-            src={solera.art.cast}
-            alt="Nine and Nova above the city of Solera"
-            fill
-            sizes="100vw"
-            priority
-          />
+          <Loop className={loop.hero} src={solera.hero.video} poster={solera.hero.poster} label={solera.hero.label} />
           <div className={styles.shade} />
           <div className={styles.heroCopy}>
             <h1 className="display">{solera.title}</h1>
             <p className={styles.hook}>{solera.hook}</p>
-            <ButtonLink href={watch} icon={<Icon name="play" size={18} />}>
-              Watch the shorts
+            <ButtonLink href="#catalyst" icon={<Icon name="play" size={18} />}>
+              Watch Catalyst
             </ButtonLink>
           </div>
+        </section>
+
+        <section id="catalyst" aria-labelledby="catalyst-title">
+          <h2 id="catalyst-title" className="h2">
+            {catalyst.title}
+          </h2>
+          <LandscapePlayer items={[catalyst]} priority />
+        </section>
+
+        <Reveal as="section" className={styles.story} aria-labelledby="story">
+          <div>
+            <h2 id="story" className="h2">
+              The story
+            </h2>
+            <div className={loop.frame}>
+              <Loop src={solera.storyLoop.video} poster={solera.storyLoop.poster} label={solera.storyLoop.label} />
+            </div>
+          </div>
+          <div className={styles.storyText}>
+            {solera.story.map((p) => (
+              <p key={p.slice(0, 24)}>{p}</p>
+            ))}
+          </div>
+        </Reveal>
+
+        <section aria-labelledby="dances">
+          <h2 id="dances" className="h2">
+            Dances
+          </h2>
+          <p className="nl-note">Nova and Ya, two dance clips.</p>
+          <LandscapePlayer items={dances} />
         </section>
 
         <section aria-labelledby="shorts">
@@ -60,19 +85,6 @@ export default function EchoesOfSolera() {
             ))}
           </Reveal>
         </section>
-
-        <Reveal as="section" className={styles.story} aria-labelledby="story">
-          <div>
-            <h2 id="story" className="h2">
-              Book one: Catalyst
-            </h2>
-          </div>
-          <div className={styles.storyText}>
-            {solera.story.map((p) => (
-              <p key={p.slice(0, 24)}>{p}</p>
-            ))}
-          </div>
-        </Reveal>
 
         <section aria-labelledby="cast">
           <h2 id="cast" className="h2">

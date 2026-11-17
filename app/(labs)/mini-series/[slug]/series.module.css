@@ -1,0 +1,236 @@
+/* The series hero. Height follows the shared title-page hero. */
+.hero {
+  composes: nl-hero-height from global;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 22%;
+}
+/* Without key art the cover fills the frame, blurred and dark, behind the copy and the cover itself. */
+.backdrop {
+  object-fit: cover;
+  filter: blur(40px) saturate(1.1) brightness(0.45);
+  scale: 1.2;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgb(14 20 28 / 0.92) 0%, rgb(14 20 28 / 0.7) 40%, transparent 72%);
+}
+.hero[data-art="false"] .shade {
+  background: linear-gradient(to right, rgb(14 20 28 / 0.75) 0%, rgb(14 20 28 / 0.35) 70%);
+}
+.copy {
+  position: relative;
+  flex: 1;
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 14px;
+  min-width: 0;
+  max-width: 640px;
+  padding: clamp(24px, 4.4vw, 64px);
+}
+/* Balanced lines inside a measure that keeps short words like "The" off a line of their own. */
+.copy h1.title {
+  max-width: 15ch;
+  font-size: clamp(2.25rem, 3.4vw + 0.75rem, 4.25rem);
+}
+.genre {
+  font-size: 0.9375rem;
+  color: rgb(246 243 236 / 0.72);
+}
+.hook {
+  margin: 4px 0 14px;
+  max-width: 44ch;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: rgb(246 243 236 / 0.88);
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+.actions > * {
+  white-space: nowrap;
+}
+.poster {
+  position: relative;
+  flex: none;
+  width: clamp(220px, 24vw, 340px);
+  margin-left: auto;
+  margin-right: clamp(24px, 5vw, 80px);
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.1),
+    0 30px 60px rgb(0 0 0 / 0.45);
+}
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Below 960 the copy would run over the couple: it moves to the bottom over a fade. */
+@media (max-width: 960px) {
+  .hero[data-art="true"] {
+    align-items: flex-end;
+  }
+  .hero[data-art="true"] .shade {
+    background: linear-gradient(to top, rgb(14 20 28 / 0.94) 0%, rgb(14 20 28 / 0.6) 45%, transparent 75%);
+  }
+}
+
+/* Phones: art keeps the top of the frame and the copy sits on the dark below; a cover stacks above the copy. */
+@media (max-width: 720px) {
+  .hero[data-art="true"] .art {
+    height: 58% !important;
+    object-position: 62% 0;
+  }
+  .hero[data-art="true"] .shade {
+    background: linear-gradient(to top, rgb(14 20 28) 0%, rgb(14 20 28) 44%, rgb(14 20 28 / 0.6) 52%, transparent 62%);
+  }
+  .hero[data-art="false"] {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 0;
+  }
+  .hero[data-art="false"] .poster {
+    width: min(56vw, 240px);
+    margin: 28px auto 0;
+  }
+  .hero[data-art="false"] .shade {
+    background: linear-gradient(to top, rgb(14 20 28 / 0.85) 0%, rgb(14 20 28 / 0.4) 60%);
+  }
+  .copy {
+    padding: 24px 20px 28px;
+  }
+  .hook {
+    font-size: 1rem;
+  }
+}
+@media (max-width: 420px) {
+  .actions {
+    gap: 8px;
+  }
+  .actions > * {
+    padding-inline: 16px;
+  }
+}
+
+/* Episodes: the player, then the list beside it (below it on a phone). */
+.watch {
+  scroll-margin-top: 24px;
+}
+.watchRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+.player {
+  height: min(78vh, 760px);
+  min-height: 420px;
+}
+.episodes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  list-style: none;
+}
+.episodes a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px 8px 8px;
+  border-radius: var(--r-card);
+  background: var(--surface);
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .episodes a:hover {
+    background: var(--surface-hover);
+  }
+}
+.episodes a:active {
+  scale: 0.98;
+}
+.episodes a[aria-current] {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.episodes img {
+  width: 56px;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: var(--r-thumb);
+}
+.epName {
+  display: grid;
+  gap: 2px;
+  font-weight: 500;
+}
+@media (max-width: 900px) {
+  .watchRow {
+    grid-template-columns: 1fr;
+  }
+  .player {
+    height: min(72vh, 640px);
+    justify-self: center;
+  }
+}
+
+/* The other images: covers and character sheets, at their own shapes. */
+.stills {
+  columns: 3 300px;
+  column-gap: 20px;
+  list-style: none;
+}
+.stills li {
+  break-inside: avoid;
+  margin-bottom: 20px;
+}
+.stills a {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  outline: 1px solid rgb(255 255 255 / 0.1);
+  outline-offset: -1px;
+  transition: translate var(--dur-move) var(--ease-out);
+}
+.stills img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (hover: hover) and (pointer: fine) {
+  .stills a:hover {
+    translate: 0 -4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stills a {
+    transition: none;
+  }
+}

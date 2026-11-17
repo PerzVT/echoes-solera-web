@@ -5,7 +5,7 @@
   max-width: 1344px;
   margin: 16px auto 0;
   display: grid;
-  gap: clamp(56px, 8vh, 88px);
+  gap: clamp(56px, 8vh, 96px);
 }
 
 .intro {
@@ -16,15 +16,6 @@
   align-items: end;
   padding: clamp(40px, 7vh, 72px) 0 clamp(40px, 6vh, 56px);
   border-bottom: 1px solid var(--border);
-}
-.eyebrow {
-  grid-column: 1 / -1;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.intro h1 {
-  max-width: 12ch;
 }
 .introSide {
   display: grid;
@@ -50,6 +41,7 @@
   align-items: end;
   justify-content: space-between;
   gap: 16px 32px;
+  margin-bottom: 28px;
 }
 .head p {
   margin-top: 8px;
@@ -82,188 +74,191 @@
   scale: 0.96;
 }
 
-/* Creator: eight screens, four to a row, each row on one connecting line. */
-.stages {
-  margin-top: 40px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  row-gap: 40px;
-  list-style: none;
-}
-.stages li {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: 6px;
-  padding-right: 20px;
-}
-.stages li::before {
-  content: "";
+/* Media that fills a positioned tile: a poster image or a loop over it. */
+.tileMedia {
   position: absolute;
-  top: 22px;
-  left: 44px;
-  right: 0;
-  height: 1px;
-  background: var(--border-strong);
-}
-.stages li:nth-child(4n)::before,
-.stages li:last-child::before {
-  display: none;
-}
-.node {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-bottom: 14px;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--border-strong);
-  background: var(--bg);
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 400ms var(--ease-out);
 }
 
-/* Style and references: a board of approved sheets beside the list. */
-.style {
+/* The creator: a production clip beside the eight screens. */
+.creator {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(32px, 5vw, 72px);
+  grid-template-columns: minmax(260px, 380px) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 80px);
   align-items: center;
 }
-.board {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  padding: clamp(16px, 2vw, 24px);
-  border-radius: var(--r-stage);
-  background: var(--surface);
-}
-.sheet {
-  display: grid;
-  gap: 10px;
-}
-.sheetArt {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  border-radius: var(--r-card);
-  background: #ece8de;
-  overflow: hidden;
-}
-.sheetArt img {
-  object-fit: contain;
-  padding: 8px;
-}
-.sheet figcaption {
-  padding-inline: 4px;
-  color: var(--text-muted);
-}
-.styleCopy {
-  display: grid;
-  justify-items: start;
-  gap: 8px;
-}
-.refs {
-  width: 100%;
-  margin: 20px 0 28px;
-  list-style: none;
-}
-.refs li {
-  display: grid;
-  gap: 2px;
-  padding: 14px 0;
-  border-top: 1px solid var(--border);
-}
-.refs li:last-child {
-  border-bottom: 1px solid var(--border);
-}
-.refName {
-  font-weight: 500;
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-/* Experiments: one wide piece and two portraits. */
-.experimentsSection {
-  scroll-margin-top: 24px;
-}
-.note {
-  margin: 8px 0 28px;
-  color: var(--text-muted);
-}
-.experiments {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-rows: clamp(360px, 36vw, 520px);
-  gap: 16px;
-  list-style: none;
-}
-.wide {
-  grid-column: span 6;
-}
-.slim {
-  grid-column: span 3;
-}
-.card {
+.creatorClip {
   position: relative;
   isolation: isolate;
-  display: flex;
-  align-items: flex-end;
-  height: 100%;
+  display: block;
+  aspect-ratio: 9 / 16;
+  max-height: 78vh;
   overflow: hidden;
   border-radius: var(--r-card);
   background: var(--surface-sunken);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
-  color: #fff;
+  transition: scale var(--dur-press) var(--ease-out);
 }
-.card:focus-visible {
-  outline-offset: 4px;
+.creatorClip:active {
+  scale: 0.99;
+}
+.clipCaption {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  padding: 48px 20px 18px;
+  background: linear-gradient(to top, rgb(10 14 20 / 0.88), transparent);
+  color: rgb(255 255 255 / 0.9);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.creatorCopy {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.creatorCopy > p {
+  max-width: 52ch;
+}
+.stages {
+  width: 100%;
+  margin: 20px 0 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 32px;
+  list-style: none;
+  counter-reset: none;
+}
+.stages li {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.node {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  font-family: var(--font-display);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.stageCopy {
+  display: grid;
+  gap: 2px;
+}
+.stageName {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Character sheets: the real cast sheets, each with its tag. */
+.sheets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  list-style: none;
+}
+.sheet {
+  display: grid;
+  gap: 10px;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.sheet:active {
+  scale: 0.98;
+}
+.sheetArt {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   border-radius: var(--r-card);
+  background: #ece8de;
 }
-.cardArt {
-  z-index: -2;
-  object-fit: cover;
+.sheetArt img {
+  object-fit: contain;
   transition: scale 400ms var(--ease-out);
 }
-.cardShade {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to top, rgb(10 14 20 / 0.92) 0%, rgb(10 14 20 / 0.6) 34%, transparent 64%);
-}
 .tag {
+  justify-self: start;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* Formats: four to a row, media above, the name and one fact below. */
+.formats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 16px;
+  list-style: none;
+}
+.format {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.format:active {
+  scale: 0.98;
+}
+.tile {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  aspect-ratio: 4 / 5;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.badge {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  padding: 6px 12px;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  padding: 4px 10px;
   border-radius: var(--r-pill);
   background: rgb(10 14 20 / 0.72);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
   color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
-.cardCopy {
-  display: grid;
-  gap: 6px;
-  padding: clamp(20px, 2vw, 28px);
-}
-.kind {
-  color: rgb(255 255 255 / 0.78);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.cardTitle {
+.formatTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-display);
-  font-size: clamp(1.375rem, 2vw, 1.75rem);
-  line-height: 1.15;
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  line-height: 1.2;
 }
-.cardLine {
-  color: rgb(255 255 255 / 0.86);
+.formatTitle svg {
+  transition: translate var(--dur-move) var(--ease-out);
+}
+.format .small {
   text-wrap: pretty;
 }
 @media (hover: hover) and (pointer: fine) {
-  .card:hover .cardArt {
+  .format:hover .tileMedia,
+  .sheet:hover .sheetArt img {
     scale: 1.03;
+  }
+  .format:hover .formatTitle svg {
+    translate: 3px 0;
   }
 }
 
@@ -308,82 +303,44 @@
 }
 
 @media (max-width: 1100px) {
-  .stages {
+  .formats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .sheets {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 36px;
-  }
-  .stages li:nth-child(2n)::before {
-    display: none;
-  }
-  .style {
-    grid-template-columns: 1fr;
-  }
-  .board {
-    order: 2;
   }
 }
 @media (max-width: 900px) {
   .intro {
     grid-template-columns: 1fr;
   }
-  .experiments {
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: auto;
+  .creator {
+    grid-template-columns: 1fr;
   }
-  .wide {
-    grid-column: 1 / -1;
-  }
-  .slim {
-    grid-column: auto;
-  }
-  .card {
-    aspect-ratio: 3 / 4;
-  }
-  .wide .card {
-    aspect-ratio: 4 / 3;
+  .creatorClip {
+    width: min(100%, 360px);
+    justify-self: center;
   }
 }
 @media (max-width: 720px) {
   .page {
     padding: 12px 16px 64px;
   }
-  /* The row becomes a column with the line running down the left. */
   .stages {
     grid-template-columns: 1fr;
-    row-gap: 0;
   }
-  .stages li {
-    grid-template-columns: 44px minmax(0, 1fr);
-    column-gap: 16px;
-    row-gap: 2px;
-    padding: 0 0 24px;
+  .formats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 12px;
   }
-  .stages li::before,
-  .stages li:nth-child(2n)::before,
-  .stages li:nth-child(4n)::before {
-    display: block;
-    top: 44px;
-    bottom: 0;
-    left: 22px;
-    right: auto;
-    width: 1px;
-    height: auto;
+  .formatTitle {
+    font-size: 1.125rem;
   }
-  .stages li:last-child::before {
-    display: none;
+  .sheets {
+    gap: 12px;
   }
-  .node {
-    grid-row: span 2;
-    margin-bottom: 0;
-  }
-  .stages h3 {
-    padding-top: 9px;
-  }
-  .experiments {
-    grid-template-columns: 1fr;
-  }
-  .slim .card {
-    aspect-ratio: 4 / 5;
+  .creatorClip {
+    width: min(100%, 300px);
   }
   .pipeline {
     gap: 8px 16px;
@@ -391,22 +348,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cardArt,
+  .tileMedia,
+  .sheetArt img,
+  .formatTitle svg,
   .pipelineArrow {
     transition: none;
   }
-  .card:hover .cardArt {
-    scale: 1;
-  }
-  .pipeline:hover .pipelineArrow {
-    translate: 0 0;
-  }
-}
-
-/* Press: the whole card gives a little. */
-.card {
-  transition: scale var(--dur-press) var(--ease-out);
-}
-.card:active {
-  scale: 0.98;
 }

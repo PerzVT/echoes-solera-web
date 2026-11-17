@@ -253,7 +253,7 @@ export function VerticalPlayer({ src, poster, label, index = 0, previous, previo
 
         {ended && (
           <div className={styles.end}>
-            <p className="h3">That is the last one out so far.</p>
+            <p className="h3">That is the last episode.</p>
             <div className={styles.endActions}>
               <Button ref={again} onClick={replay} icon={<ReplayIcon turn={turns} size={18} />}>
                 Watch again

@@ -329,7 +329,7 @@ export function ReferencesStep({ initial }: { initial: RefState }) {
         onConfirm={() => {
           // The button works until Results takes the screen.
           setStarting(true);
-          router.push("/app/episode/results");
+          router.push("/app/episode/results?state=new");
         }}
         busy={starting}
         title={confirmEpisode.title}

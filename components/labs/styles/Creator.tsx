@@ -13,7 +13,7 @@ import s from "./styles.module.css";
 
 
 /** The guide's anti-pattern rules, as the chart's Avoid row. */
-const avoid = ["Domes", "Dithering", "Over-detail"];
+const avoid = ["Black outlines", "Airbrush shading", "Over-detail"];
 
 /** Creator: the stepped builder for a style draft. Nothing leaves this page. */
 export function Creator({ initialStep = "chart" }: { initialStep?: StepKey }) {

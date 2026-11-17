@@ -173,7 +173,76 @@
   }
 }
 
-/* Card faces and manga pages */
+/* The wall: a grid of card faces or manga pages turned a few degrees and made larger than the stage, so
+   it runs past every edge. It is dimmed most where the copy sits (bottom left) by the stage fade. */
+.wall {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.wallGrid {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(150%, 1500px);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: clamp(14px, 1.6vw, 26px);
+  translate: -50% -50%;
+  rotate: -9deg;
+}
+.wall[data-kind="cards"] .wallGrid {
+  /* Every other column sits half a card lower, as cards dropped on a table. */
+  align-items: start;
+}
+.wall[data-kind="cards"] .wallTile:nth-child(even) {
+  translate: 0 18%;
+}
+.wall[data-kind="cards"] {
+  opacity: 0.5;
+  filter: saturate(0.75);
+}
+.wallTile {
+  display: block;
+  width: 100%;
+  box-shadow: 0 14px 28px rgb(0 0 0 / 0.4);
+  border-radius: 4.5% / 3.2%;
+}
+.wall[data-kind="pages"] .wallTile {
+  aspect-ratio: 2 / 3;
+  height: auto;
+  object-fit: cover;
+  border-radius: 2px;
+  outline: 6px solid #f3efe6;
+  outline-offset: -1px;
+}
+.wall[data-kind="pages"] .wallTile:nth-child(odd) {
+  translate: 0 -10%;
+}
+.wall[data-kind="pages"] {
+  opacity: 0.34;
+  filter: grayscale(1) contrast(1.05);
+}
+.stage[data-active="true"] .wall {
+  animation: hero-settle 1600ms var(--ease-out) var(--hero-wait) both;
+}
+
+/* A transparent illustration held against the right edge at full stage height (manga). */
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 100% 50%;
+  filter: drop-shadow(0 24px 40px rgb(0 0 0 / 0.5));
+}
+.stage[data-active="true"] .art {
+  animation: hero-cast 1100ms var(--ease-out) var(--hero-wait) both;
+}
+
+/* Card faces */
 .fan {
   position: absolute;
   inset: 0 6% 0 38%;
@@ -202,47 +271,6 @@
   height: auto;
   max-height: none;
   border-radius: 6.4% / 4.57%;
-}
-/* Manga: the three panels of page 1 set as a page, gutters and all (manga-hero-a). */
-.fan[data-kind="panels"] {
-  inset: 12% 6% 12% 46%;
-  display: grid;
-  grid-template-columns: 0.91fr 2.08fr;
-  align-content: center;
-  gap: 10px;
-  padding: 10px;
-  background: #f6f3ec;
-  border-radius: 3px;
-  box-shadow: 0 24px 40px rgb(0 0 0 / 0.45);
-  rotate: 1.2deg;
-  height: fit-content;
-  margin-block: auto;
-}
-.fan[data-kind="panels"] > img {
-  width: 100%;
-  height: auto;
-  max-height: none;
-  margin: 0;
-  rotate: none;
-  translate: none;
-  box-shadow: inset 0 0 0 2px #111;
-  outline: 2px solid #111;
-  outline-offset: -2px;
-}
-.fan[data-kind="panels"] > img:first-child {
-  grid-column: 1 / -1;
-}
-.fan[data-kind="pages"] > img {
-  width: 35%;
-  max-height: 80%;
-  object-fit: contain;
-  margin-inline: -1.5%;
-  rotate: calc(var(--off) * 3deg);
-  translate: 0 calc(var(--off) * 3%);
-  border-radius: 3px;
-  background: #fff;
-}
-@media (hover: hover) and (pointer: fine) {
 }
 
 /* Dock */
@@ -362,9 +390,6 @@
   .fan {
     inset: 0 0 38% 0;
   }
-  .fan[data-kind="panels"] {
-    inset: 8% 8% auto 8%;
-  }
   .fan > img,
   .fanCard {
     width: 30%;
@@ -384,6 +409,14 @@
   .figure {
     opacity: 0.9;
   }
+  /* On a tall stage the leads fill the height, cropped to the two faces; the fade keeps the copy clear. */
+  .art {
+    object-fit: cover;
+    object-position: 74% 0;
+  }
+  .wallGrid {
+    width: 260%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -398,6 +431,8 @@
   .stage[data-active="true"] .layer:not(.cast),
   .stage[data-active="true"] .figure,
   .stage[data-active="true"] .fan > *,
+  .stage[data-active="true"] .wall,
+  .stage[data-active="true"] .art,
   .stage[data-active="true"] [role="region"] {
     animation: none;
   }

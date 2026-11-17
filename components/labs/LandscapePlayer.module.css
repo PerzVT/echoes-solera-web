@@ -1,0 +1,87 @@
+.wrap {
+  display: grid;
+  gap: 20px;
+}
+.frame {
+  position: relative;
+  width: min(100%, calc(80dvh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--r-stage);
+  background: #000;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 30px 60px rgb(0 0 0 / 0.4);
+}
+.frame:focus {
+  outline: none;
+}
+.frame:fullscreen {
+  width: 100%;
+  border-radius: 0;
+  aspect-ratio: auto;
+}
+.frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  list-style: none;
+}
+.pick {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.pick:active {
+  scale: 0.98;
+}
+.thumb {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  outline: 1px solid rgb(255 255 255 / 0.1);
+  outline-offset: -1px;
+  background: var(--surface);
+  margin-bottom: 4px;
+  transition: outline-color var(--dur-feedback) var(--ease-out);
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pick[aria-current="true"] .thumb {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .pick:hover .thumb {
+    outline-color: rgb(255 255 255 / 0.4);
+  }
+}
+.name {
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+@media (max-width: 720px) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pick {
+    transition: none;
+  }
+}

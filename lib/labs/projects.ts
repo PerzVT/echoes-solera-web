@@ -17,9 +17,13 @@ export type Project = {
   /** Full-frame transparent layer registered to the background. */
   cast?: string;
   figures?: Figure[];
-  /** Portrait pieces laid out as a fan (card faces), or manga panels set as a page grid. */
-  fan?: { kind: "cards" | "panels"; items: { src: string; alt: string; width?: number; height?: number }[] };
+  /** Card faces laid out as a fan. */
+  fan?: { kind: "cards"; items: { src: string; alt: string; width?: number; height?: number }[] };
   backdrop?: string;
+  /** A tilted wall of pictures that fills the whole stage behind everything else (card faces or manga pages). */
+  wall?: { kind: "cards" | "pages"; items: string[] };
+  /** A transparent illustration contained against the right edge, over the wall. */
+  art?: string;
   /** A muted looping video that fills the hero, with the still shown until it plays. */
   video?: string;
   poster?: string;
@@ -37,8 +41,8 @@ export const projects: Project[] = [
     primary: { label: "Create an anime", href: "/app" },
     secondary: { label: "Watch Echoes of Solera", href: "/anime/echoes-of-solera" },
     tone: "dark",
-    video: `${L}/anime/hero-montage.mp4`,
-    poster: `${L}/anime/hero-montage.webp`,
+    video: `${L}/anime/anime-montage.mp4`,
+    poster: `${L}/anime/anime-montage.webp`,
 
   },
   {
@@ -66,14 +70,9 @@ export const projects: Project[] = [
     slug: "worlds",
     name: "Virtual worlds",
     line: "Walk around Tidebell Cove as a duck called FOMO.",
-    // The outfit picker is the thing on the world page a visitor can try.
-    primary: { label: "Try it out", href: "/worlds/tidebell-cove#outfits" },
+    primary: { label: "See the world", href: "/worlds/tidebell-cove" },
     tone: "dark",
-    bg: `${L}/worlds/pier.webp`,
-    figures: [
-      { src: `${L}/worlds/cast/fomo-dinosaur.webp`, right: "27%", height: "56%", bottom: "5%" },
-      { src: `${L}/worlds/cast/fomo-heart-knit.webp`, right: "8%", height: "68%", bottom: "2%" },
-    ],
+    bg: `${L}/worlds/pier-v2.webp`,
   },
   {
     slug: "cards",
@@ -83,10 +82,17 @@ export const projects: Project[] = [
     secondary: { label: "See the collection", href: "/cards" },
     tone: "dark",
     backdrop: "radial-gradient(120% 90% at 78% 40%, #1f4a4f 0%, #12303a 46%, #0e1d27 100%)",
+    // Codex's cards concept (homepage-v2 cards-final): the whole stage is a wall of the set, the fan on top.
+    wall: {
+      kind: "cards",
+      items: ["ya-garden", "fomo-dinosaur", "hisui-tea", "akane-tartlets", "fomo-shark", "yukiha-shaved-ice", "fomo-star-wizard", "fomo-heart-knit"].map(
+        (id) => `${L}/cards/art/${id}.webp`,
+      ),
+    },
     fan: {
       kind: "cards",
       items: [
-        { src: `${L}/cards/art/oren-pond.webp`, alt: "Or-en by a pond" },
+        { src: `${L}/cards/art/ya-garden.webp`, alt: "YA in the garden" },
         { src: `${L}/cards/art/nine-moonlight.webp`, alt: "Nine under the moon" },
         { src: `${L}/cards/art/nova-sunset.webp`, alt: "Nova at sunset" },
         { src: `${L}/cards/art/kohaku-bakery.webp`, alt: "Kohaku in the bakery" },
@@ -102,15 +108,13 @@ export const projects: Project[] = [
     // A screentone over the dark ground, as in the kit's manga patterns.
     backdrop:
       "radial-gradient(circle at 1px 1px, rgb(246 243 236 / 0.07) 1px, transparent 1.6px) 0 0 / 7px 7px, linear-gradient(120deg, #0d1016 0%, #171c25 100%)",
-    // The three panels of Golden Ticket page 1, cut at native size, set as a page (manga-hero-a).
-    fan: {
-      kind: "panels",
-      items: [
-        { src: `${L}/manga/panels/shop-establishing.webp`, alt: "Inside a shop of old games", width: 994, height: 432 },
-        { src: `${L}/manga/panels/nova-closeup.webp`, alt: "Nova holding a game cartridge, close up", width: 496, height: 545 },
-        { src: `${L}/manga/panels/nova-searching.webp`, alt: "Nova looking through a bin of games", width: 994, height: 478 },
-      ],
+    // Codex's manga home concept (homepage-art-v04 manga-hero): the three leads drawn as one torn page,
+    // over a wall of Golden Ticket pages that runs the width of the stage.
+    wall: {
+      kind: "pages",
+      items: [1, 2, 3].map((n) => `${L}/manga/golden-ticket/page-${n}-v2.webp`),
     },
+    art: `${L}/home/manga-hero.webp`,
   },
   {
     slug: "visual-novel",
@@ -118,7 +122,7 @@ export const projects: Project[] = [
     line: "Turn a story into a visual novel with branches.",
     primary: { label: "Play the demo", href: "/visual-novel/after-hours" },
     tone: "dark",
-    bg: `${L}/visual-novel/cg/rooftop.webp`,
+    bg: `${L}/visual-novel/cg/juri-rooftop.webp`,
   },
   {
     slug: "game-ads",

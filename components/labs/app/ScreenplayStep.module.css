@@ -173,6 +173,10 @@
   max-width: 34ch;
   text-align: left;
 }
+/* A changed passage keeps a band above its text for the label, so the label never covers a word. */
+.passage[data-changed="true"] {
+  padding-top: 28px;
+}
 .changed {
   position: absolute;
   top: 4px;

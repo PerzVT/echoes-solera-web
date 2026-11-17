@@ -7,7 +7,8 @@ import { projects } from "@/lib/labs/projects";
 
 /**
  * The Projects menu. A native <details>, so it opens without JavaScript; with it, the menu also
- * closes on Escape (focus goes back to its button), on a press outside it and when an item is chosen.
+ * closes on Escape (focus goes back to its button), on a press outside it, when Tab moves focus out of
+ * it and when an item is chosen.
  */
 export function ProjectsMenu({ className, current }: { className?: string; current?: boolean }) {
   const ref = useRef<HTMLDetailsElement>(null);
@@ -23,9 +24,16 @@ export function ProjectsMenu({ className, current }: { className?: string; curre
     const onPointer = (e: PointerEvent) => {
       if (d.open && !d.contains(e.target as Node)) d.open = false;
     };
+    // Focus leaving for somewhere outside the menu (Tab past the last item, Shift+Tab off the button).
+    const onFocusOut = (e: FocusEvent) => {
+      const next = e.relatedTarget as Node | null;
+      if (d.open && next && !d.contains(next)) d.open = false;
+    };
     document.addEventListener("keydown", onKey);
     document.addEventListener("pointerdown", onPointer);
+    d.addEventListener("focusout", onFocusOut);
     return () => {
+      d.removeEventListener("focusout", onFocusOut);
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("pointerdown", onPointer);
     };

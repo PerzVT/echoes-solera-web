@@ -22,12 +22,12 @@ export const SITE_DESCRIPTION =
  * layout's metadataBase.
  */
 export function og(title: string, image: OgImage = "default", description = SITE_DESCRIPTION): Pick<Metadata, "openGraph" | "twitter"> {
-  const url = `/labs/og/${image}.png`;
+  const url = `/labs/og/${image}-v2.png`;
   return {
     openGraph: {
       title,
       description,
-      siteName: "Nine Lives Labs",
+      siteName: "Nine Lives",
       type: "website",
       images: [{ url, width: 1200, height: 630, type: "image/png" }],
     },

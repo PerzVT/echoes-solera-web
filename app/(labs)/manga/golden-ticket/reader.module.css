@@ -62,10 +62,18 @@
   gap: 12px;
   list-style: none;
 }
+/* Each page is the size container its lettering is measured against. */
+.sheet {
+  position: relative;
+  container-type: inline-size;
+  border-radius: var(--r-thumb);
+  overflow: hidden;
+  background: #fff;
+}
 .img {
+  display: block;
   width: 100%;
   height: auto;
-  border-radius: var(--r-thumb);
 }
 
 .end {

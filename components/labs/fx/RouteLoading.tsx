@@ -74,7 +74,7 @@ export function PageLoading() {
   );
 }
 
-/** The creator and sign-in: the mark, working. Their frames differ too much for one skeleton to be honest. */
+/** The creator: the mark, working. Its frames differ too much for one skeleton to be honest. */
 export function BusyScreen() {
   return (
     <div className={styles.busy} role="status" aria-busy="true" aria-label="Loading">

@@ -2,21 +2,23 @@
 
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { useEffect, useRef, useState } from "react";
-import { PlayPauseIcon } from "./fx/AnimatedIcon";
 import styles from "./HeroVideo.module.css";
 
 /**
- * A muted 16:9 loop shown whole at every width. The stage around it is filled with a blurred, dimmed copy
- * of the poster, so a tall or very wide stage never shows bare bars. It plays only while its hero is the
- * chosen one and is on screen, and it can be paused.
+ * A muted loop that covers its stage edge to edge. It plays only while its hero is the chosen one and is
+ * on screen, and not at all under reduced motion, where the poster stands in for it.
  */
 export function HeroVideo({ src, poster, active }: { src: string; poster: string; active: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
-  const [paused, setPaused] = useState(false);
+  const [still, setStill] = useState(false);
   const [onScreen, setOnScreen] = useState(true);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPaused(true);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setStill(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   useEffect(() => {
@@ -30,17 +32,14 @@ export function HeroVideo({ src, poster, active }: { src: string; poster: string
   useEffect(() => {
     const v = video.current;
     if (!v) return;
-    if (active && !paused && onScreen) v.play().catch(() => {});
+    if (active && !still && onScreen) v.play().catch(() => {});
     else v.pause();
-  }, [active, paused, onScreen]);
+  }, [active, still, onScreen]);
 
   return (
     <>
-      <Image className={styles.backdrop} src={poster} alt="" fill sizes="40vw" priority={active} aria-hidden="true" />
+      <Image className={styles.poster} src={poster} alt="" fill sizes="100vw" priority={active} aria-hidden="true" />
       <video ref={video} className={styles.video} src={active ? src : undefined} poster={poster} muted loop playsInline preload="none" aria-hidden="true" />
-      <button type="button" className={styles.toggle} onClick={() => setPaused((p) => !p)} aria-label={paused ? "Play the video" : "Pause the video"}>
-        <PlayPauseIcon playing={!paused} size={18} />
-      </button>
     </>
   );
 }

@@ -17,7 +17,6 @@ export const cards: CardFace[] = [
   card("nova-sunset", "Nova, sunset", "solera"),
   card("nine-moonlight", "Nine, moonlight", "solera"),
   card("ya-garden", "YA, garden", "solera"),
-  card("oren-pond", "Or-en, pond", "solera"),
   card("fomo-heart-knit", "FOMO, heart knit", "tidebell"),
   card("fomo-dinosaur", "FOMO, dinosaur", "tidebell"),
   card("fomo-shark", "FOMO, shark", "tidebell"),

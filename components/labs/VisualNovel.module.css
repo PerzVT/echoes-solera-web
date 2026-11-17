@@ -1,37 +1,100 @@
 .stage {
   position: relative;
   height: 100dvh;
-  min-height: 480px;
+  min-height: 520px;
   overflow: hidden;
   background: #0b0d13;
   color: #fff;
-  /* The owner's screenshot sets dialogue near 3.1% of the frame's width. */
-  --line: clamp(1.25rem, 3.1vw, 2.875rem);
+  --gutter: clamp(16px, 3vw, 32px);
+  --line: clamp(1.0625rem, 0.9rem + 0.45vw, 1.375rem);
+  --box-w: min(1040px, calc(100% - var(--gutter) * 2));
+  /* Where the rooftop illustration is anchored. A tall screen keeps her hand and the brush in frame. */
+  --cg-focus: 50% 35%;
+}
+@media (max-aspect-ratio: 1/1) {
+  .stage {
+    --cg-focus: 64% 35%;
+  }
 }
 .stage[data-large="true"] {
-  --line: clamp(1.5rem, 3.6vw, 3.25rem);
+  --line: clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem);
 }
 
-.scene {
+/* Art: every background, illustration and pose is mounted once and cross-fades by opacity. */
+.art {
+  position: absolute;
+  inset: 0;
+}
+.layer {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 700ms var(--ease-out);
+  transition: opacity 600ms var(--ease-out);
 }
-.scene[data-on="true"] {
+.layer[data-on="true"] {
   opacity: 1;
 }
-.scene img {
+.layer img {
   object-fit: cover;
+}
+
+/* Juri stands on the floor of the scene. Her box is the full width and most of the height; the
+   cut-out is contained in it, so on a phone she is as wide as the screen allows and on a wide screen
+   as tall as it allows, never cropped. */
+.sprite {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: min(94%, 170vw);
+  opacity: 0;
+  translate: 0 12px;
+  transition:
+    opacity 300ms var(--ease-out),
+    translate 300ms var(--ease-out);
+}
+.sprite[data-on="true"] {
+  opacity: 1;
+  translate: 0 0;
+}
+.pose {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 180ms var(--ease-out);
+}
+.pose[data-on="true"] {
+  opacity: 1;
+}
+.pose img {
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+@media (min-width: 900px) {
+  /* Right of centre, so a choice can sit beside her instead of over her. */
+  .sprite {
+    left: 30%;
+  }
+  /* While a choice is open the box moves to the left half, clear of Juri. */
+  .box[data-choosing="true"] {
+    left: var(--gutter);
+    translate: none;
+    width: min(600px, 46%);
+  }
 }
 
 .tap {
   position: absolute;
   inset: 0;
-  width: 100%;
   cursor: pointer;
 }
-.tap:focus-visible {
+.reveal {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: pointer;
+}
+.reveal:focus-visible {
   outline-offset: -6px;
 }
 
@@ -39,7 +102,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  transition: opacity 250ms var(--ease-out);
+  transition: opacity 220ms var(--ease-out);
 }
 .ui[data-hidden="true"] {
   opacity: 0;
@@ -47,20 +110,23 @@
 .ui > * {
   pointer-events: auto;
 }
-.fade {
-  position: absolute;
-  /* The dialogue fade from the visual novel kit: the lower 40 percent, #080b14 at 0, 0.7 and 0.95. */
-  inset: 60% 0 0 0;
-  pointer-events: none !important;
-  background: linear-gradient(to bottom, rgb(8 11 20 / 0) 0%, rgb(8 11 20 / 0.7) 45%, rgb(8 11 20 / 0.95) 100%);
-}
 
-.exit {
+.top {
   position: absolute;
-  left: clamp(16px, 2.4vw, 32px);
-  top: clamp(16px, 2.4vw, 32px);
-  width: 48px;
-  height: 48px;
+  left: var(--gutter);
+  top: max(var(--gutter), env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none !important;
+}
+.top > * {
+  pointer-events: auto;
+}
+.exit {
+  width: 44px;
+  height: 44px;
+  flex: none;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -72,65 +138,133 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .exit:hover {
-    background: rgb(8 9 14 / 0.75);
+    background: rgb(8 9 14 / 0.8);
   }
 }
 .exit:active {
   scale: 0.96;
 }
 
-.dialogue {
+/* Title screen: the cover, a shade at the foot, and the chapter's name over it. */
+.stage[data-phase="title"] .art::after {
+  content: "";
   position: absolute;
-  left: clamp(20px, 5vw, 96px);
-  right: clamp(20px, 5vw, 96px);
-  bottom: clamp(92px, 15vh, 148px);
-  pointer-events: none !important;
-  text-shadow: 0 2px 10px rgb(0 0 0 / 0.6);
+  inset: 0;
+  background: linear-gradient(to top, rgb(8 11 20 / 0.92) 0%, rgb(8 11 20 / 0.55) 45%, rgb(8 11 20 / 0) 75%);
 }
+.title {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: max(clamp(24px, 8vh, 72px), env(safe-area-inset-bottom));
+  max-width: 560px;
+  display: grid;
+  gap: 16px;
+  animation: rise 360ms var(--ease-out) backwards;
+}
+.titleName {
+  font-size: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.blurb {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 0.86);
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* The text box: the speaker, the line, any choice, and the reading controls, in one panel at the foot. */
+.box {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  bottom: max(var(--gutter), env(safe-area-inset-bottom));
+  width: var(--box-w);
+  max-height: calc(100% - 96px);
+  overflow-y: auto;
+  display: grid;
+  padding: 18px clamp(18px, 2.8vw, 34px) 8px;
+  border-radius: var(--r-card);
+  /* A hairline edge, lit a little at the top, over a dark glass that keeps the scene showing through. */
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-top-color: rgb(255 255 255 / 0.2);
+  background: linear-gradient(180deg, rgb(22 26 40 / 0.82) 0%, rgb(10 12 20 / 0.9) 100%);
+  backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 20px 48px rgb(0 0 0 / 0.42);
+}
+/* The name plate. Narration keeps an empty plate in place so the line does not jump between speakers. */
 .speaker {
+  justify-self: start;
+  min-height: 1.9rem;
   margin-bottom: 10px;
-  font-weight: 500;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
-  color: #ffb3d1;
+  padding: 2px 16px 3px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.6rem;
+  letter-spacing: 0.01em;
+  color: #2a0f1d;
+  background: linear-gradient(180deg, #ffb4d4 0%, #ff9ec7 100%);
+  box-shadow: 0 4px 14px rgb(255 120 180 / 0.22);
 }
+.speaker[data-empty] {
+  visibility: hidden;
+}
+/* A button centres its content, so the text sits in a grid cell pinned to the top. */
 .line {
-  max-width: 34em;
-  min-height: 2.9em;
-  font-weight: 300;
+  display: grid;
+  align-content: start;
+  width: 100%;
+  max-width: 46em;
+  /* Room for three lines, so the box does not jump as lines change length. */
+  min-height: calc(var(--line) * 1.6 * 3);
+  padding: 0;
+  text-align: left;
   font-size: var(--line);
-  line-height: 1.45;
-  letter-spacing: 0.005em;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #fff;
+  cursor: pointer;
+  text-wrap: pretty;
+  border-radius: 6px;
+}
+.lineText {
+  display: block;
+}
+.line[data-who="narration"] {
+  color: rgb(234 231 242 / 0.92);
+  font-style: italic;
+}
+.line:focus-visible {
+  outline-offset: 6px;
 }
 /* The unrevealed part keeps its space so the line never reflows while it types. */
 .rest {
   visibility: hidden;
 }
-/* Without script nothing types the line out: show it whole. */
 :global(.nl:not([data-nl-js])) .rest {
   visibility: visible;
 }
-/* A quiet mark that the scene is a concept sample, beside the way out. */
-.concept {
-  position: absolute;
-  left: calc(clamp(16px, 2.4vw, 32px) + 56px);
-  top: clamp(16px, 2.4vw, 32px);
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  font-size: 0.875rem;
-  color: rgb(255 255 255 / 0.72);
-  text-shadow: 0 1px 6px rgb(0 0 0 / 0.6);
-}
-/* Continue cue: a small pink diamond, the card-back motif, after the last word. */
+/* Continue mark: a small pink diamond after the last word. */
 .more {
   display: inline-block;
-  width: 0.3em;
-  height: 0.3em;
-  margin-left: 0.4em;
+  width: 0.32em;
+  height: 0.32em;
+  margin-left: 0.45em;
   vertical-align: 0.12em;
   rotate: 45deg;
-  background: var(--accent);
+  background: #ff9ec7;
   animation: more 900ms var(--ease-out) infinite alternate;
 }
 @keyframes more {
@@ -139,89 +273,90 @@
   }
 }
 
+/* Choices sit inside the box, under the line that asks, so they never cover Juri. */
 .choices {
-  position: absolute;
-  left: clamp(20px, 5vw, 96px);
-  bottom: calc(clamp(92px, 15vh, 148px) + var(--line) * 4.6 + 36px);
-  width: min(440px, calc(100% - 40px));
   display: grid;
-  /* The kit's minimum gap between choices. */
-  gap: 16px;
+  gap: 10px;
+  margin-top: 14px;
   list-style: none;
 }
 .choices button {
   width: 100%;
-  min-height: 56px;
-  padding: 14px 22px;
+  min-height: 48px;
+  padding: 11px 18px;
   text-align: left;
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   line-height: 1.35;
   color: #fff;
-  /* Choice shapes from the kit: 22px corners, #17222d fill, white hairline; pink edge on hover. */
-  border-radius: 22px;
-  border: 2px solid rgb(255 255 255 / 0.44);
-  background: rgb(23 34 45 / 0.91);
+  border-radius: 16px;
+  border: 1.5px solid rgb(255 255 255 / 0.32);
+  background: rgb(30 40 54 / 0.9);
   transition:
     background-color var(--dur-feedback) var(--ease-out),
     border-color var(--dur-feedback) var(--ease-out),
-    translate var(--dur-feedback) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .choices button:hover {
-    background: rgb(58 53 71 / 0.93);
-    border-color: #ef8eb6;
-    translate: 4px 0;
+  .choices button:hover:not(:disabled) {
+    background: rgb(58 53 71 / 0.95);
+    border-color: #ff9ec7;
   }
 }
-.choices button:active {
-  scale: 0.98;
+.choices button:focus-visible {
+  border-color: #ff9ec7;
 }
-/* The kit's selected state: cream fill, ink text, held for a moment before the scene changes. */
+.choices button:active {
+  scale: 0.985;
+}
 .choices button[data-picked="true"] {
   color: #17222d;
   background: #f6f3ec;
   border-color: #f6f3ec;
 }
 .choices button:disabled:not([data-picked="true"]) {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: default;
 }
 .choices li {
-  animation: rise 360ms var(--ease-out) backwards;
+  animation: rise 300ms var(--ease-out) backwards;
 }
 .choices li:nth-child(2) {
-  animation-delay: 90ms;
+  animation-delay: 60ms;
+}
+.choices li:nth-child(3) {
+  animation-delay: 120ms;
 }
 @keyframes rise {
   from {
     opacity: 0;
-    translate: 0 10px;
+    translate: 0 8px;
   }
 }
 
 .controls {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: clamp(14px, 3vh, 32px);
   display: flex;
-  justify-content: center;
-  gap: clamp(4px, 3vw, 44px);
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 2px;
+  margin-top: 10px;
+  margin-right: -8px;
+  padding-top: 4px;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
 }
 .controls button {
-  min-height: 44px;
-  padding: 0 16px;
+  min-height: 40px;
+  min-width: 44px;
+  padding: 0 10px;
   border-radius: var(--r-pill);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 0.86);
+  color: rgb(255 255 255 / 0.72);
+  white-space: nowrap;
   transition:
     color var(--dur-feedback) var(--ease-out),
-    background-color var(--dur-feedback) var(--ease-out),
-    scale var(--dur-press) var(--ease-out);
+    background-color var(--dur-feedback) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
   .controls button:hover:not(:disabled) {
@@ -229,41 +364,78 @@
     background: rgb(255 255 255 / 0.1);
   }
 }
-.controls button:active:not(:disabled) {
-  scale: 0.96;
-}
 .controls button[aria-pressed="true"],
 .controls button[aria-expanded="true"] {
   color: #17202a;
   background: #f6f3ec;
 }
 .controls button:disabled {
-  color: rgb(255 255 255 / 0.36);
+  color: rgb(255 255 255 / 0.3);
   cursor: default;
 }
 
-/* Top right, clear of the dialogue line it would otherwise cover. */
+/* Ending: in the box's place, with the ending's name and the ways on. */
+.end {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  bottom: max(var(--gutter), env(safe-area-inset-bottom));
+  width: var(--box-w);
+  display: grid;
+  gap: 10px;
+  padding: 24px clamp(18px, 2.6vw, 32px);
+  border-radius: var(--r-card);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(12 15 24 / 0.88);
+  backdrop-filter: blur(10px);
+  animation: rise 320ms var(--ease-out) backwards;
+}
+.endTitle {
+  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+  line-height: 1.1;
+}
+.endText {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.86);
+}
+.textButton {
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  color: rgb(255 255 255 / 0.86);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .textButton:hover {
+    color: #fff;
+  }
+}
+
+/* Settings: top right, clear of the text box. */
 .settings {
   position: absolute;
-  right: clamp(16px, 4vw, 64px);
-  top: clamp(16px, 2.4vw, 32px);
-  max-height: calc(100% - 140px);
+  right: var(--gutter);
+  top: max(var(--gutter), env(safe-area-inset-top));
+  z-index: 2;
+  max-height: calc(100% - 2 * var(--gutter));
   overflow-y: auto;
-  width: min(320px, calc(100% - 32px));
+  width: min(320px, calc(100% - 2 * var(--gutter)));
   display: grid;
   gap: 20px;
   padding: 24px;
   border-radius: var(--r-card);
   border: 1px solid var(--border);
-  background: rgb(26 35 48 / 0.96);
+  background: rgb(26 35 48 / 0.97);
   box-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
   color: var(--text);
-  animation: rise 240ms var(--ease-out);
+  animation: rise 220ms var(--ease-out);
 }
 .settings fieldset {
   border: 0;
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
 }
 .settings legend {
@@ -300,7 +472,6 @@
   outline: 2px solid var(--focus);
   outline-offset: 3px;
 }
-/* Larger text: a switch, drawn to match the rest of the panel. */
 .switch {
   display: flex;
   align-items: center;
@@ -346,38 +517,165 @@
 }
 .settingsActions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  gap: 8px;
 }
 
-.end {
-  animation: rise 240ms var(--ease-out);
+/* Log: every line so far, over the whole stage. */
+.log {
   position: absolute;
-  left: clamp(20px, 5vw, 96px);
-  bottom: clamp(92px, 15vh, 148px);
+  inset: 0;
+  z-index: 2;
   display: grid;
-  gap: 20px;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  background: #080a10;
+  animation: fade-in 200ms var(--ease-out);
 }
-.endActions {
+.logHead {
+  width: min(760px, calc(100% - 2 * var(--gutter)));
+  margin: 0 auto;
+  padding: max(var(--gutter), env(safe-area-inset-top)) 0 12px;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
+}
+.logTitle {
+  font-size: 1.5rem;
+}
+.logList {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px max(var(--gutter), calc((100% - 760px) / 2)) 40px;
+  list-style: none;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+.logList li {
+  display: grid;
+  gap: 2px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 0.88);
+}
+.logList li[data-choice] {
+  padding-left: 12px;
+  border-left: 2px solid #ff9ec7;
+}
+.logWho {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: #ff9ec7;
 }
 
 @media (max-width: 520px) {
+  .box {
+    padding-top: 14px;
+  }
+  .choices button {
+    font-size: 1rem;
+    padding: 10px 14px;
+  }
   .settings {
-    top: 80px;
+    top: calc(max(var(--gutter), env(safe-area-inset-top)) + 56px);
+    max-height: calc(100% - 2 * var(--gutter) - 56px);
   }
 }
+/* A phone held sideways: a smaller box, Juri to the right with choices beside her, and Settings kept
+   inside the screen. */
+@media (max-height: 480px) {
+  .stage {
+    min-height: 0;
+    --gutter: 12px;
+    --line: 1rem;
+  }
+  .stage[data-large="true"] {
+    --line: 1.125rem;
+  }
+  .title {
+    bottom: max(16px, env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+  .titleName {
+    font-size: 2.25rem;
+  }
+  .blurb {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .box {
+    max-height: calc(100% - 72px);
+    padding: 10px 18px 2px;
+  }
+  .speaker {
+    min-height: 1.6rem;
+    margin-bottom: 6px;
+    padding: 1px 12px 2px;
+    font-size: 0.9375rem;
+    line-height: 1.4rem;
+  }
+  .line {
+    min-height: calc(var(--line) * 1.6 * 2);
+  }
+  .choices {
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .choices button {
+    min-height: 40px;
+    padding: 7px 14px;
+    font-size: 0.9375rem;
+  }
+  .controls {
+    margin-top: 6px;
+    padding-top: 0;
+  }
+  .controls button {
+    min-height: 36px;
+  }
+  .end {
+    gap: 6px;
+    padding: 16px 20px;
+  }
+  .settings {
+    top: var(--gutter);
+    max-height: calc(100% - 2 * var(--gutter));
+    gap: 12px;
+    padding: 16px 18px;
+  }
+  .settings legend {
+    margin-bottom: 6px;
+  }
+}
+@media (max-height: 480px) and (orientation: landscape) {
+  .sprite {
+    left: 38%;
+  }
+  .box[data-choosing="true"] {
+    left: var(--gutter);
+    translate: none;
+    width: min(440px, 48%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .layer,
+  .sprite,
+  .pose,
+  .ui,
   .track,
   .track::after {
     transition: none;
   }
-  .scene,
-  .ui {
-    transition: none;
+  .sprite {
+    translate: none;
   }
-  .choices li {
+  .choices li,
+  .title {
     animation: none;
   }
   .settings,

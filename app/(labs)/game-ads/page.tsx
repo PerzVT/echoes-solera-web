@@ -19,13 +19,6 @@ const L = "/labs/game-ads";
 const samples: Sample[] = [
   { title: "Sweet Rush", detail: "12 seconds, with sound", video: `${L}/sweet-rush.mp4`, poster: `${L}/sweet-rush.webp`, sound: true },
   { title: "Decorate and Serve", detail: "15 seconds, with sound", video: `${L}/decorate-and-serve.mp4`, poster: `${L}/decorate-and-serve.webp`, sound: true },
-  {
-    title: "Sweet Rush, alternate cut",
-    detail: "6 seconds, opens on the character, no sound",
-    video: `${L}/sweet-rush-reaction-first.mp4`,
-    poster: `${L}/sweet-rush-reaction-first.webp`,
-    sound: false,
-  },
 ];
 
 const steps = [
@@ -57,7 +50,7 @@ export default function GameAds() {
           <h2 id="samples" className="h2">
             Samples
           </h2>
-          <p className="nl-note">Three cuts from two game concepts of our own. None was made for a client.</p>
+          <p className="nl-note">Two ads from two game concepts of our own. None was made for a client.</p>
           <Reveal as="div" className={styles.samples}>
             <AdSamples samples={samples} />
             <dl className={styles.spec}>

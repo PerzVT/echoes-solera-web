@@ -31,7 +31,7 @@ export function Nav({ current }: { current?: string }) {
     <header className={styles.nav}>
       <Link href="/" className={styles.brand}>
         <AnimatedMark variant="flow" material="06-colour-field" onHover size={36} />
-        <span>Nine Lives Labs</span>
+        <span>Nine Lives</span>
       </Link>
       <nav className={styles.links} aria-label="Main">
         <ProjectsMenu className={styles.menu} current={here === "/"} />

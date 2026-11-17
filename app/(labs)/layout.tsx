@@ -13,10 +13,10 @@ const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", dis
 
 export const metadata: Metadata = {
   metadataBase: SITE_URL,
-  title: { default: "Nine Lives Labs", template: "%s · Nine Lives Labs" },
+  title: { default: "Nine Lives", template: "%s · Nine Lives" },
   description: SITE_DESCRIPTION,
   robots: { index: false, follow: false },
-  ...og("Nine Lives Labs"),
+  ...og("Nine Lives"),
   // The kit's favicons use the ink mark; on a dark tab strip the paper mark reads instead.
   icons: {
     icon: [

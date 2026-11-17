@@ -12,10 +12,10 @@ const links = [
   { href: "/pipeline", label: "Pipeline" },
 ];
 
-/** Full-screen surfaces that have no page foot: the creator, sign-in and the visual novel. */
-const bare = ["/app", "/sign-in", "/visual-novel"];
+/** Full-screen surfaces that have no page foot: the creator and the visual novel. */
+const bare = ["/app", "/visual-novel"];
 
-/** The site foot: the studio's name and the places a visitor can go from anywhere. */
+/** The site foot: the studio's name, the places a visitor can go from anywhere and the company's legal name. */
 export function SiteFooter() {
   const path = usePathname();
   if (bare.some((p) => path === p || path.startsWith(`${p}/`))) return null;
@@ -24,7 +24,7 @@ export function SiteFooter() {
       <div className={styles.inner}>
         <Link href="/" className={styles.brand}>
           <AnimatedMark variant="flow" material="06-colour-field" onHover size={28} />
-          <span>Nine Lives Labs</span>
+          <span>Nine Lives</span>
         </Link>
         <nav className={styles.links} aria-label="Site">
           {links.map((l) => (
@@ -33,7 +33,7 @@ export function SiteFooter() {
             </Link>
           ))}
         </nav>
-        <p className={styles.line}>© 2026 Nine Lives Labs</p>
+        <p className={styles.line}>Retinad Virtual Reality Inc. / Retinad Réalité Virtuelle Inc.</p>
       </div>
     </footer>
   );

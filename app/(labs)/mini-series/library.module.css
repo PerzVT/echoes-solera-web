@@ -38,13 +38,34 @@
   color: rgb(246 243 236 / 0.88);
   text-wrap: pretty;
 }
-.hook + .hook {
-  margin-top: -14px;
+/* Balanced lines inside a measure that never leaves "The" alone on the first line. */
+.featureCopy h1.title {
+  max-width: 15ch;
+  font-size: clamp(2.25rem, 3.4vw + 0.75rem, 4.25rem);
 }
 .actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
+}
+.actions > * {
+  white-space: nowrap;
+}
+/* Narrow phones: smaller type and no icon, so both buttons keep one line. */
+@media (max-width: 420px) {
+  .featureCopy {
+    padding-inline: 18px;
+  }
+  .actions {
+    gap: 8px;
+  }
+  .actions > * {
+    padding-inline: 14px;
+    font-size: 0.875rem;
+  }
+  .actions svg {
+    display: none;
+  }
 }
 
 /* Below 960 the copy would run over the couple: it moves to the bottom over a fade. */

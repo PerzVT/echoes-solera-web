@@ -88,6 +88,71 @@ export const products: Product[] = [
     image: { src: `${L}/solera-crystal-charm.webp`, width: 482, height: 482, alt: "Blue crystal charm on a brass cap and brown loop" },
     gallery: { src: `${L}/gallery-solera-crystal-charm.webp`, alt: "The charm from three angles, the cap close up, on a tote bag, and boxed" },
   },
+  {
+    slug: "echoes-of-solera-puzzle",
+    name: "Echoes of Solera jigsaw puzzle",
+    world: "Echoes of Solera",
+    description: "A jigsaw puzzle of Nova on the steps at sunset, from her card. The box lid shows the finished picture.",
+    image: { src: `${L}/puzzle-echoes-of-solera.webp`, width: 1254, height: 1254, alt: "Part-built puzzle of Nova at sunset with loose pieces and the box lid" },
+  },
+  {
+    slug: "tidebell-cove-puzzle",
+    name: "Tidebell Cove jigsaw puzzle",
+    world: "Tidebell Cove",
+    description: "A jigsaw puzzle of the cove: the pier, the lighthouse and the fishing club hut. The box lid shows the finished picture.",
+    image: { src: `${L}/puzzle-tidebell-cove-box.webp`, width: 1536, height: 1024, alt: "Nearly finished puzzle of Tidebell Cove in front of its box, with loose pieces and shells" },
+  },
+  {
+    slug: "illustrated-collection-packs",
+    name: "Illustrated collection card packs",
+    world: "Nine Lives cards",
+    description: "Foil packs in deep green with gold botanical line work. Each tears open at the top to a small stack of art cards.",
+    image: { src: `${L}/card-packs.webp`, width: 1254, height: 1254, alt: "Two green foil card packs, one torn open with cards showing" },
+  },
+  {
+    slug: "fomo-lamp-and-hug-pillow",
+    name: "FOMO lamp and hug pillow",
+    world: "Tidebell Cove",
+    description:
+      "A FOMO night light whose body glows warm, and a long plush FOMO to hug. Both wear the yellow knit hat and the vest with three hearts.",
+    image: { src: `${L}/fomo-lamp-pillow.webp`, width: 1536, height: 1024, alt: "Glowing duck night light on a bedside table beside a long duck hug pillow on the bed" },
+    focus: "30% 50%",
+  },
+  {
+    slug: "fomo-bag-charms",
+    name: "FOMO bag charms",
+    world: "Tidebell Cove",
+    description: "Small plush FOMOs in the knit hat and heart vest, each with a brass clasp to hang on a bag.",
+    image: { src: `${L}/fomo-bag-charms.webp`, width: 1536, height: 1024, alt: "Duck plush charm clipped to a canvas tote, with a second charm standing beside it" },
+  },
+  {
+    slug: "nova-and-nine-figures",
+    name: "Nova and Nine figures",
+    world: "Echoes of Solera",
+    description: "Painted figures of Nova and Nine in their current outfits, each standing on a round stone base.",
+    image: { src: `${L}/nova-nine-figures.webp`, width: 1536, height: 1024, alt: "Painted figures of Nova in her cream coat and Nine in his blue scarf on stone bases" },
+  },
+  {
+    slug: "character-pillow-covers",
+    name: "Character pillow covers",
+    world: "Echoes of Solera",
+    description: "Long body-pillow covers printed with full-length art of Nova and of Nine. Each closes with a zip at the foot.",
+    image: { src: `${L}/nova-nine-pillow-covers.webp`, width: 1536, height: 1024, alt: "Two long pillows on a bed, one printed with Nova and one with Nine" },
+  },
+  {
+    slug: "moonflower-book-nook",
+    name: "Moonflower book nook",
+    world: "The Scent of the Moonflower",
+    description: "A small palace garden in a wooden case that stands between books, with lattice screens, moonflowers and lit lanterns.",
+    image: { src: `${L}/moonflower-book-nook.webp`, width: 1536, height: 1024, alt: "Wooden book nook of a lantern-lit palace garden standing between books on a shelf" },
+  },
+  {
+    slug: "aoba-tableware",
+    name: "Aoba tableware",
+    world: "Shoujo Supper",
+    description: "A cream noodle bowl with green sprigs, a cup with a portrait of Aoba, and a leaf-shaped chopstick rest.",
+    image: { src: `${L}/aoba-tableware.webp`, width: 1536, height: 1024, alt: "Cream noodle bowl, a cup with a portrait of Aoba, and chopsticks on a leaf rest" },
+  },
 ];
 
 export const productBySlug = (slug: string) => products.find((p) => p.slug === slug);

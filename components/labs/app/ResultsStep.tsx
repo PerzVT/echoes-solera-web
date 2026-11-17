@@ -26,7 +26,8 @@ import {
 import s from "./maker.module.css";
 import r from "./ResultsStep.module.css";
 
-export type ResultsState = "default" | "failed" | "harvest" | "edits";
+/** "new" is the arrival from Generate episode: every generation is still being made and none is kept. */
+export type ResultsState = "default" | "new" | "failed" | "harvest" | "edits";
 
 /** A trim belongs to one take: a new take starts untrimmed. */
 type Trim = { take: string; range: [number, number] };
@@ -45,8 +46,13 @@ const trimOf = (g: Gen) => (g.trim && g.trim.take === g.takes[g.take].name ? g.t
 type Reroll = { n: number; edit?: string };
 
 export function ResultsStep({ initial }: { initial: ResultsState }) {
+  const fresh = initial === "new";
   const [gens, setGens] = useState<Gen[]>(() =>
-    startGens.map((g) => ({ ...g, takes: [...g.takes], take: 0, kept: g.status === "Kept" ? g.takes[0].name : undefined })),
+    startGens.map((g) =>
+      fresh
+        ? { ...g, status: "Generating" as const, takes: [...g.takes], take: 0, kept: undefined }
+        : { ...g, takes: [...g.takes], take: 0, kept: g.status === "Kept" ? g.takes[0].name : undefined },
+    ),
   );
   const [selected, setSelected] = useState(initial === "failed" ? 6 : 1);
   const [harvesting, setHarvesting] = useState(initial === "harvest");
@@ -61,6 +67,7 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
   const spareAt = useRef(0);
   const side = useRef<HTMLElement>(null);
   const sideHeading = useRef<HTMLHeadingElement>(null);
+  const pageHeading = useRef<HTMLHeadingElement>(null);
 
   const g = gens.find((x) => x.n === selected)!;
   const update = (n: number, fn: (x: Gen) => Gen) => setGens((all) => all.map((x) => (x.n === n ? fn(x) : x)));
@@ -76,8 +83,23 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
     return () => clearTimeout(t);
   }, [landed]);
 
+  // Arriving from Generate episode: the keyboard starts on the page heading, and the clips come in one
+  // after another, in order. Nothing is kept and nothing fails until the person acts.
+  useEffect(() => {
+    if (!fresh) return;
+    focusSoon(() => pageHeading.current);
+    const ts = startGens.map((x, i) =>
+      setTimeout(() => {
+        update(x.n, (y) => (y.status === "Generating" ? { ...y, status: "Ready" } : y));
+        arrive(x.n);
+      }, 6000 + i * 4000),
+    );
+    return () => ts.forEach(clearTimeout);
+  }, [fresh]);
+
   // Generation 5 is still being made when the page opens; it lands a little later.
   useEffect(() => {
+    if (fresh) return;
     const t = setTimeout(() => {
       update(5, (x) => (x.status === "Generating" ? { ...x, status: "Ready" } : x));
       arrive(5);
@@ -152,7 +174,7 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
         {said}
       </p>
       <div className={`${s.split} ${s.fill} ${r.split}`}>
-        <Panel title="Generations" level={1}>
+        <Panel title="Generations" level={1} headingRef={pageHeading}>
           <Progress label="Generations with a clip" items={gens.map((x) => ({ name: `Generation ${x.n}`, done: hasClip(x) }))} />
           <ul className={r.tiles}>
             {gens.map((x) => (

@@ -1,114 +1,160 @@
+import catalogue from "./catalogue.json";
+
 const L = "/labs/mini-series";
 
 export type Episode = { number: number; title?: string; video: string; poster: string; seconds: number };
 
+/** A still shown on a series page: a cover variant or a character sheet. */
+export type Still = { src: string; alt: string; width: number; height: number };
+
 export type Series = {
   slug: string;
   title: string;
+  /** Genre tags from the Notion story catalogue, in its order. Empty when Notion has none. */
+  genres: string[];
+  /** The same tags as one line. */
   genre: string;
   hook?: string;
+  /** The cover image. Every entry in `series` has one; titles without a cover are left out. */
   cover: string;
   /** Wide key art in two registered layers, where it exists. */
   art?: { bg: string; cast: string };
   episodes: Episode[];
   /** What the playable items are called. Defaults to "Episodes". */
   listLabel?: string;
-  /** Shown in place of "No episodes are out yet" when the series is made but not on the site. */
-  awaiting?: string;
-  /**
-   * Where the series stands: production clips on this site, episodes finished but not on this site,
-   * or not made yet. Drives the library tag, the dimming, the order and the Finished filter.
-   */
+  /** The other images for this series, shown on its page. */
+  stills: Still[];
   state: SeriesState;
 };
 
 export type SeriesState = "clips" | "finished" | "planned";
 
 /**
- * Source takes from the Second Chance production, not finished episodes: four parts of one episode,
- * then three parts of scene 8. The sixteen finished episodes are not on the site yet.
+ * Finished episodes, one entry per file, in order. Entry N plays
+ * `/labs/mini-series/<slug>/episodes/ep-NN.mp4` with the poster `ep-NN.webp` beside it
+ * (NN is N padded to two digits). Seconds are the encoded file's length, rounded.
  */
-const takes: [string, number][] = [
-  ["Part 1", 25],
-  ["Part 2", 23],
-  ["Part 3", 22],
-  ["Part 4", 27],
-  ["Scene 8, part 4", 30],
-  ["Scene 8, part 5A", 30],
-  ["Scene 8, part 5B", 26],
-];
-const secondChance = takes.map(([title, seconds], i) => ({
-  number: i + 1,
-  title,
-  video: `${L}/second-chance/episodes/${i + 1}.mp4`,
-  poster: `${L}/second-chance/episodes/${i + 1}.webp`,
-  seconds,
-}));
+const finished: Record<string, [title: string, seconds: number][]> = {
+  "second-chance": [
+    ["Episode 1", 117],
+    ["Episode 2", 131],
+    ["Episode 3", 123],
+    ["Episode 3.5", 128],
+    ["Episode 4", 153],
+  ],
+  moonflower: [
+    ["Episode 1", 130],
+    ["Episode 2", 129],
+    ["Episode 3", 130],
+    ["Episode 4", 132],
+  ],
+  "gray-winter": [
+    ["Episode 1", 140],
+    ["Episode 2", 135],
+    ["Episode 3", 132],
+    ["Episode 4", 150],
+    ["Episode 5", 126],
+  ],
+};
 
-const finished = "The episodes are finished. They are not on this site yet.";
+const cut = (slug: string): Episode[] =>
+  (finished[slug] ?? []).map(([title, seconds], i) => {
+    const n = String(i + 1).padStart(2, "0");
+    return { number: i + 1, title, video: `${L}/${slug}/episodes/ep-${n}.mp4`, poster: `${L}/${slug}/episodes/ep-${n}.webp`, seconds };
+  });
 
-export const series: Series[] = [
-  {
-    slug: "second-chance",
-    title: "Second Chance at Your Heart",
-    genre: "Supernatural romance",
-    hook: "Elena returns in another woman's body while Julian mourns the woman she used to be.",
-    cover: `${L}/second-chance/cover.webp`,
+const sheet = (slug: string, file: string, name: string, wide = false): Still => ({
+  src: `${L}/${slug}/cast/${file}.webp`,
+  alt: `Character sheet: ${name}`,
+  width: wide ? 1400 : 1122,
+  height: wide ? 1050 : 1402,
+});
+
+/** What the catalogue does not hold: key art, the other images and the state, by slug. */
+const extra: Record<string, Partial<Series>> = {
+  "second-chance": {
     art: { bg: `${L}/second-chance/hero-bg.webp`, cast: `${L}/second-chance/hero-cast.webp` },
-    episodes: secondChance,
-    listLabel: "Clips from production",
-    state: "clips",
+    state: "finished",
+    stills: [
+      { src: `${L}/second-chance/cover-red.webp`, alt: "Second Chance at Your Heart cover", width: 1060, height: 1484 },
+      sheet("second-chance", "elena-vance", "Elena Vance"),
+      sheet("second-chance", "chloe-hayes", "Chloe Hayes"),
+      sheet("second-chance", "julian-montgomery", "Julian Montgomery"),
+      sheet("second-chance", "madam-sylas", "Madam Sylas", true),
+      sheet("second-chance", "marcus-vance", "Marcus Vance", true),
+      sheet("second-chance", "bradley-cole", "Bradley Cole", true),
+    ],
   },
-  {
-    slug: "moonflower",
-    title: "The Scent of the Moonflower",
-    genre: "Palace romance",
-    hook: "A Joseon palace romance led by Yeon-hee and King Yi Sun.",
-    cover: `${L}/moonflower/cover.webp`,
+  moonflower: {
     art: { bg: `${L}/moonflower/hero-bg.webp`, cast: `${L}/moonflower/hero-cast.webp` },
-    episodes: [],
-    awaiting: finished,
     state: "finished",
+    stills: [
+      { src: `${L}/moonflower/title-page.webp`, alt: "The Scent of the Moonflower title page", width: 1024, height: 1536 },
+      sheet("moonflower", "yeon-hee", "Yeon-hee"),
+      sheet("moonflower", "king-yi-sun", "King Yi Sun"),
+      sheet("moonflower", "queen-min", "Queen Min"),
+      sheet("moonflower", "lord-min", "Lord Min"),
+      sheet("moonflower", "chief-eunuch", "the Chief Eunuch"),
+      sheet("moonflower", "captain-kang", "Captain Kang"),
+      sheet("moonflower", "head-court-lady", "Queen Min's head court lady"),
+      sheet("moonflower", "maid-choi", "Maid Choi"),
+      sheet("moonflower", "junior-maid", "the junior maid"),
+      sheet("moonflower", "royal-physician", "the head royal physician"),
+      sheet("moonflower", "head-midwife", "the head midwife"),
+      sheet("moonflower", "royal-brewer", "the royal brewer"),
+      sheet("moonflower", "assassin", "the assassin", true),
+    ],
   },
-  {
-    slug: "gray-winter",
-    title: "Heart of the Gray Winter",
-    genre: "Dark fantasy romance",
-    cover: `${L}/gray-winter/cover.webp`,
+  "gray-winter": {
     art: { bg: `${L}/gray-winter/hero-bg.webp`, cast: `${L}/gray-winter/hero-cast.webp` },
-    episodes: [],
-    awaiting: finished,
     state: "finished",
+    stills: [
+      { src: `${L}/gray-winter/title-cover.webp`, alt: "Heart of the Gray Winter cover", width: 1000, height: 1500 },
+      sheet("gray-winter", "kalore", "Kalore", true),
+    ],
   },
-  {
-    slug: "bellmaker",
-    title: "The Bellmaker Who Woke the Sky",
-    genre: "Fantasy romance",
-    hook: "A village bellmaker branded cursed learns she is the last storm phoenix when an exiled royal astronomer wakes their bond.",
-    cover: `${L}/bellmaker/cover-v04.webp`,
-    episodes: [],
-    state: "planned",
-  },
-  {
-    slug: "she-bought-the-family",
-    title: "She Bought the Family That Broke Her",
-    genre: "Revenge drama",
-    hook: "A shipyard foundling returns as the creditor who can destroy the dynasty that rejected her.",
-    cover: `${L}/she-bought-the-family/cover-v04.webp`,
-    episodes: [],
-    state: "planned",
-  },
-  {
-    slug: "four-beast-husbands",
-    title: "How Did I End Up with Four Beast-man Husbands?!",
-    genre: "Fantasy romance",
-    cover: `${L}/four-beast-husbands/cover.webp`,
-    episodes: [],
-    state: "planned",
-  },
-];
+};
+
+/** The three series with key art lead; the rest follow the Notion catalogue order. */
+const lead = ["second-chance", "moonflower", "gray-winter"];
+const rank = (slug: string) => {
+  const i = lead.indexOf(slug);
+  return i === -1 ? lead.length : i;
+};
+
+const genresOf = (g: string | null) =>
+  (g ?? "")
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+/** Every series in the Notion story catalogue that has a cover. Titles without one are not shown. */
+export const series: Series[] = catalogue
+  .filter((c): c is typeof c & { cover: string } => !!c.cover)
+  .map((c) => {
+    const more = extra[c.slug] ?? {};
+    const tags = genresOf(c.genre);
+    return {
+      slug: c.slug,
+      title: c.title,
+      genres: tags,
+      genre: tags.join(", "),
+      hook: c.hook ?? undefined,
+      cover: c.cover,
+      art: more.art,
+      episodes: cut(c.slug),
+      stills: more.stills ?? [],
+      state: more.state ?? "planned",
+    };
+  })
+  .sort((a, b) => rank(a.slug) - rank(b.slug));
+
+/** Every genre tag in use, the most used first. */
+export const genres = [...new Set(series.flatMap((s) => s.genres))].sort(
+  (a, b) => series.filter((s) => s.genres.includes(b)).length - series.filter((s) => s.genres.includes(a)).length,
+);
 
 export const seriesBySlug = (slug: string) => series.find((s) => s.slug === slug);
 export const isOut = (s: Series) => s.episodes.length > 0;
-/** The series the owner has finished making: production clips on the site, or episodes made. */
+/** The series the owner has finished making. */
 export const isFinished = (s: Series) => s.state !== "planned";

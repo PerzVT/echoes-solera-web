@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Results" };
 
 type Props = { searchParams: Promise<{ state?: string }> };
 
-const states: ResultsState[] = ["failed", "harvest", "edits"];
+const states: ResultsState[] = ["new", "failed", "harvest", "edits"];
 
 export default async function ResultsPage({ searchParams }: Props) {
   const { state } = await searchParams;

@@ -1,3 +1,19 @@
+/* The desk's colour wash: the card's own colour, mixed far into the cream so ink stays legible on it. It
+   fills the desk behind everything (the desk is the positioned parent) and eases between cards. */
+.tint {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: #fcedde;
+  background-image: radial-gradient(90% 70% at 50% 40%, rgb(255 255 255 / 0.28), transparent 70%);
+  transition: background-color 700ms var(--ease-out);
+}
+.tint[data-on] {
+  background-color: color-mix(in oklab, var(--tint) 44%, #fcedde);
+}
+
 .head {
   display: flex;
   flex-wrap: wrap;
@@ -195,7 +211,8 @@
 }
 .big {
   position: relative;
-  width: min(400px, 70vw, 58dvh);
+  /* Never wider than its own column, so the card cannot spill over the title beside it (721 to 900 px). */
+  width: min(400px, 100%, 58dvh);
   aspect-ratio: 750 / 1050;
   transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transform-style: preserve-3d;
@@ -309,6 +326,9 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .tint {
+    transition: none;
+  }
   .slot,
   .big {
     transition: none;

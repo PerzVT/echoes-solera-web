@@ -5,7 +5,7 @@ export type WorldImage = { src: string; alt: string; caption: string; width: num
 /** Tidebell Cove. Captures come from an earlier build; plates and cutouts are concept art. */
 export const tidebell = {
   title: "Tidebell Cove",
-  heroPlate: `${W}/pier.webp`,
+  heroPlate: `${W}/pier-v2.webp`,
   heroCast: [
     { src: `${W}/cast/fomo-heart-knit.webp`, alt: "FOMO in a knitted hat and heart jumper" },
     { src: `${W}/cast/fomo-dinosaur.webp`, alt: "FOMO in a dinosaur hood and vest" },

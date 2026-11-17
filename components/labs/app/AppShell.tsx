@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AnimatedMark } from "@/components/labs/fx";
-import { Account } from "./Account";
 import { FileDrops } from "./FileDrops";
 import styles from "./AppShell.module.css";
 
@@ -23,13 +22,13 @@ type Props = {
   children: ReactNode;
 };
 
-/** The creator app frame: a labelled rail (the skip link in the labs layout leads to the work area), the frame with its folded corner, a header with the signed-in account, an action bar, the work area. */
+/** The creator app frame: a labelled rail (the skip link in the labs layout leads to the work area), the frame with its folded corner, a header, an action bar, the work area. */
 export function AppShell({ section, title, bar, onFiles, children }: Props) {
   return (
     <div className={styles.shell}>
       <FileDrops onFiles={onFiles} />
       <nav className={styles.rail} aria-label="Creator">
-        <Link href="/" className={styles.mark} aria-label="Nine Lives Labs home">
+        <Link href="/" className={styles.mark} aria-label="Nine Lives home">
           <AnimatedMark variant="idle" size={32} />
         </Link>
         {rail.map((r) => (
@@ -44,7 +43,6 @@ export function AppShell({ section, title, bar, onFiles, children }: Props) {
       <div className={styles.frame}>
         <header className={styles.header}>
           <div className={styles.title}>{title}</div>
-          <Account />
         </header>
         {bar && <div className={styles.bar}>{bar}</div>}
         <main id="main" tabIndex={-1} className={styles.work}>

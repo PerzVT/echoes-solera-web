@@ -33,6 +33,7 @@ export function PackOpening() {
   const allTurned = turned.every(Boolean);
   const sealedRef = useRef<HTMLButtonElement>(null);
   const firstCard = useRef<HTMLButtonElement>(null);
+  const firstPack = useRef<HTMLButtonElement>(null);
   const moved = useRef(false);
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export function PackOpening() {
     if (!moved.current) return;
     if (stage === "sealed") sealedRef.current?.focus();
     if (stage === "open") firstCard.current?.focus();
+    if (stage === "choose") firstPack.current?.focus();
   }, [stage]);
 
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -87,7 +89,7 @@ export function PackOpening() {
         <ul className={styles.choices}>
           {sets.map((s, i) => (
             <li key={s.slug} style={{ "--i": i } as React.CSSProperties}>
-              <button type="button" className={styles.choice} onClick={() => choose(s)}>
+              <button ref={i === 0 ? firstPack : undefined} type="button" className={styles.choice} onClick={() => choose(s)}>
                 <Pack set={s} sizes="(max-width: 720px) 30vw, 240px" priority />
                 <span className={styles.choiceName}>{s.name}</span>
               </button>

@@ -8,6 +8,48 @@ import { cardsIn, sets, setBySlug, type CardFace } from "@/lib/labs/cards";
 import styles from "./CardCollection.module.css";
 
 /**
+ * The colour of a card's art: its pixels averaged at 24 x 24, each weighted by how saturated it is, so
+ * the hue comes from the picture and not from its pale ground. Read once per card and kept.
+ */
+const tints = new Map<string, Promise<string | null>>();
+function tintOf(src: string) {
+  let t = tints.get(src);
+  if (!t) {
+    t = new Promise((resolve) => {
+      const img = new window.Image();
+      img.decoding = "async";
+      img.onload = () => {
+        try {
+          const c = document.createElement("canvas");
+          c.width = c.height = 24;
+          const g = c.getContext("2d", { willReadFrequently: true });
+          if (!g) return resolve(null);
+          g.drawImage(img, 0, 0, 24, 24);
+          const d = g.getImageData(0, 0, 24, 24).data;
+          let r = 0, gr = 0, b = 0, w = 0;
+          for (let i = 0; i < d.length; i += 4) {
+            const max = Math.max(d[i], d[i + 1], d[i + 2]);
+            const min = Math.min(d[i], d[i + 1], d[i + 2]);
+            const k = 0.05 + (max - min) / 255;
+            r += d[i] * k;
+            gr += d[i + 1] * k;
+            b += d[i + 2] * k;
+            w += k;
+          }
+          resolve(`rgb(${Math.round(r / w)} ${Math.round(gr / w)} ${Math.round(b / w)})`);
+        } catch {
+          resolve(null);
+        }
+      };
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+    tints.set(src, t);
+  }
+  return t;
+}
+
+/**
  * The collection as a binder, one set to a spread. A set has four cards, so each page holds two
  * pockets and every pocket is filled (the kit's binder photograph has nine pockets on one page and a
  * cloth cover opposite, which would leave most of it empty). A card opens large.
@@ -21,6 +63,18 @@ export function CardCollection() {
   const dialog = useRef<HTMLDialogElement>(null);
   const big = useRef<HTMLDivElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const binder = useRef<HTMLDivElement>(null);
+  // The desk takes the colour of the card under the pointer or keyboard focus, and keeps the last one
+  // until another card is chosen. Off under reduced motion.
+  const [tint, setTint] = useState<string | null>(null);
+  const want = useRef<string | null>(null);
+  const tintTo = (c: CardFace) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    want.current = c.art;
+    tintOf(c.art).then((col) => {
+      if (col && want.current === c.art) setTint(col);
+    });
+  };
   const uid = useId();
   const set = sets[page];
   const cards = cardsIn(set.slug);
@@ -40,7 +94,10 @@ export function CardCollection() {
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("card");
     const found = id && cardsIn(sets[0].slug).concat(...sets.slice(1).map((s) => cardsIn(s.slug))).find((c) => c.id === id);
-    if (found) setOpen(found);
+    if (found) {
+      setPage(Math.max(0, sets.findIndex((s) => s.slug === found.set)));
+      setOpen(found);
+    }
   }, []);
 
   const show = (c: CardFace) => {
@@ -49,8 +106,15 @@ export function CardCollection() {
   };
 
   // Closing a card opened from ?card= drops the parameter, so a refresh does not open it again.
+  // The native dialog hands focus back to whatever opened it. A card opened from the link had no opener,
+  // so focus goes to that card's pocket instead of being dropped on the page.
   const close = () => {
+    const was = open;
     setOpen(null);
+    requestAnimationFrame(() => {
+      const a = document.activeElement;
+      if (was && (!a || a === document.body)) binder.current?.querySelector<HTMLButtonElement>(`[data-card="${was.id}"]`)?.focus();
+    });
     const url = new URL(window.location.href);
     if (url.searchParams.has("card")) {
       url.searchParams.delete("card");
@@ -87,6 +151,7 @@ export function CardCollection() {
 
   return (
     <>
+      <span className={styles.tint} style={tint ? ({ "--tint": tint } as React.CSSProperties) : undefined} data-on={tint ? "" : undefined} aria-hidden="true" />
       <div className={styles.head}>
         <h1 className="display">Collection</h1>
         <div className={styles.tabs} role="tablist" aria-label="Sets">
@@ -113,12 +178,20 @@ export function CardCollection() {
       </div>
 
       <div className={styles.book} id={`${uid}-panel`} role="tabpanel" aria-labelledby={`${uid}-tab-${page}`}>
-        <div className={styles.binder} key={set.slug}>
+        <div className={styles.binder} key={set.slug} ref={binder}>
           {[cards.slice(0, 2), cards.slice(2, 4)].map((pageCards, p) => (
             <ul key={p} className={styles.page}>
               {pageCards.map((c, i) => (
                 <li key={c.id} className={styles.pocket} style={{ "--i": p * 2 + i } as React.CSSProperties}>
-                  <button type="button" className={styles.slot} onClick={() => show(c)} aria-label={`${c.name}, ${set.name}`}>
+                  <button
+                    type="button"
+                    className={styles.slot}
+                    data-card={c.id}
+                    onClick={() => show(c)}
+                    onPointerEnter={() => tintTo(c)}
+                    onFocus={() => tintTo(c)}
+                    aria-label={`${c.name}, ${set.name}`}
+                  >
                     <Card card={c} caption sizes="(max-width: 720px) 40vw, (max-width: 1100px) 30vw, 300px" />
                   </button>
                 </li>

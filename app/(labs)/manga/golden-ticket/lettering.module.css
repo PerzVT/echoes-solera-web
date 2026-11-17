@@ -1,0 +1,98 @@
+/* Lettering sits over the page art. The page itself is the size container. */
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.letter {
+  position: absolute;
+  margin: 0;
+  pointer-events: auto;
+  color: #111;
+  text-align: center;
+  text-wrap: balance;
+  /* Short lines keep their own width; `w` is the most a balloon may take. */
+  width: max-content;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Speech: a white balloon with an ink outline, lettered in upper case like a printed comic. */
+.speech,
+.inset {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(10.5px, 2.75cqw, 21px);
+  line-height: 1.18;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.speech {
+  padding: 0.85em 1.05em;
+  background: #fff;
+  border: max(1.5px, 0.28cqw) solid #111;
+  border-radius: 50% / 46%;
+}
+/* Lettering for a balloon already drawn into the art: text only. */
+.inset {
+  padding: 0.2em;
+}
+
+.tail {
+  position: absolute;
+  left: var(--tail-at, 30%);
+  top: calc(100% - max(1.5px, 0.28cqw) - 1px);
+  width: 1.3em;
+  height: 1.45em;
+  overflow: visible;
+}
+.tail[data-flip] {
+  transform: scaleX(-1);
+}
+.tail[data-up] {
+  top: auto;
+  bottom: calc(100% - max(1.5px, 0.28cqw) - 1px);
+  transform: scaleY(-1);
+}
+.tail[data-up][data-flip] {
+  transform: scale(-1, -1);
+}
+.tailFill {
+  fill: #fff;
+}
+.tailLine {
+  fill: none;
+  stroke: #111;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Narration: a square caption box, sentence case. */
+.narration {
+  padding: 0.55em 0.75em;
+  background: #fff;
+  border: max(1.5px, 0.28cqw) solid #111;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(10.5px, 2.6cqw, 20px);
+  line-height: 1.25;
+  text-align: left;
+  text-wrap: pretty;
+}
+
+/* Sound effects: heavy display type, outlined in white so it reads over the art. */
+.sfx {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: calc(clamp(18px, 6cqw, 46px) * var(--sfx-scale, 1));
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #111;
+  -webkit-text-stroke: max(3px, 0.7cqw) #fff;
+  paint-order: stroke fill;
+  transform: rotate(var(--rot, 0deg));
+  transform-origin: left center;
+}

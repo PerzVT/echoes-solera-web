@@ -33,6 +33,7 @@ function Stage({ project, active, media }: { project: Project; active: boolean; 
       inert={!active}
       style={project.backdrop ? { background: project.backdrop } : undefined}
     >
+      {media && project.wall && <Wall wall={project.wall} eager={active} />}
       {media && project.video && project.poster && <HeroVideo src={project.video} poster={project.poster} active={active} />}
       {media && project.bg && <Image className={styles.layer} src={project.bg} alt="" fill sizes={wide} priority={active} />}
       {media && project.cast && <Image bare className={`${styles.layer} ${styles.cast}`} src={project.cast} alt="" fill sizes={wide} priority={active} />}
@@ -61,6 +62,9 @@ function Stage({ project, active, media }: { project: Project; active: boolean; 
           })}
         </div>
       )}
+      {/* The art is one 1680 px file with transparency, served as is: it is already sized for the stage. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {media && project.art && <img className={styles.art} src={project.art} alt="" loading={eager} fetchPriority={active ? "high" : "auto"} decoding="async" />}
       {project.tone === "dark" && <div className={styles.fade} />}
 
       <div className={styles.copy}>
@@ -78,6 +82,36 @@ function Stage({ project, active, media }: { project: Project; active: boolean; 
 
       {media && project.covers && <CoverCarousel covers={project.covers} eager={active} />}
     </section>
+  );
+}
+
+/** Rows and columns of the wall: enough tiles to run past every edge of the tilted grid at any width. */
+const WALL = { cards: { cols: 9, rows: 3 }, pages: { cols: 9, rows: 3 } } as const;
+
+/**
+ * A tilted wall of card faces or manga pages under the whole stage, so the hero has no empty ground.
+ * The items repeat, offset by one each row, so no two neighbours match.
+ */
+function Wall({ wall, eager }: { wall: NonNullable<Project["wall"]>; eager: boolean }) {
+  const { cols, rows } = WALL[wall.kind];
+  const n = wall.items.length;
+  const tiles = Array.from({ length: cols * rows }, (_, k) => wall.items[(k + Math.floor(k / cols) * 3) % n]);
+  return (
+    <div className={styles.wall} data-kind={wall.kind} aria-hidden="true">
+      <div className={styles.wallGrid} style={{ "--cols": cols } as React.CSSProperties}>
+        {tiles.map((src, k) => {
+          const card = wall.kind === "cards" && cards.find((c) => c.art === src);
+          return card ? (
+            <span key={k} className={styles.wallTile}>
+              <Card card={card} sizes="(max-width: 900px) 30vw, 12vw" />
+            </span>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={k} className={styles.wallTile} src={src} alt="" loading={eager ? "eager" : "lazy"} decoding="async" />
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -135,6 +169,62 @@ export function HomeStages({ initial }: { initial: string }) {
     setActive(slug);
     window.history.replaceState(null, "", hrefOf(slug));
   };
+
+  // A wheel or trackpad gesture over the page moves one tab along the dock. One gesture is one step: the
+  // deltas add up until they pass a threshold, then nothing more counts until the wheel has been still
+  // for a moment (a trackpad keeps sending momentum for a second after the fingers lift). It leaves alone
+  // anything that scrolls itself, open menus and dialogs, pinch zoom, and a page that still has room to
+  // scroll that way. The switch itself is the dock's switch, so reduced motion gets the instant change.
+  const activeRef = useRef(active);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+  useEffect(() => {
+    let sum = 0;
+    let last = -Infinity;
+    let locked = false;
+    let stepAt = -Infinity;
+    const canScroll = (from: EventTarget | null, dy: number) => {
+      for (let el = from instanceof Element ? from : null; el && el !== document.body; el = el.parentElement) {
+        const oy = getComputedStyle(el).overflowY;
+        if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) {
+          if (dy > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0) return true;
+        }
+      }
+      const doc = document.scrollingElement ?? document.documentElement;
+      return dy > 0 ? doc.scrollTop + window.innerHeight < doc.scrollHeight - 1 : doc.scrollTop > 0;
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.defaultPrevented) return;
+      const t = e.target instanceof Element ? e.target : null;
+      if (t?.closest('dialog, [role="dialog"], [aria-modal="true"], details[open], [role="menu"]')) return;
+      if (document.querySelector("details[open], dialog[open], [aria-modal='true']")) return;
+      const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      const px = e.deltaMode === 1 ? d * 16 : e.deltaMode === 2 ? d * window.innerHeight : d;
+      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX) && canScroll(e.target, px)) return;
+      // Event times, not timers: a switch can hold the main thread, and the queued momentum events that
+      // follow must still read as the same gesture.
+      const gap = e.timeStamp - last;
+      last = e.timeStamp;
+      if (gap > 300 && e.timeStamp - stepAt > 500) {
+        locked = false;
+        sum = 0;
+      }
+      if (locked) return;
+      sum += px;
+      if (Math.abs(sum) < 40) return;
+      locked = true;
+      stepAt = e.timeStamp;
+      const i = projects.findIndex((p) => p.slug === activeRef.current);
+      const next = projects[i + (sum > 0 ? 1 : -1)];
+      sum = 0;
+      if (!next) return;
+      setActive(next.slug);
+      window.history.replaceState(null, "", hrefOf(next.slug));
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, []);
 
   // The shouldered pill sits under the current dock link and slides to the next one.
   const measure = useCallback((animate: boolean) => {

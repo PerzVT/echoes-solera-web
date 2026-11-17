@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
     ];
     return [
       { source: "/app/:path*", headers: closed },
-      { source: "/sign-in", headers: closed },
       { source: "/studio/media-6e4b9a", headers: catalogHeaders },
       { source: "/media-preview/:path*", headers: catalogHeaders },
       { source: "/studio/styles-7c9e4a2b", headers: catalogHeaders },

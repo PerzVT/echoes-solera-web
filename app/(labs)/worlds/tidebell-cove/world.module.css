@@ -289,44 +289,7 @@
 }
 @media (max-width: 900px) {
   .captures,
-  /* A postcard front: the plate inset on cream, the cove's name in the foot band. */
-.postcard {
-  display: grid;
-  gap: 0;
-  padding: 3.2% 3.2% 0;
-  aspect-ratio: 3 / 2;
-  grid-template-rows: minmax(0, 1fr) auto;
-  border-radius: 6px;
-  background: #faf5e9;
-  box-shadow: 0 18px 36px rgb(0 0 0 / 0.32);
-  rotate: -0.6deg;
-}
-.places li:nth-child(2n) .postcard {
-  rotate: 0.8deg;
-}
-.postcardArt {
-  position: relative;
-  overflow: hidden;
-}
-.postcardArt img {
-  object-fit: cover;
-}
-.postcardFoot {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  padding: 10px 2px 12px;
-  color: #173538;
-}
-.postcardFoot span:first-child {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-}
-.postcardFoot span:last-child {
-  font-size: 0.8125rem;
-}
-.places {
+  .places {
     grid-template-columns: 1fr;
   }
   .wardrobe {
