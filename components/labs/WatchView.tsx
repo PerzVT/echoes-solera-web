@@ -2,7 +2,6 @@ import { Picture as Image } from "@/components/labs/fx/Picture";
 import Link from "next/link";
 import { ButtonLink } from "./Button";
 import { Icon } from "./Icon";
-import { BackLink } from "./BackLink";
 import { Nav } from "./Nav";
 import { VerticalPlayer } from "./VerticalPlayer";
 import title from "./Title.module.css";
@@ -28,8 +27,6 @@ type Props = {
   base: string;
   back: { href: string; label: string };
   listLabel: string;
-  /** Said in place of "Nothing is out yet" when the title is made but not on the site. */
-  awaiting?: string;
   /** Wide key art in two layers, drawn in place of the cover when there is nothing to play. */
   art?: { bg: string; cast: string };
 };
@@ -37,7 +34,7 @@ type Props = {
 const nameOf = (i: WatchItem) => i.title ?? `Episode ${i.number}`;
 
 /** The vertical watch page: player on the left, the title and its items on the right. */
-export function WatchView({ title: name, kind, hook, cover, items, wanted, base, back, listLabel, awaiting, art }: Props) {
+export function WatchView({ title: name, kind, hook, cover, items, wanted, base, back, listLabel, art }: Props) {
   const item = items.find((e) => e.number === wanted) ?? items[0];
   const next = item && items.find((e) => e.number === item.number + 1);
   const previous = item && items.find((e) => e.number === item.number - 1);
@@ -47,7 +44,6 @@ export function WatchView({ title: name, kind, hook, cover, items, wanted, base,
       <Nav />
       <main id="main" className={styles.main}>
         <div className={styles.stage}>
-          <BackLink href={back.href}>{back.label}</BackLink>
           {item ? (
             <VerticalPlayer
               src={item.video}
@@ -117,8 +113,7 @@ export function WatchView({ title: name, kind, hook, cover, items, wanted, base,
             </>
           ) : (
             <div className={styles.soon}>
-              <p className="h3">{awaiting ? "Not on this site yet" : "Coming soon"}</p>
-              <p className="muted">{awaiting ?? "Nothing is out yet."}</p>
+              <p className="h3">Coming soon</p>
               <ButtonLink href={back.href} variant="secondary">
                 See all series
               </ButtonLink>

@@ -16,17 +16,12 @@
   min-height: 0;
 }
 
-/* The back link has its own row above the player, so it never sits on the video. */
 .stage {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   justify-items: center;
-  gap: 12px;
   min-height: 0;
   padding-right: 24px;
-}
-.stage > a:first-child {
-  justify-self: start;
 }
 .coverFrame {
   height: 100%;

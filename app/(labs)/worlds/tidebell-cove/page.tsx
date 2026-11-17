@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import Link from "next/link";
 import { ButtonLink } from "@/components/labs/Button";
-import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { tidebell as w } from "@/lib/labs/worlds";
@@ -18,9 +16,6 @@ export default function TidebellCove() {
   return (
     <div className={t.page}>
       <Nav />
-      <BackLink row href="/?p=worlds">
-        Virtual worlds
-      </BackLink>
       <main id="main" className={t.main}>
         <section className={styles.hero} aria-labelledby="world-title">
           <div className={styles.stage}>
@@ -37,13 +32,7 @@ export default function TidebellCove() {
               {w.title}
             </h1>
             <p className={styles.lede}>A small 3D cove you walk around as FOMO, a duck.</p>
-            <p className={`small ${styles.status}`}>
-              <Icon name="lock" size={18} />
-              <span>The build is not playable on this site yet.</span>
-            </p>
-            <p className={styles.here}>On this page you can look through outfits for FOMO, two of them drawn on him, and see captures and concept art of the cove.</p>
             <ButtonLink href="#outfits">Try the outfits</ButtonLink>
-            <p className="nl-note">The picture above is concept art.</p>
           </div>
         </section>
 
@@ -51,7 +40,6 @@ export default function TidebellCove() {
           <h2 id="outfits-title" className="h2">
             Outfits
           </h2>
-          <p className="nl-note">Concept art of outfits for FOMO. Pick one to see it up close.</p>
           <Wardrobe sheet={w.outfits.src} outfits={w.outfits.items} />
         </section>
 
@@ -74,7 +62,6 @@ export default function TidebellCove() {
           <h2 id="residents" className="h2">
             Residents
           </h2>
-          <p className="nl-note">Concept art of characters in the cove.</p>
           <Reveal as="ul" stagger className={styles.residents}>
             {w.residents.map((r) => (
               <li key={r.src}>
@@ -91,14 +78,13 @@ export default function TidebellCove() {
           <h2 id="places" className="h2">
             Places
           </h2>
-          <p className="nl-note">Concept art of places in the cove, set as postcards.</p>
           <Reveal as="ul" stagger className={styles.places}>
             {w.places.map((p) => (
               <li key={p.src}>
                 {/* Codex's postcard fronts (worlds/postcards), built here: the plate on cream with the cove's name. */}
                 <figure className={styles.postcard}>
                   <span className={styles.postcardArt}>
-                    <Image src={p.src} alt={`Concept art of the ${p.caption.toLowerCase()}`} fill sizes="(max-width: 900px) 100vw, 440px" />
+                    <Image src={p.src} alt={`Postcard of the ${p.caption.toLowerCase()}`} fill sizes="(max-width: 900px) 100vw, 440px" />
                   </span>
                   <figcaption className={styles.postcardFoot}>
                     <span>{w.title}</span>
@@ -111,7 +97,7 @@ export default function TidebellCove() {
         </section>
 
         <Reveal as="section" className="nl-made">
-          <p className="h3">FOMO is also on concept cards and objects.</p>
+          <p className="h3">FOMO is also on cards and objects.</p>
           <div className={styles.madeActions}>
             <ButtonLink href="/cards" variant="secondary">
               See the cards

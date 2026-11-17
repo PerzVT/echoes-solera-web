@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import Link from "next/link";
 import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { products } from "@/lib/labs/shop";
@@ -17,9 +16,6 @@ export default function Shop() {
   return (
     <div className={t.page}>
       <Nav />
-      <BackLink row href="/?p=shop">
-        Shop
-      </BackLink>
       <main id="main" className={t.main}>
         <section className={styles.hero} data-theme="light">
           <Image
@@ -33,7 +29,7 @@ export default function Shop() {
           />
           <div className={styles.heroCopy}>
             <h1 className="display">Shop</h1>
-            <p className={styles.lede}>Concept objects from our worlds.</p>
+            <p className={styles.lede}>Objects from our worlds.</p>
           </div>
         </section>
 
@@ -41,7 +37,6 @@ export default function Shop() {
           <h2 id="objects" className="h2">
             Objects
           </h2>
-          <p className="nl-note">These are concepts. None is for sale yet.</p>
           <Reveal as="ul" stagger className={styles.grid}>
             {products.map((p) => (
               <ProductCard key={p.slug} p={p} sizes="(max-width: 720px) 45vw, (max-width: 1100px) 30vw, 320px" />

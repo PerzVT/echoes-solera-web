@@ -29,6 +29,8 @@ export type Project = {
   poster?: string;
   /** Cover row along the bottom edge. */
   covers?: { title: string; src: string; href: string }[];
+  /** A stage with its own contents, drawn by HeroStage in components/labs/stages/HeroStages.tsx. */
+  stage?: "series" | "chefs" | "ads" | "shop" | "cards";
 };
 
 const L = "/labs";
@@ -52,9 +54,8 @@ export const projects: Project[] = [
     primary: { label: "Create a mini-series", href: "/app" },
     secondary: { label: "Browse the series", href: "/mini-series" },
     tone: "dark",
-    // The owner's settled leads for mini-series: Yeon-hee and King Yi Sun of The Scent of the Moonflower.
-    bg: `${L}/mini-series/moonflower/hero-bg.webp`,
-    cast: `${L}/mini-series/moonflower/hero-cast.webp`,
+    // The owner's settled leads for mini-series: Moonflower's key art shows first; the cover row switches it.
+    stage: "series",
     covers: series.map((x) => ({ title: x.title, src: x.cover, href: `/mini-series/${x.slug}` })),
   },
   {
@@ -64,7 +65,8 @@ export const projects: Project[] = [
     primary: { label: "Create a video", href: "/app" },
     secondary: { label: "Watch Shoujo Supper", href: "/cooking/shoujo-supper" },
     tone: "light",
-    bg: `${L}/cooking/hero-akane.webp`,
+    backdrop: "radial-gradient(90% 80% at 72% 40%, #fffaf3 0%, #fbefe0 60%, #f4e2cd 100%)",
+    stage: "chefs",
   },
   {
     slug: "worlds",
@@ -82,6 +84,7 @@ export const projects: Project[] = [
     secondary: { label: "See the collection", href: "/cards" },
     tone: "dark",
     backdrop: "radial-gradient(120% 90% at 78% 40%, #1f4a4f 0%, #12303a 46%, #0e1d27 100%)",
+    stage: "cards",
     // Codex's cards concept (homepage-v2 cards-final): the whole stage is a wall of the set, the fan on top.
     wall: {
       kind: "cards",
@@ -132,7 +135,7 @@ export const projects: Project[] = [
     secondary: { label: "Watch samples", href: "/game-ads" },
     tone: "dark",
     bg: `${L}/game-ads/hero-bg.webp`,
-
+    stage: "ads",
   },
   {
     slug: "shop",
@@ -141,6 +144,7 @@ export const projects: Project[] = [
     primary: { label: "See the objects", href: "/shop" },
     tone: "light",
     bg: `${L}/shop/hero-backpack.webp`,
+    stage: "shop",
   },
 ];
 

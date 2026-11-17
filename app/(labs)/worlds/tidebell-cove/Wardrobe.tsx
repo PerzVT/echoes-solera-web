@@ -23,9 +23,7 @@ export function Wardrobe({ sheet, outfits }: { sheet: string; outfits: Outfit[] 
           <span className={styles.wornSlot}>
             {o.worn ? (
               <Image bare className={styles.worn} src={o.worn} alt={`FOMO wearing the ${o.name.toLowerCase()}`} width={720} height={960} sizes="(max-width: 900px) 45vw, 300px" />
-            ) : (
-              <span className="small muted">Not drawn on FOMO yet</span>
-            )}
+            ) : null}
           </span>
         </div>
         <p className="h3">{o.name}</p>

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { ButtonLink } from "@/components/labs/Button";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { ReadingProgress } from "@/components/labs/ReadingProgress";
 import t from "@/components/labs/Title.module.css";
@@ -57,9 +56,6 @@ export default function GoldenTicket() {
     <div className={styles.page}>
       <ReadingProgress />
       <Nav />
-      <BackLink row href="/?p=manga">
-        Manga
-      </BackLink>
       <main id="main" className={t.main}>
         {/* The shared title hero, drawn from a panel of page 1. */}
         <section className={t.hero}>
@@ -68,7 +64,6 @@ export default function GoldenTicket() {
           <div className={t.heroCopy}>
             <h1 className="display">{title}</h1>
             <p className={t.hook}>Adapted from the first scene of Echoes of Solera.</p>
-            <p className="nl-note">Concept pages.</p>
           </div>
         </section>
 
@@ -92,7 +87,7 @@ export default function GoldenTicket() {
 
           <section className={styles.end} aria-labelledby="end-title">
             <h2 id="end-title" className="h3">
-              End of the sample
+              End of the scene
             </h2>
             <div className={styles.actions}>
               <ButtonLink href="/?p=manga" variant="secondary">

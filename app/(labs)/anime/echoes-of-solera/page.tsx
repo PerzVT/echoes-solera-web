@@ -3,7 +3,6 @@ import { Picture as Image } from "@/components/labs/fx/Picture";
 import Link from "next/link";
 import { ButtonLink } from "@/components/labs/Button";
 import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { LandscapePlayer } from "@/components/labs/LandscapePlayer";
@@ -21,9 +20,6 @@ export default function EchoesOfSolera() {
   return (
     <div className={styles.page}>
       <Nav />
-      <BackLink row href="/?p=anime">
-        Anime Production
-      </BackLink>
       <main id="main" className={styles.main}>
         <section className={styles.hero}>
           <Loop className={loop.hero} src={solera.hero.video} poster={solera.hero.poster} label={solera.hero.label} />
@@ -90,7 +86,6 @@ export default function EchoesOfSolera() {
           <h2 id="cast" className="h2">
             Cast
           </h2>
-          <p className="nl-note">Concept art of the cast.</p>
           <Reveal as="ul" stagger className={styles.cast}>
             {solera.cast.map((c) => (
               <li key={c.name}>

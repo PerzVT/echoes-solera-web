@@ -178,7 +178,6 @@ export default function Studio() {
               Discuss a project
             </h2>
             <p className="muted">Tell us what you want to make and who it is for.</p>
-            <p className="small muted">This form is a preview. Nothing is sent yet.</p>
           </div>
           <RequestForm kind="project" />
         </Reveal>

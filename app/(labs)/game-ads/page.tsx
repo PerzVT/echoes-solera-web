@@ -4,7 +4,6 @@ import Link from "next/link";
 import { AdSamples, type Sample } from "@/components/labs/AdSamples";
 import { ButtonLink } from "@/components/labs/Button";
 import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { RequestForm } from "@/components/labs/RequestForm";
@@ -32,9 +31,6 @@ export default function GameAds() {
   return (
     <div className={t.page}>
       <Nav />
-      <BackLink row href="/?p=game-ads">
-        Game ads
-      </BackLink>
       <main id="main" className={t.main}>
         <section className={styles.hero}>
           <Image className={styles.heroArt} src={`${L}/hero-bg.webp`} alt="" fill sizes="100vw" priority />
@@ -48,9 +44,8 @@ export default function GameAds() {
 
         <section aria-labelledby="samples">
           <h2 id="samples" className="h2">
-            Samples
+            Ads
           </h2>
-          <p className="nl-note">Two ads from two game concepts of our own. None was made for a client.</p>
           <Reveal as="div" className={styles.samples}>
             <AdSamples samples={samples} />
             <dl className={styles.spec}>
@@ -95,7 +90,6 @@ export default function GameAds() {
               Request an ad
             </h2>
             <p className="nl-note">Tell us about the game.</p>
-            <p className="small muted">This form is a preview. Nothing is sent yet.</p>
           </div>
           <RequestForm />
         </Reveal>

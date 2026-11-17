@@ -3,7 +3,6 @@ import { Picture as Image } from "@/components/labs/fx/Picture";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { gallerySize, productBySlug, products, sameWorld } from "@/lib/labs/shop";
@@ -35,9 +34,6 @@ export default async function ProductPage({ params }: Props) {
   return (
     <div className={t.page}>
       <Nav />
-      <BackLink row href="/shop">
-        Shop
-      </BackLink>
       <main id="main" className={t.main}>
         <article className={styles.product}>
           {/* Never drawn wider than the file itself: a small render stays sharp at its own size. */}
@@ -55,10 +51,6 @@ export default async function ProductPage({ params }: Props) {
             <h1 className="h1">{p.name}</h1>
             <p className="muted">From {p.world}</p>
             <p className="body-lg">{p.description}</p>
-            <p className={styles.status}>
-              <span className={styles.statusTag}>Concept</span>
-              Not for sale yet.
-            </p>
           </div>
         </article>
 

@@ -1,14 +1,14 @@
 "use client";
 
 import { Picture as Image } from "@/components/labs/fx/Picture";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ButtonLink } from "./Button";
 import { Card } from "./Card";
 import { CoverCarousel } from "./CoverCarousel";
 import { HeroVideo } from "./HeroVideo";
-import { ScrollToCurrent } from "./ScrollToCurrent";
+import { Nav } from "./Nav";
+import { HeroStage } from "./stages/HeroStages";
 import { cards } from "@/lib/labs/cards";
 import { projectBySlug, projects, type Project } from "@/lib/labs/projects";
 import styles from "./Home.module.css";
@@ -47,13 +47,14 @@ function Stage({ project, active, media }: { project: Project; active: boolean; 
           style={{ right: f.right, height: f.height, bottom: f.bottom ?? 0 }}
         />
       ))}
+      {media && project.stage && <HeroStage kind={project.stage} active={active} />}
       {media && project.fan && (
         <div className={styles.fan} data-kind={project.fan.kind}>
           {project.fan.items.map((it, i) => {
             const vars = { "--i": i, "--n": project.fan!.items.length } as React.CSSProperties;
             const card = project.fan!.kind === "cards" && cards.find((c) => c.art === it.src);
             return card ? (
-              <span key={it.src} className={styles.fanCard} style={vars}>
+              <span key={it.src} className={styles.fanCard} style={vars} data-art={it.src}>
                 <Card card={card} sizes="(max-width: 900px) 40vw, 22vw" />
               </span>
             ) : (
@@ -80,7 +81,7 @@ function Stage({ project, active, media }: { project: Project; active: boolean; 
         </div>
       </div>
 
-      {media && project.covers && <CoverCarousel covers={project.covers} eager={active} />}
+      {media && project.covers && !project.stage && <CoverCarousel covers={project.covers} eager={active} />}
     </section>
   );
 }
@@ -155,138 +156,140 @@ export function HomeStages({ initial }: { initial: string }) {
       offIdle(idle);
     };
   }, []);
-  const dock = useRef<HTMLElement>(null);
-  const [pill, setPill] = useState<{ x: number; w: number; h: number; animate: boolean } | null>(null);
-
   const param = params.get("p") ?? undefined;
   useEffect(() => {
     setActive(projectBySlug(param).slug);
   }, [param]);
 
-  const choose = (e: MouseEvent<HTMLAnchorElement>, slug: string) => {
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault();
+  // Every switch (header link, wheel, arrow key, swipe) goes through here: show the stage, rewrite ?p=.
+  const choose = useCallback((slug: string) => {
     setActive(slug);
     window.history.replaceState(null, "", hrefOf(slug));
-  };
+  }, []);
 
-  // A wheel or trackpad gesture over the page moves one tab along the dock. One gesture is one step: the
-  // deltas add up until they pass a threshold, then nothing more counts until the wheel has been still
-  // for a moment (a trackpad keeps sending momentum for a second after the fingers lift). It leaves alone
-  // anything that scrolls itself, open menus and dialogs, pinch zoom, and a page that still has room to
-  // scroll that way. The switch itself is the dock's switch, so reduced motion gets the instant change.
+  // The page does not scroll: wheel, trackpad, ArrowLeft/ArrowRight and a swipe step one section, like
+  // tabs. A wheel gesture's deltas add up until they pass a small threshold (a single mouse notch is
+  // enough), then the gesture is locked for 600 ms and until the wheel goes quiet, so trackpad momentum
+  // never counts twice. A turn the other way acts at once. Nothing moves while the intro is showing or a
+  // menu or dialog is open. Reduced motion gets the instant change from the stage CSS.
   const activeRef = useRef(active);
   useEffect(() => {
     activeRef.current = active;
   }, [active]);
   useEffect(() => {
+    const blocked = (t: EventTarget | null) => {
+      if (document.querySelector(".nl[data-nl-intro]")) return true;
+      if (document.querySelector("details[open], dialog[open], [aria-modal='true'], [role='menu']")) return true;
+      const el = t instanceof Element ? t : null;
+      return !!el?.closest('dialog, [role="dialog"], [aria-modal="true"], details[open], [role="menu"]');
+    };
+    const step = (dir: 1 | -1) => {
+      const i = projects.findIndex((p) => p.slug === activeRef.current);
+      const next = projects[i + dir];
+      if (next) choose(next.slug);
+    };
+    // Something inside the stage that scrolls by itself keeps the wheel while it has room that way.
+    const canScroll = (from: EventTarget | null, d: number, vertical: boolean) => {
+      for (let el = from instanceof Element ? from : null; el && el !== document.body; el = el.parentElement) {
+        const cs = getComputedStyle(el);
+        const o = vertical ? cs.overflowY : cs.overflowX;
+        if (o !== "auto" && o !== "scroll") continue;
+        const [pos, size, full] = vertical ? [el.scrollTop, el.clientHeight, el.scrollHeight] : [el.scrollLeft, el.clientWidth, el.scrollWidth];
+        if (full > size + 1 && (d > 0 ? pos + size < full - 1 : pos > 0)) return true;
+      }
+      return false;
+    };
+
     let sum = 0;
     let last = -Infinity;
+    let lastAbs = 0;
     let locked = false;
     let stepAt = -Infinity;
-    const canScroll = (from: EventTarget | null, dy: number) => {
-      for (let el = from instanceof Element ? from : null; el && el !== document.body; el = el.parentElement) {
-        const oy = getComputedStyle(el).overflowY;
-        if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) {
-          if (dy > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0) return true;
-        }
-      }
-      const doc = document.scrollingElement ?? document.documentElement;
-      return dy > 0 ? doc.scrollTop + window.innerHeight < doc.scrollHeight - 1 : doc.scrollTop > 0;
-    };
+    let stepDir = 0;
     const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey || e.defaultPrevented) return;
-      const t = e.target instanceof Element ? e.target : null;
-      if (t?.closest('dialog, [role="dialog"], [aria-modal="true"], details[open], [role="menu"]')) return;
-      if (document.querySelector("details[open], dialog[open], [aria-modal='true']")) return;
-      const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      if (e.ctrlKey || e.defaultPrevented || blocked(e.target)) return;
+      const vertical = Math.abs(e.deltaY) >= Math.abs(e.deltaX);
+      const d = vertical ? e.deltaY : e.deltaX;
       const px = e.deltaMode === 1 ? d * 16 : e.deltaMode === 2 ? d * window.innerHeight : d;
-      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX) && canScroll(e.target, px)) return;
+      if (px === 0 || canScroll(e.target, px, vertical)) return;
       // Event times, not timers: a switch can hold the main thread, and the queued momentum events that
       // follow must still read as the same gesture.
       const gap = e.timeStamp - last;
+      const abs = Math.abs(px);
       last = e.timeStamp;
-      if (gap > 300 && e.timeStamp - stepAt > 500) {
-        locked = false;
+      const since = e.timeStamp - stepAt;
+      const dir = px > 0 ? 1 : -1;
+      if (locked) {
+        // Momentum only fades; a quiet gap, or a fresh push stronger than the fading tail, starts a new gesture.
+        const fresh = since > 600 && (gap > 160 || abs > lastAbs * 1.6 + 4);
+        if (dir !== stepDir || fresh) {
+          locked = false;
+          sum = 0;
+        }
+      } else if (gap > 300) {
         sum = 0;
       }
+      lastAbs = abs;
       if (locked) return;
+      if (sum !== 0 && Math.sign(sum) !== dir) sum = 0;
       sum += px;
-      if (Math.abs(sum) < 40) return;
+      if (Math.abs(sum) < 30) return;
       locked = true;
       stepAt = e.timeStamp;
-      const i = projects.findIndex((p) => p.slug === activeRef.current);
-      const next = projects[i + (sum > 0 ? 1 : -1)];
+      stepDir = dir;
       sum = 0;
-      if (!next) return;
-      setActive(next.slug);
-      window.history.replaceState(null, "", hrefOf(next.slug));
+      step(dir);
     };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented || blocked(e.target)) return;
+      const el = e.target instanceof HTMLElement ? e.target : null;
+      if (el?.closest('input, textarea, select, [contenteditable="true"], [role="slider"], [role="tablist"], video')) return;
+      e.preventDefault();
+      step(e.key === "ArrowRight" ? 1 : -1);
+    };
+
+    // A swipe: the stronger axis decides, up or left is the next section. Touches on the header strip
+    // are left alone so it can scroll sideways.
+    let start: { x: number; y: number; t: number } | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      const el = e.target instanceof Element ? e.target : null;
+      start = e.touches.length === 1 && !el?.closest("header") && !blocked(e.target) ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: e.timeStamp } : null;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!start) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - start.x;
+      const dy = t.clientY - start.y;
+      const quick = e.timeStamp - start.t < 800;
+      start = null;
+      const d = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+      if (!quick || Math.abs(d) < 50 || blocked(e.target)) return;
+      if (Math.abs(dx) > Math.abs(dy) && canScroll(e.target, -dx, false)) return;
+      step(d < 0 ? 1 : -1);
+    };
+
     window.addEventListener("wheel", onWheel, { passive: true });
-    return () => window.removeEventListener("wheel", onWheel);
-  }, []);
-
-  // The shouldered pill sits under the current dock link and slides to the next one.
-  const measure = useCallback((animate: boolean) => {
-    const link = dock.current?.querySelector<HTMLElement>('a[aria-current="page"]');
-    if (link) setPill({ x: link.offsetLeft, w: link.offsetWidth, h: link.offsetHeight, animate });
-  }, []);
-  const measured = useRef(false);
-  useLayoutEffect(() => {
-    measure(measured.current);
-    measured.current = true;
-  }, [active, measure]);
-  useEffect(() => {
-    const row = dock.current;
-    if (!row) return;
-    const ro = new ResizeObserver(() => measure(false));
-    row.querySelectorAll("a").forEach((a) => ro.observe(a));
-    return () => ro.disconnect();
-  }, [measure]);
-
-  // Three parts, so the slide is all transforms: two end caps that move and a middle that stretches.
-  const cap = pill ? pill.h * 0.4444 : 0;
-  const pillVars = pill
-    ? ({
-        "--px": `${pill.x}px`,
-        "--pw": `${pill.w}px`,
-        "--ph": `${pill.h}px`,
-        "--cap": `${cap}px`,
-        "--mid": ((pill.w - 2 * cap + 2) / 100).toFixed(4),
-      } as React.CSSProperties)
-    : undefined;
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [choose]);
 
   return (
     <>
+      <Nav project={active} onProject={choose} />
       <main id="main" className={styles.stages}>
         {projects.map((p) => (
           <Stage key={p.slug} project={p} active={p.slug === active} media={loaded.has(p.slug)} />
         ))}
       </main>
-      <nav ref={dock} className={styles.dock} aria-label="Projects" data-pill={pill ? "on" : undefined}>
-        {pill && (
-          <span className={styles.pill} style={pillVars} data-animate={pill.animate} aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-        )}
-        {projects.map((p) => (
-          <Link
-            key={p.slug}
-            href={hrefOf(p.slug)}
-            scroll={false}
-            replace
-            onClick={(e) => choose(e, p.slug)}
-            onPointerEnter={() => warm(p.slug)}
-            onFocus={() => warm(p.slug)}
-            aria-current={p.slug === active ? "page" : undefined}
-          >
-            {p.name}
-          </Link>
-        ))}
-        <ScrollToCurrent current={active} />
-      </nav>
     </>
   );
 }

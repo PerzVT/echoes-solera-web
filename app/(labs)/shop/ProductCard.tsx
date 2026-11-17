@@ -16,7 +16,6 @@ export function ProductCard({ p, sizes }: { p: Product; sizes: string }) {
             sizes={sizes}
             style={p.focus ? { objectPosition: p.focus } : undefined}
           />
-          <span className={styles.tag}>Concept</span>
         </span>
         <span className={styles.name}>{p.name}</span>
         <span className="small muted">{p.world}</span>

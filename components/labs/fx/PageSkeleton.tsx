@@ -23,8 +23,8 @@ export function SkBackRow() {
   );
 }
 
-/** A title page: nav, back row, the content column. */
-export function SkTitlePage({ children, back = true }: { children: ReactNode; back?: boolean }) {
+/** A title page: nav, then the content column. */
+export function SkTitlePage({ children, back = false }: { children: ReactNode; back?: boolean }) {
   return (
     <SkeletonGroup className={t.page}>
       <Nav />

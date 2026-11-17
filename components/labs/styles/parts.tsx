@@ -22,7 +22,7 @@ export function Slot({ name, media, sizes = "(max-width: 720px) 50vw, 25vw", cla
       ) : (
         <Image key={media.src} src={media.src} alt={media.alt} fill sizes={sizes} loading={eager ? "eager" : undefined} unoptimized={media.src.startsWith("blob:")} />
       )}
-      <figcaption className={media.video ? `${s.slotName} ${s.slotNameTop}` : s.slotName}>{name}</figcaption>
+      <figcaption className={media.video ? `${s.slotName} ${s.slotNameTop}` : s.slotName}>{media.label ?? name}</figcaption>
     </figure>
   );
 }

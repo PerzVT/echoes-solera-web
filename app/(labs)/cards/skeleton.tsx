@@ -1,5 +1,4 @@
 import { Nav } from "@/components/labs/Nav";
-import { SkBackRow } from "@/components/labs/fx/PageSkeleton";
 import { Skeleton, SkeletonButton, SkeletonGroup } from "@/components/labs/fx/Skeleton";
 import cc from "@/components/labs/CardCollection.module.css";
 import t from "@/components/labs/Title.module.css";
@@ -10,7 +9,6 @@ export default function PageSkeleton() {
   return (
     <SkeletonGroup className={t.page}>
       <Nav />
-      <SkBackRow />
       <div className={styles.desk} data-theme="light">
         <div className={cc.head} aria-hidden="true">
           <Skeleton width="min(340px, 70%)" height="clamp(2.4rem, 4.8vw, 4.2rem)" radius={12} />

@@ -69,7 +69,7 @@ const formats: Format[] = [
   },
   {
     title: "Game ads",
-    fact: "Two ads from two of our game concepts.",
+    fact: "Two vertical game ads.",
     href: "/game-ads",
     clip: `${L}/game-ads/sweet-rush.mp4`,
     art: `${L}/game-ads/sweet-rush.webp`,
@@ -228,7 +228,6 @@ export default function Lab() {
                         style={f.focus ? { objectPosition: f.focus } : undefined}
                       />
                     )}
-                    {f.concept && <span className={styles.badge}>Concept</span>}
                   </span>
                   <span className={styles.formatTitle}>
                     {f.title}

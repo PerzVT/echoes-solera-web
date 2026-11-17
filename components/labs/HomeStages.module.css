@@ -1,0 +1,203 @@
+/* Per-project stage contents on the home page (components/labs/stages/HeroStages.tsx). */
+
+/* Mini-series: key art layers crossfade, the cover row runs along the foot. */
+.seriesArt {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+}
+.seriesArt[data-on="true"] {
+  opacity: 1;
+}
+.seriesArt img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 30%;
+}
+
+.marquee {
+  --cover-h: calc(clamp(110px, 9.6vw, 150px) * 1.5);
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: clamp(24px, 6vh, 64px);
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+.marqueeRow {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  animation: marquee 80s linear infinite;
+}
+.marquee:hover .marqueeRow,
+.marquee:focus-within .marqueeRow {
+  animation-play-state: paused;
+}
+.marqueeRow li {
+  flex: none;
+}
+.marqueeRow a {
+  display: block;
+  height: var(--cover-h);
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.1),
+    0 10px 24px rgb(0 0 0 / 0.35);
+  transition: translate 240ms var(--ease-out);
+}
+.marqueeRow a:hover,
+.marqueeRow a:focus-visible {
+  translate: 0 -6px;
+}
+.marqueeRow a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+.marqueeRow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - 8px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marqueeRow {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+}
+
+/* Cooking: one chef at a time on the right, crossfaded. The portraits are drawn on white, so they
+   multiply into the warm ground. */
+.chefs {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 4%;
+  width: min(52%, 820px);
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 30%);
+}
+.chefs img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 118%;
+  object-fit: contain;
+  object-position: 50% 8%;
+  opacity: 0;
+  transition: opacity 1100ms var(--ease-out);
+}
+.chefs img[data-on="true"] {
+  opacity: 1;
+}
+
+/* Game ads: three vertical ads in a row across the right two thirds, the middle one forward. */
+.ads {
+  position: absolute;
+  top: 9%;
+  bottom: 9%;
+  right: clamp(24px, 4.4vw, 64px);
+  width: 62%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: clamp(16px, 2vw, 32px);
+}
+.ad {
+  height: 100%;
+  max-width: calc((100% - 2 * clamp(16px, 2vw, 32px)) / 3);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #1a1220;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.12),
+    0 24px 48px rgb(0 0 0 / 0.45);
+}
+.ad:nth-child(odd) {
+  height: 90%;
+}
+.ad video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Shop: a two by three grid of objects between the copy and the backpack. */
+.shelf {
+  position: absolute;
+  left: 31%;
+  top: 50%;
+  translate: 0 -50%;
+  height: 78%;
+  aspect-ratio: 2 / 3.05;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 18px);
+}
+.shelf img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgb(40 24 16 / 0.06),
+    0 12px 28px rgb(80 48 24 / 0.16);
+}
+
+/* Cards: a wash over the wall in the colour of the fan card under the pointer. */
+.cardsTint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: transparent;
+  mix-blend-mode: color;
+  opacity: 0;
+  transition:
+    background-color 700ms var(--ease-out),
+    opacity 700ms var(--ease-out);
+}
+.cardsTint[data-on] {
+  background-color: var(--tint);
+  opacity: 0.7;
+}
+
+@media (max-width: 900px) {
+  .shelf {
+    display: none;
+  }
+  .ads {
+    top: 6%;
+    bottom: auto;
+    height: 52%;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    justify-content: center;
+  }
+  .chefs {
+    width: 90%;
+    right: -10%;
+  }
+}

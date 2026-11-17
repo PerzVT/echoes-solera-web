@@ -4,7 +4,7 @@ import { styles as directions } from "@/app/studio/styles-7c9e4a2b/styleData";
 export type StyleStatus = "Approved" | "Draft";
 export type MediumFilter = "video" | "images";
 
-export type Media = { src: string; video?: string; alt: string };
+export type Media = { src: string; video?: string; alt: string; /** Caption in place of the slot name when the art is not what the slot names. */ label?: string };
 
 /** The five fixed subjects of a style chart. A missing one is a named slot. */
 export const chartSlots = [
@@ -187,7 +187,7 @@ const inUse: Style[] = [
     usedBy: PROJECT,
     card: { src: `${SC}/episodes/6.webp`, alt: "Second Chance at Your Heart, production clip" },
     chart: {
-      closeUp: { src: `${SC}/episodes/6.webp`, alt: "Close on her face" },
+      closeUp: { src: `${SC}/episodes/6.webp`, alt: "Both leads, full length", label: "Two-shot, full length" },
       inScene: { src: `${SC}/episodes/6.webp`, alt: "Both leads at the table" },
       environment: { src: `${SC}/hero-bg.webp`, alt: "Lit corridor, no people" },
       example: { src: `${SC}/episodes/1.webp`, video: `${SC}/episodes/1.mp4`, alt: "Second Chance at Your Heart, production clip" },
@@ -269,7 +269,7 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-/** The style-library directions. Each holds one sample frame and its clip, so far only two chart subjects. */
+/** The style-library directions. Each holds one frame and its clip: two chart subjects. */
 const library: Style[] = directions.map((d) => ({
   slug: slugify(d.title),
   name: d.title,
@@ -279,10 +279,10 @@ const library: Style[] = directions.map((d) => ({
   status: "Draft",
   group: "Library",
   source: "Style library",
-  card: { src: d.poster, alt: `${d.title}, sample frame` },
+  card: { src: d.poster, alt: `${d.title}, frame` },
   chart: {
-    inScene: { src: d.poster, alt: `${d.title}, sample frame` },
-    example: { src: d.poster, video: d.video, alt: `${d.title}, sample clip` },
+    inScene: { src: d.poster, alt: `${d.title}, frame` },
+    example: { src: d.poster, video: d.video, alt: `${d.title}, clip` },
   },
   rules: {},
   versions: [],

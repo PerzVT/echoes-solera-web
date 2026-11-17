@@ -18,7 +18,8 @@ const bare = ["/app", "/visual-novel"];
 /** The site foot: the studio's name, the places a visitor can go from anywhere and the company's legal name. */
 export function SiteFooter() {
   const path = usePathname();
-  if (bare.some((p) => path === p || path.startsWith(`${p}/`))) return null;
+  // Home is one screen with its own legal line, so it has no foot either.
+  if (path === "/" || bare.some((p) => path === p || path.startsWith(`${p}/`))) return null;
   return (
     <footer className={styles.foot}>
       <div className={styles.inner}>

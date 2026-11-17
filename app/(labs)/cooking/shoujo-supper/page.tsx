@@ -3,7 +3,6 @@ import { Picture as Image } from "@/components/labs/fx/Picture";
 import Link from "next/link";
 import { ButtonLink } from "@/components/labs/Button";
 import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import recipes from "@/lib/labs/recipes.json";
@@ -20,12 +19,9 @@ export default function ShoujoSupper() {
   return (
     <div className={styles.page}>
       <Nav />
-      <BackLink row href="/?p=cooking">
-        Cooking videos
-      </BackLink>
       <main id="main" className={styles.main}>
         <section className={`${styles.hero} ${styles.heroLight}`} data-theme="light">
-          <Image className={styles.art} src={supper.art} alt="Concept art of Akane cooking at the stove" fill sizes="100vw" priority />
+          <Image className={styles.art} src={supper.art} alt="Akane cooking at the stove" fill sizes="100vw" priority />
           <div className={styles.heroCopy}>
             <h1 className="display">{supper.title}</h1>
             <p className={styles.hook}>{supper.hook}</p>

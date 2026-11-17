@@ -1,5 +1,4 @@
 import { Nav } from "@/components/labs/Nav";
-import { SkBackRow } from "@/components/labs/fx/PageSkeleton";
 import { Skeleton, SkeletonGroup } from "@/components/labs/fx/Skeleton";
 import pack from "@/components/labs/PackOpening.module.css";
 import t from "@/components/labs/Title.module.css";
@@ -10,7 +9,6 @@ export default function PageSkeleton() {
   return (
     <SkeletonGroup className={t.page}>
       <Nav />
-      <SkBackRow />
       <div className={`${styles.desk} ${styles.packs}`}>
         <div className={pack.wrap} aria-hidden="true">
           <Skeleton width={260} height="clamp(2rem, 3.4vw, 3rem)" radius={10} />
