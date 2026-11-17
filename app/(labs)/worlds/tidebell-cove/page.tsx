@@ -32,7 +32,10 @@ export default function TidebellCove() {
               {w.title}
             </h1>
             <p className={styles.lede}>A small 3D cove you walk around as FOMO, a duck.</p>
-            <ButtonLink href="#outfits">Try the outfits</ButtonLink>
+            <ButtonLink href="/worlds/tidebell-cove/play">Play Tidebell Cove</ButtonLink>
+            <ButtonLink href="#outfits" variant="secondary">
+              Try the outfits
+            </ButtonLink>
           </div>
         </section>
 

@@ -1,0 +1,9 @@
+FOMO duck model: Highstreet. Adapted for the browser from General_Duck_Rig_V7.
+Animation and scene: Tidebell Cove. Room and visitor interpolation adapted for this small 3D map. Shared movement helpers from Hatchling.
+Fredoka: see assets/Fredoka-OFL.txt. Three.js: see assets/Three-LICENSE.txt.
+Polyfork mesh assets are licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Scaled, rotated and placed in the cove.
+Small Fishing Boat by Polyfork — https://polyfork.dev/asset/small-fishing-boat-4ac0e3
+Rowboat by Polyfork — https://polyfork.dev/asset/rowboat-c42d85
+Lifebuoy on a Post by Polyfork — https://polyfork.dev/asset/lifebuoy-on-a-post-57421b
+Propped Fishing Rod by Polyfork — https://polyfork.dev/asset/propped-fishing-rod-072978
+Beach Parasol by Polyfork — https://polyfork.dev/asset/beach-parasol-fd4530
