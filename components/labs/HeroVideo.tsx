@@ -29,17 +29,24 @@ export function HeroVideo({ src, poster, active }: { src: string; poster: string
     return () => io.disconnect();
   }, []);
 
+  // The source is set the first time the hero plays and then kept, so leaving pauses the loop and coming
+  // back resumes it where it stopped instead of reloading from the start.
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    if (active && !still && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) setStarted(true);
+  }, [active, still]);
+
   useEffect(() => {
     const v = video.current;
     if (!v) return;
-    if (active && !still && onScreen) v.play().catch(() => {});
+    if (active && !still && onScreen && started) v.play().catch(() => {});
     else v.pause();
-  }, [active, still, onScreen]);
+  }, [active, still, onScreen, started]);
 
   return (
     <>
       <Image className={styles.poster} src={poster} alt="" fill sizes="100vw" priority={active} aria-hidden="true" />
-      <video ref={video} className={styles.video} src={active ? src : undefined} poster={poster} muted loop playsInline preload="none" aria-hidden="true" />
+      <video ref={video} className={styles.video} src={started ? src : undefined} poster={poster} muted loop playsInline preload="none" aria-hidden="true" />
     </>
   );
 }

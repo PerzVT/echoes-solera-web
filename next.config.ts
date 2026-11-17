@@ -1,7 +1,18 @@
 import type { NextConfig } from "next";
+import fs from "node:fs";
+
+// Read at build time: the deployed functions do not carry public/, so the list is baked in here.
+const backdrops = (() => {
+  try {
+    return fs.readdirSync("public/labs/mini-series/backdrops").filter((f) => f.endsWith(".webp")).map((f) => f.slice(0, -5));
+  } catch {
+    return [];
+  }
+})();
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  env: { NL_SERIES_BACKDROPS: backdrops.join(",") },
   images: { formats: ["image/avif", "image/webp"], minimumCacheTTL: 86400, qualities: [75, 90] },
   async headers() {
     const catalogHeaders = [

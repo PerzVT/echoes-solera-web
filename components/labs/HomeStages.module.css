@@ -83,29 +83,105 @@
   }
 }
 
-/* Cooking: one chef at a time on the right, crossfaded. The portraits are drawn on white, so they
-   multiply into the warm ground. */
-.chefs {
+/* Anime: four vertical panels across the whole stage with thin gaps. Each panel crops its 9:16 clip to
+   its own height, so the video is only ever scaled down. Two videos per panel; the front one shows and the
+   cut is a hard swap. */
+.montage {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 4%;
-  width: min(52%, 820px);
-  mix-blend-mode: multiply;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 30%);
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  background: #07090d;
 }
-.chefs img {
+.panel {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: #11151c;
+}
+.panel img,
+.panel video {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 118%;
-  object-fit: contain;
-  object-position: 50% 8%;
-  opacity: 0;
-  transition: opacity 1100ms var(--ease-out);
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
 }
-.chefs img[data-on="true"] {
+.panel video {
+  opacity: 0;
+}
+.panel video[data-front="true"] {
+  opacity: 1;
+}
+
+/* Cooking: whole scenes crossfade, each edge to edge. The Akane kitchen keeps its own quiet left side
+   for the copy; the grids get a warm wash on the left so the ink copy reads over them. */
+.kitchen,
+.scene,
+.cove {
+  position: absolute;
+  inset: 0;
+}
+.kitchen {
+  background: #fbefe0;
+}
+.scene {
+  opacity: 0;
+  transition: opacity 1200ms var(--ease-out);
+}
+.scene[data-on="true"] {
+  opacity: 1;
+}
+.scene:not([data-kind="art"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgb(251 243 232 / 0.95) 0%, rgb(251 243 232 / 0.86) 30%, rgb(251 243 232 / 0.35) 46%, transparent 60%);
+}
+.sceneArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 100% 40%;
+}
+.sceneGrid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+}
+.sceneGrid[data-kind="stills"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  background: #fbefe0;
+}
+.sceneGrid img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+.sceneGrid[data-kind="stills"] img {
+  object-position: 50% 30%;
+}
+
+/* Virtual worlds: the cove's places crossfade full bleed. */
+.cove img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 50%;
+  opacity: 0;
+  transition: opacity 1400ms var(--ease-out);
+}
+.cove img[data-on="true"] {
   opacity: 1;
 }
 
@@ -196,8 +272,16 @@
     width: auto;
     justify-content: center;
   }
-  .chefs {
-    width: 90%;
-    right: -10%;
+  /* Four panels as two by two on a tall stage, so each keeps a vertical shape. */
+  .montage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .sceneGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .sceneGrid[data-kind="stills"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

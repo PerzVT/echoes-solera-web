@@ -8,7 +8,9 @@
 /* Choose: the three sets' packs side by side. */
 .choices {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, min(230px, 26dvh)));
+  /* Sized by the window's height as well as its width, so the title, packs and names fit on the desk
+     above the site foot (100dvh less the header, the foot and its gap, about 490 px). */
+  grid-template-columns: repeat(3, minmax(0, min(230px, max(130px, calc((100dvh - 490px) * 0.617)))));
   gap: clamp(12px, 4vw, 48px);
   list-style: none;
 }
@@ -43,7 +45,7 @@
 .sealed {
   position: relative;
   display: block;
-  width: min(300px, 60vw, 34dvh);
+  width: min(300px, 60vw, max(140px, calc((100dvh - 480px) * 0.617)));
   border-radius: 12px;
   transition:
     translate var(--dur-move) var(--ease-out),
@@ -70,6 +72,81 @@
   }
 }
 
+/* The sealed pack: 444 x 720 art, the seam at 7.5% from the top. */
+.pack {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 444 / 720;
+  filter: drop-shadow(0 18px 22px rgb(4 14 18 / 0.5));
+}
+.packBody,
+.packStrip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.packBody {
+  clip-path: inset(7.5% 0 0 0);
+}
+.packStrip {
+  clip-path: inset(0 0 92.5% 0);
+  transform-origin: 0 7.5%;
+}
+/* The line of light that runs along the seam as the pack tears. */
+.seam {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  top: 7.5%;
+  height: 2px;
+  margin-top: -1px;
+  background: linear-gradient(90deg, transparent, #fff8e6 20%, #ffffff 50%, #fff8e6 80%, transparent);
+  box-shadow: 0 0 8px 2px rgb(255 240 200 / 0.8);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  pointer-events: none;
+}
+/* The tear, 760 ms (TEAR_MS): light runs along the seam (0 to 300), the strip peels off up and to the
+   right (240 to 620), the opened pack sinks and fades (500 to 760). */
+.pack[data-tearing] .seam {
+  animation: seam 300ms cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+.pack[data-tearing] .packStrip {
+  animation: peel 380ms cubic-bezier(0.5, 0, 0.7, 0.4) 240ms forwards;
+}
+.pack[data-tearing] .packBody {
+  animation: sink 260ms cubic-bezier(0.55, 0, 1, 0.45) 500ms forwards;
+}
+@keyframes seam {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  80% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+@keyframes peel {
+  to {
+    transform: translate(18%, -16%) rotate(-14deg);
+    opacity: 0;
+  }
+}
+@keyframes sink {
+  to {
+    transform: translateY(14%) scale(0.85);
+    opacity: 0;
+  }
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -80,7 +157,7 @@
 /* The cards, the largest thing on the stage, sized so the buttons stay above the fold. */
 .spread {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, min(280px, 30dvh)));
+  grid-template-columns: repeat(3, minmax(0, min(280px, max(120px, calc((100dvh - 560px) * 0.714)))));
   gap: clamp(10px, 3vw, 40px);
   list-style: none;
 }
@@ -199,7 +276,10 @@
   .spread li {
     animation: fade 240ms linear backwards;
   }
-  .flip[data-turned="true"] {
+  .flip[data-turned="true"],
+  .pack[data-tearing] .seam,
+  .pack[data-tearing] .packStrip,
+  .pack[data-tearing] .packBody {
     animation: none;
   }
   .flip[data-turned="true"] .faceBack {

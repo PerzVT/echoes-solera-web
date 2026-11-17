@@ -25,16 +25,6 @@ export const products: Product[] = [
     gallery: { src: `${L}/gallery-fomo-backpack.webp`, alt: "The backpack from the front, side and back, open, a wing pouch close up, and worn" },
   },
   {
-    slug: "fomo-plush-wardrobe",
-    name: "FOMO plush with wardrobe",
-    world: "Tidebell Cove",
-    description:
-      "A cream duck plush with six outfits on a wooden rail: a knit hat and vest, a bathrobe, a frog hood, a bear hood with overalls, a wizard hood and cape, and a shark hood with a vest.",
-    image: { src: `${L}/fomo-plush-wardrobe.webp`, width: 1400, height: 788, alt: "Duck plush beside a wooden rail of six small outfits" },
-    focus: "0% 50%",
-    gallery: { src: `${L}/gallery-fomo-plush.webp`, alt: "The plush from the front, side and back, its face close up, held in a knit outfit, and boxed with its outfits" },
-  },
-  {
     slug: "fomo-blind-box",
     name: "FOMO blind box",
     world: "Tidebell Cove",
@@ -131,13 +121,6 @@ export const products: Product[] = [
     world: "Echoes of Solera",
     description: "Painted figures of Nova and Nine in their current outfits, each standing on a round stone base.",
     image: { src: `${L}/nova-nine-figures.webp`, width: 1536, height: 1024, alt: "Painted figures of Nova in her cream coat and Nine in his blue scarf on stone bases" },
-  },
-  {
-    slug: "character-pillow-covers",
-    name: "Character pillow covers",
-    world: "Echoes of Solera",
-    description: "Long body-pillow covers printed with full-length art of Nova and of Nine. Each closes with a zip at the foot.",
-    image: { src: `${L}/nova-nine-pillow-covers.webp`, width: 1536, height: 1024, alt: "Two long pillows on a bed, one printed with Nova and one with Nine" },
   },
   {
     slug: "moonflower-book-nook",

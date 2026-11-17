@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "./Button";
-import { Card, CardBack, Pack } from "./Card";
+import { Card, CardBack } from "./Card";
 import { cardsIn, sets, setBySlug, type CardFace, type CardSet } from "@/lib/labs/cards";
 import styles from "./PackOpening.module.css";
 
@@ -18,8 +18,25 @@ function draw(set: CardSet): CardFace[] {
   return pool.slice(0, 3);
 }
 
-/** Tear length in ms; matches @keyframes pack-tear in Card.module.css. */
+/** Tear length in ms; matches the seam, peel and sink keyframes in PackOpening.module.css. */
 const TEAR_MS = 760;
+
+const SEALED = "/labs/cards/pack/sealed.webp";
+
+/**
+ * A sealed Nine Lives pack (the foil art in public/labs/cards/pack). The art is drawn twice: the body below
+ * the seam and the crimped strip above it, so the strip can peel away when the pack is torn.
+ */
+function SealedPack({ tearing, priority }: { tearing?: boolean; priority?: boolean }) {
+  const img = { src: SEALED, alt: "", width: 444, height: 720, decoding: "async", fetchPriority: priority ? "high" : "auto" } as const;
+  return (
+    <span className={styles.pack} data-tearing={tearing || undefined}>
+      <img {...img} className={styles.packBody} />
+      <img {...img} className={styles.packStrip} aria-hidden="true" />
+      <span className={styles.seam} />
+    </span>
+  );
+}
 
 /**
  * Choose a set's pack, tear it open, and its cards come out face down on the teal stage; turn each one
@@ -90,7 +107,7 @@ export function PackOpening() {
           {sets.map((s, i) => (
             <li key={s.slug} style={{ "--i": i } as React.CSSProperties}>
               <button ref={i === 0 ? firstPack : undefined} type="button" className={styles.choice} onClick={() => choose(s)}>
-                <Pack set={s} sizes="(max-width: 720px) 30vw, 240px" priority />
+                <SealedPack priority />
                 <span className={styles.choiceName}>{s.name}</span>
               </button>
             </li>
@@ -113,7 +130,7 @@ export function PackOpening() {
           onClick={tear}
           aria-label={`Tear the ${set.name} pack open`}
         >
-          <Pack set={set} sizes="(max-width: 720px) 60vw, 320px" priority tearing={tearing} />
+          <SealedPack priority tearing={tearing} />
         </button>
         <div className={styles.actions}>
           <Button onClick={tear} loading={tearing}>

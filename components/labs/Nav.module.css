@@ -1,10 +1,15 @@
+/* Mark, dock and Open app. The dock is centred in the space between the mark and Open app, which share
+   one inset from the page edge. */
 .nav {
-  display: flex;
+  --nav-inset: 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
-  padding: 4px 8px 4px 12px;
+  gap: 16px;
+  padding: 4px var(--nav-inset);
 }
 .brand {
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -18,21 +23,37 @@
   width: 36px;
   height: 36px;
 }
-/* The nine projects share the row between the mark and Open app, spread evenly. */
-.links {
-  flex: 1;
+.middle {
   min-width: 0;
   display: flex;
-  justify-content: space-between;
-  gap: 2px;
+  justify-content: center;
 }
-.links > a {
+
+/* The dock: the old bottom row's frame, its links sized by their words with one padding, so every gap
+   between two names is the same. The padding grows with the window up to 18 px. */
+.links {
+  --link-pad: clamp(12px, calc((100vw - 1060px) / 18), 18px);
+  --link-h: 40px;
   position: relative;
   display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 9px;
-  border-radius: var(--r-control);
+  min-width: 0;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.links::-webkit-scrollbar {
+  display: none;
+}
+.links > a {
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-height: var(--link-h);
+  padding: 0 var(--link-pad);
+  border-radius: 12px;
   font-weight: 500;
   font-size: 0.875rem;
   white-space: nowrap;
@@ -42,26 +63,8 @@
     background-color var(--dur-feedback) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
-.links > a::after {
-  content: "";
-  position: absolute;
-  left: 9px;
-  right: 9px;
-  bottom: 6px;
-  height: 2px;
-  border-radius: 1px;
-  background: var(--action);
-  scale: 0 1;
-  transition: scale var(--dur-enter) var(--ease-out);
-}
-.links > a[aria-current="page"] {
-  color: var(--text);
-}
-.links > a[aria-current="page"]::after {
-  scale: 1 1;
-}
 @media (hover: hover) and (pointer: fine) {
-  .links > a:hover {
+  .links > a:not([aria-current="page"]):hover {
     color: var(--text);
     background: var(--surface);
   }
@@ -69,41 +72,95 @@
 .links > a:active {
   scale: 0.96;
 }
-.app {
-  flex: none;
+/* Before script: the current link fills itself with the shouldered shape. */
+.links > a[aria-current="page"] {
+  --c: calc(var(--link-h) * 0.4444);
+  color: var(--on-action);
+  background: var(--action);
+  border-radius: 0;
+  -webkit-mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
 }
-/* Narrower windows: the projects drop to a sideways strip under the mark and Open app. */
-@media (max-width: 1180px) {
+/* With script, one pill slides under the links instead. */
+.links[data-pill="on"] > a {
+  position: relative;
+  z-index: 1;
+}
+.links[data-pill="on"] > a[aria-current="page"] {
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+  transition: color 320ms var(--ease-out);
+}
+.pill {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  height: var(--ph);
+  pointer-events: none;
+}
+.pill span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--action);
+  transition:
+    translate 320ms var(--ease-out),
+    scale 320ms var(--ease-out);
+}
+.pill[data-animate="false"] span {
+  transition: none;
+}
+.pill span:nth-child(1) {
+  width: var(--cap);
+  translate: var(--px) 0;
+  -webkit-mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
+  mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
+}
+.pill span:nth-child(2) {
+  width: 100px;
+  transform-origin: 0 0;
+  translate: calc(var(--px) + var(--cap) - 1px) 0;
+  scale: var(--mid) 1;
+}
+.pill span:nth-child(3) {
+  width: var(--cap);
+  translate: calc(var(--px) + var(--pw) - var(--cap)) 0;
+  -webkit-mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
+  mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
+}
+
+.app {
+  justify-self: end;
+}
+
+/* Narrower windows: the dock drops under the mark and Open app as a sideways strip. */
+@media (max-width: 1279px) {
   .nav {
-    flex-wrap: wrap;
-    gap: 4px 16px;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    gap: 6px 16px;
     padding-inline: 0;
   }
-  .app {
-    margin-left: auto;
+  .middle {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
   .links {
-    order: 3;
-    flex: 0 0 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-  }
-  .links::-webkit-scrollbar {
-    display: none;
-  }
-  .links > a {
-    flex: none;
-    padding: 0 12px;
-  }
-  .links > a::after {
-    left: 12px;
-    right: 12px;
+    --link-pad: 14px;
+    max-width: 100%;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .links > a::after {
+  .pill span,
+  .links[data-pill="on"] > a[aria-current="page"] {
     transition: none;
   }
 }

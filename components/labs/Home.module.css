@@ -7,14 +7,7 @@
   gap: 12px;
   height: 100dvh;
   overflow: hidden;
-  padding: 16px 24px 10px;
-}
-.legal {
-  font-size: 0.75rem;
-  line-height: 1.2;
-  text-align: center;
-  color: var(--text-muted);
-  opacity: 0.7;
+  padding: 16px 24px 8px;
 }
 
 .stages {
@@ -280,105 +273,6 @@
   height: auto;
   max-height: none;
   border-radius: 6.4% / 4.57%;
-}
-
-/* Dock */
-.dock {
-  position: relative;
-  display: flex;
-  gap: 4px;
-  padding: 5px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.dock a {
-  flex: 1 0 auto;
-  min-height: 44px;
-  display: grid;
-  place-items: center;
-  padding: 0 18px;
-  border-radius: 13px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  white-space: nowrap;
-  color: var(--text-muted);
-  transition:
-    color var(--dur-feedback) var(--ease-out),
-    background-color var(--dur-feedback) var(--ease-out),
-    scale var(--dur-press) var(--ease-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .dock a:not([aria-current="page"]):hover {
-    color: var(--text);
-    background: var(--surface);
-  }
-}
-.dock a:active {
-  scale: 0.96;
-}
-.dock a[aria-current="page"] {
-  --c: calc(44px * 0.4444);
-  color: var(--on-action);
-  background: var(--action);
-  border-radius: 0;
-  -webkit-mask:
-    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
-    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
-    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
-  mask:
-    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
-    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
-    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
-}
-/* With script, one pill slides under the links instead of each link filling itself. */
-.dock[data-pill="on"] a {
-  position: relative;
-  z-index: 1;
-}
-.dock[data-pill="on"] a[aria-current="page"] {
-  background: none;
-  -webkit-mask: none;
-  mask: none;
-}
-.pill {
-  position: absolute;
-  left: 0;
-  top: 5px;
-  height: var(--ph);
-  pointer-events: none;
-}
-.pill span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: var(--action);
-  transition:
-    translate 320ms var(--ease-out),
-    scale 320ms var(--ease-out);
-}
-.pill[data-animate="false"] span {
-  transition: none;
-}
-.pill span:nth-child(1) {
-  width: var(--cap);
-  translate: var(--px) 0;
-  -webkit-mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
-  mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
-}
-.pill span:nth-child(2) {
-  width: 100px;
-  transform-origin: 0 0;
-  translate: calc(var(--px) + var(--cap) - 1px) 0;
-  scale: var(--mid) 1;
-}
-.pill span:nth-child(3) {
-  width: var(--cap);
-  translate: calc(var(--px) + var(--pw) - var(--cap)) 0;
-  -webkit-mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
-  mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
 }
 
 @media (max-width: 900px) {

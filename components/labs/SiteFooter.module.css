@@ -1,5 +1,8 @@
+/* The space above the foot belongs to the foot, so it is the same under every page (labs.css takes the
+   pages' own bottom padding away). */
 .foot {
-  padding: 0 24px 40px;
+  margin-top: auto;
+  padding: var(--foot-gap, 96px) 24px 40px;
 }
 .inner {
   display: flex;
@@ -54,10 +57,66 @@
 }
 @media (max-width: 720px) {
   .foot {
-    padding: 0 16px 32px;
+    padding: var(--foot-gap, 64px) 16px 32px;
   }
   .links {
     flex-basis: 100%;
     margin-left: -14px;
+  }
+}
+
+/* Home: the same foot in one short row at the bottom of the one-screen frame. */
+.foot[data-slim] {
+  margin-top: 0;
+  padding: 0 12px;
+}
+.foot[data-slim] .inner {
+  flex-wrap: nowrap;
+  gap: 24px;
+  max-width: none;
+  padding-top: 0;
+  border-top: 0;
+}
+.foot[data-slim] .brand {
+  gap: 8px;
+  min-height: 32px;
+  font-size: 0.875rem;
+}
+.foot[data-slim] .links {
+  flex-wrap: nowrap;
+  gap: 0;
+  margin-left: 0;
+  flex-basis: auto;
+}
+.foot[data-slim] .links a {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 0.8125rem;
+}
+.foot[data-slim] .line {
+  margin-left: auto;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+/* Narrow: the legal line takes a second row of its own. */
+@media (max-width: 900px) {
+  .foot[data-slim] {
+    padding: 0;
+  }
+  .foot[data-slim] .inner {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 12px;
+  }
+  .foot[data-slim] .line {
+    flex-basis: 100%;
+    margin-left: 0;
+    font-size: 0.6875rem;
+    white-space: normal;
+  }
+}
+@media (max-width: 420px) {
+  .foot[data-slim] .links a {
+    padding: 0 7px;
   }
 }

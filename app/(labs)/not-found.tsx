@@ -8,7 +8,7 @@ const clear = "radial-gradient(closest-side, rgb(0 0 0 / 0.3) 0 30%, #000 70%, #
 
 export default function NotFound() {
   return (
-    <div data-backdrop="high" style={{ padding: "16px 24px", minHeight: "100dvh", display: "grid", gridTemplateRows: "auto 1fr" }}>
+    <div data-backdrop="high" style={{ padding: "16px 24px 0", display: "grid", gridTemplateRows: "auto 1fr" }}>
       <Nav />
       <main id="main" style={{ position: "relative", display: "grid", placeContent: "center", justifyItems: "center", gap: 16, textAlign: "center", padding: "48px 0" }}>
         <AsciiField src="/labs/brand/mark-paper.svg" cell={18} intensity={0.32} accent={false} style={{ WebkitMaskImage: clear, maskImage: clear }} />

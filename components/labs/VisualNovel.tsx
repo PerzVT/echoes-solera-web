@@ -11,7 +11,8 @@ import styles from "./VisualNovel.module.css";
 
 type Speed = "slow" | "normal" | "fast";
 const perChar: Record<Speed, number> = { slow: 40, normal: 22, fast: 10 };
-type Phase = "title" | "play" | "end";
+/** The story opens already playing: the home hero's button is the start, so there is no title screen. */
+type Phase = "play" | "end";
 type Run = { warmth: number; flags: string[] };
 type Entry = { who: string | null; text: string; choice?: boolean };
 /** A line that passed its condition, with its place in the scene so "read" survives a different run. */
@@ -45,7 +46,7 @@ function stateAt(lines: Shown[], index: number, entryPose: Pose | "away") {
 
 export function VisualNovel({ story, exitHref }: { story: Story; exitHref: string }) {
   const byId = useMemo(() => new Map(story.scenes.map((s) => [s.id, s])), [story]);
-  const [phase, setPhase] = useState<Phase>("title");
+  const [phase, setPhase] = useState<Phase>("play");
   const [sceneId, setSceneId] = useState(story.start);
   const [index, setIndex] = useState(0);
   const [shown, setShown] = useState(0);
@@ -206,11 +207,6 @@ export function VisualNovel({ story, exitHref }: { story: Story; exitHref: strin
     }
   });
 
-  const start = () => {
-    setPhase("play");
-    focusNext.current = "line";
-  };
-
   const restart = () => {
     if (phase === "end" && !armed()) return;
     setTurns((n) => n + 1);
@@ -308,17 +304,17 @@ export function VisualNovel({ story, exitHref }: { story: Story; exitHref: strin
   const bgs = useMemo(() => [...new Set(story.scenes.map((s) => s.bg))], [story]);
   const cgs = useMemo(() => [...new Set(story.scenes.flatMap((s) => s.lines.map((l) => l.cg)).filter((c): c is string => !!c && c !== "none"))], [story]);
   const poses = Object.entries(story.lead.poses).filter((e): e is [Pose, string] => !!e[1]);
-  const currentBg = phase === "title" ? story.cover : scene.bg;
-  const focus = phase === "title" ? "50% 50%" : (scene.focus ?? "50% 50%");
-  const showSprite = phase !== "title" && !cg && pose !== "away" && !!story.lead.poses[pose];
+  const currentBg = scene.bg;
+  const focus = scene.focus ?? "50% 50%";
+  const showSprite = !cg && pose !== "away" && !!story.lead.poses[pose];
   const ending = phase === "end" ? scene.ending : undefined;
 
   return (
     <main id="main" className={styles.stage} data-large={large} data-phase={phase} data-scene={sceneId}>
       <div className={styles.art} aria-hidden="true">
-        {[...new Set([story.cover, ...bgs])].map((src) => (
+        {bgs.map((src) => (
           <div key={src} className={styles.layer} data-on={src === currentBg && !cg}>
-            <Image src={src} alt="" fill sizes="(max-aspect-ratio: 16/9) 178vh, 100vw" priority={src === story.cover || src === byId.get(story.start)!.bg} style={{ objectPosition: focus }} />
+            <Image src={src} alt="" fill sizes="(max-aspect-ratio: 16/9) 178vh, 100vw" priority={src === byId.get(story.start)!.bg} style={{ objectPosition: focus }} />
           </div>
         ))}
         {cgs.map((src) => (
@@ -350,21 +346,6 @@ export function VisualNovel({ story, exitHref }: { story: Story; exitHref: strin
             <Icon name="back" />
           </Link>
         </header>
-
-        {phase === "title" && (
-          <section className={styles.title} aria-labelledby="vn-title">
-            <h1 id="vn-title" className={styles.titleName}>
-              {story.title}
-            </h1>
-            <p className={styles.blurb}>{story.blurb}</p>
-            <div className={styles.actions}>
-              <Button onClick={start}>Start</Button>
-              <ButtonLink href={exitHref} variant="secondary">
-                Leave
-              </ButtonLink>
-            </div>
-          </section>
-        )}
 
         {phase === "play" && (
           <div className={styles.box} data-choosing={choosing}>

@@ -1,47 +1,243 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MutableRefObject } from "react";
 import { series } from "@/lib/labs/series";
-import { supper } from "@/lib/labs/supper";
+import { supper, releases } from "@/lib/labs/supper";
 import { products } from "@/lib/labs/shop";
+import { tidebell } from "@/lib/labs/worlds";
 import type { Project } from "@/lib/labs/projects";
 import styles from "../HomeStages.module.css";
 
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** Reduced motion as state, so a stage that is already up stops when the setting changes. */
+function useStill() {
+  const [still, setStill] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setStill(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return still;
+}
+
+/** True from the first time the stage is shown with motion allowed, and stays true: video sources are set once and never taken away, so a return resumes where it paused. */
+function useStarted(active: boolean, still: boolean) {
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    // Read the media query here too: on the first pass `still` has not caught up yet.
+    if (active && !still && !reduced()) setStarted(true);
+  }, [active, still]);
+  return started;
+}
+
 /** The per-project stage contents that need more than the shared layers: one switch, so the call site stays one line. */
-export function HeroStage({ kind, active }: { kind: NonNullable<Project["stage"]>; active: boolean }) {
-  if (kind === "series") return <SeriesHero active={active} />;
-  if (kind === "chefs") return <ChefsHero active={active} />;
+export function HeroStage({ kind, active, backdrops = [] }: { kind: NonNullable<Project["stage"]>; active: boolean; backdrops?: readonly string[] }) {
+  if (kind === "montage") return <MontageHero active={active} />;
+  if (kind === "series") return <SeriesHero active={active} backdrops={backdrops} />;
+  if (kind === "chefs") return <KitchenHero active={active} />;
+  if (kind === "worlds") return <WorldsHero active={active} />;
   if (kind === "ads") return <AdsHero active={active} />;
   if (kind === "shop") return <ShopHero active={active} />;
   return <CardsTint />;
 }
 
+/* Anime ------------------------------------------------------------------------------------------ */
+
+/** The vertical shorts, at their own 720 x 1280. No Or-en clips, and Catalyst (landscape) stays on the anime page. */
+const SHORTS = ["back-to-me", "creature-comfort", "highquest-on-break", "everyday-stops", "celestial-fruit-grazer", "one-second-express", "glowmote-grooming"].map(
+  (n) => ({ video: `/labs/anime/shorts/${n}.mp4`, poster: `/labs/anime/shorts/${n}.webp` }),
+);
+/** Seconds each panel holds a clip before it cuts, in turn. The first cuts fall at different times, so the panels never cut together. */
+const CUTS = [
+  [5.5, 8, 6.5, 9.5, 7],
+  [7.5, 5, 9, 6, 8.5],
+  [9.5, 6.5, 7.5, 5, 8],
+  [6.5, 9, 5.5, 8, 6],
+];
+
+type Pick = (panel: number) => number;
+
+/**
+ * Four vertical panels across the whole stage, each cutting to its next short every five to ten seconds.
+ * No two panels show the same clip at once, and a clip picks up where it was last cut away from. The cuts
+ * run on the videos' own clocks, so leaving the stage pauses the montage and coming back carries on.
+ * Posters only under reduced motion.
+ */
+function MontageHero({ active }: { active: boolean }) {
+  const still = useStill();
+  const started = useStarted(active, still);
+  const shown = useRef<number[]>(CUTS.map((_, i) => i));
+  const cursor = useRef(CUTS.length);
+  const pos = useRef<number[]>(SHORTS.map(() => 0));
+  const pick = useCallback<Pick>((panel) => {
+    for (let k = 0; k < SHORTS.length; k++) {
+      const c = (cursor.current + k) % SHORTS.length;
+      if (!shown.current.includes(c)) {
+        cursor.current = c + 1;
+        shown.current[panel] = c;
+        return c;
+      }
+    }
+    return shown.current[panel];
+  }, []);
+  return (
+    <div className={styles.montage} aria-hidden="true">
+      {CUTS.map((_, i) => (
+        <MontagePanel key={i} panel={i} play={active && !still} started={started} eager={active} pick={pick} pos={pos} />
+      ))}
+    </div>
+  );
+}
+
+function MontagePanel({
+  panel,
+  play,
+  started,
+  eager,
+  pick,
+  pos,
+}: {
+  panel: number;
+  play: boolean;
+  started: boolean;
+  eager: boolean;
+  pick: Pick;
+  pos: MutableRefObject<number[]>;
+}) {
+  const vids = useRef<(HTMLVideoElement | null)[]>([null, null]);
+  const [front, setFront] = useState(0);
+  const frontRef = useRef(0);
+  const playRef = useRef(play);
+  const seg = useRef({ clip: panel, start: 0, n: 0, busy: false });
+
+  useEffect(() => {
+    playRef.current = play;
+    const v = vids.current[frontRef.current];
+    if (!v || !v.src) return;
+    if (play) v.play().catch(() => {});
+    else v.pause();
+  }, [play, started]);
+
+  // The first clip, set once.
+  useEffect(() => {
+    const v = vids.current[0];
+    if (!started || !v || v.src) return;
+    v.src = SHORTS[panel].video;
+    if (playRef.current) v.play().catch(() => {});
+  }, [started, panel]);
+
+  useEffect(() => {
+    const cuts = CUTS[panel];
+    const cut = () => {
+      const s = seg.current;
+      const from = vids.current[frontRef.current];
+      const back = vids.current[1 - frontRef.current];
+      if (s.busy || !from || !back) return;
+      s.busy = true;
+      pos.current[s.clip] = from.currentTime;
+      const c = pick(panel);
+      const len = cuts[(s.n + 1) % cuts.length];
+      const go = () => {
+        const swap = () => {
+          from.pause();
+          frontRef.current = 1 - frontRef.current;
+          setFront(frontRef.current);
+          seg.current = { clip: c, start: back.currentTime, n: s.n + 1, busy: false };
+        };
+        if (playRef.current) back.play().then(swap, swap);
+        else swap();
+      };
+      const seek = () => {
+        let at = pos.current[c];
+        if (!(at + len < back.duration - 0.3)) at = 0;
+        back.addEventListener("seeked", go, { once: true });
+        back.currentTime = at;
+      };
+      if (back.dataset.clip === String(c) && back.readyState >= 1) seek();
+      else {
+        back.dataset.clip = String(c);
+        back.addEventListener("loadedmetadata", seek, { once: true });
+        back.src = SHORTS[c].video;
+      }
+    };
+    const onTime = (e: Event) => {
+      const v = e.currentTarget as HTMLVideoElement;
+      if (v !== vids.current[frontRef.current]) return;
+      const s = seg.current;
+      if (v.ended || v.currentTime - s.start >= cuts[s.n % cuts.length]) cut();
+    };
+    const all = vids.current.filter((v): v is HTMLVideoElement => !!v);
+    all.forEach((v) => {
+      v.addEventListener("timeupdate", onTime);
+      v.addEventListener("ended", onTime);
+    });
+    return () =>
+      all.forEach((v) => {
+        v.removeEventListener("timeupdate", onTime);
+        v.removeEventListener("ended", onTime);
+      });
+  }, [panel, pick, pos]);
+
+  return (
+    <div className={styles.panel}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={SHORTS[panel].poster} alt="" loading={eager ? "eager" : "lazy"} decoding="async" />
+      {[0, 1].map((k) => (
+        <video
+          key={k}
+          ref={(el) => {
+            vids.current[k] = el;
+          }}
+          data-front={k === front}
+          data-clip={k === 0 ? String(panel) : undefined}
+          poster={k === 0 ? SHORTS[panel].poster : undefined}
+          muted
+          playsInline
+          preload="auto"
+        />
+      ))}
+    </div>
+  );
+}
+
 /* Mini-series ------------------------------------------------------------------------------------ */
 
-const withArt = series.filter((s) => s.art);
-const DEFAULT_ART = series.find((s) => s.slug === "moonflower")?.slug ?? withArt[0]?.slug;
+/** A series' hover backdrop, by the folder convention read in ./backdrops.ts. */
+const backdropOf = (slug: string) => `/labs/mini-series/backdrops/${slug}.webp`;
 
 /**
  * Every series cover on a row that keeps moving. Pointing at or focusing a cover stops the row and,
- * where the series has key art, crossfades the backdrop to it. Still under reduced motion.
+ * where the series has a backdrop, crossfades to it. A file in public/labs/mini-series/backdrops wins over
+ * the layered key art; a series with neither leaves the backdrop as it is. Still under reduced motion.
  */
-function SeriesHero({ active }: { active: boolean }) {
-  const [art, setArt] = useState(DEFAULT_ART);
+function SeriesHero({ active, backdrops }: { active: boolean; backdrops: readonly string[] }) {
+  const files = new Set(backdrops);
+  const shown = series.filter((s) => files.has(s.slug) || s.art);
+  const first = shown.find((s) => s.slug === "moonflower")?.slug ?? shown[0]?.slug;
+  const [art, setArt] = useState(first);
   const eager = active ? "eager" : "lazy";
   const pick = (slug: string) => {
-    if (withArt.some((s) => s.slug === slug)) setArt(slug);
+    if (shown.some((s) => s.slug === slug)) setArt(slug);
   };
   return (
     <>
-      {withArt.map((s) => (
+      {shown.map((s) => (
         <div key={s.slug} className={styles.seriesArt} data-on={s.slug === art} aria-hidden="true">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={s.art!.bg} alt="" loading={eager} decoding="async" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={s.art!.cast} alt="" loading={eager} decoding="async" />
+          {files.has(s.slug) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={backdropOf(s.slug)} alt="" loading={eager} decoding="async" />
+          ) : (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={s.art!.bg} alt="" loading={eager} decoding="async" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={s.art!.cast} alt="" loading={eager} decoding="async" />
+            </>
+          )}
         </div>
       ))}
       <div className={styles.marquee} role="region" aria-label="Series">
@@ -67,21 +263,76 @@ function SeriesHero({ active }: { active: boolean }) {
   );
 }
 
-/* Cooking ---------------------------------------------------------------------------------------- */
+/* Crossfading backdrops ------------------------------------------------------------------------- */
 
-/** The chefs one after another, four seconds each, crossfaded. Stays on the first under reduced motion. */
-function ChefsHero({ active }: { active: boolean }) {
+/** Steps through `count` scenes every `ms` while the stage is shown; holds its place while away, and holds the first under reduced motion. */
+function useCycle(count: number, ms: number, active: boolean) {
+  const still = useStill();
   const [i, setI] = useState(0);
   useEffect(() => {
-    if (!active || reduced()) return;
-    const id = window.setInterval(() => setI((n) => (n + 1) % supper.chefs.length), 4000);
+    if (!active || still) return;
+    const id = window.setInterval(() => setI((n) => (n + 1) % count), ms);
     return () => clearInterval(id);
-  }, [active]);
+  }, [active, still, count, ms]);
+  return i;
+}
+
+/* Cooking ---------------------------------------------------------------------------------------- */
+
+const stillOf = (slug: string) => releases.find((r) => r.poster.endsWith(`/${slug}.webp`))?.poster ?? `/labs/cooking/stills/${slug}.webp`;
+const DISHES = releases.map((r) => r.dish);
+
+/** Whole pictures that each fill the stage: the Akane kitchen, the table of dishes, two rows of episode stills. */
+const KITCHEN: ({ kind: "art"; src: string } | { kind: "dishes"; items: string[] } | { kind: "stills"; items: string[] })[] = [
+  { kind: "art", src: supper.art },
+  { kind: "dishes", items: [...DISHES, ...DISHES].slice(0, 15) },
+  { kind: "stills", items: ["kacchi-biryani", "cobb-salad", "margherita-pizza", "masala-dosa"].map(stillOf) },
+  { kind: "stills", items: ["mushroom-stroganoff", "gambas-al-ajillo", "oyakodon", "lemon-ricotta-pancakes"].map(stillOf) },
+];
+
+/** The kitchen scenes crossfading every five seconds, each one edge to edge. Stays on Akane under reduced motion. */
+function KitchenHero({ active }: { active: boolean }) {
+  const i = useCycle(KITCHEN.length, 5000, active);
   return (
-    <div className={styles.chefs} aria-hidden="true">
-      {supper.chefs.map((c, k) => (
+    <div className={styles.kitchen} aria-hidden="true">
+      {KITCHEN.map((scene, k) => {
+        const loading = active && k < 2 ? "eager" : "lazy";
+        return (
+          <div key={k} className={styles.scene} data-on={k === i} data-kind={scene.kind}>
+            {scene.kind === "art" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className={styles.sceneArt} src={scene.src} alt="" loading={loading} decoding="async" />
+            ) : (
+              <div className={styles.sceneGrid} data-kind={scene.kind}>
+                {scene.items.map((src, n) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={n} src={src} alt="" loading={loading} decoding="async" />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* Virtual worlds --------------------------------------------------------------------------------- */
+
+/**
+ * Every Tidebell Cove place from /worlds/tidebell-cove. The two game captures stay on that page: they carry
+ * the game's buttons in their corners, and cropping those off would blow the 1250 px frames up past sharp.
+ */
+const COVE = [tidebell.heroPlate, ...tidebell.places.map((p) => p.src)];
+
+/** The cove's places crossfading full bleed, six seconds each. Stays on the pier under reduced motion. */
+function WorldsHero({ active }: { active: boolean }) {
+  const i = useCycle(COVE.length, 6000, active);
+  return (
+    <div className={styles.cove} aria-hidden="true">
+      {COVE.map((src, k) => (
         // eslint-disable-next-line @next/next/no-img-element
-        <img key={c.src} src={c.src} alt="" data-on={k === i} loading={active && k < 2 ? "eager" : "lazy"} decoding="async" />
+        <img key={src} src={src} alt="" data-on={k === i} loading={active && k < 2 ? "eager" : "lazy"} decoding="async" />
       ))}
     </div>
   );
@@ -96,14 +347,16 @@ const ADS = ["sweet-rush", "decorate-and-serve", "sweet-rush-reaction-first"].ma
 
 /** Three vertical ads standing side by side across the right two thirds. Posters only under reduced motion. */
 function AdsHero({ active }: { active: boolean }) {
+  const still = useStill();
+  const started = useStarted(active, still);
   const refs = useRef<(HTMLVideoElement | null)[]>([]);
   useEffect(() => {
     refs.current.forEach((v) => {
       if (!v) return;
-      if (active && !reduced()) v.play().catch(() => {});
+      if (active && !still && started) v.play().catch(() => {});
       else v.pause();
     });
-  }, [active]);
+  }, [active, still, started]);
   return (
     <div className={styles.ads} aria-hidden="true">
       {ADS.map((a, k) => (
@@ -112,7 +365,7 @@ function AdsHero({ active }: { active: boolean }) {
             ref={(el) => {
               refs.current[k] = el;
             }}
-            src={active ? a.video : undefined}
+            src={started ? a.video : undefined}
             poster={a.poster}
             muted
             loop

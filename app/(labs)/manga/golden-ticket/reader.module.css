@@ -55,12 +55,39 @@
   justify-items: center;
   gap: 48px;
 }
+/* One page under another on a phone. From 900 px it opens like a book: the left page and the right page
+   side by side, meeting at a spine, sized so a whole spread fits the window's height. An odd last page
+   sits alone on the left, as it would in print. */
 .pages {
   width: 100%;
   max-width: 760px;
   display: grid;
   gap: 12px;
   list-style: none;
+}
+@media (min-width: 900px) {
+  .pages {
+    max-width: min(1320px, calc((100svh - 96px) * 4 / 3));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: clamp(24px, 3vw, 40px);
+    column-gap: 0;
+  }
+  .sheet:nth-child(odd) {
+    border-radius: var(--r-thumb) 0 0 var(--r-thumb);
+    box-shadow: inset -14px 0 18px -14px rgb(0 0 0 / 0.35);
+  }
+  .sheet:nth-child(even) {
+    border-radius: 0 var(--r-thumb) var(--r-thumb) 0;
+    box-shadow: inset 14px 0 18px -14px rgb(0 0 0 / 0.35);
+  }
+  /* The spine shade sits over the art, not under it. */
+  .sheet::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inherit;
+  }
 }
 /* Each page is the size container its lettering is measured against. */
 .sheet {
@@ -74,23 +101,6 @@
   display: block;
   width: 100%;
   height: auto;
-}
-
-.end {
-  width: 100%;
-  max-width: 760px;
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  padding: 24px 0 16px;
-  text-align: center;
-}
-.actions {
-  margin-top: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
 }
 
 @media (max-width: 720px) {

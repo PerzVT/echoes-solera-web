@@ -20,7 +20,7 @@ const offIdle = (id: number) => (hasIdle() ? window.cancelIdleCallback(id) : cle
 
 const hrefOf = (slug: string) => (slug === projects[0].slug ? "/" : `/?p=${slug}`);
 
-function Stage({ project, active, media }: { project: Project; active: boolean; media: boolean }) {
+function Stage({ project, active, media, backdrops }: { project: Project; active: boolean; media: boolean; backdrops: readonly string[] }) {
   const eager = active ? "eager" : "lazy";
   const wide = "(max-width: 900px) 200vw, 100vw";
   return (
@@ -47,7 +47,7 @@ function Stage({ project, active, media }: { project: Project; active: boolean; 
           style={{ right: f.right, height: f.height, bottom: f.bottom ?? 0 }}
         />
       ))}
-      {media && project.stage && <HeroStage kind={project.stage} active={active} />}
+      {media && project.stage && <HeroStage kind={project.stage} active={active} backdrops={backdrops} />}
       {media && project.fan && (
         <div className={styles.fan} data-kind={project.fan.kind}>
           {project.fan.items.map((it, i) => {
@@ -121,7 +121,7 @@ function Wall({ wall, eager }: { wall: NonNullable<Project["wall"]>; eager: bool
  * press switches at once and only rewrites ?p= in the address. Links from elsewhere (the Projects
  * menu, Back and Forward) still switch the stage through the search params.
  */
-export function HomeStages({ initial }: { initial: string }) {
+export function HomeStages({ initial, backdrops = [] }: { initial: string; backdrops?: readonly string[] }) {
   const params = useSearchParams();
   const [active, setActive] = useState(initial);
   // Only the first stage's media loads with the page. The rest mount when their dock link is pointed
@@ -287,7 +287,7 @@ export function HomeStages({ initial }: { initial: string }) {
       <Nav project={active} onProject={choose} />
       <main id="main" className={styles.stages}>
         {projects.map((p) => (
-          <Stage key={p.slug} project={p} active={p.slug === active} media={loaded.has(p.slug)} />
+          <Stage key={p.slug} project={p} active={p.slug === active} media={loaded.has(p.slug)} backdrops={backdrops} />
         ))}
       </main>
     </>

@@ -30,7 +30,7 @@ export type Project = {
   /** Cover row along the bottom edge. */
   covers?: { title: string; src: string; href: string }[];
   /** A stage with its own contents, drawn by HeroStage in components/labs/stages/HeroStages.tsx. */
-  stage?: "series" | "chefs" | "ads" | "shop" | "cards";
+  stage?: "montage" | "series" | "chefs" | "worlds" | "ads" | "shop" | "cards";
 };
 
 const L = "/labs";
@@ -43,9 +43,8 @@ export const projects: Project[] = [
     primary: { label: "Create an anime", href: "/app" },
     secondary: { label: "Watch Echoes of Solera", href: "/anime/echoes-of-solera" },
     tone: "dark",
-    video: `${L}/anime/anime-montage.mp4`,
-    poster: `${L}/anime/anime-montage.webp`,
-
+    // Four vertical panels of the anime shorts, each cutting on its own clock.
+    stage: "montage",
   },
   {
     slug: "mini-series",
@@ -65,7 +64,7 @@ export const projects: Project[] = [
     primary: { label: "Create a video", href: "/app" },
     secondary: { label: "Watch Shoujo Supper", href: "/cooking/shoujo-supper" },
     tone: "light",
-    backdrop: "radial-gradient(90% 80% at 72% 40%, #fffaf3 0%, #fbefe0 60%, #f4e2cd 100%)",
+    // Full scenes crossfading edge to edge: the Akane kitchen, the dishes, rows of episode stills.
     stage: "chefs",
   },
   {
@@ -74,7 +73,8 @@ export const projects: Project[] = [
     line: "Walk around Tidebell Cove as a duck called FOMO.",
     primary: { label: "See the world", href: "/worlds/tidebell-cove" },
     tone: "dark",
-    bg: `${L}/worlds/pier-v2.webp`,
+    // Every place and capture from the world page, crossfading.
+    stage: "worlds",
   },
   {
     slug: "cards",
@@ -115,7 +115,7 @@ export const projects: Project[] = [
     // over a wall of Golden Ticket pages that runs the width of the stage.
     wall: {
       kind: "pages",
-      items: [1, 2, 3].map((n) => `${L}/manga/golden-ticket/page-${n}-v2.webp`),
+      items: [1, 2, 3].map((n) => `${L}/manga/golden-ticket/page-${n}.webp`),
     },
     art: `${L}/home/manga-hero.webp`,
   },

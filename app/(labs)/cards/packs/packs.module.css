@@ -1,0 +1,14 @@
+/* The pack page fills the window above the site foot: the header, then the teal desk to the foot. */
+.page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
+}
+.page .desk {
+  width: 100%;
+  min-height: 0;
+}
+/* On a short window the desk's padding gives way first, so the packs keep their size. */
+.page .desk {
+  padding-block: clamp(20px, 4dvh, 48px);
+}

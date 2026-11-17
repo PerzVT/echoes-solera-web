@@ -145,34 +145,6 @@
   scale: 0.96;
 }
 
-/* Title screen: the cover, a shade at the foot, and the chapter's name over it. */
-.stage[data-phase="title"] .art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgb(8 11 20 / 0.92) 0%, rgb(8 11 20 / 0.55) 45%, rgb(8 11 20 / 0) 75%);
-}
-.title {
-  position: absolute;
-  left: var(--gutter);
-  right: var(--gutter);
-  bottom: max(clamp(24px, 8vh, 72px), env(safe-area-inset-bottom));
-  max-width: 560px;
-  display: grid;
-  gap: 16px;
-  animation: rise 360ms var(--ease-out) backwards;
-}
-.titleName {
-  font-size: clamp(2.5rem, 2rem + 3vw, 4.5rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.blurb {
-  font-size: 1.0625rem;
-  line-height: 1.55;
-  color: rgb(255 255 255 / 0.86);
-  text-wrap: pretty;
-}
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -596,17 +568,6 @@
   .stage[data-large="true"] {
     --line: 1.125rem;
   }
-  .title {
-    bottom: max(16px, env(safe-area-inset-bottom));
-    gap: 10px;
-  }
-  .titleName {
-    font-size: 2.25rem;
-  }
-  .blurb {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-  }
   .box {
     max-height: calc(100% - 72px);
     padding: 10px 18px 2px;
@@ -674,8 +635,7 @@
   .sprite {
     translate: none;
   }
-  .choices li,
-  .title {
+  .choices li {
     animation: none;
   }
   .settings,
