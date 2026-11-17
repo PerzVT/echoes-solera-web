@@ -3,18 +3,17 @@
 import { useRouter } from "next/navigation";
 import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppShell } from "./AppShell";
-import { Button, ButtonLink } from "@/components/labs/Button";
-import { AnimatedMark, ChevronIcon, GestureIcon } from "@/components/labs/fx";
-import { cancelRouteSkeleton } from "@/components/labs/fx/RouteSkeleton";
-import { useCast } from "./CastProvider";
+import { Btn, IconBtn } from "@/components/labs/chat/ui";
+import { ChevronIcon, GestureIcon } from "@/components/labs/fx";
+import { useCast, useEpisode } from "./CastProvider";
 import { crossfade } from "./fx/crossfade";
 import m from "./fx/motion.module.css";
-import { BlockedAction, EpisodeTitle, Panel, RecentScripts, Status, Stepper, focusSoon, revealOnPhone } from "./parts";
-import { EPISODE, processingStages, recentScripts, screenplay, shotOf, startingNotes, type Block, type Note } from "@/lib/labs/maker";
+import { Panel, Status, focusSoon, revealOnPhone } from "./parts";
+import { EPISODE, processingStages, type Block, type Note } from "@/lib/labs/maker";
 import s from "./maker.module.css";
 import p from "./ScreenplayStep.module.css";
 
-export type Phase = "processing" | "screenplay" | "comments";
+export type Phase = "processing" | "screenplay";
 
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -30,7 +29,7 @@ export function ScreenplayStep({ initial }: { initial: Phase }) {
       }}
     />
   ) : (
-    <Screenplay seeded={phase === "comments"} arrived={arrived} />
+    <Screenplay arrived={arrived} />
   );
 }
 
@@ -89,7 +88,9 @@ function Processing({ onDone }: { onDone: () => void }) {
   /** Milliseconds of reading done. It drives the page, the head and the stages, so they cannot disagree. */
   const [now, setNow] = useState(0);
   const [still, setStill] = useState(false);
-  const [file, setFile] = useState(EPISODE.file);
+  const { ep } = useEpisode();
+  const screenplay = ep.blocks;
+  const file = ep.file ?? (ep.source ? "Your script" : EPISODE.file);
   const [headY, setHeadY] = useState(0);
   const page = useRef<HTMLDivElement>(null);
   const done = useRef(onDone);
@@ -98,10 +99,6 @@ function Processing({ onDone }: { onDone: () => void }) {
   }, [onDone]);
 
   useEffect(() => {
-    try {
-      const f = sessionStorage.getItem("maker-script");
-      if (f) setFile(f);
-    } catch {}
     if (reduced()) {
       setStill(true);
       const steps = REDUCED_AT.map((ms, i) => setTimeout(() => setNow(STAGE_AT[i] + 100), ms));
@@ -120,7 +117,7 @@ function Processing({ onDone }: { onDone: () => void }) {
       if (t - last < 32) return;
       last = t;
       const at = t - t0;
-      if (at >= END) {
+      if (at >= Math.max(END, startOf(screenplay.length) + READ)) {
         cancelAnimationFrame(frame);
         done.current();
         return;
@@ -129,6 +126,7 @@ function Processing({ onDone }: { onDone: () => void }) {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stage = STAGE_AT.filter((ms) => now >= ms).length;
@@ -160,22 +158,15 @@ function Processing({ onDone }: { onDone: () => void }) {
 
   return (
     <AppShell
-      section="/app"
-      title={<EpisodeTitle />}
-      bar={<Stepper current="script" />}
-      actions={
-        <>
-          {/* Loading keeps the label and the fill; a second press does nothing. */}
-          <Button loading icon={<AnimatedMark variant="busy" size={18} tone="mono" />} aria-describedby="processing-why">
-            Processing script
-          </Button>
-          <span id="processing-why" className="sr-only">
-            The script is being read.
-          </span>
-        </>
+      step="screenplay"
+      fit
+      action={
+        <Btn kind="primary" disabled>
+          Next
+        </Btn>
       }
     >
-      <div className={`${s.split} ${s.fill}`}>
+      <div className={`${p.single} ${s.fill}`}>
         <Panel
           title="Reading your script"
           level={1}
@@ -243,7 +234,6 @@ function Processing({ onDone }: { onDone: () => void }) {
             <span className={p.scan} data-on={reading >= 0} style={{ translate: `0 ${headY}px` }} />
           </div>
         </Panel>
-        <RecentScripts />
       </div>
     </AppShell>
   );
@@ -256,11 +246,15 @@ type Composer = { block: string; type: Note["type"]; quote: string; text: string
 const textOf = (b: Block) => (b.kind === "action" || b.kind === "dialogue" ? b.text : "");
 const passageId = (block: string) => `passage-${block}`;
 const noteId = (id: string) => `note-${id}`;
-/** Where each passage sits in the screenplay, so the comment cards follow the text. */
-const orderOf = Object.fromEntries(screenplay.map((b, i) => [b.id, i]));
-/** The shot the prompt shows before a passage is chosen: the first one. */
-const firstShot = screenplay.find((b): b is Extract<Block, { kind: "camera" }> => b.kind === "camera");
-const scriptTitle = recentScripts[0].title;
+/** The camera break a passage sits under. */
+function shotIn(blocks: Block[], id: string) {
+  let shot: Extract<Block, { kind: "camera" }> | undefined;
+  for (const b of blocks) {
+    if (b.kind === "camera") shot = b;
+    if (b.id === id) return shot;
+  }
+  return undefined;
+}
 const phone = () => window.matchMedia("(max-width: 900px)").matches;
 
 /** A passage with a suggested change pending: the words it replaces struck through, then the new words. */
@@ -283,35 +277,38 @@ function Suggested({ text, note }: { text: string; note: Note }) {
   );
 }
 
-function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) {
+function Screenplay({ arrived }: { arrived: boolean }) {
   const router = useRouter();
   const store = useCast();
-  const memoKey = `screenplay:notes:${seeded ? "comments" : "plain"}`;
-  const [texts, setTexts] = useState<Record<string, string>>(() => Object.fromEntries(screenplay.map((b) => [b.id, textOf(b)])));
+  const { ep, patch } = useEpisode();
+  const screenplay = ep.blocks;
+  /** Where each passage sits in the screenplay, so the comment cards follow the text. */
+  const orderOf: Record<string, number> = Object.fromEntries(screenplay.map((b, i) => [b.id, i]));
+  /** The shot the prompt shows before a passage is chosen: the first one. */
+  const firstShot = screenplay.find((b): b is Extract<Block, { kind: "camera" }> => b.kind === "camera");
+  const [texts, setTexts] = useState<Record<string, string>>(() => ep.texts ?? Object.fromEntries(screenplay.map((b) => [b.id, textOf(b)])));
   // Unsent comments survive leaving by the browser's Back button; the plain address opens with none.
-  const [notes, setNotes] = useState<Note[]>(() => store.kept<Note[]>(memoKey) ?? (seeded ? startingNotes : []));
+  const [notes, setNotes] = useState<Note[]>(() => ep.notes ?? []);
   const [selected, setSelected] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
   const [composer, setComposer] = useState<Composer | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [rewriting, setRewriting] = useState(false);
-  const [changed, setChanged] = useState<Set<string>>(new Set());
+  const [changed, setChanged] = useState<Set<string>>(() => new Set(ep.changed));
   const [said, setSaid] = useState("");
   /** The passage whose comment is pointed at: hovering or focusing either the card or the passage lights both. */
   const [active, setActive] = useState<string | null>(null);
-  /** Where the person tried to go with comments unsent. */
-  const [leaving, setLeaving] = useState<{ href: string; from: HTMLElement | null } | null>(null);
   const menuFirst = useRef<HTMLButtonElement>(null);
-  const leaveFirst = useRef<HTMLButtonElement>(null);
   const pageHeading = useRef<HTMLHeadingElement>(null);
   const commentsHeading = useRef<HTMLHeadingElement>(null);
   /** The comments panel. What it shows dissolves when it changes as a whole: a comment removed, the comments sent, the rewrite back. */
   const comments = useRef<HTMLElement>(null);
-  const after = useRef<string | null>(null);
 
+  // The episode keeps its edits and comments, so leaving, reloading or coming back finds them.
   useEffect(() => {
-    store.keep(memoKey, notes);
-  }, [store, memoKey, notes]);
+    patch({ texts, notes, changed: [...changed] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [texts, notes, changed]);
 
   // Arriving from processing, the keyboard lands on the screenplay heading rather than nowhere.
   useEffect(() => {
@@ -333,50 +330,13 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
     return () => document.removeEventListener("pointerdown", close);
   }, [menu, selected]);
 
-  /** A comment typed in the composer but not added yet: it counts as unsent, so leaving asks first. */
+  /** A comment typed in the composer but not added yet goes with the others when they are sent. */
   const draft = composer && composer.text.trim() && composer.text.trim() !== (composer.type === "suggestion" ? composer.quote : "") ? composer : null;
   const draftNote = (c: Composer): Note => ({ id: `n${Date.now()}`, block: c.block, type: c.type, quote: c.quote, body: c.text.trim() });
-  const unsentCount = notes.length + (draft ? 1 : 0);
 
-  // Every way out by a link (the stepper, the rail, Continue) asks first while comments are unsent.
-  const unsent = unsentCount > 0 && !rewriting;
-  useEffect(() => {
-    if (!unsent) return;
-    const guard = (e: MouseEvent) => {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const a = (e.target as Element).closest?.("a[href]") as HTMLAnchorElement | null;
-      if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
-      const url = new URL(a.href, location.href);
-      if (url.origin !== location.origin || url.pathname === location.pathname) return;
-      // The window's capture phase runs before any listener on the document, so the route skeleton never hears this click
-      // and cannot lay itself over the question asked here. Any skeleton already pending is dropped as well.
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      cancelRouteSkeleton();
-      setLeaving({ href: url.pathname + url.search, from: a });
-      focusSoon(() => leaveFirst.current);
-    };
-    window.addEventListener("click", guard, true);
-    return () => window.removeEventListener("click", guard, true);
-  }, [unsent]);
-
-  /** The rewrite in progress, so leaving the screen stops it and it can never move a person who has gone elsewhere. */
+  /** The rewrite in progress, so leaving the screen stops it. */
   const rewrite = useRef<number | undefined>(undefined);
   useEffect(() => () => clearTimeout(rewrite.current), []);
-  // While the rewrite runs, a link to anywhere else, or Back, is the person's new choice: the destination they had picked is dropped.
-  useEffect(() => {
-    if (!rewriting) return;
-    const moved = (e: Event) => {
-      const a = e.type === "click" ? ((e.target as Element).closest?.("a[href]") as HTMLAnchorElement | null) : null;
-      if (e.type === "popstate" || (a && new URL(a.href, location.href).pathname !== location.pathname)) after.current = null;
-    };
-    window.addEventListener("click", moved, true);
-    window.addEventListener("popstate", moved);
-    return () => {
-      window.removeEventListener("click", moved, true);
-      window.removeEventListener("popstate", moved);
-    };
-  }, [rewriting]);
 
   const focusPassage = (block: string) => focusSoon(() => document.getElementById(passageId(block)));
 
@@ -428,7 +388,7 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
     closeComposer();
   };
 
-  const send = (then?: string) => {
+  const send = () => {
     // A comment still in the composer goes with the others.
     const sent = draft ? [...notes, draftNote(draft)] : notes;
     crossfade(comments.current);
@@ -436,11 +396,8 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
     setNotes(sent);
     setComposer(null);
     setMenu(false);
-    setLeaving(null);
     setSaid("Rewriting the screenplay.");
-    after.current = then ?? null;
     focusSoon(() => commentsHeading.current);
-    const here = location.pathname;
     clearTimeout(rewrite.current);
     rewrite.current = window.setTimeout(
       () => {
@@ -463,96 +420,57 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
         setSaid("Comments sent. Changed passages are marked.");
         // The comments panel closes with nothing left in it: the keyboard goes to the screenplay heading rather than nowhere.
         focusSoon(() => (document.activeElement === document.body ? pageHeading.current : null));
-        // Only from the page the comments were sent on: never pull someone back who has moved on.
-        if (after.current && location.pathname === here) router.push(after.current);
       },
       reduced() ? 1200 : 2600,
     );
   };
 
-  const discard = (then?: string) => {
+  const discard = () => {
     crossfade(comments.current);
     setNotes([]);
-    // Leaving drops the half-written comment too; discarding the list from its own panel keeps what is being written.
-    if (then) setComposer(null);
-    setLeaving(null);
     setSaid("Comments discarded.");
-    if (then) router.push(then);
   };
 
   const noted = new Set(notes.map((n) => n.block));
-  const shot = (selected ? shotOf(selected) : undefined) ?? firstShot;
+  const shot = (selected ? shotIn(screenplay, selected) : undefined) ?? firstShot;
   /** The cards in the order of their passages; two on one passage keep the order they were added in. */
   const ordered = [...notes].sort((a, b) => orderOf[a.block] - orderOf[b.block]);
   /** The latest suggestion on each passage, drawn in the text. */
   const suggestionOf = new Map(notes.filter((n) => n.type === "suggestion").map((n) => [n.block, n]));
   const panelOpen = notes.length > 0 || Boolean(composer) || rewriting;
 
-  let action;
-  if (leaving)
-    action = (
-      <div className={`${s.barGroup} ${m.enter}`} role="group" aria-labelledby="leave-why">
-        <span id="leave-why" className={s.reason}>
-          {unsentCount > 1 ? "Your comments are not sent." : "Your comment is not sent."}
-        </span>
-        <Button ref={leaveFirst} variant="secondary" size="small" onClick={() => send(leaving.href)}>
-          Send comments
-        </Button>
-        <Button variant="quiet" size="small" onClick={() => discard(leaving.href)}>
-          Discard comments
-        </Button>
-        <Button
-          variant="quiet"
-          size="small"
-          onClick={() => {
-            const from = leaving.from;
-            setLeaving(null);
-            focusSoon(() => (from && document.contains(from) ? from : null));
-          }}
-        >
-          Stay here
-        </Button>
-      </div>
-    );
-  else if (rewriting) action = <BlockedAction id="continue-why" label="Continue to references" reason="Rewriting the screenplay." />;
-  else if (notes.length > 0)
-    // Unsent comments make sending the next step; going on stays one press away and asks first.
-    action = (
-      <div className={s.barGroup}>
-        <ButtonLink variant="secondary" href="/app/episode/references">
-          Continue to references
-        </ButtonLink>
-        <Button onClick={() => send()}>Send comments</Button>
-      </div>
-    );
-  else action = <ButtonLink href="/app/episode/references">Continue to references</ButtonLink>;
-
   return (
     <AppShell
-      section="/app"
-      title={<EpisodeTitle />}
-      bar={<Stepper current="screenplay" />}
-      actions={action}
+      step="screenplay"
+      fit
+      action={
+        <Btn kind="primary" disabled={rewriting} onClick={() => router.push("/app/episode/cast")}>
+          Next
+        </Btn>
+      }
     >
       <p className="sr-only" aria-live="polite">
         {said}
       </p>
       <div className={`${p.layout} ${s.fill}`} data-panel={panelOpen}>
         <Panel
-          title={scriptTitle}
+          title={ep.episode}
+          sub={store.seriesTitle(ep.series) === ep.series && ep.newSeries ? ep.newSeries : store.seriesTitle(ep.series)}
           level={1}
           flush
           busy={rewriting}
           headingRef={pageHeading}
           actions={
-            <Button variant="quiet" size="small" icon={<ChevronIcon open={showPrompt} size={16} />} aria-expanded={showPrompt} aria-controls="sp-prompt" onClick={() => setShowPrompt((v) => !v)}>
+            firstShot && (
+            <Btn kind="ghost" small icon={<ChevronIcon open={showPrompt} size={16} />} aria-expanded={showPrompt} aria-controls="sp-prompt" onClick={() => setShowPrompt((v) => !v)}>
               {showPrompt ? "Hide prompt" : "Show prompt"}
-            </Button>
+            </Btn>
+            )
           }
         >
           {showPrompt && shot && (
             <div id="sp-prompt" className={`${s.inset} ${p.prompt} ${m.enter}`}>
-              <p className="label muted">Prompt for {shot.text}</p>
+              <p className="label muted">{shot.text}</p>
               <p className="small">{shot.prompt}</p>
             </div>
           )}
@@ -644,17 +562,22 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
             headingRef={commentsHeading}
             foot={
               notes.length > 0 && !rewriting ? (
-                <Button
-                  variant="quiet"
-                  size="small"
-                  onClick={() => {
-                    const keep = Boolean(composer);
-                    discard();
-                    focusSoon(() => (keep ? commentsHeading.current : pageHeading.current));
-                  }}
-                >
-                  Discard comments
-                </Button>
+                <>
+                  <Btn kind="secondary" small onClick={send}>
+                    Send comments
+                  </Btn>
+                  <Btn
+                    kind="ghost"
+                    small
+                    onClick={() => {
+                      const keep = Boolean(composer);
+                      discard();
+                      focusSoon(() => (keep ? commentsHeading.current : pageHeading.current));
+                    }}
+                  >
+                    Discard
+                  </Btn>
+                </>
               ) : undefined
             }
           >
@@ -691,9 +614,9 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
                           </>
                         )}
                       </button>
-                      <Button variant="quiet" size="small" className={p.remove} onClick={() => removeNote(n)} aria-label="Remove comment">
+                      <IconBtn className={p.remove} onClick={() => removeNote(n)} label="Remove comment">
                         <GestureIcon name="close" size={16} />
-                      </Button>
+                      </IconBtn>
                     </li>
                   ))}
                 </ul>
@@ -715,22 +638,12 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
                       }}
                     />
                     <div className={s.actions}>
-                      {composer.text.trim() && composer.text.trim() !== (composer.type === "suggestion" ? composer.quote : "") ? (
-                        <Button variant="secondary" size="small" onClick={add}>
-                          {composer.type === "comment" ? "Add comment" : "Add suggestion"}
-                        </Button>
-                      ) : (
-                        <BlockedAction
-                          id="composer-why"
-                          variant="secondary"
-                          size="small"
-                          label={composer.type === "comment" ? "Add comment" : "Add suggestion"}
-                          reason={composer.type === "comment" ? "Write the comment first." : "Change the text first."}
-                        />
-                      )}
-                      <Button variant="quiet" size="small" onClick={closeComposer}>
+                      <Btn kind="secondary" small disabled={!draft} onClick={add}>
+                        {composer.type === "comment" ? "Add comment" : "Add suggestion"}
+                      </Btn>
+                      <Btn kind="ghost" small onClick={closeComposer}>
                         Cancel
-                      </Button>
+                      </Btn>
                     </div>
                   </div>
                 )}

@@ -1,21 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore, type RefObject } from "react";
-
-function useMedia(query: string) {
-  return useSyncExternalStore(
-    (on) => {
-      const m = window.matchMedia(query);
-      m.addEventListener("change", on);
-      return () => m.removeEventListener("change", on);
-    },
-    () => window.matchMedia(query).matches,
-    () => false,
-  );
-}
-
-export const usePhone = () => useMedia("(max-width: 767px)");
-export const useReducedMotion = () => useMedia("(prefers-reduced-motion: reduce)");
+import { useEffect, useRef, type RefObject } from "react";
 
 /** Calls `onClose` on Escape or a press outside `ref`, while `open`. Focus goes back to `back` on Escape. */
 export function useDismiss(open: boolean, ref: RefObject<HTMLElement | null>, onClose: () => void, back?: RefObject<HTMLElement | null>) {
@@ -55,27 +40,4 @@ export function useDialog(open: boolean) {
     if (!open && d.open) d.close();
   }, [open]);
   return ref;
-}
-
-/** A file picker that is not on screen: `open()` shows the system dialog. */
-export function useFilePicker(accept: string, onFiles: (files: File[]) => void) {
-  const handler = useRef(onFiles);
-  useEffect(() => {
-    handler.current = onFiles;
-  });
-  const input = useRef<HTMLInputElement | null>(null);
-  return () => {
-    if (!input.current) {
-      const el = document.createElement("input");
-      el.type = "file";
-      el.multiple = true;
-      el.addEventListener("change", () => {
-        if (el.files?.length) handler.current([...el.files]);
-        el.value = "";
-      });
-      input.current = el;
-    }
-    input.current.accept = accept;
-    input.current.click();
-  };
 }

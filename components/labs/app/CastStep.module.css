@@ -1,0 +1,274 @@
+/* Cast: characters, then locations, as image cards in a grid that fills the width. */
+.page {
+  display: grid;
+  gap: 32px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+.group {
+  display: grid;
+  gap: 16px;
+}
+.groupTitle {
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.grid > li {
+  display: flex;
+}
+
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.missing {
+  border: 1.5px dashed var(--border-strong);
+  background: transparent;
+}
+.art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+.art[data-kind="location"] {
+  aspect-ratio: 4 / 3;
+}
+.art img {
+  object-fit: cover;
+}
+/* Character sheets are whole turnarounds on white: shown uncropped on a white ground. */
+.art:not([data-kind="location"]):has(img),
+.pickArt {
+  background: #fff;
+}
+.art:not([data-kind="location"]) img,
+.pickArt img {
+  object-fit: contain;
+  object-position: top;
+}
+.art[data-kind="location"] img {
+  object-position: center;
+}
+.missing .art {
+  background: transparent;
+  border: 1px dashed var(--border);
+}
+.text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.name {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.tag {
+  overflow: hidden;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.variant {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  font-size: 0.875rem;
+  text-align: left;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+.variant > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+@media (hover: hover) and (pointer: fine) {
+  .variant:hover {
+    background: var(--surface-hover);
+  }
+}
+.tools {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* ---------- Picker ---------- */
+.dialog {
+  width: min(1040px, calc(100vw - 48px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+}
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.dialog::backdrop {
+  background: rgb(5 8 12 / 0.7);
+}
+.dialogHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 12px 12px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.dialogTitle {
+  font-weight: 500;
+  font-size: 1.125rem;
+}
+.dialogBody {
+  display: grid;
+  gap: 24px;
+  padding: 24px;
+  overflow-y: auto;
+}
+.pickGroup {
+  display: grid;
+  gap: 12px;
+}
+.pickGroupTitle {
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+.pickGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pick {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 6px;
+  border-radius: 12px;
+  text-align: left;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+.pick[aria-pressed="true"] {
+  background: var(--surface-hover);
+  box-shadow: inset 0 0 0 1.5px var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pick:hover {
+    background: var(--surface-hover);
+  }
+}
+.pickArt {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-sunken);
+}
+.pickArt img {
+  object-fit: cover;
+  object-position: top;
+}
+.pickOn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--action);
+  color: var(--on-action);
+}
+.pickLabel {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.pickTag {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 767px) {
+  .page {
+    gap: 24px;
+  }
+  .title {
+    font-size: 1.75rem;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .card {
+    gap: 8px;
+    padding: 8px;
+  }
+  .tools {
+    grid-template-columns: 1fr;
+  }
+  .variant {
+    min-height: 44px;
+  }
+  .dialog {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+  .dialogBody {
+    padding: 16px;
+  }
+  .pickGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+}

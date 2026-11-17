@@ -3,11 +3,14 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { MediaFrame, PlayPauseIcon, VolumeIcon } from "@/components/labs/fx";
+import { Icon } from "@/components/labs/Icon";
 import { AppIcon } from "@/components/labs/app/AppIcon";
 import { Btn } from "@/components/labs/chat/ui";
-import { scenes, statusWord, type Shot } from "./data";
+import { reviewWord, statusWord, type Shot } from "./data";
+import { EndCard, SceneHead, ShotCard } from "./Cards";
 import { useReducedMotion } from "./hooks";
-import { Develop, Thumb, useArriving } from "./Thumb";
+import type { Editor } from "./Storyboard";
+import { Develop, useArriving } from "./Thumb";
 import b from "./board.module.css";
 
 export type View = "shot" | "board";
@@ -24,36 +27,12 @@ export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => 
   );
 }
 
-/** The selected shot as large as the stage allows, with the frames it starts and ends on under it. */
-export function ShotStage({ shot, n, prev, onRetry }: { shot: Shot; n: number; prev?: Shot; onRetry: () => void }) {
-  const take = shot.takes[shot.take];
-  const start = prev && prev.status !== "failed" && prev.status !== "empty" ? prev.takes[prev.take] : undefined;
-  const end = shot.status !== "failed" && shot.status !== "empty" ? take : undefined;
-  return (
-    <div className={b.shotStage}>
-      <div className={b.frameBox}>
-        <Frame key={shot.id} shot={shot} n={n} onRetry={onRetry} />
-      </div>
-      <div className={b.ends}>
-        <Slot name="Start frame" still={start?.still} />
-        <Slot name="End frame" still={end?.still} />
-      </div>
-    </div>
-  );
+/** The selected shot as large as the stage allows. */
+export function ShotStage({ shot, n, onMake }: { shot?: Shot; n: number; onMake: () => void }) {
+  return <div className={b.shotStage}>{shot ? <Frame key={shot.id} shot={shot} n={n} onMake={onMake} /> : <div className={b.frame} data-empty />}</div>;
 }
 
-function Slot({ name, still }: { name: string; still?: string }) {
-  return (
-    <figure className={b.slot}>
-      <span className={b.slotArt} data-empty={!still || undefined}>
-        {still && <Image src={still} alt="" fill sizes="120px" />}
-      </span>
-      <figcaption>{name}</figcaption>
-    </figure>
-  );
-}
-
-function Frame({ shot, n, onRetry }: { shot: Shot; n: number; onRetry: () => void }) {
+function Frame({ shot, n, onMake }: { shot: Shot; n: number; onMake: () => void }) {
   const video = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
   const [playing, setPlaying] = useState(false);
@@ -61,9 +40,10 @@ function Frame({ shot, n, onRetry }: { shot: Shot; n: number; onRetry: () => voi
   const arriving = useArriving(shot.status);
   const take = shot.takes[shot.take];
   const cap = (
-    <p className={b.cap}>
+    <p className={b.cap} data-review={shot.review}>
       Shot {n}
       {shot.takes.length > 1 && shot.status === "ready" && `, take ${shot.take + 1}`}
+      {shot.review && `, ${reviewWord[shot.review].toLowerCase()}`}
     </p>
   );
 
@@ -73,14 +53,12 @@ function Frame({ shot, n, onRetry }: { shot: Shot; n: number; onRetry: () => voi
         {shot.status === "generating" ? (
           <Develop cell={8} />
         ) : (
-          <div className={b.frameNote}>
+          <div className={b.frameNote} data-status={shot.status}>
             {shot.status === "failed" && <AppIcon name="warning" size={24} />}
             <p>{statusWord[shot.status]}</p>
-            {shot.status === "failed" && (
-              <Btn kind="secondary" small onClick={onRetry}>
-                Try again
-              </Btn>
-            )}
+            <Btn kind="secondary" small onClick={onMake}>
+              {shot.status === "failed" ? "Try again" : "Generate shot"}
+            </Btn>
           </div>
         )}
         {cap}
@@ -95,7 +73,7 @@ function Frame({ shot, n, onRetry }: { shot: Shot; n: number; onRetry: () => voi
   };
 
   return (
-    <div className={b.frame}>
+    <div className={b.frame} data-review={shot.review}>
       <MediaFrame fill>
         {take.clip ? (
           <video
@@ -132,36 +110,38 @@ function Frame({ shot, n, onRetry }: { shot: Shot; n: number; onRetry: () => voi
   );
 }
 
-/** Every shot as a printed storyboard: frame, label, action and status, grouped by scene. */
-export function BoardGrid({ shots, selected, onPick }: { shots: Shot[]; selected: string; onPick: (id: string) => void }) {
+/** Every shot as a printed storyboard, scene under scene, scrolling down through all of them. */
+export function BoardGrid({ ed, onOpen }: { ed: Editor; onOpen: (id: string) => void }) {
   return (
     <div className={b.boardGrid}>
-      {scenes.map((sc) => (
-        <section key={sc.n} className={b.boardScene} aria-labelledby={`board-sc-${sc.n}`}>
-          <h3 id={`board-sc-${sc.n}`} className={b.sceneHead}>
-            <span>{sc.n}</span> {sc.heading}
-          </h3>
+      {ed.ep.scenes.map((sc, si) => (
+        <section key={sc.id} className={b.boardScene} aria-label={`Scene ${si + 1}`}>
+          <SceneHead scene={sc} n={si + 1} menu={ed.sceneMenu(sc.id, "column")} onRename={(h) => ed.rename(sc.id, h)} />
           <ul className={b.boardCards}>
-            {shots.map((s, i) =>
-              s.scene !== sc.n ? null : (
-                <li key={s.id}>
-                  <button type="button" className={b.boardCard} aria-pressed={s.id === selected} onClick={() => onPick(s.id)} aria-label={`Shot ${i + 1}, ${s.label}, ${statusWord[s.status]}`}>
-                    <Thumb shot={s} sizes="(max-width: 767px) 45vw, 280px" />
-                    <span className={b.cardLabel}>
-                      <span className={b.num}>{i + 1}</span>
-                      <span className={b.cardName}>{s.label}</span>
-                    </span>
-                    {s.action && <span className={b.cardAction}>{s.action}</span>}
-                    <span className={b.cardStatus} data-status={s.status}>
-                      {statusWord[s.status]}
-                    </span>
-                  </button>
-                </li>
-              ),
-            )}
+            {sc.shots.map((s, i) => (
+              <ShotCard
+                key={s.id}
+                shot={s}
+                n={ed.number(s.id)}
+                scene={sc}
+                index={i}
+                selected={s.id === ed.selected}
+                variant="board"
+                menu={ed.shotMenu(s.id)}
+                onSelect={() => (s.id === ed.selected ? onOpen(s.id) : ed.select(s.id))}
+                onAddBefore={() => ed.addAt(sc.id, i)}
+                onDrop={ed.drop}
+                sizes="(max-width: 767px) 45vw, 280px"
+              />
+            ))}
+            <EndCard scene={sc} variant="board" onAdd={() => ed.addAt(sc.id, sc.shots.length)} onDrop={ed.drop} />
           </ul>
         </section>
       ))}
+      <button type="button" className={b.addScene} data-board="" onClick={() => ed.addScene(ed.ep.scenes.length - 1)}>
+        <Icon name="plus" size={16} />
+        Add scene
+      </button>
     </div>
   );
 }

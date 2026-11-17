@@ -1,0 +1,258 @@
+/* The creator's top bar. One row on desktop; on phones a row, the steps under it, and the action docked at the bottom. */
+.bar {
+  position: sticky;
+  z-index: 30;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 60px;
+  padding: 0 16px 0 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.mark:active {
+  scale: 0.97;
+}
+
+.views {
+  display: flex;
+  gap: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+.view {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.view[aria-current="page"] {
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--text);
+  border-radius: 10px 10px 2px 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .view:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+  }
+}
+.title {
+  overflow: hidden;
+  min-width: 0;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Steps ---------- */
+.steps {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+.stepList {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stepItem + .stepItem::before {
+  content: "";
+  width: 16px;
+  height: 1px;
+  background: var(--border-strong);
+}
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px 0 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.num {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+}
+.step[data-state="todo"] {
+  color: var(--text-subtle, var(--text-muted));
+  opacity: 0.55;
+}
+.step[data-state="done"] .num {
+  border-color: transparent;
+  background: var(--surface-hover);
+  color: var(--text);
+}
+.step[data-state="current"] {
+  color: var(--text);
+}
+.step[data-state="current"] .num {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--on-action);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.step:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+}
+
+.action {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  margin-left: auto;
+}
+.steps + .action {
+  margin-left: 0;
+}
+
+@media (max-width: 1099px) {
+  .withSteps .stepLabel {
+    display: none;
+  }
+  .withSteps .step[data-state="current"] .stepLabel {
+    display: inline;
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 767px) {
+  .bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+  }
+  .row {
+    gap: 4px;
+    height: 56px;
+    padding: 0 8px;
+  }
+  .mark {
+    width: 44px;
+    height: 44px;
+  }
+  .views {
+    margin-left: auto;
+    padding-left: 0;
+    border-left: 0;
+  }
+  .view {
+    height: 44px;
+  }
+  .title {
+    display: none;
+  }
+  .steps {
+    border-top: 1px solid var(--border);
+  }
+  .stepList {
+    flex: 1;
+    gap: 0;
+  }
+  .stepItem {
+    flex: 1;
+    min-width: 0;
+  }
+  .stepItem + .stepItem::before {
+    display: none;
+  }
+  .step {
+    flex: 1;
+    justify-content: center;
+    gap: 6px;
+    height: 44px;
+    padding: 0 4px;
+    border-radius: 0;
+    box-shadow: inset 0 -2px 0 var(--border);
+  }
+  .step[data-state="current"] {
+    box-shadow: inset 0 -2px 0 var(--text);
+  }
+  .step[data-state="done"] {
+    box-shadow: inset 0 -2px 0 var(--text-muted);
+  }
+  .step {
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.6875rem;
+  }
+  .num {
+    width: 18px;
+    height: 18px;
+    font-size: 0.625rem;
+  }
+  .withSteps .stepLabel {
+    display: block;
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
+  }
+  .action {
+    position: fixed;
+    z-index: 40;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .action > * {
+    flex: 1;
+  }
+  :global(body):has(.action) {
+    padding-bottom: calc(69px + env(safe-area-inset-bottom));
+  }
+}

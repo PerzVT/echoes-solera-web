@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { SeriesEpisodesScreen } from "@/components/labs/app/SeriesFrame";
+import { SeriesEpisodes } from "@/components/labs/app/Library";
 
-export const metadata: Metadata = { title: "Series" };
+export const metadata: Metadata = { title: "Library" };
 
 export default async function SeriesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  // The screen resolves the slug itself, so a series made in this session opens too.
-  return <SeriesEpisodesScreen key={slug} slug={slug} />;
+  return <SeriesEpisodes key={slug} slug={slug} />;
 }

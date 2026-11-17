@@ -49,8 +49,8 @@ export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Bool
 /** The three creator tools. Each is its own screen. */
 export const tools = [
   { key: "mini-series", label: "Mini-series", href: "/app" },
-  { key: "cooking", label: "Cooking videos", href: "/app/cooking" },
   { key: "anime", label: "Anime", href: "/app/anime" },
+  { key: "cooking", label: "Cooking videos", href: "/app/cooking" },
 ] as const;
 export type ToolKey = (typeof tools)[number]["key"];
 

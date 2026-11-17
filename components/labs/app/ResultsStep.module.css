@@ -1,613 +1,265 @@
-/* Three columns filling the work area: the generations, the stage with the clip, the side panel for the take. */
-div.split {
+/* Results: the generations in a column at the left, the selected clip large, its actions beside it. */
+.layout {
+  flex: 1 1 auto;
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr) 344px;
-  grid-template-rows: minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+  gap: 32px;
+  min-height: 0;
 }
-
-/* ---------- Generations ---------- */
-/* Focus is moved to the page heading by script on arrival; the heading is not a control, so it shows no ring. */
-.list h1:focus,
-.list h1:focus-visible {
-  outline: none;
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
 }
-.gens {
-  list-style: none;
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+.rows {
+  display: grid;
+  gap: 4px;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
-.gens > li + li {
-  border-top: 1px solid var(--border);
-}
-.gen {
+.row {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-columns: 44px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 6px 24px;
+  min-height: 72px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 12px;
   text-align: left;
-  cursor: pointer;
   transition: background-color var(--dur-feedback) var(--ease-out);
 }
+.row[aria-pressed="true"] {
+  background: var(--surface-hover);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
 @media (hover: hover) and (pointer: fine) {
-  .gen:hover {
-    background: var(--surface-hover);
+  .row:hover {
+    background: var(--surface);
   }
 }
-.gen:active {
-  background: var(--surface-sunken);
-}
-/* The one way a row shows it is current: raised fill and the pink edge. */
-.gen[aria-pressed="true"] {
-  background: var(--surface-hover);
-  box-shadow: inset 3px 0 0 var(--accent);
-}
-.gen:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: -2px;
-}
-.genArt {
+.thumb {
   position: relative;
   display: block;
-  width: 36px;
+  width: 44px;
   aspect-ratio: 9 / 16;
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--r-thumb);
+  border-radius: 6px;
   background: var(--surface-sunken);
-  transition:
-    border-color var(--dur-feedback) var(--ease-out),
-    box-shadow var(--dur-feedback) var(--ease-out);
 }
-.genArt img {
+.thumb img {
   object-fit: cover;
 }
-.genArt[data-empty="true"] {
-  border: 1.5px dashed var(--border-strong);
-}
-.genText {
+.rowText {
   display: grid;
+  gap: 2px;
   min-width: 0;
-  font-size: 0.875rem;
-  line-height: 1.43;
 }
-.genName {
+.rowName {
   font-weight: 500;
+  font-size: 0.9375rem;
 }
-.genNum {
-  display: none;
-}
-.genSummary,
-.muted {
-  color: var(--text-muted);
-}
-.genSummary {
+.rowSub {
   overflow: hidden;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  white-space: nowrap;
   text-overflow: ellipsis;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
   white-space: nowrap;
 }
-.genStatus {
-  justify-self: start;
+.status[data-status="approved"] {
+  color: var(--success, #7fd1a1);
+}
+.status[data-status="denied"] {
+  color: var(--danger, #f08a7a);
 }
 
-/* A clip still being made: its poster dimmed under the sunken surface, with glyph noise and a band of density crossing it.
-   When the clip arrives that cover is drawn off from the top, once, behind a pink edge, and the poster is left. */
 .develop {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: rgb(14 20 28 / 0.8);
+  background: rgb(14 20 28 / 0.75);
 }
-.developing {
-  color: var(--text);
-}
-.develop::after {
-  content: "";
+.glyphs {
   position: absolute;
   inset: 0;
-  border-top: 2px solid var(--accent);
-  opacity: 0;
-}
-.develop[data-leaving] {
-  animation: develop-off 640ms var(--ease-curtain) both;
-}
-.develop[data-leaving]::after {
-  opacity: 1;
-  animation: develop-edge 640ms var(--ease-curtain) both;
-}
-@keyframes develop-off {
-  from {
-    clip-path: inset(0);
-  }
-  to {
-    clip-path: inset(100% 0 0 0);
-  }
-}
-@keyframes develop-edge {
-  to {
-    translate: 0 100%;
-  }
-}
-@keyframes develop-fade {
-  to {
-    opacity: 0;
-  }
 }
 
-.frames {
-  display: grid;
-  padding: 16px 24px 8px;
-  border-top: 1px solid var(--border);
-}
-.framesTitle:focus {
-  outline: none;
-}
-.framesTitle:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-.frameList {
-  display: grid;
-  gap: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.frame {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-span.frameArt {
-  width: 28px;
-  height: auto;
-  aspect-ratio: 9 / 16;
-  border-radius: 6px;
-}
-.frameText {
-  display: grid;
-  min-width: 0;
-  font-size: 0.875rem;
-  line-height: 1.43;
-}
-
-/* ---------- Stage ---------- */
 .stage {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 16px;
-  min-width: 0;
+  grid-template-columns: auto minmax(260px, 340px);
+  justify-content: center;
+  align-items: start;
+  gap: 32px;
   min-height: 0;
-  scroll-margin-top: 16px;
-}
-/* The room the clip has: the clip takes all of its height, or all of its width when the column is narrow. */
-.screenBox {
   container-type: size;
-  display: grid;
-  place-items: center;
-  min-width: 0;
-  min-height: 0;
 }
 .screen {
   position: relative;
-  height: min(100cqh, 100cqw * 16 / 9);
+  height: 100cqh;
+  max-width: calc(100cqw - 372px);
   aspect-ratio: 9 / 16;
   overflow: hidden;
-  border-radius: var(--r-card);
+  border-radius: 16px;
   background: #000;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
 }
+.screen img,
 .screen video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  cursor: pointer;
 }
-.screen img {
-  object-fit: cover;
-}
-/* Being made: the poster stays in place, dim, so nothing moves when the clip arrives. */
-.making img {
-  opacity: 0.4;
-}
-/* Arrived: the clip comes up from the dimmed poster. */
-.screen[data-arrived] {
-  animation: screen-arrive 480ms var(--ease-out) both;
-}
-@keyframes screen-arrive {
-  from {
-    opacity: 0.4;
-  }
-}
-.noClipScreen {
-  display: grid;
-  place-items: center;
-  border: 1.5px dashed var(--border-strong);
-  background: var(--surface-sunken);
-  box-shadow: none;
-}
-.noClip {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
-
-/* The overlays on the clip: play and time, sound, download. */
-.over {
+.controls {
   position: absolute;
+  inset: auto 12px 12px;
   z-index: 2;
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+.over {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-width: 44px;
   height: 44px;
-  border-radius: var(--r-pill);
-  background: rgb(0 0 0 / 0.6) !important;
-  color: #fff !important;
-  transition:
-    background-color var(--dur-feedback) var(--ease-out),
-    scale var(--dur-press) var(--ease-out);
+  padding: 0 12px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 0.55);
+  color: var(--on-media, #fff);
+  transition: background-color var(--dur-feedback) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
   .over:hover {
-    background: rgb(0 0 0 / 0.78) !important;
+    background: rgb(0 0 0 / 0.75);
   }
 }
-.over:active {
-  scale: 0.96;
-}
-.over:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-.download {
-  top: 12px;
-  right: 12px;
-}
-.mute {
-  right: 12px;
-  bottom: 12px;
-}
-.play {
-  left: 12px;
-  bottom: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 16px 0 12px;
-  font-size: 0.9375rem;
+.time {
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
 
-/* Under the clip: the take's actions, the frame scrubber, or the state of a clip that is not there. */
 .under {
-  justify-self: center;
-  width: min(100%, 680px);
+  display: grid;
+  gap: 20px;
 }
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-/* The five actions keep one row under the clip: a little less room inside each shoulder than the shared default. */
-.actions > button {
-  padding-inline: 24px;
-}
-/* The tick's place on "Keep this take": a faint tick while the take is not kept, drawn over in green when it is. */
-.keepTick {
-  display: inline-grid;
-}
-.keepTick > * {
-  grid-area: 1 / 1;
-}
-.keepTick > :first-child {
-  opacity: 0.28;
-}
-.keepTick > :last-child {
-  color: var(--success);
-}
-.failed {
+.caption {
   display: grid;
   gap: 4px;
-  font-size: 0.875rem;
-  line-height: 1.43;
 }
-.failedTitle {
-  font-weight: 500;
-  font-size: 1rem;
-  color: var(--danger);
-}
-.under:has(.failed) {
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-  text-align: center;
-}
-.under:has([role="status"]) {
-  text-align: center;
-}
-
-/* Scrubber under the clip, for picking a frame. */
-.scrub {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-muted);
-}
-.under.scrub {
-  width: min(100%, 420px);
-  min-height: 40px;
-}
-.scrub input,
-.trim input {
-  appearance: none;
-  width: 100%;
-  height: 36px;
-  margin: 0;
-  background: transparent;
-  cursor: pointer;
-}
-.scrub input::-webkit-slider-runnable-track,
-.trim input::-webkit-slider-runnable-track {
-  height: 4px;
-  border-radius: var(--r-pill);
-  background: linear-gradient(to right, var(--progress) var(--p, 0%), var(--border) var(--p, 0%));
-}
-.trim input::-webkit-slider-runnable-track {
-  background: var(--border);
-}
-/* The part of the clip the trim keeps is lit on both tracks: after the start, before the end. */
-.trim input[data-edge="start"]::-webkit-slider-runnable-track {
-  background: linear-gradient(to right, var(--border) var(--p, 0%), var(--progress) var(--p, 0%));
-}
-.trim input[data-edge="end"]::-webkit-slider-runnable-track {
-  background: linear-gradient(to right, var(--progress) var(--p, 100%), var(--border) var(--p, 100%));
-}
-.scrub input::-moz-range-track,
-.trim input::-moz-range-track {
-  height: 4px;
-  border-radius: var(--r-pill);
-  background: var(--border);
-}
-.scrub input::-moz-range-progress {
-  height: 4px;
-  border-radius: var(--r-pill);
-  background: var(--progress);
-}
-.scrub input::-webkit-slider-thumb,
-.trim input::-webkit-slider-thumb {
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  margin-top: -6px;
-  border-radius: 50%;
-  background: var(--text);
-  transition: scale var(--dur-press) var(--ease-out);
-}
-/* A handle that is held grows a little, so a drag has a grip. */
-.scrub input:active::-webkit-slider-thumb,
-.trim input:active::-webkit-slider-thumb {
-  scale: 1.3;
-}
-.scrub input::-moz-range-thumb,
-.trim input::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--text);
-}
-
-/* ---------- Side panel ---------- */
-div.sideBody {
-  gap: 24px;
-}
-.form {
-  display: grid;
-  gap: 16px;
-}
-.trim {
-  gap: 8px;
-}
-.trim label {
-  display: grid;
-}
-.editBox {
-  margin-bottom: 8px;
-}
-.takes {
+.genTitle {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-button.take {
-  width: 72px;
-}
-span.takeArt {
-  aspect-ratio: 9 / 16;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 500;
+  font-size: 1.375rem;
+  line-height: 1.3;
 }
 .takeName {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 500;
   font-size: 0.875rem;
-  line-height: 1.43;
+  font-weight: 400;
+  color: var(--text-muted);
 }
-
-/* ---------- Play episode ---------- */
-.playDialog {
-  width: min(460px, calc(100vw - 32px));
-  padding: 16px;
-}
-.playWrap {
+.actions {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
-/* The dialog's own controls: play, the clip's time, sound. */
-.playBar {
-  width: min(100%, 360px);
-  margin: 0 auto;
+.denied {
+  border-color: var(--danger, #f08a7a);
+  color: var(--danger, #f08a7a);
 }
-.barButton {
+.feedback {
   display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--r-pill);
+  gap: 8px;
+}
+.feedbackBox {
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface-sunken);
   color: var(--text);
-  transition:
-    background-color var(--dur-feedback) var(--ease-out),
-    scale var(--dur-press) var(--ease-out);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  resize: vertical;
 }
-@media (hover: hover) and (pointer: fine) {
-  .barButton:hover {
-    background: var(--surface-hover);
-  }
+.feedbackBox:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
 }
-.barButton:active {
-  scale: 0.96;
-}
-.playFrame {
-  position: relative;
-  height: min(70dvh, 640px);
-  aspect-ratio: 9 / 16;
-  margin: 0 auto;
-  max-width: 100%;
-  overflow: hidden;
-  border-radius: var(--r-control);
-  background: #000;
-}
-.playFrame video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  cursor: pointer;
-}
-.playLabel {
-  text-align: center;
-  font-weight: 500;
+.feedbackActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-/* Reduced motion: the glyphs hold one frame while the clip is made, and fade off when it arrives. Handles do not grow. */
-@media (prefers-reduced-motion: reduce) {
-  .develop[data-leaving] {
-    animation: develop-fade 200ms linear both;
-  }
-  .develop[data-leaving]::after {
-    display: none;
-  }
-  .scrub input:active::-webkit-slider-thumb,
-  .trim input:active::-webkit-slider-thumb {
-    scale: 1;
-  }
-}
-
-/* A window between the phone layout and a wide one: the two side columns narrow so the clip keeps its room. */
-@media (min-width: 901px) and (max-width: 1200px) {
-  div.split {
-    grid-template-columns: 240px minmax(0, 1fr) 300px;
-    gap: 16px;
-  }
-}
-
-/* ---------- Phone: the generations as a strip, then the clip, its actions and the side panel ---------- */
-@media (max-width: 900px) {
-  div.split {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-    gap: 16px;
-  }
-  .gens {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    padding: 12px 16px;
-    scrollbar-width: none;
-  }
-  .gens > li {
-    flex: none;
-  }
-  .gens > li + li {
-    border-top: 0;
-  }
-  .gen {
-    grid-template-columns: none;
-    justify-items: center;
-    gap: 4px;
-    width: 64px;
-    padding: 4px;
-    border-radius: var(--r-control);
-  }
-  .gen[aria-pressed="true"] {
-    background: none;
-    box-shadow: none;
-  }
-  .gen[aria-pressed="true"] .genArt {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
-  }
-  .gen:active {
-    background: none;
-  }
-  .genArt {
-    width: 56px;
-  }
-  .genText {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-  }
-  .genNum {
-    display: inline;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-  }
-  .genName,
-  .genSummary,
-  .statusWord {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .frames {
-    padding: 12px 16px 8px;
-  }
+@media (max-width: 1200px) {
   .stage {
-    grid-template-rows: auto auto;
-  }
-  .screenBox {
-    container-type: inline-size;
-  }
-  /* Keep takes the full width; the other actions pair up under it, equal widths. */
-  .actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .actions > button {
-    width: 100%;
-    padding-inline: 20px;
-  }
-  .actions > :first-child,
-  .actions > :nth-child(even):last-child {
-    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    container-type: normal;
   }
   .screen {
-    height: min(60dvh, 100cqw * 16 / 9);
+    height: auto;
+    width: min(100%, 360px);
+    max-width: none;
+  }
+  .under {
+    width: min(100%, 420px);
+  }
+  .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .actions > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  .stage {
+    overflow-y: auto;
+    padding-bottom: 24px;
+  }
+}
+
+/* Phones: the clip first, its actions, then the list of generations. */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .list {
+    order: 2;
+    overflow: visible;
+  }
+  .stage {
+    scroll-margin-top: 120px;
+  }
+  .screen {
+    width: auto;
+    height: min(62dvh, 560px);
+    max-width: 100%;
+  }
+  .under {
+    width: 100%;
+  }
+  .title {
+    font-size: 1.5rem;
   }
 }

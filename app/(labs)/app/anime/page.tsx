@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { BoardApp } from "@/components/labs/board/BoardApp";
+import { CanvasList } from "@/components/labs/board/CanvasList";
 
-export const metadata: Metadata = { title: "Catalyst" };
+export const metadata: Metadata = { title: "Anime" };
 
-export default function AnimeBoardPage() {
-  return <BoardApp />;
+export default function AnimePage() {
+  return <CanvasList />;
 }

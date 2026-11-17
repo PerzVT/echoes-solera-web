@@ -178,11 +178,11 @@ export default function Lab() {
               <p className="muted">One sheet per outfit. The screenplay finds each sheet by its tag.</p>
             </div>
             <div className={styles.links}>
-              <Link href="/app/cast" className={styles.textLink}>
+              <Link href="/app/episode/cast" className={styles.textLink}>
                 Open the cast
                 <GestureIcon name="arrow" />
               </Link>
-              <Link href="/app/styles" className={styles.textLink}>
+              <Link href="/app/episode/style" className={styles.textLink}>
                 Open the style library
                 <GestureIcon name="arrow" />
               </Link>
@@ -191,7 +191,7 @@ export default function Lab() {
           <Reveal as="ul" stagger className={styles.sheets}>
             {sheets.map((s) => (
               <li key={s.tag}>
-                <Link href="/app/cast" className={styles.sheet}>
+                <Link href="/app/episode/cast" className={styles.sheet}>
                   <span className={styles.sheetArt}>
                     <Image src={s.src} alt={s.alt} fill sizes="(max-width: 720px) 80vw, (max-width: 1100px) 45vw, 320px" />
                   </span>

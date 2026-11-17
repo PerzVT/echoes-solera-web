@@ -40,7 +40,7 @@ export const projects: Project[] = [
     slug: "anime",
     name: "Anime Production",
     line: "Turn an idea into a short anime video.",
-    primary: { label: "Create an anime", href: "/app" },
+    primary: { label: "Create an anime", href: "/app/anime/new" },
     secondary: { label: "Watch Echoes of Solera", href: "/anime/echoes-of-solera" },
     tone: "dark",
     // One montage of hard cuts: full-screen Catalyst and dance cuts, with the row of four vertical shorts between them.
@@ -61,7 +61,7 @@ export const projects: Project[] = [
     slug: "cooking",
     name: "Cooking videos",
     line: "Turn a recipe into a short cooking video.",
-    primary: { label: "Create a video", href: "/app" },
+    primary: { label: "Create a video", href: "/app/cooking" },
     secondary: { label: "Watch Shoujo Supper", href: "/cooking/shoujo-supper" },
     tone: "light",
     // Full scenes crossfading edge to edge: the Akane kitchen, the dishes, rows of episode stills.

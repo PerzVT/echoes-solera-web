@@ -1,0 +1,223 @@
+/* A generation on the Create page: the video large at 9:16 and its settings and verdict beside it. */
+.result {
+  display: grid;
+  grid-template-columns: auto minmax(280px, 380px);
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  min-height: calc(100dvh - 61px);
+  padding: 24px 32px;
+}
+.stage {
+  display: grid;
+  place-items: center;
+}
+.screen {
+  position: relative;
+  height: calc(100dvh - 61px - 48px);
+  max-height: 900px;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+}
+.screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.under {
+  object-fit: cover;
+  filter: blur(6px) brightness(0.7);
+}
+.develop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgb(14 20 28 / 0.78);
+}
+.glyphs {
+  color: var(--text);
+}
+.develop[data-leaving] {
+  animation: develop-off 640ms var(--ease-curtain) both;
+}
+@keyframes develop-off {
+  to {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+.controls {
+  position: absolute;
+  z-index: 2;
+  inset: auto 10px 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.over {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 0.55);
+  color: var(--on-media);
+}
+.time {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+.side {
+  display: grid;
+  align-content: center;
+  gap: 20px;
+  min-width: 0;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.settings {
+  display: grid;
+  margin: 0;
+}
+.settings > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--border);
+}
+.settings dt {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.settings dd {
+  margin: 0;
+  font-size: 0.875rem;
+  text-align: right;
+}
+.chefVal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  overflow: hidden;
+  border-radius: var(--r-pill);
+}
+.avatar img {
+  object-fit: cover;
+}
+.actions {
+  display: grid;
+  gap: 10px;
+}
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.pair > *,
+.dock > * {
+  --h: 48px;
+}
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+.verdict[data-verdict="approved"] {
+  color: var(--success);
+}
+.verdict[data-verdict="denied"] {
+  color: var(--danger);
+}
+.retry {
+  display: grid;
+  gap: 8px;
+}
+.feedback {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  resize: vertical;
+  outline: none;
+}
+.feedback:focus {
+  border-color: var(--text);
+}
+.feedback::placeholder {
+  color: var(--text-disabled);
+}
+.retryRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .develop[data-leaving] {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .result {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-items: start;
+    gap: 20px;
+    min-height: 0;
+    padding: 16px;
+  }
+  .screen {
+    height: auto;
+    width: min(100%, calc((100dvh - 260px) * 9 / 16));
+    min-width: 220px;
+  }
+  .side {
+    width: 100%;
+    max-width: 480px;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 767px) {
+  .dock {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .over {
+    min-width: 44px;
+    height: 44px;
+  }
+}

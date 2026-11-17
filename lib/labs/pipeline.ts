@@ -514,11 +514,11 @@ export const steps: WalkStep[] = [
 
 /** Where each creator surface opens. The episode screens live under /app. */
 export const surfaceHref: Record<Surface, string> = {
-  Script: "/app/episode/script",
+  Script: "/app",
   Screenplay: "/app/episode/screenplay",
-  References: "/app/episode/references",
+  References: "/app/episode/cast",
   Results: "/app/episode/results",
-  "Style hub": "/app/styles",
+  "Style hub": "/app/episode/style",
 };
 
 export function getFunction(slug: string) {

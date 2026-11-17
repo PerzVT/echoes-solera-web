@@ -74,6 +74,12 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 24px;
 }
+/* Processing: the one page, centred. */
+.single {
+  display: grid;
+  grid-template-columns: minmax(0, 820px);
+  justify-content: center;
+}
 .layout[data-panel="true"] {
   grid-template-columns: minmax(0, 1fr) 380px;
 }

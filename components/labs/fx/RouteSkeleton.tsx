@@ -64,24 +64,21 @@ const routes: Route[] = [
   route(/^\/lab$/, () => import("@/app/(labs)/lab/skeleton")),
   route(/^\/pipeline$/, () => import("@/app/(labs)/pipeline/skeleton")),
   route(/^\/pipeline\/[^/]+$/, () => import("@/app/(labs)/pipeline/[function]/skeleton")),
-  // The creator. Import and new come before the style pages, which would match them too.
+  // The creator.
   route(/^\/app$/, () => import("@/app/(labs)/app/skeleton")),
+  route(/^\/app\/library$/, () => import("@/app/(labs)/app/library/skeleton")),
   route(/^\/app\/cooking$/, () => import("@/app/(labs)/app/cooking/skeleton")),
+  route(/^\/app\/cooking\/library$/, () => import("@/app/(labs)/app/cooking/library/skeleton")),
   route(/^\/app\/anime$/, () => import("@/app/(labs)/app/anime/skeleton")),
-  route(/^\/app\/c\/[^/]+$/, () => import("@/app/(labs)/app/c/[id]/skeleton")),
-  route(/^\/app\/new$/, () => import("@/app/(labs)/app/new/skeleton")),
-  route(/^\/app\/cast$/, () => import("@/app/(labs)/app/cast/skeleton")),
-  route(/^\/app\/episode\/script$/, () => import("@/app/(labs)/app/episode/script/skeleton")),
+  route(/^\/app\/anime\/new$/, () => import("@/app/(labs)/app/anime/new/skeleton")),
+  route(/^\/app\/anime\/new\/(screenplay|cast|style)$/, () => import("@/app/(labs)/app/anime/new/cast/skeleton")),
+  route(/^\/app\/anime\/new\/storyboard$/, () => import("@/app/(labs)/app/anime/new/storyboard/skeleton")),
+  route(/^\/app\/anime\/[^/]+$/, () => import("@/app/(labs)/app/anime/[canvas]/skeleton")),
   route(/^\/app\/episode\/screenplay$/, () => import("@/app/(labs)/app/episode/screenplay/skeleton")),
-  route(/^\/app\/episode\/references$/, () => import("@/app/(labs)/app/episode/references/skeleton")),
+  route(/^\/app\/episode\/cast$/, () => import("@/app/(labs)/app/episode/cast/skeleton")),
+  route(/^\/app\/episode\/style$/, () => import("@/app/(labs)/app/episode/style/skeleton")),
   route(/^\/app\/episode\/results$/, () => import("@/app/(labs)/app/episode/results/skeleton")),
-  route(/^\/app\/series\/[^/]+\/cast$/, () => import("@/app/(labs)/app/series/[slug]/cast/skeleton")),
-  route(/^\/app\/series\/[^/]+\/style$/, () => import("@/app/(labs)/app/series/[slug]/style/skeleton")),
   route(/^\/app\/series\/[^/]+$/, () => import("@/app/(labs)/app/series/[slug]/skeleton")),
-  route(/^\/app\/styles$/, () => import("@/app/(labs)/app/styles/skeleton")),
-  route(/^\/app\/styles\/import$/, () => import("@/app/(labs)/app/styles/import/skeleton")),
-  route(/^\/app\/styles\/new$/, () => import("@/app/(labs)/app/styles/new/skeleton")),
-  route(/^\/app\/styles\/[^/]+$/, () => import("@/app/(labs)/app/styles/[slug]/skeleton")),
 ];
 const match = (path: string) => routes.find((r) => r.re.test(path));
 

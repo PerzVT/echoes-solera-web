@@ -27,9 +27,10 @@ export type Video = {
 export const chefs = supper.chefs;
 const chefNames = new Set(chefs.map((c) => c.name));
 
+/** Styles a cooking video can be made in: every listed video style except the live-action one. */
 export const genStyles: Style[] = [
-  ...allStyles.filter((s) => !s.hidden && s.card && s.group === "In use"),
-  ...allStyles.filter((s) => !s.hidden && s.card && s.group === "Library"),
+  ...allStyles.filter((s) => !s.hidden && s.card && s.group === "In use" && s.filter === "video" && s.slug !== "photoreal-period"),
+  ...allStyles.filter((s) => !s.hidden && s.card && s.group === "Library" && s.filter === "video"),
 ];
 export const defaultStyle = genStyles[0];
 export const styleBySlug = (slug: string) => genStyles.find((s) => s.slug === slug) ?? defaultStyle;
@@ -53,12 +54,23 @@ export const searchRecipes = (q: string) => {
   return t ? recipes.filter((r) => fold(r.title).includes(t)) : recipes;
 };
 
-/** The clip a finished generation plays: the dish's own episode, or a stand-in picked from the title. */
-export function clipFor(r: Recipe) {
-  if (r.release) return r.release;
-  let h = 0;
-  for (const ch of r.title) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return releases[h % releases.length];
+/** Releases whose poster shows only the dish, no chef: the stand-in for a chef who has none of her own. */
+const dishOnly = releases.filter((r) => ["kacchi-biryani", "mushroom-stroganoff"].includes(slug(r)));
+
+/**
+ * The clip a take plays. It must show the chef chosen: her own episode of this dish first, then her other
+ * episodes in turn; a chef with no episode gets a dish-only clip, so no other chef appears in her place.
+ */
+export function clipFor(r: Recipe, chef: string, take = 0): { video: string; poster: string } {
+  const hers = releases.filter((x) => x.chef === chef);
+  if (hers.length) {
+    const own = r.release && r.release.chef === chef ? [r.release, ...hers.filter((x) => x !== r.release)] : hers;
+    return own[take % own.length];
+  }
+  if (dishOnly.length) return dishOnly[take % dishOnly.length];
+  // No clip fits: her portrait holds the frame and the nearest dish plays once it has developed.
+  const near = r.release ?? releases[take % releases.length];
+  return { video: near.video, poster: chefSrc(chef) ?? near.poster };
 }
 
 /** The show's videos, newest first. */

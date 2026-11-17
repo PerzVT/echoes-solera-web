@@ -39,7 +39,7 @@ export function Thumb({ shot, sizes }: { shot: Shot; sizes: string }) {
   const take = shot.takes[shot.take];
   const empty = !take || shot.status === "failed" || shot.status === "empty";
   return (
-    <span className={b.thumb} data-empty={(empty && shot.status !== "generating") || undefined}>
+    <span className={b.thumb} data-review={shot.review} data-empty={(empty && shot.status !== "generating") || undefined}>
       {take && shot.status !== "failed" && shot.status !== "empty" && <Image src={take.still} alt="" fill sizes={sizes} />}
       {shot.status === "failed" && <AppIcon name="warning" size={18} />}
       {(shot.status === "generating" || arriving) && <Develop leaving={arriving} />}
@@ -50,8 +50,14 @@ export function Thumb({ shot, sizes }: { shot: Shot; sizes: string }) {
 
 export function StatusMark({ shot }: { shot: Shot }) {
   return (
-    <span className={b.mark} data-status={shot.status} aria-hidden="true">
-      {shot.status === "generating" ? <AnimatedMark variant="busy" size={14} /> : shot.status === "ready" ? <Icon name="check" size={12} /> : null}
+    <span className={b.mark} data-status={shot.status} data-review={shot.status === "ready" ? shot.review : undefined} aria-hidden="true">
+      {shot.status === "generating" ? (
+        <AnimatedMark variant="busy" size={14} />
+      ) : shot.status !== "ready" ? null : shot.review === "denied" ? (
+        <Icon name="close" size={12} />
+      ) : shot.review === "approved" ? (
+        <Icon name="check" size={12} />
+      ) : null}
     </span>
   );
 }

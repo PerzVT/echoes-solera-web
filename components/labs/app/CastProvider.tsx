@@ -1,182 +1,166 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import {
-  EPISODE,
-  otherTags,
-  seriesCards,
-  slug,
-  startingCast,
-  tagForFile,
-  uniqueTag,
-  type CastSheet,
-  type OtherSheet,
-  type SeriesCard,
-  type SeriesCast,
-  type Tool,
-} from "@/lib/labs/maker";
-import type { EpisodeItem } from "./creator";
+import { screenplay, seriesCards, startingCast, type Block, type Note, type SeriesCard, type SeriesCast } from "@/lib/labs/maker";
+import { episodesOf, nextEpisodeName, startingElements, type Element, type EpisodeItem } from "./creator";
+import { generationsFor, type Gen } from "./script";
 
-/** The series and episode the episode screens work on. */
-export type Working = { slug: string; title: string; episode: string };
+/**
+ * One episode's own work: its script read into blocks, the comments and edits on it, its cast, style and clip
+ * decisions. Held per episode, keyed "<series>/<episode>", so a new episode and an existing one never share it.
+ */
+type EpisodeData = {
+  series: string;
+  episode: string;
+  /** Not finished yet: Results ends on Finish, which adds it to the Library. A finished episode ends on Done. */
+  isNew: boolean;
+  /** The name of a series that Finish will create. */
+  newSeries?: string;
+  /** What was submitted: the typed text, or the name of the file it came from. */
+  source: string;
+  file?: string;
+  blocks: Block[];
+  texts?: Record<string, string>;
+  notes?: Note[];
+  changed?: string[];
+  elements?: Element[];
+  style?: string;
+  gens?: Gen[];
+};
 
-/** The cast of every series, plus the series made in this session, held in React state for the whole /app section. */
-type Store = {
-  all: Record<string, SeriesCast>;
-  get: (series: string) => SeriesCast;
-  set: (series: string, next: SeriesCast) => void;
-  addCharacter: (series: string, name: string) => string;
-  renameCharacter: (series: string, id: string, name: string) => void;
-  removeCharacter: (series: string, id: string) => void;
-  /**
-   * Adds one sheet per image file to a character and returns the new sheets. Pass the name when the character was added in the same event,
-   * and the tags when they were worked out beforehand (the upload step shows them before they are added).
-   */
-  addSheets: (series: string, character: string, files: File[], name?: string, tags?: string[]) => CastSheet[];
-  updateSheet: (series: string, id: string, patch: Partial<CastSheet>) => void;
-  removeSheet: (series: string, id: string) => void;
-  /** Keeps a location, prop or continuity frame uploaded on References, and returns it. */
-  addOther: (series: string, kind: OtherSheet["kind"], who: string, file: File, tag?: string) => OtherSheet;
-  /** Frees the object URLs of uploads that nothing shows any more. */
-  release: (srcs: string[]) => void;
-  /** Series made with New series in this session, newest first. */
+type Saved = {
+  current: string | null;
+  episodes: Record<string, EpisodeData>;
+  added: Record<string, EpisodeItem[]>;
   created: SeriesCard[];
-  addSeries: (title: string, tool: Tool) => string;
-  /** Episodes started with New episode in this session, by series. */
-  addedEpisodes: Record<string, EpisodeItem[]>;
-  addEpisode: (series: string, episode: EpisodeItem) => void;
-  /** The series and episode the episode screens show. */
-  working: Working;
-  setWorking: (w: Working) => void;
-  /** State a screen keeps when the person leaves it and comes back, such as the matches on References. */
+  renamed: Record<string, string>;
+  deletedSeries: string[];
+  deletedEpisodes: string[];
+};
+
+type Store = {
+  get: (series: string) => SeriesCast;
+  /** The series in the Library, in order, with renames applied and deletions left out. */
+  series: SeriesCard[];
+  seriesTitle: (slug: string) => string;
+  /** A series' episodes, with those finished here and without those deleted. */
+  episodesIn: (slug: string) => EpisodeItem[];
+  /** The episode the flow is working on: the one last submitted or opened. */
+  current: string;
+  setCurrent: (key: string) => void;
+  /** An episode's work, or what it starts with if nothing has been done to it yet. */
+  episodeOf: (key: string) => EpisodeData;
+  start: (key: string, data: EpisodeData) => void;
+  patch: (key: string, p: Partial<EpisodeData>) => void;
+  /** Adds the episode to its series, and a card for the series when it is new. */
+  finish: (key: string, poster: string) => void;
+  renameSeries: (slug: string, title: string) => void;
+  deleteSeries: (slug: string, back: boolean) => void;
+  deleteEpisode: (key: string, back: boolean) => void;
+  /** State a step keeps when the person leaves it and comes back. */
   kept: <T>(key: string) => T | undefined;
   keep: (key: string, value: unknown) => void;
 };
 
 const Ctx = createContext<Store | null>(null);
-
 const empty: SeriesCast = { characters: [], sheets: [] };
-let seq = 0;
-const nextId = (p: string) => `${p}-${Date.now().toString(36)}-${(seq++).toString(36)}`;
+const STORAGE = "nine-lives:mini-series";
+/** The episode a step shows when it is opened directly with nothing submitted: the demo script, not yet finished. */
+export const DRAFT = "draft";
+export const episodeKey = (series: string, episode: string) => `${series}/${episode}`;
 
-/** Every tag in use in a series, plus the library's location and prop tags. */
-export const tagsIn = (cast: SeriesCast, except?: string) => [
-  ...cast.sheets.filter((x) => x.id !== except).map((x) => x.tag),
-  ...(cast.others ?? []).filter((x) => x.id !== except).map((x) => x.tag),
-  ...otherTags,
-];
-
-/** The series card for a slug, including series made in this session. */
-export function findSeries(slugValue: string | undefined, created: SeriesCard[]) {
-  return [...created, ...seriesCards].find((x) => x.slug === slugValue);
-}
+const blank: Saved = { current: null, episodes: {}, added: {}, created: [], renamed: {}, deletedSeries: [], deletedEpisodes: [] };
 
 export function CastProvider({ children }: { children: ReactNode }) {
-  const [all, setAll] = useState<Record<string, SeriesCast>>(startingCast);
-  const [created, setCreated] = useState<SeriesCard[]>([]);
-  const [working, setWorking] = useState<Working>({ slug: "second-chance", title: EPISODE.series, episode: EPISODE.episode });
-  const [addedEpisodes, setAddedEpisodes] = useState<Record<string, EpisodeItem[]>>({});
+  const [saved, setSaved] = useState<Saved>(blank);
+  // The session is read back from sessionStorage before anything is drawn, so a reload lands on the same work.
+  const [ready, setReady] = useState(false);
   const memo = useRef(new Map<string, unknown>());
-  /**
-   * Tags handed out since the cast was last drawn. Several adds in one event each see the tags the earlier ones took,
-   * although none of them has reached `all` yet. Emptied once the new cast is drawn, when `all` holds them.
-   */
-  const handedOut = useRef(new Map<string, Set<string>>());
+
   useEffect(() => {
-    handedOut.current.clear();
-  }, [all]);
-
-  const get = useCallback((series: string) => all[series] ?? empty, [all]);
-
-  const edit = useCallback((series: string, fn: (c: SeriesCast) => SeriesCast) => {
-    setAll((a) => ({ ...a, [series]: fn(a[series] ?? empty) }));
+    try {
+      const raw = sessionStorage.getItem(STORAGE);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (raw) setSaved({ ...blank, ...JSON.parse(raw) });
+    } catch {}
+    setReady(true);
   }, []);
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      sessionStorage.setItem(STORAGE, JSON.stringify(saved));
+    } catch {}
+  }, [saved, ready]);
 
-  const store = useMemo<Store>(
-    () => ({
-      all,
-      get,
-      set: (series, next) => setAll((a) => ({ ...a, [series]: next })),
-      addCharacter: (series, name) => {
-        const id = nextId("character");
-        edit(series, (c) => ({ ...c, characters: [...c.characters, { id, name }] }));
-        return id;
-      },
-      renameCharacter: (series, id, name) =>
-        edit(series, (c) => {
-          // Tags of sheets added here follow the character name until someone edits them.
-          const taken = new Set(tagsIn(c));
-          const sheets = c.sheets.map((x) => {
-            if (x.character !== id || !x.added || x.tagEdited) return x;
-            taken.delete(x.tag);
-            const tag = tagForFile(name, x.file, taken);
-            taken.add(tag);
-            return { ...x, tag };
-          });
-          return { ...c, characters: c.characters.map((x) => (x.id === id ? { ...x, name } : x)), sheets };
+  const edit = useCallback((fn: (s: Saved) => Saved) => setSaved(fn), []);
+
+  const store = useMemo<Store>(() => {
+    const all = [...seriesCards, ...saved.created];
+    const series = all.filter((c) => !saved.deletedSeries.includes(c.slug)).map((c) => ({ ...c, title: saved.renamed[c.slug] ?? c.title }));
+    const seriesTitle = (slug: string) => saved.renamed[slug] ?? all.find((c) => c.slug === slug)?.title ?? slug;
+    const episodesIn = (slug: string) => episodesOf(slug, saved.added[slug]).filter((e) => !saved.deletedEpisodes.includes(episodeKey(slug, e.name)));
+
+    const episodeOf = (key: string): EpisodeData => {
+      const had = saved.episodes[key];
+      if (had) return had;
+      if (key === DRAFT) {
+        const s = series[0]?.slug ?? "second-chance";
+        return { series: s, episode: nextEpisodeName(episodesIn(s)), isNew: true, source: "", blocks: screenplay };
+      }
+      // A finished episode from the Library: the demo script, the default cast, every clip approved.
+      const at = key.indexOf("/");
+      return { series: key.slice(0, at), episode: key.slice(at + 1), isNew: false, source: "", blocks: screenplay, elements: startingElements, gens: generationsFor(screenplay, true) };
+    };
+
+    return {
+      get: (s) => startingCast[s] ?? empty,
+      series,
+      seriesTitle,
+      episodesIn,
+      current: saved.current ?? DRAFT,
+      setCurrent: (key) => edit((s) => (s.current === key ? s : { ...s, current: key })),
+      episodeOf,
+      start: (key, data) => edit((s) => ({ ...s, current: key, episodes: { ...s.episodes, [key]: data } })),
+      patch: (key, p) =>
+        edit((s) => {
+          const base = s.episodes[key] ?? episodeOf(key);
+          return { ...s, episodes: { ...s.episodes, [key]: { ...base, ...p } } };
         }),
-      removeCharacter: (series, id) =>
-        edit(series, (c) => ({ ...c, characters: c.characters.filter((x) => x.id !== id), sheets: c.sheets.filter((x) => x.character !== id) })),
-      addSheets: (series, character, files, given, tags) => {
-        const c = all[series] ?? empty;
-        const name = given ?? c.characters.find((x) => x.id === character)?.name ?? "sheet";
-        const out = handedOut.current.get(series) ?? new Set<string>();
-        handedOut.current.set(series, out);
-        const taken = new Set([...tagsIn(c), ...out]);
-        const added = files.map((f, i) => {
-          const planned = tags?.[i];
-          const tag = planned && !taken.has(planned) ? planned : tagForFile(name, f.name, taken);
-          taken.add(tag);
-          out.add(tag);
-          const src = URL.createObjectURL(f);
-          return { id: nextId("sheet"), tag, character, src, face: src, added: true, file: f.name } satisfies CastSheet;
+      finish: (key, poster) => {
+        const ep = episodeOf(key);
+        const slug = ep.series;
+        const done = episodeKey(slug, ep.episode);
+        edit((s) => {
+          const exists = [...seriesCards, ...s.created].some((c) => c.slug === slug);
+          const created = ep.newSeries && !exists ? [...s.created, { slug, title: ep.newSeries, cover: poster }] : s.created;
+          const list = s.added[slug] ?? [];
+          const added = list.some((x) => x.name === ep.episode) ? s.added : { ...s.added, [slug]: [...list, { name: ep.episode, poster }] };
+          // The finished episode keeps its work under its own key; the draft is free again.
+          const episodes = { ...s.episodes, [done]: { ...(s.episodes[key] ?? ep), isNew: false, newSeries: undefined } };
+          if (key !== done) delete episodes[key];
+          return { ...s, created, added, episodes, current: done };
         });
-        edit(series, (x) => ({ ...x, sheets: [...x.sheets, ...added] }));
-        return added;
       },
-      updateSheet: (series, id, patch) => edit(series, (c) => ({ ...c, sheets: c.sheets.map((x) => (x.id === id ? { ...x, ...patch } : x)) })),
-      removeSheet: (series, id) => edit(series, (c) => ({ ...c, sheets: c.sheets.filter((x) => x.id !== id) })),
-      addOther: (series, kind, who, file, given) => {
-        const c = all[series] ?? empty;
-        const tag = given ?? uniqueTag(who, tagsIn(c));
-        const other: OtherSheet = { id: nextId(kind), kind, tag, who, src: URL.createObjectURL(file) };
-        edit(series, (x) => ({ ...x, others: [...(x.others ?? []), other] }));
-        return other;
-      },
-      release: (srcs) => srcs.filter((x) => x.startsWith("blob:")).forEach((x) => URL.revokeObjectURL(x)),
-      created,
-      addSeries: (title, tool) => {
-        const base = slug(title).replace(/_/g, "-") || "series";
-        let key = base;
-        for (let n = 2; [...created, ...seriesCards].some((x) => x.slug === key); n++) key = `${base}-${n}`;
-        const card: SeriesCard = {
-          title,
-          slug: key,
-          tool,
-          cover: "",
-          add: tool === "Cooking" ? "New video" : "New episode",
-          episodes: [{ name: tool === "Cooking" ? "Video 1" : "Episode 1", stage: tool === "Cooking" ? "Recipe" : "Script", href: "/app/episode/script" }],
-        };
-        setCreated((x) => [card, ...x]);
-        setWorking({ slug: key, title, episode: card.episodes[0].name });
-        return key;
-      },
-      addedEpisodes,
-      addEpisode: (series, episode) =>
-        setAddedEpisodes((a) => (a[series]?.some((x) => x.name === episode.name) ? a : { ...a, [series]: [...(a[series] ?? []), episode] })),
-      working,
-      setWorking,
+      renameSeries: (slug, title) => edit((s) => ({ ...s, renamed: { ...s.renamed, [slug]: title } })),
+      deleteSeries: (slug, back) => edit((s) => ({ ...s, deletedSeries: back ? s.deletedSeries.filter((x) => x !== slug) : [...s.deletedSeries, slug] })),
+      deleteEpisode: (key, back) => edit((s) => ({ ...s, deletedEpisodes: back ? s.deletedEpisodes.filter((x) => x !== key) : [...s.deletedEpisodes, key] })),
       kept: <T,>(key: string) => memo.current.get(key) as T | undefined,
       keep: (key, value) => void memo.current.set(key, value),
-    }),
-    [all, get, edit, created, working, addedEpisodes],
-  );
+    };
+  }, [saved, edit]);
 
-  return <Ctx.Provider value={store}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={store}>{ready ? children : null}</Ctx.Provider>;
 }
 
 export function useCast() {
   const store = useContext(Ctx);
   if (!store) throw new Error("useCast needs the CastProvider from app/(labs)/app/layout.tsx");
   return store;
+}
+
+/** The episode the flow is on, and a way to change its work. */
+export function useEpisode() {
+  const store = useCast();
+  const key = store.current;
+  return { key, ep: store.episodeOf(key), patch: (p: Partial<EpisodeData>) => store.patch(key, p) };
 }

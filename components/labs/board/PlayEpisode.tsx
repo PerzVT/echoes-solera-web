@@ -61,9 +61,13 @@ export function PlayEpisode({ open, onClose, shots, title }: { open: boolean; on
             <IconBtn label={playing ? "Pause" : "Play"} onClick={() => setPlaying(!playing)}>
               <PlayPauseIcon playing={playing} size={18} />
             </IconBtn>
-            <span className={b.playCount}>
-              {at + 1} / {shots.length}
-            </span>
+            <ol className={b.playCount} aria-label={`Shot ${at + 1}, ${shot.label}`}>
+              {shots.map((s, i) => (
+                <li key={s.id} data-state={i < at ? "done" : i === at ? "now" : undefined}>
+                  <button type="button" aria-label={`Play from shot ${i + 1}`} onClick={() => setAt(i)} />
+                </li>
+              ))}
+            </ol>
             <IconBtn label={muted ? "Turn sound on" : "Turn sound off"} onClick={() => setMuted(!muted)}>
               <VolumeIcon muted={muted} size={18} />
             </IconBtn>

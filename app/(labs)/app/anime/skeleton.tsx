@@ -1,6 +1,6 @@
 /** Shown by RouteSkeleton (components/labs/fx) while this route is on its way. */
-import { BoardSkeleton } from "@/components/labs/board/BoardSkeleton";
+import { ListSkeleton } from "@/components/labs/board/Skeletons";
 
-export default function AnimeBoardLoading() {
-  return <BoardSkeleton />;
+export default function AnimeLoading() {
+  return <ListSkeleton />;
 }

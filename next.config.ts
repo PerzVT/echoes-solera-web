@@ -10,6 +10,9 @@ const backdrops = (() => {
   }
 })();
 
+/** The public address of the Blob store that holds the site's videos. */
+const MEDIA = "https://xdkyhndo0jxmfyrf.public.blob.vercel-storage.com";
+
 const nextConfig: NextConfig = {
   devIndicators: false,
   env: { NL_SERIES_BACKDROPS: backdrops.join(",") },
@@ -18,6 +21,12 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: { "/walk": ["./lib/labs/cove/tidebell-cove.html"] },
   async rewrites() {
     return [{ source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" }];
+  },
+  // Videos are not in the repo or the deployment. Each lives in the Vercel Blob store under the path it had
+  // in public/, so every .mp4 address on the site is sent there. A new video is uploaded to the store at
+  // its public/ path; nothing else changes.
+  async redirects() {
+    return [{ source: "/:path(.*\\.mp4)", destination: `${MEDIA}/:path`, permanent: false }];
   },
   async headers() {
     const catalogHeaders = [

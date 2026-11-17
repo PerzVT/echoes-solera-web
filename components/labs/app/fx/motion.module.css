@@ -9,11 +9,6 @@
 .fade {
   animation: m-fade var(--dur-enter) linear both;
 }
-/* Leaving: shorter and quieter than arriving. */
-.leave {
-  animation: m-leave var(--dur-exit) var(--ease-out) both;
-  pointer-events: none;
-}
 @keyframes m-enter {
   from {
     opacity: 0;
@@ -36,11 +31,6 @@
     opacity: 0;
   }
 }
-
-/* Landed: a sheet set down in its group. It starts a little above its place and a little large, and settles. */
-.land {
-  animation: m-land 420ms var(--ease-out) both;
-}
 @keyframes m-land {
   from {
     opacity: 0;
@@ -50,29 +40,6 @@
   45% {
     opacity: 1;
   }
-}
-
-/* Rows that fill in one after another: each direct child waits its turn. Set --i on the child. */
-.fillRows > * {
-  animation: m-enter var(--dur-move) var(--ease-out) both;
-  animation-delay: calc(min(var(--i, 0), 14) * 45ms);
-}
-
-/* Two texts in one place: the old one lifts out as the new one comes up under it. */
-.swapText {
-  display: inline-grid;
-  justify-items: start;
-  vertical-align: bottom;
-}
-.swapText > * {
-  grid-area: 1 / 1;
-  white-space: nowrap;
-}
-.swapIn {
-  animation: m-swap-in var(--dur-enter) var(--ease-out) both;
-}
-.swapOut {
-  animation: m-swap-out var(--dur-exit) var(--ease-out) both;
 }
 @keyframes m-swap-in {
   from {
@@ -93,9 +60,5 @@
   .fillRows > *,
   .swapIn {
     animation-name: m-fade;
-  }
-  .leave,
-  .swapOut {
-    animation-name: m-fade-out;
   }
 }

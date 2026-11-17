@@ -3,12 +3,13 @@ import { ResultsStep, type ResultsState } from "@/components/labs/app/ResultsSte
 
 export const metadata: Metadata = { title: "Results" };
 
-type Props = { searchParams: Promise<{ state?: string }> };
+type Props = { searchParams: Promise<{ state?: string; series?: string; episode?: string }> };
 
-const states: ResultsState[] = ["new", "failed", "harvest", "edits"];
-
+/** ?state=new arrives from Generate with every clip still being made; ?series=&episode= opens an episode from the Library. */
 export default async function ResultsPage({ searchParams }: Props) {
-  const { state } = await searchParams;
-  const initial = states.find((x) => x === state) ?? "default";
-  return <ResultsStep key={initial} initial={initial} />;
+  const { state, series, episode } = await searchParams;
+  const initial: ResultsState = state === "new" ? "new" : "default";
+  // The key CastProvider holds the episode under: "<series>/<episode>".
+  const open = series && episode ? `${series}/${episode}` : undefined;
+  return <ResultsStep key={`${initial}:${open ?? ""}`} initial={initial} open={open} />;
 }

@@ -1,115 +1,99 @@
-/* The few shapes the creator's loading states need beyond the real screens' own classes. */
-
-/* On a card that is not a Panel: a placeholder is one step lighter than the card, or it could not be seen on it. */
-.onSurface {
-  --skeleton: var(--surface-hover);
-}
-
-/* A placeholder standing for one line of text: 12 to 16px of block in a 20 to 24px line. */
-.metaLine,
-.factLine {
-  margin-block: 4px;
-}
-.factValue {
+/* Skeleton layouts: the main blocks of each screen where the screen puts them. */
+.start {
   display: grid;
+  gap: 32px;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  padding-bottom: 10vh;
 }
-.quiet {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  padding-inline: 16px;
-}
-.lines {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-}
-
-/* A sheet tile: art, name and tag, as the tile button sets them. */
-.tile {
+.doc {
   display: grid;
   align-content: start;
-  gap: 8px;
-  min-width: 0;
-  padding-bottom: 4px;
-  list-style: none;
+  gap: 24px;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
 }
-
-/* New series: the tool cards and style stills at the real cards' size. */
-.tool {
-  gap: 12px;
-  min-height: 100px;
-  cursor: default;
-}
-.styleTile {
+.wide {
   display: grid;
   align-content: start;
-  gap: 8px;
+  gap: 24px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
-
-/* Series: the faces in the cast strip, the art and the quiet button of a style card. */
-.faceArt {
-  justify-self: center;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
-.styleArt {
-  margin-bottom: 8px;
+.series {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
 }
-.styleUse {
-  margin-top: 12px;
-}
-
-/* Cast: a character tab with its face and two lines. */
-.whoTab {
-  cursor: default;
-}
-
-/* The style chart: a slot fills its grid cell. */
-.slot {
+.split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  gap: 24px;
   min-height: 0;
 }
-
-/* Results: the actions under the clip at their own widths; on a phone they pair up at full width. A take tile. */
-.action {
-  width: var(--w);
-}
-.take {
+.tiles {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  align-content: start;
+  gap: 16px;
+  overflow: hidden;
+}
+.side {
+  height: 100%;
+}
+.results {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+  gap: 32px;
+  min-height: 0;
+}
+.rows {
+  display: grid;
+  align-content: start;
   gap: 8px;
-  width: 72px;
 }
-
-/* The screenplay page as lines. One full column, so a line's percentage width is of the page. */
-.page {
-  display: grid;
-  width: 100%;
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: start;
-  gap: 14px;
-}
-.pageHeading {
-  margin-top: 18px;
-}
-.pageHeading:first-child {
-  margin-top: 6px;
-}
-.pageCamera {
-  margin-top: 8px;
-}
-.pageCue,
-.pageLine {
+.player {
   justify-self: center;
-}
-.pageCue {
-  margin-top: 8px;
+  height: 100%;
+  max-height: 80dvh;
+  aspect-ratio: 9 / 16;
 }
 
 @media (max-width: 900px) {
-  .action {
-    width: 100%;
+  .split,
+  .results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .side {
+    display: none;
+  }
+  .results .rows {
+    order: 2;
+  }
+  .player {
+    height: 60dvh;
   }
 }
-@media (max-width: 720px) {
-  .tool {
-    min-height: 82px;
+@media (max-width: 767px) {
+  .cards,
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .series {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

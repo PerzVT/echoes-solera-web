@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { ChatApp } from "@/components/labs/chat/ChatApp";
-import { courier } from "@/components/labs/chat/font";
+import { ScriptStep } from "@/components/labs/app/ScriptStep";
 
-export const metadata: Metadata = { title: "New chat" };
+export const metadata: Metadata = { title: "Mini-series" };
 
-export default function AppHomePage() {
-  return (
-    <div className={courier.variable}>
-      <ChatApp />
-    </div>
-  );
+export default function AppStartPage() {
+  return <ScriptStep />;
 }
