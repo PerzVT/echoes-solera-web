@@ -43,7 +43,7 @@ export const projects: Project[] = [
     primary: { label: "Create an anime", href: "/app" },
     secondary: { label: "Watch Echoes of Solera", href: "/anime/echoes-of-solera" },
     tone: "dark",
-    // Four vertical panels of the anime shorts, each cutting on its own clock.
+    // One montage of hard cuts: full-screen Catalyst and dance cuts, with the row of four vertical shorts between them.
     stage: "montage",
   },
   {
@@ -70,8 +70,9 @@ export const projects: Project[] = [
   {
     slug: "worlds",
     name: "Virtual worlds",
-    line: "Walk around Tidebell Cove as a duck called FOMO.",
-    primary: { label: "See the world", href: "/worlds/tidebell-cove" },
+    line: "Check out our interactive virtual world.",
+    primary: { label: "Play Tidebell Cove", href: "/worlds/tidebell-cove/play" },
+    secondary: { label: "See the world", href: "/worlds/tidebell-cove" },
     tone: "dark",
     // Every place and capture from the world page, crossfading.
     stage: "worlds",

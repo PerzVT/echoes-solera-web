@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type MutableRefObject } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { series } from "@/lib/labs/series";
 import { supper, releases } from "@/lib/labs/supper";
 import { products } from "@/lib/labs/shop";
@@ -47,159 +47,222 @@ export function HeroStage({ kind, active, backdrops = [] }: { kind: NonNullable<
 
 /* Anime ------------------------------------------------------------------------------------------ */
 
-/** The vertical shorts, at their own 720 x 1280. No Or-en clips, and Catalyst (landscape) stays on the anime page. */
+/** The vertical shorts, at their own 720 x 1280. No Or-en clips. */
 const SHORTS = ["back-to-me", "creature-comfort", "highquest-on-break", "everyday-stops", "celestial-fruit-grazer", "one-second-express", "glowmote-grooming"].map(
   (n) => ({ video: `/labs/anime/shorts/${n}.mp4`, poster: `/labs/anime/shorts/${n}.webp` }),
 );
-/** Seconds each panel holds a clip before it cuts, in turn. The first cuts fall at different times, so the panels never cut together. */
-const CUTS = [
-  [5.5, 8, 6.5, 9.5, 7],
-  [7.5, 5, 9, 6, 8.5],
-  [9.5, 6.5, 7.5, 5, 8],
-  [6.5, 9, 5.5, 8, 6],
-];
-
-type Pick = (panel: number) => number;
 
 /**
- * Four vertical panels across the whole stage, each cutting to its next short every five to ten seconds.
- * No two panels show the same clip at once, and a clip picks up where it was last cut away from. The cuts
- * run on the videos' own clocks, so leaving the stage pauses the montage and coming back carries on.
- * Posters only under reduced motion.
+ * A full-screen cut plays to its end; each is already 6 to 10 seconds long. Catalyst is cut from the
+ * 1920 x 1080 master, the dances are at their own 1280 x 720. The row of four shorts holds for `len`.
+ */
+type Segment = { kind: "film"; video: string; poster: string } | { kind: "row"; len: number };
+const film = (n: string): Segment => ({ kind: "film", video: `/labs/anime/montage/${n}.mp4`, poster: `/labs/anime/montage/${n}.webp` });
+const SEGMENTS: Segment[] = [
+  film("catalyst-aisle"),
+  { kind: "row", len: 7 },
+  film("dance-indoor"),
+  film("catalyst-card"),
+  { kind: "row", len: 6.5 },
+  film("catalyst-night"),
+  film("dance-cloud"),
+  film("catalyst-rain"),
+  film("catalyst-tree"),
+  { kind: "row", len: 7.5 },
+];
+const PANELS = 4;
+const after = (k: number) => (k + 1) % SEGMENTS.length;
+const FIRST_POSTER = "/labs/anime/montage/catalyst-aisle.webp";
+
+/**
+ * One montage with hard cuts: a full-screen Catalyst or dance cut, then the row of four vertical shorts,
+ * and so on. Each time the row comes round it deals the next four shorts, and a short picks up where it
+ * was last cut away from. Only the shown segment and the next one have sources; a full-screen cut drops
+ * its source once it has played. The cuts run on the videos' own clocks, so leaving the stage pauses the
+ * montage and coming back carries on from the same segment and time. One still under reduced motion.
  */
 function MontageHero({ active }: { active: boolean }) {
   const still = useStill();
   const started = useStarted(active, still);
-  const shown = useRef<number[]>(CUTS.map((_, i) => i));
-  const cursor = useRef(CUTS.length);
-  const pos = useRef<number[]>(SHORTS.map(() => 0));
-  const pick = useCallback<Pick>((panel) => {
-    for (let k = 0; k < SHORTS.length; k++) {
-      const c = (cursor.current + k) % SHORTS.length;
-      if (!shown.current.includes(c)) {
-        cursor.current = c + 1;
-        shown.current[panel] = c;
-        return c;
-      }
-    }
-    return shown.current[panel];
-  }, []);
-  return (
-    <div className={styles.montage} aria-hidden="true">
-      {CUTS.map((_, i) => (
-        <MontagePanel key={i} panel={i} play={active && !still} started={started} eager={active} pick={pick} pos={pos} />
-      ))}
-    </div>
-  );
-}
-
-function MontagePanel({
-  panel,
-  play,
-  started,
-  eager,
-  pick,
-  pos,
-}: {
-  panel: number;
-  play: boolean;
-  started: boolean;
-  eager: boolean;
-  pick: Pick;
-  pos: MutableRefObject<number[]>;
-}) {
-  const vids = useRef<(HTMLVideoElement | null)[]>([null, null]);
-  const [front, setFront] = useState(0);
-  const frontRef = useRef(0);
+  const play = active && !still;
+  const [cur, setCur] = useState(0);
+  const curRef = useRef(0);
+  const prevRef = useRef(-1);
   const playRef = useRef(play);
-  const seg = useRef({ clip: panel, start: 0, n: 0, busy: false });
+  const films = useRef<(HTMLVideoElement | null)[]>([]);
+  const panels = useRef<(HTMLVideoElement | null)[]>([]);
+  const [clips, setClips] = useState<number[]>(() => Array.from({ length: PANELS }, (_, i) => i));
+  const clipsRef = useRef(clips);
+  const cursor = useRef(0);
+  const rowFor = useRef(-1);
+  const pos = useRef<number[]>(SHORTS.map(() => 0));
+  const clock = useRef({ elapsed: 0, last: -1 });
+  const busy = useRef(false);
 
-  useEffect(() => {
-    playRef.current = play;
-    const v = vids.current[frontRef.current];
-    if (!v || !v.src) return;
-    if (play) v.play().catch(() => {});
-    else v.pause();
-  }, [play, started]);
+  const videosOf = useCallback((k: number) => {
+    const list = SEGMENTS[k].kind === "film" ? [films.current[k]] : panels.current;
+    return list.filter((v): v is HTMLVideoElement => !!v);
+  }, []);
 
-  // The first clip, set once.
-  useEffect(() => {
-    const v = vids.current[0];
-    if (!started || !v || v.src) return;
-    v.src = SHORTS[panel].video;
-    if (playRef.current) v.play().catch(() => {});
-  }, [started, panel]);
-
-  useEffect(() => {
-    const cuts = CUTS[panel];
-    const cut = () => {
-      const s = seg.current;
-      const from = vids.current[frontRef.current];
-      const back = vids.current[1 - frontRef.current];
-      if (s.busy || !from || !back) return;
-      s.busy = true;
-      pos.current[s.clip] = from.currentTime;
-      const c = pick(panel);
-      const len = cuts[(s.n + 1) % cuts.length];
-      const go = () => {
-        const swap = () => {
-          from.pause();
-          frontRef.current = 1 - frontRef.current;
-          setFront(frontRef.current);
-          seg.current = { clip: c, start: back.currentTime, n: s.n + 1, busy: false };
-        };
-        if (playRef.current) back.play().then(swap, swap);
-        else swap();
-      };
+  // Give a segment its sources ahead of time. The row deals its next four shorts here and seeks each to
+  // where it was left, or to the start when that would run past its end.
+  const prepare = useCallback((k: number) => {
+    const s = SEGMENTS[k];
+    if (s.kind === "film") {
+      const v = films.current[k];
+      if (v && !v.getAttribute("src")) {
+        v.preload = "auto";
+        v.src = s.video;
+      }
+      return;
+    }
+    if (rowFor.current === k) return;
+    rowFor.current = k;
+    const deal = Array.from({ length: PANELS }, (_, i) => (cursor.current + i) % SHORTS.length);
+    cursor.current = (cursor.current + PANELS) % SHORTS.length;
+    clipsRef.current = deal;
+    setClips(deal);
+    clock.current = { elapsed: 0, last: -1 };
+    deal.forEach((c, i) => {
+      const v = panels.current[i];
+      if (!v) return;
       const seek = () => {
         let at = pos.current[c];
-        if (!(at + len < back.duration - 0.3)) at = 0;
-        back.addEventListener("seeked", go, { once: true });
-        back.currentTime = at;
+        if (!(at + s.len < v.duration - 0.3)) at = 0;
+        v.currentTime = at;
       };
-      if (back.dataset.clip === String(c) && back.readyState >= 1) seek();
+      if (v.getAttribute("src") === SHORTS[c].video && v.readyState >= 1) seek();
       else {
-        back.dataset.clip = String(c);
-        back.addEventListener("loadedmetadata", seek, { once: true });
-        back.src = SHORTS[c].video;
+        v.addEventListener("loadedmetadata", seek, { once: true });
+        v.src = SHORTS[c].video;
       }
+    });
+  }, []);
+
+  // A hard cut: start the next segment, and swap only once it is playing, so the outgoing frame holds
+  // until then and nothing blank shows between them.
+  const advance = useCallback(() => {
+    if (busy.current) return;
+    busy.current = true;
+    const from = curRef.current;
+    const to = after(from);
+    prepare(to);
+    const swap = () => {
+      if (SEGMENTS[from].kind === "row") {
+        clipsRef.current.forEach((c, i) => {
+          const v = panels.current[i];
+          if (!v) return;
+          pos.current[c] = v.currentTime;
+          v.pause();
+        });
+        rowFor.current = -1;
+      } else films.current[from]?.pause();
+      if (!playRef.current) videosOf(to).forEach((v) => v.pause());
+      prevRef.current = from;
+      curRef.current = to;
+      setCur(to);
+      busy.current = false;
+      prepare(after(to));
+    };
+    const next = videosOf(to);
+    if (!playRef.current || !next.length) swap();
+    else Promise.all(next.map((v) => v.play())).then(swap, swap);
+  }, [prepare, videosOf]);
+
+  // After the swap has painted, drop the source of the full-screen cut that just played.
+  useEffect(() => {
+    const k = prevRef.current;
+    if (k < 0 || k === cur || SEGMENTS[k].kind !== "film") return;
+    const v = films.current[k];
+    if (v?.getAttribute("src")) {
+      v.removeAttribute("src");
+      v.load();
+    }
+  }, [cur]);
+
+  // Play while the stage is shown, pause while away. The first time, load the opening segment and the next.
+  useEffect(() => {
+    playRef.current = play;
+    if (!started || still) return;
+    const k = curRef.current;
+    prepare(k);
+    prepare(after(k));
+    videosOf(k).forEach((v) => (play ? v.play().catch(() => {}) : v.pause()));
+  }, [play, started, still, prepare, videosOf]);
+
+  // A full-screen cut ends its segment when it ends; the row counts its first panel's playing time.
+  useEffect(() => {
+    if (still) return;
+    const onEnded = (e: Event) => {
+      if (e.currentTarget === films.current[curRef.current]) advance();
     };
     const onTime = (e: Event) => {
-      const v = e.currentTarget as HTMLVideoElement;
-      if (v !== vids.current[frontRef.current]) return;
-      const s = seg.current;
-      if (v.ended || v.currentTime - s.start >= cuts[s.n % cuts.length]) cut();
+      const s = SEGMENTS[curRef.current];
+      if (s.kind !== "row") return;
+      const t = (e.currentTarget as HTMLVideoElement).currentTime;
+      const c = clock.current;
+      if (c.last >= 0) {
+        const d = t - c.last;
+        if (d > 0 && d < 1) c.elapsed += d;
+      }
+      c.last = t;
+      if (c.elapsed >= s.len) advance();
     };
-    const all = vids.current.filter((v): v is HTMLVideoElement => !!v);
-    all.forEach((v) => {
-      v.addEventListener("timeupdate", onTime);
-      v.addEventListener("ended", onTime);
-    });
-    return () =>
-      all.forEach((v) => {
-        v.removeEventListener("timeupdate", onTime);
-        v.removeEventListener("ended", onTime);
-      });
-  }, [panel, pick, pos]);
+    const fs = films.current.filter((v): v is HTMLVideoElement => !!v);
+    const lead = panels.current[0];
+    fs.forEach((v) => v.addEventListener("ended", onEnded));
+    lead?.addEventListener("timeupdate", onTime);
+    return () => {
+      fs.forEach((v) => v.removeEventListener("ended", onEnded));
+      lead?.removeEventListener("timeupdate", onTime);
+    };
+  }, [still, advance]);
 
+  if (still) {
+    return (
+      <div className={styles.montage} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.film} data-on="true" src={FIRST_POSTER} alt="" decoding="async" />
+      </div>
+    );
+  }
+
+  const near = (k: number) => k === cur || k === after(cur);
   return (
-    <div className={styles.panel}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={SHORTS[panel].poster} alt="" loading={eager ? "eager" : "lazy"} decoding="async" />
-      {[0, 1].map((k) => (
-        <video
-          key={k}
-          ref={(el) => {
-            vids.current[k] = el;
-          }}
-          data-front={k === front}
-          data-clip={k === 0 ? String(panel) : undefined}
-          poster={k === 0 ? SHORTS[panel].poster : undefined}
-          muted
-          playsInline
-          preload="auto"
-        />
-      ))}
+    <div className={styles.montage} aria-hidden="true">
+      {SEGMENTS.map((s, k) =>
+        s.kind === "film" ? (
+          <video
+            key={k}
+            ref={(el) => {
+              films.current[k] = el;
+            }}
+            className={styles.film}
+            data-on={k === cur}
+            poster={near(k) ? s.poster : undefined}
+            muted
+            playsInline
+            preload="none"
+          />
+        ) : null,
+      )}
+      <div className={styles.row} data-on={SEGMENTS[cur].kind === "row"}>
+        {clips.map((c, i) => (
+          <div key={i} className={styles.panel}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={SHORTS[c].poster} alt="" loading={active ? "eager" : "lazy"} decoding="async" />
+            <video
+              ref={(el) => {
+                panels.current[i] = el;
+              }}
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -282,10 +345,9 @@ function useCycle(count: number, ms: number, active: boolean) {
 const stillOf = (slug: string) => releases.find((r) => r.poster.endsWith(`/${slug}.webp`))?.poster ?? `/labs/cooking/stills/${slug}.webp`;
 const DISHES = releases.map((r) => r.dish);
 
-/** Whole pictures that each fill the stage: the Akane kitchen, the table of dishes, two rows of episode stills. */
+/** Whole pictures that each fill the stage: the Akane kitchen and two rows of episode stills. */
 const KITCHEN: ({ kind: "art"; src: string } | { kind: "dishes"; items: string[] } | { kind: "stills"; items: string[] })[] = [
   { kind: "art", src: supper.art },
-  { kind: "dishes", items: [...DISHES, ...DISHES].slice(0, 15) },
   { kind: "stills", items: ["kacchi-biryani", "cobb-salad", "margherita-pizza", "masala-dosa"].map(stillOf) },
   { kind: "stills", items: ["mushroom-stroganoff", "gambas-al-ajillo", "oyakodon", "lemon-ricotta-pancakes"].map(stillOf) },
 ];

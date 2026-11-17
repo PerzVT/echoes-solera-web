@@ -83,12 +83,32 @@
   }
 }
 
-/* Anime: four vertical panels across the whole stage with thin gaps. Each panel crops its 9:16 clip to
-   its own height, so the video is only ever scaled down. Two videos per panel; the front one shows and the
-   cut is a hard swap. */
+/* Anime: one montage of hard cuts. A full-screen cut covers the stage; the row is four vertical panels
+   with thin gaps, each cropping its 9:16 clip to its own height, so it is only ever scaled down. The shown
+   segment sits on top; the others wait underneath, hidden, so a cut is an instant swap. */
 .montage {
   position: absolute;
   inset: 0;
+  z-index: 0;
+  background: #07090d;
+}
+.film,
+.row {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.film {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.film[data-on="true"],
+.row[data-on="true"] {
+  opacity: 1;
+  z-index: 1;
+}
+.row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
@@ -108,12 +128,6 @@
   height: 100%;
   object-fit: cover;
   object-position: 50% 35%;
-}
-.panel video {
-  opacity: 0;
-}
-.panel video[data-front="true"] {
-  opacity: 1;
 }
 
 /* Cooking: whole scenes crossfade, each edge to edge. The Akane kitchen keeps its own quiet left side
@@ -273,7 +287,7 @@
     justify-content: center;
   }
   /* Four panels as two by two on a tall stage, so each keeps a vertical shape. */
-  .montage {
+  .row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
     gap: 4px;
