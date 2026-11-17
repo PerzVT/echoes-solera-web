@@ -1,0 +1,140 @@
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 300px));
+  justify-content: start;
+  gap: clamp(16px, 2.4vw, 32px);
+  list-style: none;
+}
+.frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 24px 48px rgb(0 0 0 / 0.36);
+  margin-bottom: 16px;
+}
+.frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The whole frame plays and pauses. */
+.hit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border-radius: inherit;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.hit:focus-visible {
+  outline-offset: -4px;
+}
+.hit:active {
+  scale: 0.98;
+}
+.play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #17202a;
+  background: rgb(246 243 236 / 0.94);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.4);
+  /* Leaves as the clip starts and comes back when it stops, with the dialog's enter and exit:
+     opacity and a scale from 0.97, 180 ms in and 120 ms out. */
+  opacity: 0;
+  scale: 0.97;
+  transition:
+    opacity 120ms var(--ease-out),
+    scale 120ms var(--ease-out);
+}
+.play[data-shown="true"] {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 180ms var(--ease-out),
+    scale 180ms var(--ease-out);
+}
+.play svg {
+  translate: 2px 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hit:hover .play[data-shown="true"] {
+    scale: 1.06;
+  }
+}
+.sound {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px 0 12px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #fff;
+  background: rgb(14 20 28 / 0.78);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sound:hover {
+    background: rgb(14 20 28 / 0.92);
+  }
+}
+.sound:active {
+  scale: 0.96;
+}
+@media (pointer: coarse) {
+  .sound {
+    min-height: 44px;
+  }
+}
+.title {
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: repeat(3, 72vw);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .row li {
+    scroll-snap-align: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .play {
+    transition: none;
+  }
+  /* The 2px nudge centres the play triangle; the reduced-motion baseline must not undo it on hover. */
+  .row .hit .play svg {
+    translate: 2px 0 !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .play {
+    scale: 1;
+    filter: none;
+    transition: opacity var(--dur-feedback) linear;
+  }
+}

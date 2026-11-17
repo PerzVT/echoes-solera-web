@@ -1,0 +1,158 @@
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 4px 8px 4px 12px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-weight: 500;
+  font-size: 1.125rem;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+.brand svg {
+  width: 36px;
+  height: 36px;
+}
+.links {
+  display: flex;
+  gap: 4px;
+}
+.links > a,
+.menu summary {
+  padding: 10px 14px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.links > a[aria-current="page"],
+.menu summary[aria-current="page"],
+.menu[open] summary {
+  color: var(--text);
+}
+.menu[open] summary {
+  background: var(--surface);
+}
+@media (hover: hover) and (pointer: fine) {
+  .links > a:hover,
+  .menu summary:hover {
+    color: var(--text);
+    background: var(--surface);
+  }
+}
+.links > a:active,
+.menu summary:active {
+  scale: 0.96;
+}
+.menu {
+  position: relative;
+}
+.menu summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+}
+.menu summary::-webkit-details-marker {
+  display: none;
+}
+.menu summary svg {
+  transition: rotate var(--dur-enter) var(--ease-out);
+}
+.menu[open] summary svg {
+  rotate: 180deg;
+}
+.menu ul {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  padding: 8px;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
+}
+.menu[open] ul {
+  transform-origin: 24px 0;
+  animation: menu-in var(--dur-enter) var(--ease-out);
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+@keyframes menu-fade {
+  from {
+    opacity: 0;
+  }
+}
+.menu li a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu li a:hover {
+    background: var(--surface-hover);
+  }
+}
+.menu li a:active {
+  background: var(--surface-sunken);
+}
+.spacer {
+  flex: 1;
+}
+/* Phones: the links drop to their own row under the brand instead of disappearing. */
+@media (max-width: 720px) {
+  .nav {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding-inline: 0;
+  }
+  .links {
+    order: 3;
+    flex-basis: 100%;
+    margin-left: -14px;
+  }
+  .links > a,
+  .menu summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .menu ul {
+    left: 14px;
+    max-width: calc(100vw - 32px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu summary svg {
+    transition: none;
+  }
+  /* The chevron shows the menu's state, so it stays turned even while the baseline holds hover still. */
+  .menu[open] summary svg {
+    rotate: 180deg !important;
+  }
+  .menu[open] ul {
+    animation-name: menu-fade;
+  }
+}

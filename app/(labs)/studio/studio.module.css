@@ -1,0 +1,284 @@
+.page {
+  padding: 16px 24px 96px;
+}
+.main {
+  max-width: 1344px;
+  margin: 16px auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(56px, 8vh, 88px);
+}
+
+/* Intro: the heading on the left, what we do and the actions on the right. */
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  column-gap: clamp(32px, 5vw, 80px);
+  row-gap: 20px;
+  align-items: end;
+  padding: clamp(40px, 7vh, 72px) 0 clamp(40px, 6vh, 56px);
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  grid-column: 1 / -1;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.intro h1 {
+  max-width: 11ch;
+}
+.introSide {
+  display: grid;
+  gap: 28px;
+  justify-items: start;
+}
+.lede {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Selected work: the three pieces the brief names, at different sizes on a 12-column grid. */
+.work {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: clamp(340px, 34vw, 500px);
+  gap: 16px;
+  list-style: none;
+}
+.wide {
+  grid-column: span 8;
+}
+.tall {
+  grid-column: span 4;
+}
+.mid {
+  grid-column: span 7;
+}
+.narrow {
+  grid-column: span 5;
+}
+.full {
+  grid-column: span 12;
+}
+.card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+.card:focus-visible {
+  outline-offset: 4px;
+  border-radius: var(--r-card);
+}
+.cardArt {
+  z-index: -2;
+  object-fit: cover;
+  transition: scale 400ms var(--ease-out);
+}
+.cardShade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgb(10 14 20 / 0.9) 0%, rgb(10 14 20 / 0.55) 32%, transparent 62%);
+}
+.cardCopy {
+  display: grid;
+  gap: 6px;
+  padding: clamp(20px, 2.4vw, 32px);
+  padding-right: 88px;
+  max-width: 560px;
+}
+.kind {
+  color: rgb(255 255 255 / 0.78);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+.cardLine {
+  color: rgb(255 255 255 / 0.86);
+  text-wrap: pretty;
+}
+.cardArrow {
+  position: absolute;
+  right: clamp(20px, 2.4vw, 32px);
+  bottom: clamp(20px, 2.4vw, 32px);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    translate var(--dur-move) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .cardArt {
+    scale: 1.03;
+  }
+  .card:hover .cardArrow {
+    background: rgb(255 255 255 / 0.24);
+    translate: 3px 0;
+  }
+}
+
+/* Services: a ruled list beside the heading. */
+.services {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 48px;
+}
+.serviceList > div {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 8px 32px;
+  align-items: baseline;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.serviceList > div:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Process: four numbered steps on one line. */
+.steps {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  list-style: none;
+}
+.steps li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.num {
+  /* The one step marker used across the site (lab, studio, game ads, pipeline): a ringed serif numeral. */
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.discuss {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  gap: 48px;
+  padding: clamp(24px, 4vw, 48px);
+  border-radius: var(--r-stage);
+  background: var(--surface);
+  scroll-margin-top: 24px;
+}
+.discussCopy {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+@media (max-width: 1100px) {
+  .services {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+@media (max-width: 900px) {
+  .intro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .work {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .wide,
+  .tall,
+  .mid,
+  .narrow,
+  .full {
+    grid-column: auto;
+  }
+  .card {
+    aspect-ratio: 4 / 3;
+  }
+  .tall .card,
+  .narrow .card {
+    aspect-ratio: 4 / 5;
+  }
+  .steps {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 40px;
+  }
+  .discuss {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 16px 64px;
+  }
+  .serviceList > div {
+    grid-template-columns: 1fr;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+  .discuss {
+    padding: 24px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardArt,
+  .cardArrow {
+    transition: none;
+  }
+  .card:hover .cardArt {
+    scale: 1;
+  }
+  .card:hover .cardArrow {
+    translate: 0 0;
+  }
+}
+
+/* Press: the whole card gives a little. */
+.card {
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.card:active {
+  scale: 0.98;
+}

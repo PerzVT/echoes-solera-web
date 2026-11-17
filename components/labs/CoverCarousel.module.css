@@ -1,0 +1,138 @@
+.carousel {
+  --cover-w: clamp(110px, 9.6vw, 150px);
+}
+/* A row across the whole foot of the hero, under the copy (mini-series-hero-a). */
+.carousel {
+  position: absolute;
+  z-index: 1;
+  left: clamp(24px, 4.4vw, 64px);
+  right: clamp(24px, 4.4vw, 64px);
+  bottom: clamp(24px, 6vh, 64px);
+}
+
+.track {
+  display: flex;
+  gap: 12px;
+  /* Room for the hover lift and the focus ring inside the scroll box. */
+  padding: 10px 4px 6px;
+  margin: -10px -4px -6px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 4px;
+  scrollbar-width: none;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+.track li {
+  flex: none;
+  scroll-snap-align: start;
+}
+/* A soft edge says there is more in that direction. */
+.carousel:not([data-end="true"]) .track {
+  -webkit-mask: linear-gradient(to left, transparent, #000 48px);
+  mask: linear-gradient(to left, transparent, #000 48px);
+}
+.carousel[data-end="true"]:not([data-start="true"]) .track {
+  -webkit-mask: linear-gradient(to right, transparent, #000 48px);
+  mask: linear-gradient(to right, transparent, #000 48px);
+}
+
+.cover {
+  display: block;
+  width: var(--cover-w);
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: var(--r-thumb);
+  outline: 1px solid rgb(255 255 255 / 0.1);
+  outline-offset: -1px;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.4);
+  transition:
+    translate var(--dur-move) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.cover:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cover:active {
+  scale: 0.98;
+}
+
+/* Arrows only where there is a mouse; touch screens swipe. */
+.arrows {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cover:hover {
+    translate: 0 -6px;
+  }
+  /* Above the right end of the row, clear of the copy on the left. */
+  .arrows {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 12px);
+    display: flex;
+    gap: 8px;
+  }
+  .arrows button {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: rgb(14 20 28 / 0.72);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+    transition:
+      background-color var(--dur-feedback) var(--ease-out),
+      opacity var(--dur-feedback) var(--ease-out),
+      scale var(--dur-press) var(--ease-out);
+  }
+  .arrows button:hover:not(:disabled) {
+    background: rgb(14 20 28 / 0.9);
+  }
+  .arrows button:active:not(:disabled) {
+    scale: 0.96;
+  }
+  .arrows button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  /* Every cover fits: nothing to scroll, so no arrows. */
+  .carousel[data-start="true"][data-end="true"] .arrows {
+    display: none;
+  }
+}
+
+/* Narrow screens: the copy fills the foot of the stage, so the row moves to the top edge. */
+@media (max-width: 900px) {
+  .carousel {
+    top: 16px;
+    bottom: auto;
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+  .cover {
+    width: 80px;
+  }
+  .arrows {
+    top: 100%;
+    bottom: auto;
+    margin-top: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover {
+    transition: none;
+  }
+}

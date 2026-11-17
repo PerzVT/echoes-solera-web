@@ -1,0 +1,73 @@
+/*
+ * The intro sheet, to the perz.dev intro's structure and timing (perz.dev,
+ * src/components/site/intro-loader.css):
+ *   a fixed sheet in the page's canvas colour with one centred logo, clamp(88px, 12vw, 128px);
+ *   a ghost of the logo at 0.16, and the full logo filled in over it after 100 ms (AnimatedMark,
+ *   variant "reveal": the material grows along the nine's own shape behind a small pink nib, and the
+ *   bridge and centre are uncovered as it arrives);
+ *   a 2 px line along the bottom edge growing from the left in step with the fill;
+ *   then the whole sheet lifts over 600 ms, cubic-bezier(.76,0,.24,1).
+ *
+ * Two numbers differ from his. A fill that travels a path with four turns covers almost three times the
+ * distance of a straight wipe, so his 1000 ms and his ease left a still start and a rushed middle. The
+ * fill takes 1100 ms on a curve with less ease-in, and the lift starts at 1250 ms, so the sheet is gone
+ * at 1850 ms where his is gone at 1750.
+ */
+.intro {
+  display: none;
+}
+:global(.nl[data-nl-intro]) .intro {
+  display: grid;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  place-items: center;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  /* Read by the mark's reveal and by the line, so the two cannot drift apart. */
+  --mark-reveal: 1100ms;
+  --mark-reveal-ease: cubic-bezier(0.42, 0, 0.3, 1);
+  animation: intro-lift 600ms 1250ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+.logo {
+  display: grid;
+  width: clamp(88px, 12vw, 128px);
+  aspect-ratio: 1;
+}
+.logo svg {
+  width: 100%;
+  height: 100%;
+}
+.line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform-origin: left;
+  animation: intro-line var(--mark-reveal) 100ms var(--mark-reveal-ease) both;
+}
+@keyframes intro-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes intro-lift {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+/* The inline script never sets the attribute under reduced motion; this covers the setting changing mid-visit. */
+@media (prefers-reduced-motion: reduce) {
+  :global(.nl[data-nl-intro]) .intro {
+    display: none;
+    animation: none;
+  }
+}

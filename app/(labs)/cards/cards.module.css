@@ -1,0 +1,24 @@
+/* The collection's cream desk. */
+.desk {
+  max-width: 1344px;
+  margin: 16px auto 0;
+  display: grid;
+  gap: clamp(16px, 3vh, 28px);
+  padding: clamp(20px, 3.4vw, 48px);
+  border-radius: var(--r-stage);
+  background: #fcedde;
+  color: var(--text);
+}
+/* The pack opening happens on the teal stage the card detail uses, as in tcg-pack-reveal. */
+.packs {
+  min-height: calc(100dvh - 200px);
+  align-content: center;
+  background:
+    radial-gradient(70% 60% at 50% 35%, rgb(255 220 180 / 0.1), transparent 70%),
+    radial-gradient(120% 100% at 30% 20%, #1f5059 0%, #143a44 60%, #0f2c35 100%);
+}
+.note {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}

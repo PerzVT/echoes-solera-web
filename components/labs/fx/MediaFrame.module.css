@@ -1,0 +1,66 @@
+.frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--mf-r, inherit);
+}
+.fill {
+  position: absolute;
+  inset: 0;
+}
+.media {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+/* With no ratio and no fill, the media itself sets the height. */
+.frame:not([data-sized]) .media {
+  position: relative;
+}
+.media > :is(img, video) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wait {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--skeleton);
+  opacity: 0;
+}
+.wait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(100deg, transparent 22%, var(--skeleton-sheen) 50%, transparent 78%);
+}
+
+/* Only a scripted document hides media that has not loaded; otherwise it would never be shown. */
+:global(.nl[data-nl-js]) .frame[data-loaded="false"] .media {
+  opacity: 0;
+}
+:global(.nl[data-nl-js]) .frame[data-loaded="false"] .wait {
+  opacity: 1;
+}
+:global(.nl[data-nl-js]) .frame[data-loaded="false"] .wait::after {
+  animation: mf-sheen 1700ms var(--ease-in-out) infinite;
+}
+:global(.nl[data-nl-js]) .frame[data-loaded="true"] .media {
+  transition: opacity var(--dur-media) var(--ease-out);
+}
+:global(.nl[data-nl-js]) .frame[data-loaded="true"] .wait {
+  transition: opacity var(--dur-media) var(--ease-out);
+}
+@keyframes mf-sheen {
+  to {
+    translate: 100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.nl[data-nl-js]) .frame[data-loaded="false"] .wait::after {
+    animation: none;
+  }
+}

@@ -1,0 +1,346 @@
+.mark {
+  --mark-focal: var(--accent, #ff83b7);
+  --mark-delay: 0ms;
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+.mark[data-tone="mono"] {
+  --mark-focal: currentColor;
+}
+.focalStop {
+  stop-color: var(--mark-focal);
+}
+.centre {
+  fill: var(--mark-focal);
+}
+.centre,
+.bridge {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+.bridge {
+  transform-origin: 100% 50%;
+}
+/* The pen stroke. Hidden until a variant uses it: the offsets leave room for the round ends, which
+   reach 0.07 of the path past each end of a dash. */
+.run {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 13.4;
+  stroke-linejoin: miter;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1.4;
+  stroke-dashoffset: 1.1;
+}
+.ghost {
+  opacity: 0.1;
+}
+.outline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.5;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+/* draw: over a faint ghost of the finished mark (as the perz.dev intro shows its logo), the focal node lands, its bridge reaches out, a hairline traces the contour and the nine is
+   written in after it. About one second. */
+.mark[data-variant="draw"] .centre {
+  animation: mark-centre 360ms var(--ease-out) var(--mark-delay) both;
+}
+.mark[data-variant="draw"] .bridge {
+  animation: mark-bridge 280ms var(--ease-out) calc(var(--mark-delay) + 160ms) both;
+}
+.mark[data-variant="draw"] .outline {
+  animation: mark-outline 820ms var(--ease-in-out) calc(var(--mark-delay) + 60ms) both;
+}
+.mark[data-variant="draw"] .run {
+  animation: mark-write 600ms var(--ease-in-out) calc(var(--mark-delay) + 300ms) both;
+}
+.mark[data-variant="draw"] .lattice {
+  animation: mark-settle 120ms linear calc(var(--mark-delay) + 880ms) both;
+}
+@keyframes mark-centre {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+@keyframes mark-bridge {
+  from {
+    opacity: 0;
+    scale: 0 1;
+  }
+}
+@keyframes mark-outline {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0.7;
+  }
+  78% {
+    stroke-dashoffset: 0;
+    opacity: 0.7;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes mark-write {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes mark-settle {
+  from {
+    opacity: 0;
+  }
+}
+
+/* idle: the focal node breathes, slowly and by little. A link that holds the mark sends one pulse round
+   the nine when it is hovered. */
+.mark[data-variant="idle"] .centre {
+  animation: mark-breathe 2800ms var(--ease-in-out) infinite alternate;
+}
+.mark[data-variant="idle"] .bridge {
+  animation: mark-glow 2800ms var(--ease-in-out) infinite alternate;
+}
+@keyframes mark-breathe {
+  to {
+    scale: 0.88;
+  }
+}
+@keyframes mark-glow {
+  to {
+    opacity: 0.55;
+  }
+}
+.mark[data-variant="idle"] .run {
+  stroke: var(--mark-focal);
+  stroke-dasharray: 0.16 1.6;
+  stroke-dashoffset: 0.26;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .mark[data-variant="idle"] .run {
+    animation: mark-pulse 900ms var(--ease-in-out) both;
+  }
+}
+@keyframes mark-pulse {
+  from {
+    stroke-dashoffset: 0.26;
+  }
+  to {
+    stroke-dashoffset: -1.1;
+  }
+}
+
+/* busy: the lattice dims and a lit length travels the nine, over and over. */
+.mark[data-variant="busy"] .lattice {
+  opacity: 0.28;
+}
+.mark[data-variant="busy"] .run {
+  stroke-dasharray: 0.3 1.6;
+  stroke-dashoffset: 0.4;
+  animation: mark-travel 1500ms cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+}
+.mark[data-variant="busy"] .centre {
+  animation: mark-beat 1500ms var(--ease-in-out) infinite;
+}
+@keyframes mark-travel {
+  from {
+    stroke-dashoffset: 0.4;
+  }
+  to {
+    stroke-dashoffset: -1.1;
+  }
+}
+@keyframes mark-beat {
+  0%,
+  100% {
+    scale: 1;
+  }
+  18% {
+    scale: 0.82;
+  }
+}
+
+/* Materials: a raster of the lattice in one of the nine brand materials, clipped to the vector lattice
+   so its edge stays sharp at any size. */
+.rim {
+  fill: none;
+  stroke: rgb(246 243 236 / 0.4);
+  stroke-width: 0.6;
+}
+.drift,
+.sheen {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* On hover only: the paper lattice is underneath and the material fades in over it. */
+.mark[data-on-hover] .materials {
+  opacity: 0;
+  transition: opacity 260ms var(--ease-out);
+}
+/* Same weight as the flow rules below plus one attribute, so their animation shorthand cannot set these
+   running again: a mark nobody points at runs nothing. */
+.mark[data-on-hover][data-variant="flow"] :is(.drift, .sheen) {
+  animation-play-state: paused;
+}
+:is(a, button):focus-visible .mark[data-on-hover] .materials {
+  opacity: 1;
+}
+:is(a, button):focus-visible .mark[data-on-hover][data-variant="flow"] :is(.drift, .sheen) {
+  animation-play-state: running;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .mark[data-on-hover] .materials {
+    opacity: 1;
+  }
+  :is(a, button):hover .mark[data-on-hover][data-variant="flow"] :is(.drift, .sheen) {
+    animation-play-state: running;
+  }
+}
+
+/* flow: a second copy of the material, a little large, drifts over the still one under the clip, the
+   way wet pigment creeps; now and then one soft light crosses it. */
+.mark[data-variant="flow"] .drift {
+  /* Half strength: the moving copy carries the raster's pale rim with it, and at full strength that reads as a second edge. */
+  opacity: 0.55;
+  scale: 1.07;
+  animation: mark-drift 9000ms var(--ease-in-out) infinite alternate;
+}
+.mark[data-variant="flow"] .sheen {
+  rotate: 16deg;
+  animation: mark-sheen 5600ms var(--ease-in-out) infinite;
+}
+@keyframes mark-drift {
+  from {
+    translate: -1.5px -1.1px;
+    rotate: -2.5deg;
+  }
+  to {
+    translate: 1.5px 1.2px;
+    rotate: 2.5deg;
+  }
+}
+@keyframes mark-sheen {
+  0%,
+  58% {
+    translate: 0 0;
+  }
+  100% {
+    translate: 72px 0;
+  }
+}
+
+/* reveal: the perz.dev intro's timing, on this mark's own shape. A ghost of the whole mark at 0.16; the
+   material grows along the nine from the end of its tail, round the loop and in along the bridge, over
+   1000 ms after 100 ms, shifting through its list as it goes and landing on the last. A small pink nib
+   leads the edge and comes to rest where the focal centre is uncovered. */
+.mark[data-variant="reveal"] .ghost {
+  opacity: 0.16;
+}
+.grow {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 14.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1.4;
+  animation: mark-grow var(--mark-reveal, 1000ms) var(--mark-reveal-ease, cubic-bezier(0.65, 0, 0.35, 1)) calc(var(--mark-delay) + 100ms) both;
+}
+.nib {
+  fill: none;
+  stroke: var(--mark-focal);
+  stroke-width: 4.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.001 3;
+  animation:
+    mark-nib var(--mark-reveal, 1000ms) var(--mark-reveal-ease, cubic-bezier(0.65, 0, 0.35, 1)) calc(var(--mark-delay) + 100ms) both,
+    mark-nib-show var(--mark-reveal, 1000ms) linear calc(var(--mark-delay) + 100ms) both;
+}
+.mark[data-variant="reveal"] .material[data-shift] {
+  animation: mark-shift 300ms ease-in-out calc(var(--mark-delay) + 100ms + (var(--k) + 1) * var(--mark-reveal, 1000ms) / (var(--n) + 1) - 150ms) both;
+}
+/* The round end reaches 0.07 of the path past the dash, so "not started" is a little more than one
+   length back. The nib starts 0.04 back for the same reason and so rides just inside the growing end. */
+@keyframes mark-grow {
+  from {
+    stroke-dashoffset: 1.08;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes mark-nib {
+  from {
+    stroke-dashoffset: 0.04;
+  }
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+@keyframes mark-nib-show {
+  0% {
+    opacity: 0;
+  }
+  6%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes mark-shift {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Reduced motion: draw and idle rest as the finished mark; material marks show one material, still. Busy holds a lit length on the top row and
+   only its focal node fades, so it still reads as working without anything travelling. */
+@media (prefers-reduced-motion: reduce) {
+  .mark .ghost {
+    display: none;
+  }
+  .mark .centre,
+  .mark .bridge,
+  .mark .outline,
+  .mark .run,
+  .mark .lattice,
+  .mark .drift,
+  .mark .grow,
+  .mark .material {
+    animation: none !important;
+  }
+  .mark .nib {
+    display: none;
+  }
+  /* One material, still: the first of a cycle, the last of a reveal (where it lands). No light crosses. */
+  .mark .sheen,
+  .mark[data-variant="flow"] .drift {
+    display: none;
+  }
+  .mark[data-variant="reveal"] .material[data-shift] {
+    opacity: 0;
+  }
+  .mark[data-variant="reveal"] .ghost {
+    display: none;
+  }
+  .mark[data-variant="busy"] .run {
+    stroke-dasharray: 0.3 1.6;
+    stroke-dashoffset: -0.2;
+  }
+  .mark[data-variant="busy"] .centre {
+    animation: mark-fade 1600ms var(--ease-in-out) infinite alternate !important;
+  }
+}
+@keyframes mark-fade {
+  to {
+    opacity: 0.45;
+  }
+}

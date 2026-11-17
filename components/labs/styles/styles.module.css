@@ -1,0 +1,299 @@
+/* Styles screens. Panels, chips, fields, the stepper, rows and empty states come from the maker
+   (components/labs/app/maker.module.css). This file holds only what is particular to styles:
+   the hub grid and cards, the chart and its slots, the guide text and the conflict note. */
+
+/* Hub */
+.intro {
+  max-width: 64ch;
+  margin-bottom: 32px;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+.group + .group {
+  margin-top: 48px;
+}
+.groupHead {
+  margin-bottom: 16px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
+  gap: 32px 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.card {
+  display: grid;
+  gap: 8px;
+  border-radius: var(--r-control);
+  color: var(--text);
+}
+a.card {
+  transition: scale var(--dur-press) var(--ease-out);
+}
+a.card:active {
+  scale: 0.98;
+}
+.cardArt {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.cardArt img {
+  object-fit: cover;
+  transition: scale 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.card:hover .cardArt img {
+    scale: 1.03;
+  }
+}
+/* Waiting for chart art: shown, greyed, not a link. */
+.cardSoon {
+  color: var(--text-muted);
+}
+.cardSoon .cardArt img {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+.cardName {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--text-muted);
+}
+.status[data-status="Approved"]::before {
+  background: var(--success);
+  box-shadow: none;
+}
+.status[data-status="Draft"]::before {
+  background: var(--warning);
+  box-shadow: none;
+}
+
+/* Slot: a named place for art. */
+.slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  text-align: center;
+}
+.filled {
+  padding: 0;
+  border: 0;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.filled img,
+.filled video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.slotLabel {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.slotState {
+  font-size: 0.75rem;
+}
+.slotName {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgb(10 14 20 / 0.72);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+/* Over a video the name sits at the top, clear of the controls. */
+.slotName.slotNameTop {
+  top: 8px;
+  bottom: auto;
+}
+
+/* The style page and the creator: chart beside its details. */
+div.split {
+  grid-template-columns: minmax(0, 1.75fr) minmax(320px, 1fr);
+}
+div.splitEven {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* Chart */
+.chart {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  grid-template-rows: repeat(2, minmax(168px, 1fr));
+  gap: 12px;
+  min-height: 380px;
+}
+.chart > :first-child {
+  grid-row: span 2;
+}
+.avoid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.avoid .slot {
+  min-height: 72px;
+}
+.samples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.samples .slot {
+  aspect-ratio: 16 / 9;
+}
+
+/* Guide text */
+.guide {
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-muted);
+}
+.guide mark {
+  display: inline;
+  padding: 2px 0;
+  background: var(--danger-soft);
+  color: var(--text);
+  box-shadow: -4px 0 0 var(--danger-soft), 4px 0 0 var(--danger-soft);
+}
+/* The guide, when shown under the chart: its heading and text keep the panel's own spacing. */
+.guideBlock {
+  display: grid;
+  gap: 16px;
+}
+.conflict {
+  display: grid;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: var(--r-control);
+  background: var(--danger-soft);
+  font-size: 0.875rem;
+}
+.conflict strong {
+  font-weight: 500;
+}
+
+/* Import: the file panel takes a drop. */
+.drop {
+  display: grid;
+  min-width: 0;
+  border-radius: var(--r-card);
+  outline: 2px dashed transparent;
+  outline-offset: 4px;
+  transition: outline-color var(--dur-feedback) var(--ease-out);
+}
+.drop[data-over="true"] {
+  outline-color: var(--focus);
+}
+
+/* Use in project */
+.choices {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  border: 0;
+}
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out);
+}
+.choice:has(:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.choice:has(:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1100px) {
+  div.split,
+  div.splitEven {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 12px;
+  }
+  .chart {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: 150px;
+    min-height: 0;
+  }
+  .chart > :first-child {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+  .avoid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cardArt img,
+  .drop,
+  .choice {
+    transition: none;
+  }
+  a.card:hover .cardArt img {
+    scale: 1;
+  }
+}

@@ -1,0 +1,23 @@
+/* Laid over the page being left, top-aligned, so the skeleton is seen from its top whatever the scroll was. */
+.over {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  overflow: hidden;
+  background: var(--bg);
+  animation: over-in var(--dur-exit) linear;
+  transition: opacity var(--dur-exit) linear;
+}
+.over[data-leaving] {
+  opacity: 0;
+}
+@keyframes over-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .over {
+    animation: none;
+  }
+}

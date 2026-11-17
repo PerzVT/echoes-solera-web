@@ -1,0 +1,180 @@
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-bottom: 24px;
+}
+.head h2:global(.h2) {
+  margin-bottom: 0;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chips button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (pointer: coarse) {
+  .chips button {
+    min-height: 44px;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .chips button:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+}
+.chips button:active {
+  scale: 0.96;
+}
+.chips button[aria-pressed="true"] {
+  color: var(--on-action);
+  background: var(--action);
+  border-color: var(--action);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 32px 24px;
+  list-style: none;
+}
+.poster {
+  display: grid;
+  gap: 4px;
+}
+a.poster {
+  transition: scale var(--dur-press) var(--ease-out);
+}
+a.poster:active {
+  scale: 0.98;
+}
+.cover {
+  position: relative;
+  display: block;
+  margin-bottom: 8px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  outline: 1px solid rgb(255 255 255 / 0.1);
+  outline-offset: -1px;
+  background: var(--surface);
+  transition: translate var(--dur-move) var(--ease-out);
+}
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 200ms linear;
+}
+/* Not out yet: the cover is held back so the released ones stand forward. */
+.cover[data-soon="true"] img {
+  filter: saturate(0.45) brightness(0.72);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.poster:hover .cover {
+    translate: 0 -6px;
+  }
+  a.poster:hover .cover[data-soon="true"] img {
+    filter: saturate(0.8) brightness(0.9);
+  }
+}
+.blank {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1.2;
+  color: var(--text-muted);
+}
+.tag {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgb(14 20 28 / 0.82);
+}
+.name {
+  font-weight: 500;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.count {
+  margin: -8px 0 24px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.moreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 24px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .more:hover {
+    background: var(--surface-hover);
+  }
+}
+.more:active {
+  scale: 0.96;
+}
+
+/* Column counts that divide the first twelve evenly: six, four, then two. */
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+@media (min-width: 721px) and (max-width: 1099px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover {
+    transition: none;
+  }
+}

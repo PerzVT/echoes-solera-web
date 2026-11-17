@@ -1,0 +1,379 @@
+div.split {
+  grid-template-columns: minmax(0, 1.55fr) minmax(360px, 1fr);
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Clips are vertical: the shared tile at 9:16. */
+span.tileArt {
+  aspect-ratio: 9 / 16;
+}
+/* A clip still being made: its poster dimmed under the sunken surface, with glyph noise and a band of density crossing it.
+   When the clip arrives that cover is drawn off from the top, once, behind a pink edge, and the poster is left. */
+.develop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgb(14 20 28 / 0.8);
+}
+.player img {
+  object-fit: cover;
+}
+.developing {
+  color: var(--text);
+}
+.develop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 2px solid var(--accent);
+  opacity: 0;
+}
+.develop[data-leaving] {
+  animation: develop-off 640ms var(--ease-curtain) both;
+}
+.develop[data-leaving]::after {
+  opacity: 1;
+  animation: develop-edge 640ms var(--ease-curtain) both;
+}
+@keyframes develop-off {
+  from {
+    clip-path: inset(0);
+  }
+  to {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+@keyframes develop-edge {
+  to {
+    translate: 0 100%;
+  }
+}
+@keyframes develop-fade {
+  to {
+    opacity: 0;
+  }
+}
+.noClip {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 8px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+.noClip img {
+  width: min(80px, 100%);
+  height: auto;
+}
+
+.frames {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+}
+.frameList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.frame {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.frameArt {
+  width: 48px;
+  height: auto;
+  aspect-ratio: 9 / 16;
+}
+.frameText {
+  display: grid;
+  font-size: 0.875rem;
+}
+
+/* ---------- Side panel ---------- */
+.head {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.player {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.player video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+/* The two states of the panel under the clip: the take's actions, or picking a frame. */
+.mode {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+/* The tick's place on "Keep this take": a faint tick while the take is not kept, drawn over in green when it is. */
+.keepTick {
+  display: inline-grid;
+}
+.keepTick > * {
+  grid-area: 1 / 1;
+}
+.keepTick > :first-child {
+  opacity: 0.28;
+}
+.keepTick > :last-child {
+  color: var(--success);
+}
+.play,
+.mute {
+  z-index: 2;
+}
+.mute {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  background: rgb(0 0 0 / 0.6) !important;
+  color: #fff !important;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.mute:active {
+  scale: 0.96;
+}
+.play {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px 0 8px;
+  border-radius: var(--r-pill);
+  background: rgb(0 0 0 / 0.6) !important;
+  color: #fff !important;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.play:active {
+  scale: 0.96;
+}
+.info {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.takes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.stack {
+  display: grid;
+  justify-items: start;
+  margin-left: -16px;
+}
+.rule {
+  height: 0;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+.failed {
+  display: grid;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: var(--r-control);
+  background: var(--danger-soft);
+}
+.failedTitle {
+  font-weight: 500;
+  color: var(--danger);
+}
+
+/* Scrubber over the clip, for picking a frame. */
+.scrub {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.scrub input,
+.trim input {
+  appearance: none;
+  width: 100%;
+  height: 36px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.scrub input::-webkit-slider-runnable-track,
+.trim input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(to right, var(--progress) var(--p, 0%), var(--border) var(--p, 0%));
+}
+.trim input::-webkit-slider-runnable-track {
+  background: var(--border);
+}
+/* The part of the clip the trim keeps is lit on both tracks: after the start, before the end. */
+.trim input[data-edge="start"]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, var(--border) var(--p, 0%), var(--progress) var(--p, 0%));
+}
+.trim input[data-edge="end"]::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, var(--progress) var(--p, 100%), var(--border) var(--p, 100%));
+}
+.scrub input::-moz-range-track,
+.trim input::-moz-range-track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--border);
+}
+.scrub input::-moz-range-progress {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--progress);
+}
+.scrub input::-webkit-slider-thumb,
+.trim input::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--text);
+  transition: scale var(--dur-press) var(--ease-out);
+}
+/* A handle that is held grows a little, so a drag has a grip. */
+.scrub input:active::-webkit-slider-thumb,
+.trim input:active::-webkit-slider-thumb {
+  scale: 1.3;
+}
+.scrub input::-moz-range-thumb,
+.trim input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--text);
+}
+.trim {
+  gap: 8px;
+}
+.trim label {
+  display: grid;
+}
+.editBox {
+  margin-bottom: 8px;
+}
+
+/* Play episode */
+.playDialog {
+  width: min(460px, calc(100vw - 32px));
+  padding: 16px;
+}
+.playWrap {
+  display: grid;
+  gap: 12px;
+}
+/* The dialog's own controls: play, the clip's time, sound. */
+.playBar {
+  width: min(100%, 360px);
+  margin: 0 auto;
+}
+.barButton {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  color: var(--text);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .barButton:hover {
+    background: var(--surface-hover);
+  }
+}
+.barButton:active {
+  scale: 0.96;
+}
+.playFrame {
+  position: relative;
+  height: min(70dvh, 640px);
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  background: #000;
+}
+.playFrame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+.playLabel {
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Reduced motion: the glyphs hold one frame while the clip is made, and fade off when it arrives. Handles do not grow. */
+@media (prefers-reduced-motion: reduce) {
+  .develop[data-leaving] {
+    animation: develop-fade 200ms linear both;
+  }
+  .develop[data-leaving]::after {
+    display: none;
+  }
+  .scrub input:active::-webkit-slider-thumb,
+  .trim input:active::-webkit-slider-thumb {
+    scale: 1;
+  }
+}
+@media (max-width: 900px) {
+  div.split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .player {
+    width: min(220px, 100%);
+  }
+}
+
+/* The side panel; a phone scrolls it into view after a tile is chosen. */
+.side {
+  scroll-margin-top: 16px;
+}

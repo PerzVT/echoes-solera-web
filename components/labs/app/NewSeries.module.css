@@ -1,0 +1,90 @@
+div.split {
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+}
+.tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+/* A radio card: the chosen one takes the pink edge and the soft pink fill. */
+.tool {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-height: 96px;
+  padding: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-control);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tool:hover {
+    background: var(--surface-hover);
+  }
+}
+.tool:active {
+  scale: 0.98;
+}
+.tool[data-checked="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.tool:has(:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.toolName {
+  font-weight: 500;
+}
+.styles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+label.styleCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 0;
+  padding: 12px;
+}
+.styleArt {
+  position: relative;
+  flex: none;
+}
+.castRow {
+  align-items: start;
+}
+.castText {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.below {
+  display: grid;
+  gap: 12px;
+  padding: 16px 24px;
+}
+
+@media (max-width: 1100px) {
+  .tools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tool {
+    min-height: 0;
+  }
+}
+@media (max-width: 900px) {
+  div.split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 720px) {
+  .below {
+    padding-inline: 16px;
+  }
+}

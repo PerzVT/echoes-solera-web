@@ -1,0 +1,69 @@
+.form {
+  display: grid;
+  gap: 20px;
+}
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.form label {
+  display: grid;
+  gap: 8px;
+}
+.form label span {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.form input,
+.form textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+  transition: border-color var(--dur-feedback) var(--ease-out);
+}
+.form textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+.form input::placeholder {
+  color: var(--text-disabled);
+}
+@media (hover: hover) and (pointer: fine) {
+  .form input:hover,
+  .form textarea:hover {
+    border-color: var(--text-muted);
+  }
+}
+.form input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+.form label .error {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--danger);
+}
+.form input:focus-visible,
+.form textarea:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-control);
+}
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+@media (max-width: 560px) {
+  .pair {
+    grid-template-columns: 1fr;
+  }
+}

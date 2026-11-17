@@ -1,0 +1,93 @@
+/* The few shapes the creator's loading states need beyond the real screens' own classes. */
+.field {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.lines {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.tile {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding-bottom: 6px;
+  list-style: none;
+}
+.facts {
+  display: grid;
+}
+.facts > span {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 37px;
+  border-bottom: 1px solid var(--border);
+}
+.facts > span:last-child {
+  border-bottom: 0;
+}
+.stack {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 14px;
+}
+.centre {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 320px);
+  margin: 32px auto 0;
+}
+.centre > * {
+  justify-items: center;
+}
+
+/* Series card rows, at the height of an episode link. */
+.episode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+.episode + .episode {
+  border-top: 1px solid var(--border);
+}
+.homeAdd {
+  align-items: center;
+  gap: 28px;
+  min-height: 40px;
+  margin-left: 0;
+}
+
+/* The screenplay page as lines. */
+.page {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+.pageHeading {
+  margin-top: 18px;
+}
+.pageHeading:first-child {
+  margin-top: 6px;
+}
+.pageCamera {
+  margin-top: 8px;
+}
+.pageCue,
+.pageLine {
+  justify-self: center;
+}
+.pageCue {
+  margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+  .facts > span {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+}

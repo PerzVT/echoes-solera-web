@@ -1,0 +1,138 @@
+/* The art is light with an empty left half, so the copy sits there in dark ink. */
+/* Height follows the shared title-page hero. */
+.hero {
+  composes: nl-hero-height from global;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-stage);
+  /* Matches the art's own backdrop so no seam shows while it loads. */
+  background: #fadccc;
+  color: var(--text);
+}
+.heroArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 70%;
+}
+.heroCopy {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  max-width: 44%;
+  padding: 48px clamp(24px, 4.4vw, 64px);
+}
+.lede {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px 24px;
+  list-style: none;
+}
+.card {
+  display: grid;
+  gap: 4px;
+  border-radius: var(--r-card);
+}
+.thumb {
+  position: relative;
+  display: block;
+  margin-bottom: 10px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  outline: 1px solid rgb(255 255 255 / 0.08);
+  outline-offset: -1px;
+  background: var(--surface);
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .thumb img {
+    scale: 1.04;
+  }
+}
+.tag {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgb(14 20 28 / 0.72);
+}
+.name {
+  font-weight: 500;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 720px) {
+  /* Copy above, art below: the art fades in under the copy's backdrop. */
+  .hero.hero {
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .heroArt {
+    position: static;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-position: 84% 70%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
+    order: 2;
+    margin-top: -32px;
+  }
+  .heroCopy {
+    max-width: none;
+    padding: 32px 24px 0;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 16px;
+  }
+  .tag {
+    left: 8px;
+    top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb img {
+    transition: none;
+  }
+  .card:hover .thumb img {
+    scale: 1;
+  }
+}
+
+/* Press: the whole card gives a little. */
+.card {
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.card:active {
+  scale: 0.98;
+}

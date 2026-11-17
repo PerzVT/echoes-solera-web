@@ -1,0 +1,188 @@
+.icon {
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+
+/* Swap: both icons in one cell. The leaving one shrinks to 0.25 and blurs out as the other comes up. */
+.swap {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  vertical-align: middle;
+}
+.swap > span {
+  grid-area: 1 / 1;
+  display: block;
+  transition:
+    opacity var(--dur-swap) var(--ease-swap),
+    scale var(--dur-swap) var(--ease-swap),
+    filter var(--dur-swap) var(--ease-swap);
+}
+.swap[data-on="false"] .b,
+.swap[data-on="true"] .a {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+
+/* Volume: the same recipe on the two small parts, about their own centres. */
+.partA,
+.partB {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transition:
+    opacity var(--dur-swap) var(--ease-swap),
+    scale var(--dur-swap) var(--ease-swap),
+    filter var(--dur-swap) var(--ease-swap);
+}
+.icon[data-kind="volume"][data-on="false"] .partB,
+.icon[data-kind="volume"][data-on="true"] .partA {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+
+.icon[data-kind="chevron"] {
+  transition: rotate var(--dur-enter) var(--ease-out);
+}
+.icon[data-kind="chevron"][data-on="true"] {
+  rotate: 180deg;
+}
+
+/* Check: drawn from its short leg, as a hand ticks a box. */
+.icon[data-kind="check"] path {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition:
+    stroke-dashoffset var(--dur-exit) var(--ease-out),
+    opacity var(--dur-exit) var(--ease-out);
+}
+.icon[data-kind="check"][data-on="true"] path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+  transition:
+    stroke-dashoffset 380ms var(--ease-out) 60ms,
+    opacity 80ms linear 60ms;
+}
+@starting-style {
+  .icon[data-kind="check"][data-on="true"] path {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+}
+
+/* Replay: one turn against the arrow's direction, when asked. */
+.icon[data-kind="replay"][data-on="true"] {
+  animation: icon-turn 520ms var(--ease-out);
+}
+@keyframes icon-turn {
+  from {
+    rotate: 360deg;
+  }
+}
+
+/* Gesture icons answer the control that holds them. */
+.icon[data-kind="gesture"] .part {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transition:
+    translate var(--dur-move) var(--ease-out),
+    rotate var(--dur-move) var(--ease-out),
+    scale var(--dur-move) var(--ease-out);
+}
+.icon[data-gesture="arrow"][data-on] .part {
+  translate: 3px 0;
+}
+.icon[data-gesture="back"][data-on] .part {
+  translate: -3px 0;
+}
+.icon[data-gesture="upload"][data-on] .part {
+  translate: 0 -2.5px;
+}
+.icon[data-gesture="download"][data-on] .part {
+  translate: 0 2.5px;
+}
+.icon[data-gesture="close"][data-on] .part,
+.icon[data-gesture="plus"][data-on] .part {
+  rotate: 90deg;
+}
+.icon[data-gesture="search"][data-on] .part {
+  translate: -1px -1px;
+  scale: 1.08;
+}
+:is(a, button, summary, label):focus-visible .icon[data-gesture="arrow"] .part {
+  translate: 3px 0;
+}
+:is(a, button, summary, label):focus-visible .icon[data-gesture="back"] .part {
+  translate: -3px 0;
+}
+/* Keyboard focus gets the whole gesture set, as hover does. */
+:is(a, button, summary, label):focus-visible .icon[data-gesture="upload"] .part {
+  translate: 0 -2.5px;
+}
+:is(a, button, summary, label):focus-visible .icon[data-gesture="download"] .part {
+  translate: 0 2.5px;
+}
+:is(a, button, summary, label):focus-visible .icon:is([data-gesture="close"], [data-gesture="plus"]) .part {
+  rotate: 90deg;
+}
+:is(a, button, summary, label):focus-visible .icon[data-gesture="search"] .part {
+  translate: -1px -1px;
+  scale: 1.08;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button, summary, label):hover .icon[data-gesture="arrow"] .part {
+    translate: 3px 0;
+  }
+  :is(a, button, summary, label):hover .icon[data-gesture="back"] .part {
+    translate: -3px 0;
+  }
+  :is(a, button, summary, label):hover .icon[data-gesture="upload"] .part {
+    translate: 0 -2.5px;
+  }
+  :is(a, button, summary, label):hover .icon[data-gesture="download"] .part {
+    translate: 0 2.5px;
+  }
+  :is(a, button, summary, label):hover .icon:is([data-gesture="close"], [data-gesture="plus"]) .part {
+    rotate: 90deg;
+  }
+  :is(a, button, summary, label):hover .icon[data-gesture="search"] .part {
+    translate: -1px -1px;
+    scale: 1.08;
+  }
+}
+
+/* Reduced motion: states still change, by opacity alone. Nothing scales, turns, travels or blurs. */
+@media (prefers-reduced-motion: reduce) {
+  .swap > span,
+  .partA,
+  .partB {
+    transition: opacity var(--dur-feedback) linear;
+  }
+  .swap[data-on="false"] .b,
+  .swap[data-on="true"] .a,
+  .icon[data-kind="volume"][data-on="false"] .partB,
+  .icon[data-kind="volume"][data-on="true"] .partA {
+    scale: 1;
+    filter: none;
+  }
+  .icon[data-kind="chevron"] {
+    transition: none;
+  }
+  .icon[data-kind="check"] path,
+  .icon[data-kind="check"][data-on="true"] path {
+    stroke-dashoffset: 0;
+    transition: opacity var(--dur-feedback) linear;
+  }
+  .icon[data-kind="replay"][data-on="true"] {
+    animation: none;
+  }
+  .icon[data-kind="gesture"] .part {
+    transition: none;
+    translate: none !important;
+    rotate: none !important;
+    scale: none !important;
+  }
+}

@@ -1,0 +1,282 @@
+/* Nine Lives Labs tokens. Source: solera-web-design/tokens/tokens.json. Dark is the default. */
+.nl {
+  --bg: #121923;
+  --surface: #1a2330;
+  --surface-sunken: #0e141c;
+  --surface-hover: #232d3d;
+  --text: #f6f3ec;
+  --text-muted: #aeb4c0;
+  --text-disabled: #667083;
+  --border: #344054;
+  --border-strong: #647087;
+  --action: #f6f3ec;
+  --action-hover: #ddd8cc;
+  --on-action: #17202a;
+  --accent: #ff83b7;
+  --accent-soft: #3a2233;
+  --focus: #9fa5e8;
+  --on-media: #ffffff;
+  --success: #6fd3a0;
+  --warning: #f2b861;
+  --danger: #ff8f85;
+  --danger-soft: #3b1f1e;
+  --progress: #929bd2;
+
+  --r-thumb: 8px;
+  --r-control: 12px;
+  --r-card: 20px;
+  --r-stage: 28px;
+  --r-pill: 999px;
+
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-dm-sans), system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 100ms;
+  --dur-feedback: 150ms;
+  --dur-enter: 180ms;
+  --dur-exit: 120ms;
+  --dur-move: 200ms;
+  /* Motion layer (components/labs/fx). */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-swap: cubic-bezier(0.2, 0, 0, 1);
+  --dur-swap: 300ms;
+  --dur-media: 220ms;
+  --dur-reveal: 600ms;
+  --dur-hero: 640ms;
+  --stagger: 90ms;
+  --pigment-rose: #ff83b7;
+  --pigment-iris: #929bd2;
+  --pigment-air: #c6dceb;
+  --skeleton: #1a2330;
+  --skeleton-edge: rgb(246 243 236 / 0.05);
+  --skeleton-sheen: rgb(246 243 236 / 0.07);
+  /* End caps of the shouldered shape, used as masks. */
+  --cap-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 1 24 54' preserveAspectRatio='none'%3E%3Cpath d='M25 1h-1C15 1 15 10.08 10 14 5 18.48 1 21.84 1 28s4 9.52 9 14c5 3.92 5 13 14 13h1z'/%3E%3C/svg%3E");
+  --cap-r: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 1 24 54' preserveAspectRatio='none'%3E%3Cg transform='translate(26 0) scale(-1 1)'%3E%3Cpath d='M25 1h-1C15 1 15 10.08 10 14 5 18.48 1 21.84 1 28s4 9.52 9 14c5 3.92 5 13 14 13h1z'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* Lets the fixed pigment field sit behind the content at z-index -1. */
+  isolation: isolate;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.nl [data-theme="light"] {
+  --bg: #f7f3e8;
+  --surface: #fffdf7;
+  --surface-sunken: #efeadc;
+  --surface-hover: #f1ecdd;
+  --text: #17202a;
+  --text-muted: #55605f;
+  --text-disabled: #8e8c80;
+  --border: #ddd7c7;
+  --border-strong: #8f8a7c;
+  --action: #17202a;
+  --action-hover: #2c3743;
+  --on-action: #f7f3e8;
+  --accent: #b8256f;
+  --accent-soft: #fbe3ee;
+  --focus: #4e57c4;
+  --skeleton: #efeadc;
+  --skeleton-edge: rgb(23 32 42 / 0.06);
+  --skeleton-sheen: rgb(255 253 247 / 0.7);
+}
+
+body:has(.nl) {
+  background: #121923;
+}
+
+:where(.nl) a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(.nl) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+:where(.nl) img {
+  display: block;
+  max-width: 100%;
+}
+.nl :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+/* No specificity, so it only rounds the ring on elements that set no radius of their own. */
+:where(.nl :focus-visible) {
+  border-radius: 6px;
+}
+.nl ::selection {
+  background: var(--accent);
+  color: #17202a;
+}
+
+.nl .display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 5.6vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.nl .h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.nl .h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.875rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.nl .h3 {
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+.nl .body-lg {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+.nl .small {
+  font-size: 0.875rem;
+  line-height: 1.43;
+}
+.nl .label {
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.33;
+  letter-spacing: 0.02em;
+}
+.nl .muted {
+  color: var(--text-muted);
+}
+.nl .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The first thing Tab reaches. Off screen until it has focus. */
+.nl .nl-skip {
+  position: fixed;
+  z-index: 300;
+  top: 12px;
+  left: 12px;
+  padding: 12px 18px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  color: var(--on-action);
+  background: var(--action);
+  translate: 0 -200%;
+}
+.nl .nl-skip:focus-visible {
+  translate: 0 0;
+}
+/* The target of the skip link is not a control, so it takes focus without a ring. */
+.nl main:focus {
+  outline: none;
+}
+
+/* Furniture shared by the public pages. */
+.nl .nl-note {
+  margin: 8px 0 28px;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* Back to where the page was reached from: icon and label, quiet until hovered. */
+.nl .nl-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 44px;
+  margin-left: -10px;
+  padding: 0 14px 0 10px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nl .nl-back:hover {
+    color: var(--text);
+    background: var(--surface);
+  }
+}
+.nl .nl-back:active {
+  scale: 0.96;
+}
+/* Placed between the nav and the content column, lined up with the column's left edge. */
+.nl .nl-back-row {
+  display: flex;
+  max-width: 1344px;
+  margin: 12px auto -4px;
+}
+
+/* The one hero height for title pages. Page modules compose it (composes: nl-hero-height from global). */
+.nl .nl-hero-height {
+  min-height: clamp(440px, 62vh, 620px);
+}
+.nl .nl-made {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 32px;
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+
+/* Page entry: each route fades up a little as it arrives. */
+.nl .pageIn {
+  animation: page-in 240ms var(--ease-out);
+}
+@keyframes page-in {
+  from {
+    opacity: 0.65;
+    translate: 0 8px;
+  }
+}
+
+/* Reduced motion baseline: colour and opacity still change, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .nl *,
+  .nl *::before,
+  .nl *::after {
+    scroll-behavior: auto !important;
+    transition-property: color, background-color, border-color, opacity, text-decoration-color, visibility !important;
+  }
+  .nl :is(a, button, summary, [role="tab"]):is(:hover, :active),
+  .nl :is(a, button, summary):is(:hover, :active) * {
+    scale: none !important;
+    translate: none !important;
+    rotate: none !important;
+  }
+  .nl .pageIn {
+    animation: none;
+  }
+}

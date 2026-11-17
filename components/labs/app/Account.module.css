@@ -1,0 +1,36 @@
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.who {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-muted);
+}
+.account button {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  color: var(--text);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .account button:hover {
+    background: var(--surface-hover);
+  }
+}
+.account button:active {
+  scale: 0.96;
+}
+@media (max-width: 720px) {
+  .who {
+    display: none;
+  }
+}

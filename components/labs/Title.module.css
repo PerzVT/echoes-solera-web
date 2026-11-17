@@ -1,0 +1,346 @@
+/*
+ * Page furniture for the public title pages: page padding, the content column and its section gap.
+ * The back link, the hero height, the section note and the closing strip are global classes in
+ * labs.css (nl-back, nl-back-row, nl-hero-height, nl-note, nl-made), because every page module uses them.
+ */
+.page {
+  padding: 16px 24px 96px;
+}
+.main {
+  max-width: 1344px;
+  margin: 16px auto 0;
+  display: grid;
+  gap: clamp(56px, 8vh, 88px);
+}
+.main h2 {
+  margin-bottom: 24px;
+}
+/* A section heading followed by a note: the note sits close under it. */
+.main h2:has(+ :global(.nl-note)) {
+  margin-bottom: 0;
+}
+.hero {
+  composes: nl-hero-height from global;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.art {
+  object-fit: cover;
+  object-position: 72% 24%;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgb(14 20 28 / 0.88) 0%, rgb(14 20 28 / 0.45) 30%, transparent 60%),
+    linear-gradient(to right, rgb(14 20 28 / 0.66) 0%, rgb(14 20 28 / 0.2) 38%, transparent 60%);
+}
+.heroCopy {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  max-width: 620px;
+  padding: clamp(24px, 4.4vw, 64px);
+}
+.hook {
+  margin-bottom: 14px;
+  max-width: 40ch;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: rgb(246 243 236 / 0.9);
+  text-wrap: pretty;
+}
+
+/* Light key art drawn with a quiet left side: ink text, no shade. */
+.heroLight {
+  align-items: center;
+  background: #f3e9db;
+}
+.heroLight .art {
+  object-position: 100% 40%;
+}
+.heroLight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to right, rgb(247 243 232 / 0.9) 0%, rgb(247 243 232 / 0.7) 26%, transparent 50%);
+}
+.heroLight .heroCopy {
+  z-index: 2;
+}
+.heroLight .hook {
+  color: var(--text-muted);
+}
+.heroLight .heroCopy {
+  color: var(--text);
+  max-width: 500px;
+}
+
+.dish {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50%;
+  outline: 2px solid rgb(255 255 255 / 0.9);
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.4);
+}
+
+.chefs {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 16px;
+  list-style: none;
+}
+.chefs li {
+  display: grid;
+  gap: 10px;
+}
+/* The chef tiles are crops of white reference sheets. Multiplied onto a warm tile, the white takes the
+   tile's colour, so they sit on the page as a set rather than as pasted sheets. */
+.portrait {
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: #ead9c4;
+}
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  mix-blend-mode: multiply;
+}
+
+/* Each cell is two lines, dish then chef, so every row is the same height and the rules line up. */
+.soonList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 24px;
+  list-style: none;
+}
+.soonList li {
+  display: grid;
+  grid-template-rows: auto 1.43em;
+  align-content: start;
+  gap: 2px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.soonList .name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.name {
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.shorts {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 28px 20px;
+  list-style: none;
+}
+.short {
+  display: grid;
+  gap: 10px;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.short:active {
+  scale: 0.98;
+}
+.poster {
+  position: relative;
+  display: block;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  outline: 1px solid rgb(255 255 255 / 0.1);
+  outline-offset: -1px;
+  background: var(--surface);
+  transition: translate var(--dur-move) var(--ease-out);
+}
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (hover: hover) and (pointer: fine) {
+  .short:hover .poster {
+    translate: 0 -6px;
+  }
+}
+.len {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: rgb(14 20 28 / 0.78);
+}
+
+.story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 32px;
+  padding: clamp(24px, 4vw, 48px);
+  border-radius: var(--r-stage);
+  background: var(--surface);
+}
+.story h2 {
+  margin: 4px 0 0;
+}
+.storyText {
+  display: grid;
+  gap: 16px;
+  max-width: 62ch;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+.cast {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  list-style: none;
+}
+.cast li {
+  display: grid;
+  gap: 12px;
+}
+.figure {
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: radial-gradient(120% 90% at 50% 20%, #2a3a52 0%, var(--surface) 70%);
+}
+.figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  padding-top: 12px;
+}
+
+.places {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  list-style: none;
+}
+.places li {
+  display: grid;
+  gap: 12px;
+}
+.plate {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  outline: 1px solid rgb(255 255 255 / 0.08);
+  outline-offset: -1px;
+}
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1000px) {
+  .chefs {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .soonList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .shorts {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cast {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .story {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+/* Below 960 the light art no longer has a quiet side wide enough for the copy:
+   the copy moves to the bottom over a cream fade, and the hero grows taller so the face stays clear. */
+@media (max-width: 960px) {
+  .heroLight {
+    align-items: flex-end;
+    min-height: max(clamp(440px, 62vh, 620px), min(92vw, 80vh));
+  }
+  .heroLight .art {
+    object-position: 70% 20%;
+  }
+  .heroLight::before {
+    content: none;
+  }
+  .heroLight::after {
+    content: "";
+    position: absolute;
+    inset: 40% 0 0 0;
+    background: linear-gradient(to top, rgb(247 243 232 / 0.95) 40%, transparent);
+  }
+  .heroLight .heroCopy {
+    z-index: 1;
+  }
+}
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 16px 64px;
+  }
+  .shorts,
+  .cast {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chefs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .soonList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 16px;
+  }
+  /* Two columns are narrow: a dish name gets two lines, and every cell keeps room for both. */
+  .soonList li {
+    grid-template-rows: 2.7em 1.43em;
+  }
+  .soonList .name {
+    display: -webkit-box;
+    white-space: normal;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .heroLight .art {
+    object-position: 76% 30%;
+  }
+  .places {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster {
+    transition: none;
+  }
+}

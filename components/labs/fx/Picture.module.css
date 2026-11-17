@@ -1,0 +1,40 @@
+/* Only a scripted site marks images as waiting: without script the attribute never changes, so nothing
+   may depend on it to be seen. */
+/* Not yet near the viewport: a flat tile, nothing running. Loading: the tile breathes in opacity, which
+   runs on the compositor (an <img> cannot carry the ::after sheen the skeletons use). */
+:global(.nl[data-nl-js]) .pic:is([data-pic="idle"], [data-pic="wait"]):not([data-bare]) {
+  background-color: var(--skeleton);
+}
+:global(.nl[data-nl-js]) .pic[data-pic="wait"]:not([data-bare]) {
+  animation: pic-wait 1700ms var(--ease-in-out) infinite alternate;
+}
+:global(.nl[data-nl-js]) .pic[data-pic="wait"][data-bare] {
+  opacity: 0;
+}
+/* The tile cannot cross-fade with its own picture, so the picture starts part-way in. */
+.pic[data-pic="in"] {
+  animation: pic-in var(--dur-media) var(--ease-out);
+}
+.pic[data-pic="in"][data-bare] {
+  animation-name: pic-in-bare;
+}
+@keyframes pic-wait {
+  to {
+    opacity: 0.6;
+  }
+}
+@keyframes pic-in {
+  from {
+    opacity: 0.35;
+  }
+}
+@keyframes pic-in-bare {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(.nl[data-nl-js]) .pic:is([data-pic="idle"], [data-pic="wait"]):not([data-bare]) {
+    animation: none;
+  }
+}

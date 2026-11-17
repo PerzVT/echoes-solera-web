@@ -1,0 +1,45 @@
+/* Held back below the fold, then let in once. Transitions, so a fast scroll can never strand it half way. */
+.reveal {
+  --reveal-delay: 0ms;
+}
+.reveal[data-reveal="wait"]:not([data-stagger]),
+.reveal[data-reveal="wait"][data-stagger] > * {
+  opacity: 0;
+  translate: 0 12px;
+}
+.reveal[data-reveal="in"]:not([data-stagger]),
+.reveal[data-reveal="in"][data-stagger] > * {
+  transition:
+    opacity var(--dur-reveal) var(--ease-out) var(--reveal-delay),
+    translate var(--dur-reveal) var(--ease-out) var(--reveal-delay);
+}
+.reveal[data-reveal="in"][data-stagger] > :nth-child(2) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger));
+}
+.reveal[data-reveal="in"][data-stagger] > :nth-child(3) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger) * 2);
+}
+.reveal[data-reveal="in"][data-stagger] > :nth-child(4) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger) * 3);
+}
+.reveal[data-reveal="in"][data-stagger] > :nth-child(5) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger) * 4);
+}
+.reveal[data-reveal="in"][data-stagger] > :nth-child(6) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger) * 5);
+}
+.reveal[data-reveal="in"][data-stagger] > :nth-child(7) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger) * 6);
+}
+/* A long list should not keep its tail waiting: from the eighth on, everything arrives together. */
+.reveal[data-reveal="in"][data-stagger] > :nth-child(n + 8) {
+  transition-delay: calc(var(--reveal-delay) + var(--stagger) * 7);
+}
+/* The component never sets the attribute under reduced motion; this covers the setting changing mid-visit. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-reveal="wait"]:not([data-stagger]),
+  .reveal[data-reveal="wait"][data-stagger] > * {
+    opacity: 1;
+    translate: none;
+  }
+}

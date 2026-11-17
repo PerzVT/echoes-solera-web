@@ -1,0 +1,199 @@
+.shell {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  min-height: 100dvh;
+  /* The desk the paper lies on: the site's pigment picture, held still, shows faintly round the frame and behind the rail.
+     Nothing moves behind the work. The frame itself keeps its paper grain and is opaque. */
+  background: rgb(14 20 28 / 0.8);
+}
+
+.rail {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 0;
+}
+.mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+  border-radius: var(--r-control);
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.mark:active {
+  scale: 0.96;
+}
+/* In the rail the mark answers the pointer (one pulse round the nine) and otherwise holds still. Its idle
+   breathing animates parts of an SVG, which the browser cannot hand to the compositor: left running, it
+   kept the main thread drawing frames all day and added about 16 ms before a typed character was painted
+   (measured in the script box). The last two paths are the bridge and the focal node, drawn on their own
+   or inside the mark's last group. */
+.rail .mark svg[data-variant] > path:nth-last-child(-n + 2),
+.rail .mark svg[data-variant] > g:last-child > path:nth-last-child(-n + 2) {
+  animation: none;
+}
+.item {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  width: 64px;
+  padding: 9px 0 7px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .item:hover {
+    color: var(--text);
+    background: var(--surface);
+  }
+}
+.item:active {
+  scale: 0.96;
+}
+.item[aria-current="page"] {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+/* The panel contour from the brand kit: one paper shape per screen, its top-right corner folded,
+   with a light grain. The fold is a mask over the frame and a drawn edge along the cut. */
+.frame {
+  --fold: 64px;
+  --fold-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M0 0H4Q14 0 21 7L57 43Q64 50 64 60V64H0Z'/%3E%3C/svg%3E");
+  --fold-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M0 .5H4Q13.8.5 20.6 7.4L56.6 43.4Q63.5 50.3 63.5 60V64' fill='none' stroke='%23000'/%3E%3C/svg%3E");
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  margin: 12px 12px 12px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-stage) 0 var(--r-stage) var(--r-stage);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--bg);
+  overflow: clip;
+  -webkit-mask:
+    var(--fold-fill) 100% 0 / var(--fold) var(--fold) no-repeat,
+    linear-gradient(#000 0 0) 0 0 / calc(100% - var(--fold)) 100% no-repeat,
+    linear-gradient(#000 0 0) 0 100% / 100% calc(100% - var(--fold)) no-repeat;
+  mask:
+    var(--fold-fill) 100% 0 / var(--fold) var(--fold) no-repeat,
+    linear-gradient(#000 0 0) 0 0 / calc(100% - var(--fold)) 100% no-repeat,
+    linear-gradient(#000 0 0) 0 100% / 100% calc(100% - var(--fold)) no-repeat;
+}
+.frame::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: -1px;
+  right: -1px;
+  width: var(--fold);
+  height: var(--fold);
+  background: var(--border);
+  pointer-events: none;
+  -webkit-mask: var(--fold-edge) 0 0 / 100% 100% no-repeat;
+  mask: var(--fold-edge) 0 0 / 100% 100% no-repeat;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  padding: 0 64px 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+.bar {
+  /* As on a panel: a placeholder in the bar is one step lighter than the bar. */
+  --skeleton: var(--surface-hover);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.work {
+  padding: 24px;
+  min-width: 0;
+}
+.work:focus {
+  outline: none;
+}
+
+@media (max-width: 720px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .rail {
+    order: 2;
+    position: sticky;
+    top: auto;
+    bottom: 0;
+    z-index: 5;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 6px 8px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+  .mark {
+    margin: 0;
+  }
+  .frame {
+    --fold: 48px;
+    margin: 8px;
+  }
+  .header,
+  .bar {
+    padding-inline: 16px;
+  }
+  .header {
+    padding-right: 48px;
+  }
+  .work {
+    padding: 16px;
+  }
+}
+
+/* On wide screens the app fills the viewport and the work area scrolls, so panels can take the height left over. */
+@media (min-width: 901px) {
+  .shell {
+    height: 100dvh;
+    min-height: 0;
+  }
+  .frame {
+    min-height: 0;
+  }
+  .work {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}

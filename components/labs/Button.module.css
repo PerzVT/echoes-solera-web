@@ -1,0 +1,219 @@
+/* The shouldered button from the design system: two shaped caps and a straight middle. */
+.btn {
+  --h: 48px;
+  --fill: var(--action);
+  --ink: var(--on-action);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--h);
+  padding-inline: calc(var(--h) * 0.4444 + 10px);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.33;
+  white-space: nowrap;
+  color: var(--ink);
+  transition: scale var(--dur-press) var(--ease-out);
+}
+a.btn {
+  color: var(--ink);
+}
+.btn::before,
+.btn::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  -webkit-mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+.btn::before {
+  inset: 0;
+  --c: calc(var(--h) * 0.4444);
+  background: var(--edge, var(--fill));
+}
+.btn::after {
+  inset: 1px;
+  --c: calc((var(--h) - 2px) * 0.4444);
+  background: var(--fill);
+}
+.btn:active:not(:disabled):not([aria-disabled="true"]) {
+  scale: 0.96;
+}
+
+
+/* The label and its icons. The label is its own box so it can give way to the tick on success. */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+}
+.label,
+.icon {
+  transition:
+    opacity var(--dur-enter) var(--ease-out),
+    translate var(--dur-move) var(--ease-out);
+}
+.icon {
+  display: inline-flex;
+  flex: none;
+}
+
+/* The wash: a layer cut to the same shoulders as the fill, with one band of pigment waiting off its
+   left edge. Hover sends the band across once; it does not come back, it resets unseen. */
+.wash {
+  --c: calc((var(--h) - 2px) * 0.4444);
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+}
+.wash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -101% 0;
+  background: linear-gradient(100deg, transparent 18%, var(--wash-a) 44%, var(--wash-b) 58%, transparent 84%);
+}
+.primary {
+  --wash-a: rgb(255 131 183 / 0.28);
+  --wash-b: rgb(146 155 210 / 0.24);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Only the full-size primary answers a hover with the band; elsewhere hover changes the fill at once. */
+  .primary:not(.small):hover .wash::before {
+    translate: 101% 0;
+    transition: translate 480ms var(--ease-out);
+  }
+  .btn:hover .after {
+    translate: 3px 0;
+  }
+  .primary:hover {
+    --fill: var(--action-hover);
+  }
+  .secondary:hover {
+    --fill: var(--surface-hover);
+  }
+  .quiet:hover {
+    --fill: var(--surface-hover);
+  }
+}
+.secondary {
+  --fill: var(--surface);
+  --edge: var(--border-strong);
+  --ink: var(--text);
+  --wash-a: rgb(246 243 236 / 0.1);
+  --wash-b: rgb(255 131 183 / 0.14);
+}
+.quiet {
+  --fill: transparent;
+  --edge: transparent;
+  --ink: var(--text);
+  --wash-a: rgb(246 243 236 / 0.08);
+  --wash-b: rgb(246 243 236 / 0.08);
+}
+
+/* Loading: the label stays and dims a little, the band keeps crossing, presses are ignored. */
+.btn[data-state] {
+  pointer-events: none;
+}
+.btn[data-state="loading"] {
+  cursor: progress;
+}
+.btn[data-state="loading"] .label,
+.btn[data-state="loading"] .icon {
+  opacity: 0.78;
+}
+.btn[data-state="loading"] .wash::before {
+  animation: btn-run 1300ms var(--ease-in-out) infinite;
+}
+.primary[data-state="loading"] {
+  --fill: var(--action-hover);
+}
+.secondary[data-state="loading"],
+.quiet[data-state="loading"] {
+  --fill: var(--surface-hover);
+}
+@keyframes btn-run {
+  to {
+    translate: 101% 0;
+  }
+}
+/* Success: the label lifts out and a tick draws in its place. The width does not change. */
+.btn[data-state="success"] .label,
+.btn[data-state="success"] .icon {
+  opacity: 0;
+  translate: 0 -3px;
+}
+.done {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.small {
+  --h: 40px;
+  font-size: 0.875rem;
+}
+/* Touch screens get the full 44px target. */
+@media (pointer: coarse) {
+  .small {
+    --h: 44px;
+  }
+}
+.btn[aria-disabled="true"] {
+  --fill: var(--surface-sunken);
+  --edge: var(--border);
+  --ink: var(--text-disabled);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+  /* No band crosses. While loading the whole shape takes the tint and it fades in and out instead. */
+  .btn:hover .wash::before {
+    translate: -101% 0;
+    transition: none;
+  }
+  .btn[data-state="loading"] .wash::before {
+    translate: 0 0;
+    background: linear-gradient(100deg, var(--wash-a), var(--wash-b));
+    opacity: 0.6;
+    animation: btn-fade 1600ms var(--ease-in-out) infinite alternate;
+  }
+  .btn:hover .after,
+  .btn[data-state="success"] .label,
+  .btn[data-state="success"] .icon {
+    translate: none;
+  }
+  .btn:active:not(:disabled):not([aria-disabled="true"]) {
+    scale: 1;
+  }
+}
+@keyframes btn-fade {
+  from {
+    opacity: 0.15;
+  }
+}

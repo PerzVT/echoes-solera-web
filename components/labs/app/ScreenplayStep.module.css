@@ -1,0 +1,328 @@
+/* ---------- Processing ---------- */
+/* The page being read. It is the screenplay page itself, with what has not been read yet set in glyphs. */
+.reading {
+  position: relative;
+}
+.reading .passage {
+  cursor: default;
+  pointer-events: none;
+}
+.unread {
+  color: var(--text-disabled);
+  opacity: 0.62;
+}
+/* The two glyphs under the head. */
+.readHead {
+  color: var(--accent);
+}
+.heading[data-read="false"] > span:first-child {
+  color: var(--text-disabled);
+}
+.reading .camera > span {
+  transition: opacity var(--dur-move) linear;
+}
+.camera[data-read="false"] > span,
+.camera[data-read="false"]::after {
+  opacity: 0.35;
+}
+/* The read head: a hairline that goes down the page one passage at a time, with a little light above it. */
+.scan {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent) 14%, var(--accent) 86%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    translate 270ms linear,
+    opacity var(--dur-move) linear;
+}
+.scan::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  background: linear-gradient(to top, rgb(255 131 183 / 0.09), transparent);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+}
+.scan[data-on="true"] {
+  opacity: 0.75;
+}
+.stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.now {
+  color: var(--text);
+}
+
+/* ---------- Screenplay ---------- */
+/* The prompt stays in view at the top of the scrolling page. */
+.prompt {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 16px 24px 0;
+  border: 1px solid var(--border);
+}
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 48px 48px;
+  font-family: var(--font-screenplay), "Courier New", monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+  transition: opacity 200ms var(--ease-out);
+}
+.page[data-dim="true"] {
+  opacity: 0.55;
+}
+.heading {
+  display: flex;
+  gap: 16px;
+  margin: 32px 0 12px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.heading:first-child {
+  margin-top: 0;
+}
+.camera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 4px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.camera::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.passageWrap {
+  position: relative;
+}
+.passage {
+  position: relative;
+  display: block;
+  width: calc(100% + 24px);
+  margin: 0 -12px;
+  padding: 4px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--r-thumb);
+  text-align: left;
+  font: inherit;
+  white-space: pre-wrap;
+  cursor: pointer;
+  transition: background-color var(--dur-feedback) var(--ease-out), border-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .passage:hover {
+    background: var(--surface-hover);
+  }
+}
+.passage:active:not(:disabled) {
+  background: var(--surface-sunken);
+}
+.passage[data-noted="true"] {
+  background: var(--accent-soft);
+}
+.passage[data-selected="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+/* A passage the rewrite changed: it is lit for a moment and settles to the bar on its left, which stays. */
+.passage[data-changed="true"] {
+  box-shadow: inset 3px 0 0 var(--progress);
+  animation: changed-settle 1400ms var(--ease-out);
+}
+@keyframes changed-settle {
+  from {
+    background-color: rgb(146 155 210 / 0.3);
+  }
+}
+.passage:disabled {
+  cursor: progress;
+}
+.passage[data-kind="dialogue"] {
+  display: grid;
+  justify-items: center;
+  margin-top: 12px;
+}
+.cue {
+  text-transform: uppercase;
+}
+.lineText {
+  max-width: 34ch;
+  text-align: left;
+}
+.changed {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  padding: 0 8px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  color: var(--progress);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.menu {
+  position: absolute;
+  z-index: 3;
+  right: -12px;
+  bottom: calc(100% + 8px);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-control);
+  background: var(--surface-hover);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.4);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  transform-origin: 100% 100%;
+  animation: menu-in var(--dur-feedback) var(--ease-out);
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+.menu button {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--r-thumb);
+  font-weight: 500;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu button:hover {
+    background: var(--surface);
+  }
+}
+.menu button:active {
+  scale: 0.96;
+}
+.menu > span {
+  width: 1px;
+  height: 16px;
+  background: var(--border-strong);
+}
+
+/* ---------- Comments panel ---------- */
+.notes {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.notes:empty {
+  display: none;
+}
+.note {
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+}
+.noteHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  font-size: 0.75rem;
+}
+.noteType {
+  margin-left: auto;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.quote {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+del.quote {
+  display: block;
+  text-decoration: line-through;
+}
+.ins {
+  display: block;
+  text-decoration: none;
+}
+.noteActions {
+  margin-left: -16px;
+}
+.composer {
+  display: grid;
+  gap: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    transition: none;
+  }
+  /* Nothing travels: the page resolves in three parts, with the stages. */
+  .scan {
+    display: none;
+  }
+  .menu {
+    animation-name: fade-in;
+  }
+}
+@media (max-width: 1100px) {
+  .page {
+    padding-inline: 24px;
+  }
+}
+@media (max-width: 720px) {
+  .page {
+    padding: 16px 16px 32px;
+  }
+  .prompt {
+    margin-inline: 16px;
+  }
+}

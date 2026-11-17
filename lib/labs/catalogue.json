@@ -1,0 +1,474 @@
+[
+  {
+    "slug": "gray-winter",
+    "title": "Heart of the Gray Winter",
+    "genre": "Dark Romance, Gothic, Fantasy",
+    "hook": null,
+    "status": "Selected",
+    "cover": "/labs/mini-series/gray-winter/cover.webp"
+  },
+  {
+    "slug": "the-bride-behind-the-west-wing",
+    "title": "The Bride Behind the West Wing",
+    "genre": "Gothic, Contemporary, K-Drama",
+    "hook": "A forensic document restorer falls for the owner of a storm-closed Jeju hotel, but their wedding is interrupted by the wife he hid while protecting evidence of a corporate murder attempt.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-bride-behind-the-west-wing.webp"
+  },
+  {
+    "slug": "they-swapped-my-groom-before-the-veil-lifted",
+    "title": "They Swapped My Groom Before the Veil Lifted",
+    "genre": "Contemporary, C-Drama",
+    "hook": "An opera-streaming heiress is promised a wedding to the composer she loves, but her collapsing family substitutes a financier beneath the ceremonial veil while the real groom dies trying to expose their fraud.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/they-swapped-my-groom-before-the-veil-lifted.webp"
+  },
+  {
+    "slug": "she-bought-the-family",
+    "title": "She Bought the Family That Broke Her",
+    "genre": "Dark Romance, Contemporary, K-Drama",
+    "hook": "A shipyard foundling returns as the creditor who can destroy the dynasty that rejected her, only to see two adult heirs repeat her ruined love and force her to choose between revenge and ending the cycle.",
+    "status": "Shortlisted",
+    "cover": "/labs/mini-series/she-bought-the-family/cover-v04.webp"
+  },
+  {
+    "slug": "my-husband-sold-my-life-while-i-was-missing",
+    "title": "My Husband Sold My Life While I Was Missing",
+    "genre": "Contemporary, K-Drama",
+    "hook": "After surviving a genuine ferry disaster, a forensic accountant learns her husband suppressed proof she was alive so he could sell her shares—and returns at the regulatory hearing that can make the theft permanent.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/my-husband-sold-my-life-while-i-was-missing.webp"
+  },
+  {
+    "slug": "i-took-my-sisters-role-and-her-fake-fiance",
+    "title": "I Took My Sister's Role—and Her Fake Fiancé",
+    "genre": "Contemporary, C-Drama",
+    "hook": "When a star abandons her comeback drama, her uncredited stunt double takes the lead role and inherited fake engagement—then learns her disgraced co-star accepted the substitution to expose their producer.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/i-took-my-sisters-role-and-her-fake-fiance.webp"
+  },
+  {
+    "slug": "he-forgets-me-every-midnight",
+    "title": "He Forgets Me Every Midnight",
+    "genre": "Fantasy, Contemporary, K-Drama",
+    "hook": "A disaster engineer has seven nights to free a climate physicist whose memory resets to the same fixed morning at midnight, while a corporate storm beacon turns every day they rebuild together into data its owner plans to erase.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/he-forgets-me-every-midnight.webp"
+  },
+  {
+    "slug": "the-spare-key-he-never-used",
+    "title": "The Spare Key He Never Used",
+    "genre": "Contemporary, K-Drama",
+    "hook": "After a doxxing attack leaves a sharp-tongued podcast producer homeless, she accepts the unused guest suite of the esports captain she publicly criticized and learns that his restraint—not his fame—is the real threat to her defenses.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-spare-key-he-never-used.webp"
+  },
+  {
+    "slug": "i-was-sent-to-arrest-his-father",
+    "title": "I Was Sent to Arrest His Father",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A financial-crimes prosecutor investigating a luxury hotel foundation falls for the owner's overlooked son, then discovers the family used his signature to frame him for the fraud he is helping her expose.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/i-was-sent-to-arrest-his-father.webp"
+  },
+  {
+    "slug": "seven-nights-with-the-man-who-cannot-die",
+    "title": "Seven Nights with the Man Who Cannot Die",
+    "genre": "Dark Romance, Fantasy, Contemporary, K-Drama",
+    "hook": "A neurologist spends one final week with an immortal memory courier before her fellowship, then awakens able to steal seconds from dying bodies and becomes property claimed by the syndicate that made him.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/seven-nights-with-the-man-who-cannot-die.webp"
+  },
+  {
+    "slug": "bellmaker",
+    "title": "The Bellmaker Who Woke the Sky",
+    "genre": "Fantasy, Historical, C-Drama",
+    "hook": "A village bellmaker branded cursed discovers she is the last storm phoenix when an exiled royal astronomer awakens their bond, forcing her to survive court trials and close the sky-rift her bloodline once sealed.",
+    "status": "Shortlisted",
+    "cover": "/labs/mini-series/bellmaker/cover-v04.webp"
+  },
+  {
+    "slug": "i-made-his-worst-rival-a-star",
+    "title": "I Made His Worst Rival a Star",
+    "genre": "Contemporary, K-Drama",
+    "hook": "After catching her idol boyfriend with the cousin who manages them both, a performance director rebuilds his blacklisted rival for a televised comeback—then risks losing the man she turned into a weapon.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/i-made-his-worst-rival-a-star.webp"
+  },
+  {
+    "slug": "i-married-the-stranger-who-seized-my-caravan",
+    "title": "I Married the Stranger Who Seized My Caravan",
+    "genre": "Historical, C-Drama, Dark Romance",
+    "hook": "A spice-caravan heiress's masked oasis lover is revealed as the border marshal who seized her convoy, just before a treaty marriage forces them to uncover the forged tariffs starving two desert cities.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/i-married-the-stranger-who-seized-my-caravan.webp"
+  },
+  {
+    "slug": "we-hated-each-other-until-the-tower-fell",
+    "title": "We Hated Each Other Until the Tower Fell",
+    "genre": "Contemporary, K-Drama",
+    "hook": "Two lifelong architecture rivals compete to restore Seoul's most famous tower, but a hidden structural failure forces them into the same rescue plan and turns professional hatred into the only trust keeping people alive.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/we-hated-each-other-until-the-tower-fell.webp"
+  },
+  {
+    "slug": "my-sisters-bodyguard-broke-every-rule",
+    "title": "My Sister's Bodyguard Broke Every Rule",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A documentary photographer begins a secret affair with her mayoral-candidate sister's trusted bodyguard, then forces both protectors to admit that keeping her hidden is another way of controlling her life.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/my-sisters-bodyguard-broke-every-rule.webp"
+  },
+  {
+    "slug": "his-girlfriends-all-vanish-on-day-fourteen",
+    "title": "His Girlfriends All Vanish on Day Fourteen",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A consumer reporter dates Seoul's notorious fourteen-day boyfriend to expose him, then discovers every breakup hides the same deadline: he is entering witness protection after testifying against his own family.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/his-girlfriends-all-vanish-on-day-fourteen.webp"
+  },
+  {
+    "slug": "the-dragon-heir-rejected-me-live",
+    "title": "The Dragon Heir Rejected Me Live",
+    "genre": "Dark Romance, Fantasy, Contemporary, C-Drama",
+    "hook": "A 25-year-old contract medic is rejected live when her dragon sigil names a corporate heir, then discovers she is the stolen founder whose identity can dismantle his supernatural empire.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-dragon-heir-rejected-me-live.webp"
+  },
+  {
+    "slug": "my-sister-sent-me-to-marry-a-ruined-shipwright",
+    "title": "My Sister Sent Me to Marry a Ruined Shipwright",
+    "genre": "Historical, C-Drama",
+    "hook": "An apothecary replaces her favored sister in marriage to a disgraced shipwright, unaware he is an imperial investigator using the union to expose the smuggling family that sacrificed them both.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/my-sister-sent-me-to-marry-a-ruined-shipwright.webp"
+  },
+  {
+    "slug": "i-danced-with-the-man-he-feared",
+    "title": "I Danced With the Man He Feared",
+    "genre": "Dark Romance, Contemporary, K-Drama",
+    "hook": "At the gala meant to unveil her comeback duet, a prima ballerina watches her fiancé give her role and choreography to her understudy—then crosses the ballroom to the outlaw choreographer he fears.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/i-danced-with-the-man-he-feared.webp"
+  },
+  {
+    "slug": "the-woman-who-remembered-my-name",
+    "title": "The Woman Who Remembered My Name",
+    "genre": "Contemporary, K-Drama",
+    "hook": "When a 52-year-old conservator discovers her husband mortgaged her life’s work to support his first love, the woman she once abandoned returns and helps her reclaim both her father’s care and her own name.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-woman-who-remembered-my-name.webp"
+  },
+  {
+    "slug": "the-groom-beneath-the-avalanche",
+    "title": "The Groom Beneath the Avalanche",
+    "genre": "Contemporary",
+    "hook": "A mountain rescue pilot saves an injured stranger hours after refusing an arranged merger marriage—then discovers the man she chose to trust is the supposedly dying groom she planned to escape.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-groom-beneath-the-avalanche.webp"
+  },
+  {
+    "slug": "seven-years-before-the-fire",
+    "title": "Seven Years Before the Fire",
+    "genre": "Fantasy, K-Drama, Contemporary",
+    "hook": "Murdered in a staged studio fire, a documentary producer wakes seven years earlier and uses a future only she remembers to expose the fiancé and foster sister who sold her witnesses.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/seven-years-before-the-fire.webp"
+  },
+  {
+    "slug": "my-divorce-was-his-hostile-takeover",
+    "title": "My Divorce Was His Hostile Takeover",
+    "genre": "Contemporary, C-Drama",
+    "hook": "When her husband uses a livestreamed divorce to seize their clean-energy empire for his mistress, the discarded cofounder accepts—and invokes the family trust to marry the rival CEO he cannot defeat.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/my-divorce-was-his-hostile-takeover.webp"
+  },
+  {
+    "slug": "the-factory-between-us",
+    "title": "The Factory Between Us",
+    "genre": "Contemporary, K-Drama",
+    "hook": "An island labor mediator blames a guarded battery founder for poisoning his workers—until a strike crisis, a rejected proposal, and a hidden whistleblower force both rivals to rebuild the factory and their judgment of each other.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-factory-between-us.webp"
+  },
+  {
+    "slug": "the-fool-i-married-saved-everyone",
+    "title": "The Fool I Married Saved Everyone",
+    "genre": "Contemporary",
+    "hook": "A relief spokesperson blackmailed into exposing an illegal evacuation network discovers that its legendary leader is the frivolous husband she stopped trusting—and must help him rescue the sister she accidentally endangered.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-fool-i-married-saved-everyone.webp"
+  },
+  {
+    "slug": "the-woman-who-signed-my-death",
+    "title": "The Woman Who Signed My Death",
+    "genre": "Gothic, Contemporary, C-Drama",
+    "hook": "Warned that her fiancé plans to erase her identity, a tech heiress enters the marriage as a trap with a three-part identity escrow—then wakes under another woman’s name and must trigger her own restoration.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-woman-who-signed-my-death.webp"
+  },
+  {
+    "slug": "the-message-beneath-the-storm",
+    "title": "The Message Beneath the Storm",
+    "genre": "Contemporary",
+    "hook": "At the tenth memorial of a ferry disaster, two first loves arrive engaged to other people—then a storm traps them inside a lighthouse containing the radio message that could rewrite why they separated.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-message-beneath-the-storm.webp"
+  },
+  {
+    "slug": "our-exes-watched-us-fall-in-love",
+    "title": "Our Exes Watched Us Fall in Love",
+    "genre": "Contemporary",
+    "hook": "Two strangers are publicly abandoned at neighboring airport gates, then turn one viral walkout into a fake-couple pact that makes both exes return just as the performance becomes real.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/our-exes-watched-us-fall-in-love.webp"
+  },
+  {
+    "slug": "eighteen-graves-one-promise",
+    "title": "Eighteen Graves, One Promise",
+    "genre": "Fantasy, Contemporary",
+    "hook": "A woman carrying eighteen complete lifetimes returns to the opera house where her last body burned and finds the man she loved restoring it—while someone recreates the fire that killed her.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/eighteen-graves-one-promise.webp"
+  },
+  {
+    "slug": "every-lie-leaves-gold",
+    "title": "Every Lie Leaves Gold",
+    "genre": "Dark Romance, Fantasy, Contemporary",
+    "hook": "A male investigator who sees lies fracture every reflection must ally with the female saboteur tied to his sister’s death—and recognize the technically true sentence proving her apparent betrayal is their trap.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/every-lie-leaves-gold.webp"
+  },
+  {
+    "slug": "the-desert-stole-my-name",
+    "title": "The Desert Stole My Name",
+    "genre": "Fantasy, Contemporary",
+    "hook": "After a sandstorm marks an oasis archivist for erasure, she must reject a curse demanding one lover replace another—and reclaim her name before everyone she loves forgets it.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-desert-stole-my-name.webp"
+  },
+  {
+    "slug": "the-bodyguard-with-no-heartbeat",
+    "title": "The Bodyguard With No Heartbeat",
+    "genre": "Fantasy, Contemporary, C-Drama",
+    "hook": "A bioengineered palace technician hiding her origin falls for an adult-designed royal automaton who has no heartbeat—and must prove his feelings are his own before a wedding command turns him into her executioner.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-bodyguard-with-no-heartbeat.webp"
+  },
+  {
+    "slug": "the-voice-note-he-never-sent",
+    "title": "The Voice Note He Never Sent",
+    "genre": "Contemporary",
+    "hook": "Eight years after family pressure made her reject a penniless fire pilot, a conservation planner meets him again as a decorated captain—and a wildfire forces them to trust the judgment pride kept silent.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-voice-note-he-never-sent.webp"
+  },
+  {
+    "slug": "ninety-days-to-become-myself",
+    "title": "Ninety Days to Become Myself",
+    "genre": "Contemporary, C-Drama",
+    "hook": "A 39-year-old shipping heiress given ninety days to live marries a disgraced ferry captain to escape her family—then must choose him again when the diagnosis and his poverty both prove false.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/ninety-days-to-become-myself.webp"
+  },
+  {
+    "slug": "the-potter-of-black-tide-house",
+    "title": "The Potter of Black Tide House",
+    "genre": "Gothic, Dark Romance, Contemporary, K-Drama",
+    "hook": "A fugitive father hides with his child in a storm-beaten coastal house, but loving the woman next door safely means exposing the powerful wife who can erase his custody with one call.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-potter-of-black-tide-house.webp"
+  },
+  {
+    "slug": "the-blueprint-he-thought-was-his",
+    "title": "The Blueprint He Thought Was His",
+    "genre": "Contemporary, C-Drama",
+    "hook": "A child’s sleeping words reveal that a celebrated architect’s marriage was built to wound another woman—so she removes the one authorization that can make her husband’s city project real.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-blueprint-he-thought-was-his.webp"
+  },
+  {
+    "slug": "she-remembered-every-lie",
+    "title": "She Remembered Every Lie",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A hotel founder wakes from a coma remembering everything, then pretends not to recognize the husband using her diagnosis to steal her company—while the archivist helping her is tied to the crash.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/she-remembered-every-lie.webp"
+  },
+  {
+    "slug": "the-regents-borrowed-consort",
+    "title": "The Regent's Borrowed Consort",
+    "genre": "Historical, C-Drama",
+    "hook": "An expiring border treaty allows blood-relative proxies at the altar, so archivist Jian Luo replaces his injured brother and finds Regent Mei Zhen standing as bride for her missing sister—then the palace is sealed for treason.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-regents-borrowed-consort.webp"
+  },
+  {
+    "slug": "the-groom-who-cashed-out",
+    "title": "The Groom Who Cashed Out",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A struggling actor paid to impersonate a media heiress's vanished fiancé completes the contract and leaves, only for his clean exit and new creative partner to make his former patron see the man behind the performance.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-groom-who-cashed-out.webp"
+  },
+  {
+    "slug": "the-generals-husband-came-from-tomorrow",
+    "title": "The General's Husband Came From Tomorrow",
+    "genre": "Historical, Fantasy, C-Drama",
+    "hook": "A trauma surgeon from the future wakes as a disgraced court husband, is ordered to marry a poisoned woman general, and becomes the strategist her empire planned to blame for a manufactured border war.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-generals-husband-came-from-tomorrow.webp"
+  },
+  {
+    "slug": "thirty-days-at-the-last-lighthouse",
+    "title": "Thirty Days at the Last Lighthouse",
+    "genre": "Contemporary, K-Drama",
+    "hook": "Four women choose a one-month contract to reopen a storm-closed Jeju lighthouse inn; each controls whether a partner enters the refuge, one marriage ends, one is rebuilt through work, and a new courtship begins without pressure.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/thirty-days-at-the-last-lighthouse.webp"
+  },
+  {
+    "slug": "pretend-you-love-me-at-the-gala",
+    "title": "Pretend You Love Me at the Gala",
+    "genre": "Dark Romance, Contemporary, K-Drama",
+    "hook": "An investigative filmmaker blackmails a cosmetics heiress's estranged son into posing as her fiancé, then discovers he has been secretly compensating the same trial victims she came to avenge.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/pretend-you-love-me-at-the-gala.webp"
+  },
+  {
+    "slug": "his-lost-wife-returned-on-his-wedding-day",
+    "title": "His Lost Wife Returned on His Wedding Day",
+    "genre": "Historical, C-Drama",
+    "hook": "A tea heir's convenience wedding is interrupted by the privateer wife he believed drowned, who needs his fleet to expose the guild treasurer who forged her death and nearly killed them both.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/his-lost-wife-returned-on-his-wedding-day.webp"
+  },
+  {
+    "slug": "the-gardener-and-the-bound-moon",
+    "title": "The Gardener and the Bound Moon",
+    "genre": "Historical, Fantasy, K-Drama",
+    "hook": "A palace gardener hiding weather magic is forced into royal trials and must trust the immortal moon guardian assigned to expose his weaknesses—before the court turns her bound life into his final test.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-gardener-and-the-bound-moon.webp"
+  },
+  {
+    "slug": "she-signed-before-the-cake-went-cold",
+    "title": "She Signed Before the Cake Went Cold",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A pregnant pastry chef ends her marriage the night she catches her celebrity-restaurateur wife cheating, then must decide whether a younger bookstore owner offers real partnership or only shelter from public humiliation.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/she-signed-before-the-cake-went-cold.webp"
+  },
+  {
+    "slug": "bidding-starts-with-his-alibi",
+    "title": "Bidding Starts With His Alibi",
+    "genre": "Contemporary",
+    "hook": "After her collector husband replaces her on their anniversary, a museum registrar turns the provenance files behind his fortune into a midnight auction that can expose him—or destroy the artists she wants to protect.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/bidding-starts-with-his-alibi.webp"
+  },
+  {
+    "slug": "rehearsing-the-love-we-lost",
+    "title": "Rehearsing the Love We Lost",
+    "genre": "Contemporary, C-Drama",
+    "hook": "A ballet star hiding a career-ending injury returns to the sports physician who was her first love, and a tightly bounded rehabilitation campaign forces them to uncover who intercepted the message that separated them.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/rehearsing-the-love-we-lost.webp"
+  },
+  {
+    "slug": "the-patient-he-never-believed",
+    "title": "The Patient He Never Believed",
+    "genre": "Contemporary, Dark Romance",
+    "hook": "A pregnant doctor framed for a fatal clinical-trial dose leaves the hospital heir who turned their marriage into punishment, directing an independent nurse and advocate through the evidence before her own heart condition runs out the clock.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-patient-he-never-believed.webp"
+  },
+  {
+    "slug": "the-ocean-returned-him-seven-years-late",
+    "title": "The Ocean Returned Him Seven Years Late",
+    "genre": "Contemporary, Fantasy",
+    "hook": "A quantum oceanographer pretends to believe his wife's absurd identical-twin alibi, enters a deep-sea time rift, and resurfaces seven years later to find she has declared him dead and built an empire from his research.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-ocean-returned-him-seven-years-late.webp"
+  },
+  {
+    "slug": "he-returned-with-the-governors-lost-twins",
+    "title": "He Returned With the Governor's Lost Twins",
+    "genre": "Historical, C-Drama",
+    "hook": "Six years after selling his service to a mountain governor, an apothecary returns with the household's presumed-dead twin heirs and a revenge plan—colliding with the woman commander who believes he abandoned her.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/he-returned-with-the-governors-lost-twins.webp"
+  },
+  {
+    "slug": "the-family-they-hired-was-real",
+    "title": "The Family They Hired Was Real",
+    "genre": "Contemporary, K-Drama",
+    "hook": "A single mother hired to stage a family for a hotel heir discovers that a fertility-clinic crime made her daughter biologically his—and the relatives who arranged the contract are the same people sabotaging the DNA test.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-family-they-hired-was-real.webp"
+  },
+  {
+    "slug": "the-duchess-bought-the-man-who-broke-her",
+    "title": "The Duchess Bought the Man Who Broke Her",
+    "genre": "Historical, Dark Romance",
+    "hook": "A blinded lord is being sold into a creditor marriage when the commoner woman he once rejected returns as a war duchess, buys the contract for revenge, and discovers his cruelty was the sacrifice that saved her life.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-duchess-bought-the-man-who-broke-her.webp"
+  },
+  {
+    "slug": "the-son-she-was-told-was-dead",
+    "title": "The Son She Was Told Was Dead",
+    "genre": "Contemporary",
+    "hook": "A seven-year-old boy interrupts a woman's heir ceremony by calling her Mother, leading her to the imprisoned father who claims the family staged the baby's death to bury the safety scandal that put him behind bars.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-son-she-was-told-was-dead.webp"
+  },
+  {
+    "slug": "the-woman-who-unbound-four-dragons",
+    "title": "The Woman Who Unbound Four Dragons",
+    "genre": "Fantasy, Historical",
+    "hook": "A woman dropped into a patriarchal sky court is ordered to control four condemned female dragon captains; as she breaks their bonds, the general policing her must sacrifice rank and inheritance to make their voluntary alliance legally visible.",
+    "status": "Research",
+    "cover": "/labs/mini-series/catalogue/the-woman-who-unbound-four-dragons.webp"
+  },
+  {
+    "slug": "wayward",
+    "title": "Wayward",
+    "genre": null,
+    "hook": "A disgraced cartographer exiled from an icebound mining citadel accepts a protection pact with the cursed Warden who absorbs human memories, then risks her last happy memory to stop both his tribunal and her corrupt governor.",
+    "status": null,
+    "cover": null
+  },
+  {
+    "slug": "moonflower",
+    "title": "The Scent of the Moonflower",
+    "genre": "K-Drama, Historical",
+    "hook": null,
+    "status": "Selected",
+    "cover": "/labs/mini-series/moonflower/cover.webp"
+  },
+  {
+    "slug": "second-chance",
+    "title": "Second Chance at Your Heart",
+    "genre": null,
+    "hook": null,
+    "status": "Selected",
+    "cover": "/labs/mini-series/second-chance/cover.webp"
+  },
+  {
+    "slug": "four-beast-husbands",
+    "title": "How Did I End Up with Four Beast-man Husbands?!",
+    "genre": "Fantasy",
+    "hook": null,
+    "status": "Shortlisted",
+    "cover": "/labs/mini-series/four-beast-husbands/cover.webp"
+  },
+  {
+    "slug": "tarot-cafe",
+    "title": "Tarot Cafe",
+    "genre": null,
+    "hook": null,
+    "status": "Research",
+    "cover": null
+  }
+]

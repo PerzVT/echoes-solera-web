@@ -1,0 +1,190 @@
+div.split {
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+}
+.progress {
+  padding: 16px 24px;
+}
+/* The side panel's place in the split; a phone scrolls it into view after a choice. */
+.side {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  scroll-margin-top: 16px;
+}
+.side > * {
+  min-height: 0;
+}
+
+/* The list sizes its rows to its own width, not the window's, so the name never loses its column. */
+.list {
+  container: refs / inline-size;
+}
+/* Room for Choose and Upload, so matched and unmatched rows line up. */
+.rowActions {
+  min-width: 176px;
+}
+
+/* A mid-width list (a laptop with the side panel open, an iPad): two lines per row.
+   The name and its status share the first line; where it is used and the actions share the second. */
+@container refs (max-width: 720px) {
+  .list .refRow[data-actions="true"] {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    row-gap: 0;
+    padding-block: 8px;
+    padding-right: 12px;
+  }
+  .list .refRow[data-actions="true"] > .thumbCell {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+  .list .refRow[data-actions="true"] > .text {
+    display: contents;
+  }
+  .list .refRow[data-actions="true"] .name {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+  }
+  .list .refRow[data-actions="true"] .used {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+  }
+  .list .refRow[data-actions="true"] > .status {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-self: end;
+  }
+  .list .refRow[data-actions="true"] > .rowActions {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+    min-width: 0;
+  }
+}
+/* A narrow list (a small laptop with the side panel open): the actions get their own line,
+   so a matched row's two buttons never squeeze the name. */
+@container refs (max-width: 560px) {
+  .list .refRow[data-actions="true"] {
+    grid-template-rows: auto auto auto;
+  }
+  .list .refRow[data-actions="true"] > .thumbCell {
+    grid-row: 1 / 4;
+    align-self: start;
+  }
+  .list .refRow[data-actions="true"] .used {
+    grid-column: 2 / 4;
+  }
+  .list .refRow[data-actions="true"] > .rowActions {
+    grid-column: 2 / 4;
+    grid-row: 3;
+    justify-self: start;
+    margin-left: -12px;
+  }
+}
+/* A phone: one column, the status and the actions under the name. */
+@container refs (max-width: 420px) {
+  .list .refRow[data-actions="true"] {
+    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-rows: none;
+    padding-right: 16px;
+  }
+  .list .refRow[data-actions="true"] > .thumbCell {
+    grid-row: 1 / 3;
+  }
+  .list .refRow[data-actions="true"] .used {
+    grid-column: 2;
+  }
+  .list .refRow[data-actions="true"] > .status {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    align-self: center;
+  }
+  .list .refRow[data-actions="true"] > .rowActions {
+    grid-column: 2;
+    grid-row: 4;
+    justify-self: start;
+    margin-left: -16px;
+  }
+}
+
+.search {
+  position: relative;
+  display: block;
+}
+.reasonSwap {
+  display: inline-grid;
+}
+.reasonSwap > * {
+  grid-area: 1 / 1;
+  align-self: center;
+}
+.reasonSwap > [data-hidden] {
+  visibility: hidden;
+}
+/* A row still being looked up: its answer keeps its place, hidden, under a placeholder of the same size. */
+.refRow [data-waiting] {
+  position: relative;
+}
+.refRow [data-waiting] > :not(.cover) {
+  visibility: hidden;
+}
+.refRow [data-waiting] > .cover {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  width: 100%;
+}
+.rowActions[data-waiting] > .cover {
+  left: auto;
+  right: 0;
+  width: min(100%, 96px);
+}
+/* A sheet tile that is still being looked up. */
+.waitTile {
+  display: grid;
+  gap: 8px;
+}
+.search svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.search input {
+  padding-left: 48px;
+}
+ul.sheets {
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+}
+.screenplayLine {
+  font-family: var(--font-screenplay), "Courier New", monospace;
+  font-size: 1rem;
+}
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+span.frameArt {
+  aspect-ratio: 16 / 9;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  div.split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 720px) {
+  .progress {
+    padding-inline: 16px;
+  }
+}

@@ -1,0 +1,84 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  align-items: start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.series {
+  padding: 24px 24px 12px;
+}
+.top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.cover {
+  width: 64px;
+  height: auto;
+  aspect-ratio: 2 / 3;
+}
+.eps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+/* The whole row opens the episode where it stands. */
+.episode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding-inline: 12px;
+  margin-inline: -12px;
+  border-radius: var(--r-control);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.eps li + li .episode {
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+.stage {
+  color: var(--text-muted);
+}
+@media (hover: hover) and (pointer: fine) {
+  .episode:hover {
+    background: var(--surface-hover);
+  }
+  .episode:hover .stage {
+    color: var(--text);
+  }
+}
+.episode:active {
+  scale: 0.99;
+}
+@media (prefers-reduced-motion: reduce) {
+  .episode {
+    transition: none;
+  }
+}
+.add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0 0 -16px;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .series {
+    padding: 16px 16px 8px;
+  }
+}

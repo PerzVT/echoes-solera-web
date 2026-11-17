@@ -1,0 +1,404 @@
+/* The pigment behind the page is the site-wide PigmentField (labs layout). */
+.page {
+  display: grid;
+  grid-template-rows: auto minmax(400px, 1fr) auto;
+  gap: 16px;
+  height: 100dvh;
+  min-height: 560px;
+  padding: 16px 24px 20px;
+}
+
+.stages {
+  position: relative;
+  min-height: 0;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  opacity: 0;
+  visibility: hidden;
+  /* Each stage paints on its own layer, so fading one in does not repaint the others. */
+  contain: paint;
+  will-change: opacity;
+  transition:
+    opacity 420ms var(--ease-out),
+    visibility 0s linear 420ms;
+}
+.stage[data-active="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 420ms var(--ease-out),
+    visibility 0s;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 30%;
+}
+.cast {
+  transform-origin: 80% 100%;
+  scale: 1.02;
+  translate: 1.2% 0;
+  transition:
+    scale 900ms var(--ease-out),
+    translate 900ms var(--ease-out);
+}
+.stage[data-active="true"] .cast {
+  scale: 1;
+  translate: 0 0;
+}
+
+.figure {
+  position: absolute;
+  width: auto;
+  max-width: none;
+  filter: drop-shadow(0 18px 24px rgb(0 0 0 / 0.28));
+}
+
+.fade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgb(14 20 28 / 0.86) 0%, rgb(14 20 28 / 0.5) 26%, transparent 58%),
+    linear-gradient(to right, rgb(14 20 28 / 0.62) 0%, rgb(14 20 28 / 0.2) 36%, transparent 60%);
+  pointer-events: none;
+}
+
+.copy {
+  position: absolute;
+  left: clamp(24px, 4.4vw, 64px);
+  bottom: clamp(24px, 6vh, 64px);
+  max-width: min(640px, 62%);
+  color: var(--text);
+}
+/* Over the cover row: the copy sits on top of it, the row's height plus a gap above the foot. */
+@media (min-width: 901px) {
+  .stage[data-covers] .copy {
+    bottom: calc(clamp(24px, 6vh, 64px) + clamp(110px, 9.6vw, 150px) * 1.5 + 40px);
+  }
+}
+.line {
+  margin-top: 12px;
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+.stage:not([data-theme="light"]) .line {
+  color: rgb(246 243 236 / 0.88);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+/* Light art is drawn with a quiet left side, so the text sits on it in ink. */
+.stage[data-theme="light"] .layer {
+  object-position: 100% 50%;
+}
+/* The light art keeps its quiet space mid-left (the cook and her pan fill the lower left), so the copy
+   centres there rather than taking the dark stages' bottom-left anchor. */
+.stage[data-theme="light"] .copy {
+  bottom: auto;
+  top: 44%;
+  translate: 0 -50%;
+  max-width: min(420px, 40%);
+}
+
+/* Hero entrance. Runs when a stage becomes the current one: on arrival and on every switch. The copy
+   rises in three steps, the art settles from a little large, cards and pages are dealt out, covers follow. On a first
+   visit it waits for the intro sheet to start lifting. */
+.stage {
+  --hero-wait: 0ms;
+}
+:global(.nl[data-nl-intro]) .stage {
+  --hero-wait: 1250ms;
+}
+.stage[data-active="true"] .copy > * {
+  animation: hero-rise var(--dur-hero) var(--ease-out) var(--hero-wait) both;
+}
+.stage[data-active="true"] .copy > :nth-child(2) {
+  animation-delay: calc(var(--hero-wait) + var(--stagger));
+}
+.stage[data-active="true"] .copy > :nth-child(3) {
+  animation-delay: calc(var(--hero-wait) + var(--stagger) * 2);
+}
+.stage[data-active="true"] .layer:not(.cast) {
+  animation: hero-settle 1400ms var(--ease-out) var(--hero-wait) both;
+}
+.stage[data-active="true"] .cast {
+  animation: hero-cast 1100ms var(--ease-out) var(--hero-wait) both;
+}
+.stage[data-active="true"] .figure {
+  animation: hero-rise 800ms var(--ease-out) calc(var(--hero-wait) + 120ms) both;
+}
+.stage[data-active="true"] .fan > * {
+  animation: hero-deal 720ms var(--ease-out) calc(var(--hero-wait) + 100ms + var(--i) * 70ms) both;
+}
+/* The cover carousel is its own component; it joins the entrance as one piece. */
+.stage[data-active="true"] [role="region"] {
+  animation: hero-rise 560ms var(--ease-out) calc(var(--hero-wait) + 260ms) both;
+}
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+@keyframes hero-settle {
+  from {
+    scale: 1.045;
+  }
+}
+@keyframes hero-cast {
+  from {
+    scale: 1.03;
+    translate: 1.6% 0;
+  }
+}
+@keyframes hero-deal {
+  from {
+    opacity: 0;
+    rotate: 0deg;
+    translate: 0 9%;
+  }
+}
+
+/* Card faces and manga pages */
+.fan {
+  position: absolute;
+  inset: 0 6% 0 38%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fan > img,
+.fanCard {
+  --mid: calc((var(--n) - 1) / 2);
+  --off: calc(var(--i) - var(--mid));
+  width: 29%;
+  height: auto;
+  max-width: none;
+  max-height: 62%;
+  margin-inline: -2.5%;
+  rotate: calc(var(--off) * 6deg);
+  translate: 0 calc(var(--off) * var(--off) * 2.2%);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.2) inset,
+    0 24px 40px rgb(0 0 0 / 0.45);
+}
+.fanCard {
+  display: block;
+  flex: none;
+  height: auto;
+  max-height: none;
+  border-radius: 6.4% / 4.57%;
+}
+/* Manga: the three panels of page 1 set as a page, gutters and all (manga-hero-a). */
+.fan[data-kind="panels"] {
+  inset: 12% 6% 12% 46%;
+  display: grid;
+  grid-template-columns: 0.91fr 2.08fr;
+  align-content: center;
+  gap: 10px;
+  padding: 10px;
+  background: #f6f3ec;
+  border-radius: 3px;
+  box-shadow: 0 24px 40px rgb(0 0 0 / 0.45);
+  rotate: 1.2deg;
+  height: fit-content;
+  margin-block: auto;
+}
+.fan[data-kind="panels"] > img {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  rotate: none;
+  translate: none;
+  box-shadow: inset 0 0 0 2px #111;
+  outline: 2px solid #111;
+  outline-offset: -2px;
+}
+.fan[data-kind="panels"] > img:first-child {
+  grid-column: 1 / -1;
+}
+.fan[data-kind="pages"] > img {
+  width: 35%;
+  max-height: 80%;
+  object-fit: contain;
+  margin-inline: -1.5%;
+  rotate: calc(var(--off) * 3deg);
+  translate: 0 calc(var(--off) * 3%);
+  border-radius: 3px;
+  background: #fff;
+}
+@media (hover: hover) and (pointer: fine) {
+}
+
+/* Dock */
+.dock {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dock a {
+  flex: 1 0 auto;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0 18px;
+  border-radius: 13px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .dock a:not([aria-current="page"]):hover {
+    color: var(--text);
+    background: var(--surface);
+  }
+}
+.dock a:active {
+  scale: 0.96;
+}
+.dock a[aria-current="page"] {
+  --c: calc(44px * 0.4444);
+  color: var(--on-action);
+  background: var(--action);
+  border-radius: 0;
+  -webkit-mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+}
+/* With script, one pill slides under the links instead of each link filling itself. */
+.dock[data-pill="on"] a {
+  position: relative;
+  z-index: 1;
+}
+.dock[data-pill="on"] a[aria-current="page"] {
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+}
+.pill {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  height: var(--ph);
+  pointer-events: none;
+}
+.pill span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--action);
+  transition:
+    translate 320ms var(--ease-out),
+    scale 320ms var(--ease-out);
+}
+.pill[data-animate="false"] span {
+  transition: none;
+}
+.pill span:nth-child(1) {
+  width: var(--cap);
+  translate: var(--px) 0;
+  -webkit-mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
+  mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
+}
+.pill span:nth-child(2) {
+  width: 100px;
+  transform-origin: 0 0;
+  translate: calc(var(--px) + var(--cap) - 1px) 0;
+  scale: var(--mid) 1;
+}
+.pill span:nth-child(3) {
+  width: var(--cap);
+  translate: calc(var(--px) + var(--pw) - var(--cap)) 0;
+  -webkit-mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
+  mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
+}
+
+@media (max-width: 900px) {
+  .page {
+    height: auto;
+    min-height: 100dvh;
+    grid-template-rows: auto minmax(560px, 1fr) auto;
+    padding: 12px 16px 16px;
+  }
+  .copy,
+  .stage[data-theme="light"] .copy {
+    max-width: none;
+    right: 24px;
+    top: auto;
+    bottom: 24px;
+    translate: none;
+  }
+  .fan {
+    inset: 0 0 38% 0;
+  }
+  .fan[data-kind="panels"] {
+    inset: 8% 8% auto 8%;
+  }
+  .fan > img,
+  .fanCard {
+    width: 30%;
+  }
+  .stage[data-theme="light"] .layer {
+    object-position: 78% 50%;
+  }
+  .stage[data-theme="light"]::after {
+    content: "";
+    position: absolute;
+    inset: 45% 0 0 0;
+    background: linear-gradient(to top, rgb(247 243 232 / 0.94) 35%, transparent);
+  }
+  .stage[data-theme="light"] .copy {
+    z-index: 1;
+  }
+  .figure {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .stage[data-active="true"],
+  .cast {
+    transition: none;
+  }
+  /* The stage is simply there: no rise, no settle, no deal. */
+  .stage[data-active="true"] .copy > *,
+  .stage[data-active="true"] .layer,
+  .stage[data-active="true"] .layer:not(.cast),
+  .stage[data-active="true"] .figure,
+  .stage[data-active="true"] .fan > *,
+  .stage[data-active="true"] [role="region"] {
+    animation: none;
+  }
+}

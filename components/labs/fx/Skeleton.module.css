@@ -1,0 +1,117 @@
+/* The block. A 1.7 s cycle, as on perz.dev; here a sheen crosses on a transform instead of the block pulsing. */
+.sk {
+  --sk-r: 6px;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  flex: none;
+  max-width: 100%;
+  border-radius: var(--sk-r);
+  background: var(--skeleton);
+  box-shadow: inset 0 0 0 1px var(--skeleton-edge);
+}
+.sk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(100deg, transparent 22%, var(--skeleton-sheen) 50%, transparent 78%);
+  animation: sk-sheen 1700ms var(--ease-in-out) calc(var(--sk-i, 0) * var(--stagger)) infinite;
+}
+@keyframes sk-sheen {
+  to {
+    translate: 100% 0;
+  }
+}
+.shoulder {
+  border-radius: 0;
+  box-shadow: none;
+  --c: 21.33px;
+  -webkit-mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  mask:
+    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
+    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+}
+
+.text {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+}
+.text .sk {
+  height: 12px;
+}
+.text[data-size="title"] .sk {
+  height: 22px;
+  --sk-r: 8px;
+}
+.text[data-size="display"] .sk {
+  height: clamp(2.4rem, 4.8vw, 4.2rem);
+  --sk-r: 12px;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.stageCopy {
+  position: absolute;
+  left: clamp(24px, 4.4vw, 64px);
+  right: 24px;
+  bottom: clamp(24px, 6vh, 64px);
+  display: grid;
+  gap: 18px;
+  max-width: 640px;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+.panel .sk {
+  background: var(--surface-hover);
+}
+
+.listRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--sk-min, 168px)), 1fr));
+  gap: 28px 16px;
+}
+.cell {
+  display: grid;
+  gap: 12px;
+}
+
+/* Reduced motion: the blocks hold still. Their shape is the message. */
+@media (prefers-reduced-motion: reduce) {
+  .sk::after {
+    animation: none;
+    display: none;
+  }
+}

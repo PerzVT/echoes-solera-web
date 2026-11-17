@@ -1,0 +1,69 @@
+/* The featured series. Height follows the shared title-page hero. */
+.feature {
+  composes: nl-hero-height from global;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  display: flex;
+  align-items: center;
+}
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 22%;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgb(14 20 28 / 0.92) 0%, rgb(14 20 28 / 0.7) 40%, transparent 72%);
+}
+.featureCopy {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  max-width: 600px;
+  padding: clamp(24px, 4.4vw, 64px);
+}
+.hook {
+  margin-bottom: 14px;
+  max-width: 40ch;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: rgb(246 243 236 / 0.88);
+  text-wrap: pretty;
+}
+.hook + .hook {
+  margin-top: -14px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Below 960 the copy would run over the couple: it moves to the bottom over a fade. */
+@media (max-width: 960px) {
+  .feature {
+    align-items: flex-end;
+  }
+  .shade {
+    background: linear-gradient(to top, rgb(14 20 28 / 0.94) 0%, rgb(14 20 28 / 0.6) 45%, transparent 75%);
+  }
+}
+
+/* Phones: the couple keeps the top of the frame and the copy sits on the dark below them, never on a face. */
+@media (max-width: 720px) {
+  .art {
+    height: 58% !important;
+    object-position: 62% 0;
+  }
+  .shade {
+    background: linear-gradient(to top, rgb(14 20 28) 0%, rgb(14 20 28) 44%, rgb(14 20 28 / 0.6) 52%, transparent 62%);
+  }
+}

@@ -1,0 +1,412 @@
+.page {
+  padding: 16px 24px 96px;
+}
+.main {
+  max-width: 1344px;
+  margin: 16px auto 0;
+  display: grid;
+  gap: clamp(56px, 8vh, 88px);
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  column-gap: clamp(32px, 5vw, 80px);
+  row-gap: 20px;
+  align-items: end;
+  padding: clamp(40px, 7vh, 72px) 0 clamp(40px, 6vh, 56px);
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  grid-column: 1 / -1;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.intro h1 {
+  max-width: 12ch;
+}
+.introSide {
+  display: grid;
+  gap: 28px;
+  justify-items: start;
+}
+.lede {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 44ch;
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.head p {
+  margin-top: 8px;
+  max-width: 52ch;
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 4px;
+  font-weight: 500;
+  color: var(--text);
+  border-bottom: 1px solid var(--border-strong);
+  transition:
+    border-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .textLink:hover {
+    border-color: var(--text);
+  }
+}
+.textLink:active {
+  scale: 0.96;
+}
+
+/* Creator: eight screens, four to a row, each row on one connecting line. */
+.stages {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  row-gap: 40px;
+  list-style: none;
+}
+.stages li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding-right: 20px;
+}
+.stages li::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 44px;
+  right: 0;
+  height: 1px;
+  background: var(--border-strong);
+}
+.stages li:nth-child(4n)::before,
+.stages li:last-child::before {
+  display: none;
+}
+.node {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Style and references: a board of approved sheets beside the list. */
+.style {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: clamp(16px, 2vw, 24px);
+  border-radius: var(--r-stage);
+  background: var(--surface);
+}
+.sheet {
+  display: grid;
+  gap: 10px;
+}
+.sheetArt {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--r-card);
+  background: #ece8de;
+  overflow: hidden;
+}
+.sheetArt img {
+  object-fit: contain;
+  padding: 8px;
+}
+.sheet figcaption {
+  padding-inline: 4px;
+  color: var(--text-muted);
+}
+.styleCopy {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+.refs {
+  width: 100%;
+  margin: 20px 0 28px;
+  list-style: none;
+}
+.refs li {
+  display: grid;
+  gap: 2px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.refs li:last-child {
+  border-bottom: 1px solid var(--border);
+}
+.refName {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Experiments: one wide piece and two portraits. */
+.experimentsSection {
+  scroll-margin-top: 24px;
+}
+.note {
+  margin: 8px 0 28px;
+  color: var(--text-muted);
+}
+.experiments {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: clamp(360px, 36vw, 520px);
+  gap: 16px;
+  list-style: none;
+}
+.wide {
+  grid-column: span 6;
+}
+.slim {
+  grid-column: span 3;
+}
+.card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+.card:focus-visible {
+  outline-offset: 4px;
+  border-radius: var(--r-card);
+}
+.cardArt {
+  z-index: -2;
+  object-fit: cover;
+  transition: scale 400ms var(--ease-out);
+}
+.cardShade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgb(10 14 20 / 0.92) 0%, rgb(10 14 20 / 0.6) 34%, transparent 64%);
+}
+.tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: rgb(10 14 20 / 0.72);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  color: #fff;
+}
+.cardCopy {
+  display: grid;
+  gap: 6px;
+  padding: clamp(20px, 2vw, 28px);
+}
+.kind {
+  color: rgb(255 255 255 / 0.78);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  line-height: 1.15;
+}
+.cardLine {
+  color: rgb(255 255 255 / 0.86);
+  text-wrap: pretty;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .cardArt {
+    scale: 1.03;
+  }
+}
+
+/* Pipeline: one ruled row that links out. */
+.pipeline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 88px;
+  padding: 20px 4px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pipeline:hover {
+    background: var(--surface);
+  }
+}
+.pipeline:active {
+  background: var(--surface-sunken);
+}
+.pipelineText {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+  line-height: 1.2;
+}
+.pipelineArrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  transition: translate var(--dur-move) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pipeline:hover .pipelineArrow {
+    translate: 3px 0;
+  }
+}
+
+@media (max-width: 1100px) {
+  .stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 36px;
+  }
+  .stages li:nth-child(2n)::before {
+    display: none;
+  }
+  .style {
+    grid-template-columns: 1fr;
+  }
+  .board {
+    order: 2;
+  }
+}
+@media (max-width: 900px) {
+  .intro {
+    grid-template-columns: 1fr;
+  }
+  .experiments {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+  }
+  .wide {
+    grid-column: 1 / -1;
+  }
+  .slim {
+    grid-column: auto;
+  }
+  .card {
+    aspect-ratio: 3 / 4;
+  }
+  .wide .card {
+    aspect-ratio: 4 / 3;
+  }
+}
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 16px 64px;
+  }
+  /* The row becomes a column with the line running down the left. */
+  .stages {
+    grid-template-columns: 1fr;
+    row-gap: 0;
+  }
+  .stages li {
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 16px;
+    row-gap: 2px;
+    padding: 0 0 24px;
+  }
+  .stages li::before,
+  .stages li:nth-child(2n)::before,
+  .stages li:nth-child(4n)::before {
+    display: block;
+    top: 44px;
+    bottom: 0;
+    left: 22px;
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+  .stages li:last-child::before {
+    display: none;
+  }
+  .node {
+    grid-row: span 2;
+    margin-bottom: 0;
+  }
+  .stages h3 {
+    padding-top: 9px;
+  }
+  .experiments {
+    grid-template-columns: 1fr;
+  }
+  .slim .card {
+    aspect-ratio: 4 / 5;
+  }
+  .pipeline {
+    gap: 8px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardArt,
+  .pipelineArrow {
+    transition: none;
+  }
+  .card:hover .cardArt {
+    scale: 1;
+  }
+  .pipeline:hover .pipelineArrow {
+    translate: 0 0;
+  }
+}
+
+/* Press: the whole card gives a little. */
+.card {
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.card:active {
+  scale: 0.98;
+}

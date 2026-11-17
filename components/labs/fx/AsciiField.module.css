@@ -1,0 +1,13 @@
+/* Fills the nearest positioned ancestor. Glyphs take the field's text colour. */
+.field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--text-muted);
+}
+.field canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

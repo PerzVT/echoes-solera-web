@@ -1,0 +1,395 @@
+.stage {
+  position: relative;
+  height: 100dvh;
+  min-height: 480px;
+  overflow: hidden;
+  background: #0b0d13;
+  color: #fff;
+  /* The owner's screenshot sets dialogue near 3.1% of the frame's width. */
+  --line: clamp(1.25rem, 3.1vw, 2.875rem);
+}
+.stage[data-large="true"] {
+  --line: clamp(1.5rem, 3.6vw, 3.25rem);
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+}
+.scene[data-on="true"] {
+  opacity: 1;
+}
+.scene img {
+  object-fit: cover;
+}
+
+.tap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  cursor: pointer;
+}
+.tap:focus-visible {
+  outline-offset: -6px;
+}
+
+.ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 250ms var(--ease-out);
+}
+.ui[data-hidden="true"] {
+  opacity: 0;
+}
+.ui > * {
+  pointer-events: auto;
+}
+.fade {
+  position: absolute;
+  /* The dialogue fade from the visual novel kit: the lower 40 percent, #080b14 at 0, 0.7 and 0.95. */
+  inset: 60% 0 0 0;
+  pointer-events: none !important;
+  background: linear-gradient(to bottom, rgb(8 11 20 / 0) 0%, rgb(8 11 20 / 0.7) 45%, rgb(8 11 20 / 0.95) 100%);
+}
+
+.exit {
+  position: absolute;
+  left: clamp(16px, 2.4vw, 32px);
+  top: clamp(16px, 2.4vw, 32px);
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff !important;
+  background: rgb(8 9 14 / 0.62);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .exit:hover {
+    background: rgb(8 9 14 / 0.75);
+  }
+}
+.exit:active {
+  scale: 0.96;
+}
+
+.dialogue {
+  position: absolute;
+  left: clamp(20px, 5vw, 96px);
+  right: clamp(20px, 5vw, 96px);
+  bottom: clamp(92px, 15vh, 148px);
+  pointer-events: none !important;
+  text-shadow: 0 2px 10px rgb(0 0 0 / 0.6);
+}
+.speaker {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: #ffb3d1;
+}
+.line {
+  max-width: 34em;
+  min-height: 2.9em;
+  font-weight: 300;
+  font-size: var(--line);
+  line-height: 1.45;
+  letter-spacing: 0.005em;
+}
+/* The unrevealed part keeps its space so the line never reflows while it types. */
+.rest {
+  visibility: hidden;
+}
+/* Without script nothing types the line out: show it whole. */
+:global(.nl:not([data-nl-js])) .rest {
+  visibility: visible;
+}
+/* A quiet mark that the scene is a concept sample, beside the way out. */
+.concept {
+  position: absolute;
+  left: calc(clamp(16px, 2.4vw, 32px) + 56px);
+  top: clamp(16px, 2.4vw, 32px);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: rgb(255 255 255 / 0.72);
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.6);
+}
+/* Continue cue: a small pink diamond, the card-back motif, after the last word. */
+.more {
+  display: inline-block;
+  width: 0.3em;
+  height: 0.3em;
+  margin-left: 0.4em;
+  vertical-align: 0.12em;
+  rotate: 45deg;
+  background: var(--accent);
+  animation: more 900ms var(--ease-out) infinite alternate;
+}
+@keyframes more {
+  from {
+    opacity: 0.35;
+  }
+}
+
+.choices {
+  position: absolute;
+  left: clamp(20px, 5vw, 96px);
+  bottom: calc(clamp(92px, 15vh, 148px) + var(--line) * 4.6 + 36px);
+  width: min(440px, calc(100% - 40px));
+  display: grid;
+  /* The kit's minimum gap between choices. */
+  gap: 16px;
+  list-style: none;
+}
+.choices button {
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 22px;
+  text-align: left;
+  font-size: 1.125rem;
+  line-height: 1.35;
+  color: #fff;
+  /* Choice shapes from the kit: 22px corners, #17222d fill, white hairline; pink edge on hover. */
+  border-radius: 22px;
+  border: 2px solid rgb(255 255 255 / 0.44);
+  background: rgb(23 34 45 / 0.91);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out),
+    translate var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .choices button:hover {
+    background: rgb(58 53 71 / 0.93);
+    border-color: #ef8eb6;
+    translate: 4px 0;
+  }
+}
+.choices button:active {
+  scale: 0.98;
+}
+/* The kit's selected state: cream fill, ink text, held for a moment before the scene changes. */
+.choices button[data-picked="true"] {
+  color: #17222d;
+  background: #f6f3ec;
+  border-color: #f6f3ec;
+}
+.choices button:disabled:not([data-picked="true"]) {
+  opacity: 0.5;
+  cursor: default;
+}
+.choices li {
+  animation: rise 360ms var(--ease-out) backwards;
+}
+.choices li:nth-child(2) {
+  animation-delay: 90ms;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(14px, 3vh, 32px);
+  display: flex;
+  justify-content: center;
+  gap: clamp(4px, 3vw, 44px);
+}
+.controls button {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.86);
+  transition:
+    color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .controls button:hover:not(:disabled) {
+    color: #fff;
+    background: rgb(255 255 255 / 0.1);
+  }
+}
+.controls button:active:not(:disabled) {
+  scale: 0.96;
+}
+.controls button[aria-pressed="true"],
+.controls button[aria-expanded="true"] {
+  color: #17202a;
+  background: #f6f3ec;
+}
+.controls button:disabled {
+  color: rgb(255 255 255 / 0.36);
+  cursor: default;
+}
+
+/* Top right, clear of the dialogue line it would otherwise cover. */
+.settings {
+  position: absolute;
+  right: clamp(16px, 4vw, 64px);
+  top: clamp(16px, 2.4vw, 32px);
+  max-height: calc(100% - 140px);
+  overflow-y: auto;
+  width: min(320px, calc(100% - 32px));
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  border-radius: var(--r-card);
+  border: 1px solid var(--border);
+  background: rgb(26 35 48 / 0.96);
+  box-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
+  color: var(--text);
+  animation: rise 240ms var(--ease-out);
+}
+.settings fieldset {
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.settings legend {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.settings fieldset label {
+  position: relative;
+  flex: 1;
+}
+.settings fieldset input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.settings fieldset span {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  border-radius: var(--r-control);
+  border: 1px solid var(--border);
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+.settings fieldset input:checked + span {
+  color: var(--on-action);
+  background: var(--action);
+  border-color: var(--action);
+}
+.settings fieldset input:focus-visible + span {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+/* Larger text: a switch, drawn to match the rest of the panel. */
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-align: left;
+}
+.track {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-sunken);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out);
+}
+.track::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition:
+    translate var(--dur-move) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out);
+}
+.switch[aria-checked="true"] .track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.switch[aria-checked="true"] .track::after {
+  translate: 18px 0;
+  background: #17202a;
+}
+.settingsActions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.end {
+  animation: rise 240ms var(--ease-out);
+  position: absolute;
+  left: clamp(20px, 5vw, 96px);
+  bottom: clamp(92px, 15vh, 148px);
+  display: grid;
+  gap: 20px;
+}
+.endActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .settings {
+    top: 80px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .track::after {
+    transition: none;
+  }
+  .scene,
+  .ui {
+    transition: none;
+  }
+  .choices li {
+    animation: none;
+  }
+  .settings,
+  .end {
+    animation-name: fade-in;
+  }
+  .more {
+    animation: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
