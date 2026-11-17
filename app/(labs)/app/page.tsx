@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { AppHome } from "@/components/labs/app/AppHome";
+import { ChatApp } from "@/components/labs/chat/ChatApp";
+import { courier } from "@/components/labs/chat/font";
 
-export const metadata: Metadata = { title: "Your series" };
+export const metadata: Metadata = { title: "New chat" };
 
 export default function AppHomePage() {
-  return <AppHome />;
+  return (
+    <div className={courier.variable}>
+      <ChatApp />
+    </div>
+  );
 }

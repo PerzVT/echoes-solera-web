@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type DragEvent, type KeyboardEvent } from "react";
 import { AppShell } from "./AppShell";
 import { Button, ButtonLink } from "@/components/labs/Button";
 import { Icon } from "@/components/labs/Icon";
@@ -17,7 +17,7 @@ export type RefState = "default" | "outfit" | "confirm";
 /**
  * References: every element the episode needs, grouped as characters, locations and props. Each card shows the
  * picture itself, the element's name and its full element ID. A card opens its picture full screen; an element
- * with no picture offers Choose and Upload.
+ * with no picture takes a dropped file or opens the picker, which also uploads.
  */
 export function ReferencesStep({ initial }: { initial: RefState }) {
   const router = useRouter();
@@ -40,7 +40,8 @@ export function ReferencesStep({ initial }: { initial: RefState }) {
     store.keep(memoKey, elements);
   }, [store, memoKey, elements]);
 
-  const shown = elements.filter((x) => x.src);
+  // Screen order: group by group, as the cards are laid out.
+  const shown = elementGroups.flatMap((g) => elements.filter((x) => x.kind === g.kind && x.src));
   const missing = elements.filter((x) => !x.src);
 
   /** Pictures an element can be matched to: the series cast for a character, the library and this session's uploads otherwise. */
@@ -116,13 +117,22 @@ export function ReferencesStep({ initial }: { initial: RefState }) {
         {said}
       </p>
       <div className={r.page}>
-        <h1 className={r.title}>References</h1>
-        {rejected && <Alert>{rejected}</Alert>}
+        <h1 className="sr-only">References</h1>
+        {rejected && (
+          <div className={r.wide}>
+            <Alert>{rejected}</Alert>
+          </div>
+        )}
         {elementGroups.map((g) => {
           const items = elements.filter((x) => x.kind === g.kind);
           if (!items.length) return null;
           return (
-            <section key={g.kind} className={r.group} aria-labelledby={`g-${g.kind}`}>
+            <section
+              key={g.kind}
+              className={r.group}
+              aria-labelledby={`g-${g.kind}`}
+              style={{ "--span": Math.min(items.length, 4) } as CSSProperties}
+            >
               <h2 id={`g-${g.kind}`} className={r.groupTitle}>
                 {g.label}
               </h2>
@@ -130,27 +140,19 @@ export function ReferencesStep({ initial }: { initial: RefState }) {
                 {items.map((x) => (
                   <li key={x.id} className={r.card}>
                     {x.src ? (
-                      <button
-                        type="button"
-                        className={r.art}
-                        onClick={(e) => {
-                          opener.current = e.currentTarget;
-                          setViewing(x.id);
-                        }}
-                        aria-label={`View ${x.name} full screen`}
-                      >
-                        <SheetImage src={x.src} sizes="(max-width: 720px) 100vw, (max-width: 1280px) 50vw, 33vw" className={r.img} />
-                        <span className={r.zoom} aria-hidden="true">
-                          <Icon name="fullscreen" size={18} />
-                        </span>
-                      </button>
-                    ) : (
-                      <div className={r.art} data-empty="true">
-                        <span className={r.emptyIcon} aria-hidden="true">
-                          <GestureIcon name="upload" size={24} />
-                        </span>
-                        <p className={r.emptyText}>No image</p>
-                        <div className={r.emptyActions}>
+                      <div className={r.artWrap}>
+                        <button
+                          type="button"
+                          className={r.art}
+                          onClick={(e) => {
+                            opener.current = e.currentTarget;
+                            setViewing(x.id);
+                          }}
+                          aria-label={`View ${x.name} full screen`}
+                        >
+                          <SheetImage src={x.src} sizes="(max-width: 720px) 100vw, (max-width: 1200px) 50vw, 25vw" className={r.img} />
+                        </button>
+                        <span className={r.change}>
                           <Button
                             variant="secondary"
                             size="small"
@@ -158,34 +160,25 @@ export function ReferencesStep({ initial }: { initial: RefState }) {
                               opener.current = e.currentTarget;
                               setChoosing(x.id);
                             }}
-                            aria-label={`Choose an image for ${x.name}`}
+                            aria-label={`Change the image for ${x.name}`}
                           >
-                            Choose
+                            Change
                           </Button>
-                          <Button variant="quiet" size="small" onClick={() => startUpload(x.id)} aria-label={`Upload an image for ${x.name}`}>
-                            Upload
-                          </Button>
-                        </div>
+                        </span>
                       </div>
+                    ) : (
+                      <EmptyArt
+                        name={x.name}
+                        onChoose={(el) => {
+                          opener.current = el;
+                          setChoosing(x.id);
+                        }}
+                        onFiles={(files) => upload(x, files)}
+                      />
                     )}
                     <div className={r.meta}>
-                      <div className={r.metaText}>
-                        <p className={r.name}>{x.name}</p>
-                        <p className={r.tag}>{x.tag}</p>
-                      </div>
-                      {x.src && (
-                        <Button
-                          variant="quiet"
-                          size="small"
-                          onClick={(e) => {
-                            opener.current = e.currentTarget;
-                            setChoosing(x.id);
-                          }}
-                          aria-label={`Change the image for ${x.name}`}
-                        >
-                          Change
-                        </Button>
-                      )}
+                      <p className={r.name}>{x.name}</p>
+                      <p className={r.tag}>{x.tag}</p>
                     </div>
                   </li>
                 ))}
@@ -242,10 +235,45 @@ export function ReferencesStep({ initial }: { initial: RefState }) {
         busy={starting}
         title={`Generate ${store.working.episode.toLowerCase()}`}
         makes={confirmEpisode.makes}
-        facts={missing.length ? [{ label: "No image", value: listOf(missing.map((x) => x.name)) }] : []}
+        facts={missing.length ? [{ label: "Missing", value: listOf(missing.map((x) => x.name)) }] : []}
         confirmLabel="Generate episode"
       />
     </AppShell>
+  );
+}
+
+type EmptyArtProps = { name: string; onChoose: (el: HTMLElement) => void; onFiles: (files: File[]) => void };
+
+/** An element with no picture: the whole box takes a dropped image, and one button opens the picker. */
+function EmptyArt({ name, onChoose, onFiles }: EmptyArtProps) {
+  const [over, setOver] = useState(false);
+  const onDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setOver(false);
+    onFiles(Array.from(e.dataTransfer.files));
+  };
+  return (
+    <div
+      className={r.art}
+      data-empty="true"
+      data-over={over || undefined}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setOver(true);
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOver(false);
+      }}
+      onDrop={onDrop}
+    >
+      <span className={r.emptyIcon} aria-hidden="true">
+        <GestureIcon name="upload" size={24} active={over} />
+      </span>
+      <p className={r.emptyText}>No image</p>
+      <Button variant="secondary" size="small" onClick={(e) => onChoose(e.currentTarget)} aria-label={`Choose an image for ${name}`}>
+        Choose image
+      </Button>
+    </div>
   );
 }
 

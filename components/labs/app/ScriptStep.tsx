@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import { AppShell } from "./AppShell";
 import { Button } from "@/components/labs/Button";
+import { GestureIcon } from "@/components/labs/fx";
 import { AppIcon } from "./AppIcon";
 import m from "./fx/motion.module.css";
 import { useCast } from "./CastProvider";
-import { Alert, Dropzone, EpisodeTitle, Status, Stepper, focusSoon } from "./parts";
+import { Alert, EpisodeTitle, Status, Stepper, focusSoon, useFilePicker } from "./parts";
 import { recentScripts, scriptTypes } from "@/lib/labs/maker";
-import s from "./maker.module.css";
 import st from "./ScriptStep.module.css";
 
 export function ScriptStep() {
@@ -25,6 +25,7 @@ export function ScriptStep() {
   }, [store, file, text]);
   const [rejected, setRejected] = useState("");
   const [going, setGoing] = useState(false);
+  const [over, setOver] = useState(false);
   const choose = useRef<HTMLButtonElement>(null);
   const paste = useRef<HTMLTextAreaElement>(null);
 
@@ -40,13 +41,31 @@ export function ScriptStep() {
     setRejected(rest.length ? `${rest.map((x) => x.name).join(", ")} not added. An episode takes one script; ${f.name} is used.` : "");
     setFile(f.name);
   };
+  const picker = useFilePicker(".txt,.docx,.fdx,.pdf", take, false);
+
+  // A file dropped anywhere on the box loads it; the drop never lands in the text as a path.
+  const onDragOver = (e: DragEvent) => {
+    if (!e.dataTransfer.types.includes("Files")) return;
+    e.preventDefault();
+    setOver(true);
+  };
+  const onDragLeave = (e: DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOver(false);
+  };
+  const onDrop = (e: DragEvent) => {
+    if (!e.dataTransfer.files.length) return;
+    e.preventDefault();
+    setOver(false);
+    take(Array.from(e.dataTransfer.files));
+  };
 
   const ready = Boolean(file || text.trim());
+  const empty = !text;
 
   const process = () => {
-    // With nothing added yet, the button leads to the two ways of adding a script.
+    // With nothing added yet, the button leads to the box.
     if (!ready) {
-      focusSoon(() => choose.current);
+      focusSoon(() => paste.current);
       return;
     }
     try {
@@ -57,108 +76,101 @@ export function ScriptStep() {
   };
 
   return (
-    <AppShell
-      section="/app"
-      title={<EpisodeTitle />}
-      onFiles={take}
-      bar={<Stepper current="script" />}
-      actions={
-        <Button onClick={process} loading={going} aria-disabled={!ready || undefined}>
-          Process script
-        </Button>
-      }
-    >
-      <div className={st.page}>
-        <h1 className={st.title}>Bring your script</h1>
-        <div className={st.grid}>
-          <section className={st.card} aria-labelledby="upload-heading">
-            <h2 id="upload-heading" className={st.cardTitle}>
-              Upload a file
-            </h2>
-            <div className={st.cardBody}>
-              <Dropzone
-                title="Drop your script here"
-                hint=".txt, .docx, .fdx or .pdf"
-                button="Choose file"
-                buttonLabel="Choose a script file"
-                accept=".txt,.docx,.fdx,.pdf"
-                onFiles={take}
-                buttonRef={choose}
-              />
-              {file && (
+    <AppShell section="/app" title={<EpisodeTitle />} onFiles={take} bar={<Stepper current="script" />}>
+      <div className={st.layout}>
+        <section className={st.box} aria-labelledby="script-heading" data-over={over} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
+          <h1 id="script-heading" className="sr-only">
+            Script
+          </h1>
+          <div className={st.field}>
+            {empty && !file && (
+              <div className={st.invite} aria-hidden="true">
+                <GestureIcon name="upload" size={28} active={over} />
+                <span>Drop a script or paste it here</span>
+              </div>
+            )}
+            <textarea
+              ref={paste}
+              id="script-text"
+              className={st.text}
+              placeholder="EXT. CEMETERY - DAY, RAIN"
+              value={text}
+              spellCheck={false}
+              aria-labelledby="script-heading"
+              aria-describedby={file && text.trim() ? "script-both" : undefined}
+              onChange={(e) => setText(e.target.value)}
+            />
+            {file && text.trim() && (
+              <span id="script-both" className="sr-only">
+                {file} is used, not this text.
+              </span>
+            )}
+          </div>
+          {rejected && <Alert className={st.alert}>{rejected}</Alert>}
+          <div className={st.foot}>
+            <div className={st.source}>
+              {picker.node}
+              {file ? (
                 <p className={`${st.chosen} ${m.enter}`}>
                   <AppIcon name="file" size={16} />
                   <span className={st.chosenName}>{file}</span>
                   <Button
                     variant="quiet"
                     size="small"
+                    className={st.iconButton}
                     onClick={() => {
                       setFile("");
                       focusSoon(() => choose.current);
                     }}
                     aria-label={`Remove ${file}`}
                   >
-                    Remove
+                    <GestureIcon name="close" size={16} />
                   </Button>
                 </p>
-              )}
-              {rejected && <Alert>{rejected}</Alert>}
-            </div>
-          </section>
-
-          <section className={st.card} aria-labelledby="paste-heading">
-            <h2 id="paste-heading" className={st.cardTitle}>
-              <label htmlFor="script-text">Paste the text</label>
-            </h2>
-            <div className={st.cardBody}>
-              <textarea
-                ref={paste}
-                id="script-text"
-                className={`${s.textarea} ${st.paste}`}
-                placeholder="EXT. CEMETERY - DAY, RAIN"
-                value={text}
-                spellCheck={false}
-                aria-describedby={file && text.trim() ? "script-both" : undefined}
-                onChange={(e) => setText(e.target.value)}
-              />
-              {file && text.trim() && (
-                <p id="script-both" className={st.note}>
-                  {file} is used, not this text.
-                </p>
+              ) : (
+                <>
+                  <Button ref={choose} variant="secondary" size="small" onClick={picker.open} aria-label="Choose a script file">
+                    Choose file
+                  </Button>
+                  <span className={st.types}>.txt, .docx, .fdx or .pdf</span>
+                </>
               )}
             </div>
-          </section>
+            <Button className={st.process} onClick={process} loading={going} aria-disabled={!ready || undefined}>
+              Process script
+            </Button>
+          </div>
+        </section>
 
-          <section className={st.card} aria-labelledby="recent-heading">
-            <h2 id="recent-heading" className={st.cardTitle}>
-              Recent scripts
-            </h2>
-            <ul className={st.recent}>
-              {recentScripts.map((r) => {
-                const body = (
-                  <>
-                    <span className={st.recentText}>
-                      <span className={st.recentName}>{r.title}</span>
-                      <Status icon={r.state === "Processed" ? "check" : "dot"}>{r.state}</Status>
-                    </span>
-                    <span className={st.recentDate}>{r.date}</span>
-                  </>
-                );
-                return (
-                  <li key={r.title}>
-                    {r.href ? (
-                      <Link href={r.href} className={st.recentRow}>
-                        {body}
-                      </Link>
-                    ) : (
-                      <div className={st.recentRow}>{body}</div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        </div>
+        <section className={st.recentCard} aria-labelledby="recent-heading">
+          <h2 id="recent-heading" className={st.recentTitle}>
+            Recent scripts
+          </h2>
+          <ul className={st.recent}>
+            {recentScripts.map((r) => {
+              const body = (
+                <>
+                  <span className={st.recentText}>
+                    <span className={st.recentName}>{r.title}</span>
+                    <Status icon={r.state === "Processed" ? "check" : "dot"}>{r.state}</Status>
+                  </span>
+                  <span className={st.recentDate}>{r.date}</span>
+                </>
+              );
+              return (
+                <li key={r.title}>
+                  {r.href ? (
+                    <Link href={r.href} className={st.recentRow}>
+                      {body}
+                    </Link>
+                  ) : (
+                    <div className={st.recentRow}>{body}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       </div>
     </AppShell>
   );

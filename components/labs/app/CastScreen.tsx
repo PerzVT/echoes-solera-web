@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type DragEvent,
+  type KeyboardEvent,
 } from "react";
 import { SeriesFrame } from "./SeriesFrame";
 import { Button, ButtonLink } from "@/components/labs/Button";
@@ -134,6 +135,22 @@ export function CastScreen({
   const newButton = useRef<HTMLButtonElement>(null);
 
   const sheet = cast.sheets.find((x) => x.id === selected);
+  /** The character whose sheets the grid shows. Falls back to the first character when the chosen one is gone. */
+  const [chosen, setChosen] = useState<string | null>(
+    cast.characters[0]?.id ?? null,
+  );
+  const current =
+    cast.characters.find((x) => x.id === chosen) ?? cast.characters[0];
+  const sheetsOf = (id: string) => cast.sheets.filter((x) => x.character === id);
+
+  /** Picking a character shows its sheets and its first sheet in the detail. */
+  const choose = (id: string) => {
+    if (id === current?.id) return;
+    setChosen(id);
+    const first = sheetsOf(id)[0];
+    if (first && first.id !== selected) crossfade(detail.current);
+    setSelected(first?.id ?? null);
+  };
 
   useEffect(() => {
     if (!fresh.length) return;
@@ -181,6 +198,7 @@ export function CastScreen({
     setRejected(notImages(other));
     if (!images.length) return;
     const added = store.addSheets(series, character, images);
+    setChosen(character);
     setFresh(added.map((x) => x.id));
     setSelected(added[0].id);
     setSaid(`Added ${added.map((x) => x.tag).join(", ")}.`);
@@ -227,7 +245,10 @@ export function CastScreen({
       setPending((now) => now.filter((p) => !previews.includes(p.preview)));
       setAdded(false);
     }, 750);
-    if (added[0]) setSelected(added[0].id);
+    if (added[0]) {
+      setSelected(added[0].id);
+      setChosen(added[0].character);
+    }
     setSaid(`Added ${added.map((x) => x.tag).join(", ")}.`);
     focusSoon(() => detailHeading.current);
     requestAnimationFrame(() => revealOnPhone(detail.current));
@@ -245,6 +266,8 @@ export function CastScreen({
     change();
     const id = store.addCharacter(series, "New character");
     setStub(id);
+    setChosen(id);
+    setSelected(null);
     setRenaming(id);
   };
 
@@ -265,6 +288,8 @@ export function CastScreen({
         setRejected(
           `${clash.name} is already in this cast. Add the sheets to ${clash.name}.`,
         );
+        setChosen(clash.id);
+        setSelected(sheetsOf(clash.id)[0]?.id ?? null);
         focusSoon(() => document.getElementById(`add-${clash.id}`));
       } else focusSoon(() => newButton.current);
       return;
@@ -314,7 +339,11 @@ export function CastScreen({
     );
     store.removeCharacter(series, id);
     setRemoving(null);
-    if (sheet?.character === id) setSelected(null);
+    const rest = cast.characters.filter((x) => x.id !== id);
+    const next = rest[Math.max(0, cast.characters.findIndex((x) => x.id === id) - 1)];
+    setChosen(next?.id ?? null);
+    setSelected(next ? (sheetsOf(next.id)[0]?.id ?? null) : null);
+    focusSoon(() => (next ? document.getElementById(`who-${next.id}`) : newButton.current));
   };
 
   const removeSheet = (x: CastSheet) => {
@@ -355,11 +384,14 @@ export function CastScreen({
     setUndo(null);
     if (first) {
       setSelected(first.id);
+      setChosen(first.character);
       focusSoon(() => document.getElementById(`tile-${first.id}`));
-    } else
+    } else {
+      setChosen(undo.characters[0]?.id ?? chosen);
       focusSoon(() =>
-        document.getElementById(`rename-${undo.characters[0]?.id}`),
+        document.getElementById(`more-${undo.characters[0]?.id}`),
       );
+    }
   };
 
   const dismiss = () => {
@@ -453,10 +485,7 @@ export function CastScreen({
                 {cast.characters.length === 0
                   ? pending.length === 0 && (
                       <>
-                        <Empty>
-                          No characters in this series yet. Upload sheets, or
-                          drop them here, and say who is on each one.
-                        </Empty>
+                        <Empty>No characters in this series yet.</Empty>
                         <Dropzone
                           title="Drop sheet images here"
                           hint=".png, .jpg or .webp"
@@ -468,39 +497,44 @@ export function CastScreen({
                         />
                       </>
                     )
-                  : cast.characters.map((ch, i) => (
-                      <Group
-                        first={i === 0}
-                        key={ch.id}
-                        id={ch.id}
-                        name={ch.name}
-                        sheets={cast.sheets.filter(
-                          (x) => x.character === ch.id,
-                        )}
-                        selected={selected}
-                        fresh={fresh}
-                        renaming={renaming === ch.id}
-                        removing={removing === ch.id}
-                        onRename={() => {
-                          change();
-                          setRenaming(ch.id);
-                        }}
-                        onRenamed={(name) => named(ch, name)}
-                        onRemove={() => {
-                          // A character with sheets asks once: the undo is single-level.
-                          if (cast.sheets.some((x) => x.character === ch.id))
-                            setRemoving(ch.id);
-                          else removeCharacter(ch.id);
-                        }}
-                        onRemoveConfirmed={() => removeCharacter(ch.id)}
-                        onRemoveCancelled={() => setRemoving(null)}
-                        onSelect={select}
-                        onFiles={(files) => {
-                          change();
-                          addTo(ch.id, files);
-                        }}
-                      />
-                    ))}
+                  : current && (
+                      <>
+                        <Characters
+                          characters={cast.characters}
+                          current={current.id}
+                          sheetsOf={sheetsOf}
+                          onChoose={choose}
+                        />
+                        <Group
+                          key={current.id}
+                          id={current.id}
+                          name={current.name}
+                          sheets={sheetsOf(current.id)}
+                          selected={selected}
+                          fresh={fresh}
+                          renaming={renaming === current.id}
+                          removing={removing === current.id}
+                          onRename={() => {
+                            change();
+                            setRenaming(current.id);
+                          }}
+                          onRenamed={(name) => named(current, name)}
+                          onRemove={() => {
+                            // A character with sheets asks once: the undo is single-level.
+                            if (sheetsOf(current.id).length)
+                              setRemoving(current.id);
+                            else removeCharacter(current.id);
+                          }}
+                          onRemoveConfirmed={() => removeCharacter(current.id)}
+                          onRemoveCancelled={() => setRemoving(null)}
+                          onSelect={select}
+                          onFiles={(files) => {
+                            change();
+                            addTo(current.id, files);
+                          }}
+                        />
+                      </>
+                    )}
               </div>
             </Panel>
 
@@ -521,6 +555,7 @@ export function CastScreen({
                       ? sheet.tag
                       : tagForFile(who, sheet.file, tagsIn(cast, sheet.id));
                     store.updateSheet(series, sheet.id, { character, tag });
+                    setChosen(character);
                     // The sheet changes group; the keyboard stays on the field it was moved with.
                     focusSoon(() =>
                       document.activeElement === document.body
@@ -540,11 +575,7 @@ export function CastScreen({
                 />
               ) : (
                 <Panel as="section" title="Sheet" headingRef={detailHeading}>
-                  <Empty art="no-results">
-                    {cast.sheets.length
-                      ? "Select a sheet to see it large and set its character and tag."
-                      : "A sheet you upload shows here, with its character and tag."}
-                  </Empty>
+                  <Empty art="no-results">No sheet selected</Empty>
                 </Panel>
               )}
             </aside>
@@ -700,8 +731,70 @@ function Assign({
   );
 }
 
+type CharactersProps = {
+  characters: CastCharacter[];
+  current: string;
+  sheetsOf: (id: string) => CastSheet[];
+  onChoose: (id: string) => void;
+};
+
+/** One tab per character: face, name and sheet count. Arrow keys, Home and End move between them. */
+function Characters({ characters, current, sheetsOf, onChoose }: CharactersProps) {
+  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    const i = characters.findIndex((x) => x.id === current);
+    const to =
+      e.key === "ArrowRight" || e.key === "ArrowDown"
+        ? (i + 1) % characters.length
+        : e.key === "ArrowLeft" || e.key === "ArrowUp"
+          ? (i - 1 + characters.length) % characters.length
+          : e.key === "Home"
+            ? 0
+            : e.key === "End"
+              ? characters.length - 1
+              : -1;
+    if (to < 0) return;
+    e.preventDefault();
+    const id = characters[to].id;
+    onChoose(id);
+    const el = document.getElementById(`who-${id}`);
+    el?.focus();
+    el?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  };
+  return (
+    <div className={c.who} role="tablist" aria-label="Characters" onKeyDown={onKey}>
+      {characters.map((ch) => {
+        const mine = sheetsOf(ch.id);
+        const face = mine[0]?.face ?? mine[0]?.src;
+        const on = ch.id === current;
+        return (
+          <button
+            key={ch.id}
+            id={`who-${ch.id}`}
+            type="button"
+            role="tab"
+            className={c.whoTab}
+            aria-selected={on}
+            aria-controls="cast-sheets"
+            tabIndex={on ? 0 : -1}
+            onClick={() => onChoose(ch.id)}
+          >
+            <span className={c.face}>
+              {face ? <SheetImage src={face} sizes="48px" /> : <span aria-hidden="true">{ch.name.slice(0, 1)}</span>}
+            </span>
+            <span className={c.whoText}>
+              <span className={c.whoName}>{ch.name}</span>
+              <span className={c.whoCount}>
+                {mine.length} {mine.length === 1 ? "sheet" : "sheets"}
+              </span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 type GroupProps = {
-  first: boolean;
   id: string;
   name: string;
   sheets: CastSheet[];
@@ -719,7 +812,6 @@ type GroupProps = {
 };
 
 function Group({
-  first,
   id,
   name,
   sheets,
@@ -741,6 +833,9 @@ function Group({
   const input = useRef<HTMLInputElement>(null);
   const addTile = useRef<HTMLButtonElement>(null);
   const renameButton = useRef<HTMLButtonElement>(null);
+  const [menu, setMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
   const keepButton = useRef<HTMLButtonElement>(null);
   const fieldId = useId();
   /** Where focus goes when the name field closes: the next step after naming, or back to Rename. */
@@ -759,6 +854,22 @@ function Group({
   useEffect(() => {
     if (removing) keepButton.current?.focus();
   }, [removing]);
+
+  // The More menu: its first item takes focus; Escape, a click outside or focus leaving closes it.
+  useEffect(() => {
+    if (!menu) return;
+    menuRef.current?.querySelector("button")?.focus();
+    const away = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (!menuRef.current?.contains(t) && !renameButton.current?.contains(t)) setMenu(false);
+    };
+    document.addEventListener("pointerdown", away);
+    return () => document.removeEventListener("pointerdown", away);
+  }, [menu]);
+  const pick = (run: () => void) => {
+    setMenu(false);
+    run();
+  };
 
   const close = (value: string) => {
     if (closed.current) return false;
@@ -781,7 +892,7 @@ function Group({
   };
 
   return (
-    <section className={c.group} aria-label={name}>
+    <section id="cast-sheets" className={c.group} role="tabpanel" aria-labelledby={`who-${id}`}>
       <div className={c.groupHead}>
         {renaming ? (
           <form
@@ -824,25 +935,54 @@ function Group({
           <h2 className={c.groupName}>{name}</h2>
         )}
         {!renaming && !removing && (
-          <div className={s.rowActions}>
-            <Button
+          <div className={c.more}>
+            <button
               ref={renameButton}
-              id={`rename-${id}`}
-              variant="quiet"
-              size="small"
-              onClick={onRename}
-              aria-label={`Rename ${name}`}
+              id={`more-${id}`}
+              type="button"
+              className={c.moreButton}
+              aria-label={`More for ${name}`}
+              aria-expanded={menu}
+              aria-controls={menu ? menuId : undefined}
+              onClick={() => setMenu((x) => !x)}
             >
-              Rename
-            </Button>
-            <Button
-              variant="quiet"
-              size="small"
-              onClick={onRemove}
-              aria-label={`Remove ${name}`}
-            >
-              Remove
-            </Button>
+              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="4" cy="10" r="1.75" fill="currentColor" />
+                <circle cx="10" cy="10" r="1.75" fill="currentColor" />
+                <circle cx="16" cy="10" r="1.75" fill="currentColor" />
+              </svg>
+            </button>
+            {menu && (
+              <div
+                ref={menuRef}
+                id={menuId}
+                className={`${c.menu} ${m.enter}`}
+                onKeyDown={(e) => {
+                  const items = Array.from(menuRef.current?.querySelectorAll("button") ?? []);
+                  const i = items.indexOf(document.activeElement as HTMLButtonElement);
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    setMenu(false);
+                    renameButton.current?.focus();
+                  } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const by = e.key === "ArrowDown" ? 1 : -1;
+                    items[(i + by + items.length) % items.length]?.focus();
+                  }
+                }}
+                onBlur={(e) => {
+                  const to = e.relatedTarget as Node | null;
+                  if (to && !e.currentTarget.contains(to) && to !== renameButton.current) setMenu(false);
+                }}
+              >
+                <button type="button" className={c.menuItem} onClick={() => pick(onRename)}>
+                  Rename
+                </button>
+                <button type="button" className={c.menuItem} onClick={() => pick(onRemove)}>
+                  Remove
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -891,11 +1031,17 @@ function Group({
                 <SheetImage
                   src={x.src}
                   sizes="(max-width: 900px) 45vw, 180px"
-                  eager={first && i < 4}
+                  eager={i < 4}
                 />
               </span>
-              <span className={s.tileName}>{x.tag}</span>
-              {x.variant && <span className={s.tileSub}>{x.variant}</span>}
+              {x.variant ? (
+                <>
+                  <span className={s.tileName}>{x.variant}</span>
+                  <span className={`${s.tileSub} ${c.mono}`}>{x.tag}</span>
+                </>
+              ) : (
+                <span className={`${s.tileName} ${c.mono}`}>{x.tag}</span>
+              )}
             </button>
           </li>
         ))}
@@ -930,12 +1076,6 @@ function Group({
           {picker.node}
         </li>
       </ul>
-      {sheets.length === 0 && (
-        <p className={s.cardSub}>
-          No sheets for {name} yet. Drop images on the tile, or press it to
-          choose them.
-        </p>
-      )}
     </section>
   );
 }
@@ -1034,11 +1174,7 @@ function Detail({
               className={s.input}
               value={who?.name ?? ""}
               readOnly
-              aria-describedby="sheet-character-hint"
             />
-            <p id="sheet-character-hint" className={s.hint}>
-              Library sheets stay with their character and their tag.
-            </p>
           </>
         )}
       </div>
@@ -1056,7 +1192,7 @@ function Detail({
               autoComplete="off"
               spellCheck={false}
               aria-invalid={Boolean(error)}
-              aria-describedby="sheet-tag-hint"
+              aria-describedby={error ? "sheet-tag-hint" : undefined}
               onChange={(e) => typed(e.target.value)}
               onBlur={() => {
                 if (error) {
@@ -1065,15 +1201,10 @@ function Detail({
                 }
               }}
             />
-            {error ? (
+            {error && (
               <Alert id="sheet-tag-hint" className={c.fieldNote}>
                 {error}
               </Alert>
-            ) : (
-              <p id="sheet-tag-hint" className={s.hint}>
-                Lowercase, with words joined by underscores. It follows the
-                character name until you change it.
-              </p>
             )}
           </>
         ) : (
@@ -1082,7 +1213,6 @@ function Detail({
             className={s.input}
             value={sheet.tag}
             readOnly
-            aria-describedby="sheet-character-hint"
           />
         )}
       </div>

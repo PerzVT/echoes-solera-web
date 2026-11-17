@@ -1,43 +1,59 @@
-/* References: one image-first grid per group. Spacing: 8, 16, 24, 32, 48. */
+/* References: one image-first grid per group. Spacing: 4, 8, 12, 16, 24, 32. */
 .page {
   display: grid;
   align-content: start;
-  gap: 48px;
+  gap: 32px;
 }
-.title {
-  margin-bottom: -16px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+.wide {
+  grid-column: 1 / -1;
 }
 .group {
   display: grid;
-  gap: 16px;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
 }
 .groupTitle {
   font-weight: 500;
   font-size: 1.25rem;
   line-height: 1.4;
 }
-/* Three cards to a row on the 12-column grid, two on a narrow screen, one on a phone. */
+/* Below 1200: each group its own grid, two cards to a row, one on a phone. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
+/* 1200 and wider: four columns across the page. A group spans as many columns as it has cards (up to four) and
+   its own grid matches those columns, so groups share a row and a long group wraps under its own heading. */
+@media (min-width: 1200px) {
+  .page {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 32px;
+  }
+  .group {
+    grid-column: span var(--span, 4);
+  }
+  .grid {
+    grid-template-columns: repeat(var(--span, 4), minmax(0, 1fr));
+  }
+}
 
 .card {
   display: grid;
-  gap: 16px;
-  padding: 16px;
+  align-content: start;
+  gap: 12px;
+  padding: 12px;
   border: 1px solid var(--border);
   border-radius: var(--r-card);
   background: var(--surface);
+}
+.artWrap {
+  position: relative;
 }
 /* The picture box: 4:3, the shape of a character sheet. The picture is shown whole, never cropped. */
 .art {
@@ -65,30 +81,29 @@ button.art:focus-visible {
 .img {
   object-fit: contain;
 }
-.zoom {
+/* Change sits on the picture: a dark backing so it reads on white sheet art. Shown on hover and keyboard focus,
+   always on touch. */
+.change {
   position: absolute;
   top: 8px;
   right: 8px;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
+  display: flex;
+  padding: 4px;
   border-radius: var(--r-pill);
-  background: rgb(8 11 16 / 0.7);
-  color: var(--on-media);
+  background: rgb(8 11 16 / 0.72);
   opacity: 0;
   transition: opacity var(--dur-feedback) var(--ease-out);
 }
-button.art:focus-visible .zoom {
+.artWrap:focus-within .change {
   opacity: 1;
 }
-@media (hover: hover) and (pointer: fine) {
-  button.art:hover .zoom {
+@media (hover: hover) {
+  .artWrap:hover .change {
     opacity: 1;
   }
 }
 @media (hover: none) {
-  .zoom {
+  .change {
     opacity: 1;
   }
 }
@@ -97,6 +112,13 @@ button.art:focus-visible .zoom {
   gap: 8px;
   border: 1.5px dashed var(--border-strong);
   text-align: center;
+  transition:
+    border-color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out);
+}
+.art[data-empty="true"][data-over="true"] {
+  border-color: var(--focus);
+  background: var(--surface-hover);
 }
 .emptyIcon {
   display: grid;
@@ -111,25 +133,15 @@ button.art:focus-visible .zoom {
   font-weight: 500;
   color: var(--text-muted);
 }
-.emptyActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
+.art[data-empty="true"] > button {
+  margin-top: 4px;
 }
 
 .meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 0 8px 8px;
-}
-.metaText {
   display: grid;
   gap: 4px;
   min-width: 0;
+  padding: 0 4px 4px;
 }
 .name {
   font-weight: 500;
@@ -142,10 +154,6 @@ button.art:focus-visible .zoom {
   line-height: 1.43;
   color: var(--text-muted);
   overflow-wrap: anywhere;
-}
-.meta > button {
-  flex: none;
-  margin-right: -8px;
 }
 
 /* ---------- Full screen picture ---------- */
@@ -333,18 +341,9 @@ button.art:focus-visible .zoom {
   gap: 8px;
 }
 
-@media (max-width: 1100px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 @media (max-width: 720px) {
   .page {
-    gap: 32px;
-  }
-  .title {
-    font-size: 1.625rem;
-    margin-bottom: -8px;
+    gap: 24px;
   }
   .grid {
     grid-template-columns: minmax(0, 1fr);
@@ -380,5 +379,9 @@ button.art:focus-visible .zoom {
 @media (prefers-reduced-motion: reduce) {
   .lbImg {
     animation: none;
+  }
+  .change,
+  .art[data-empty="true"] {
+    transition: none;
   }
 }

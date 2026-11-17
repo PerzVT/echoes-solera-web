@@ -1,0 +1,146 @@
+/* ---------- Document: screenplay and prompts ---------- */
+.doc {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+.docHead {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 32px;
+}
+.docTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.875rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.changed {
+  color: var(--accent);
+}
+.script {
+  font-family: var(--font-screenplay), "Courier New", monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.scene {
+  display: flex;
+  gap: 16px;
+  margin: 32px 0 12px;
+  font: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.scene:first-child {
+  margin-top: 0;
+}
+.scene > span {
+  color: var(--text-muted);
+}
+.shot {
+  margin: 24px 0 4px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.action,
+.dialogue {
+  display: block;
+  width: calc(100% + 24px);
+  margin: 0 -12px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font: inherit;
+  text-align: left;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+.dialogue {
+  padding-inline: 15% 12px;
+}
+.cue {
+  display: block;
+  padding-left: 20%;
+  text-transform: uppercase;
+}
+@media (hover: hover) and (pointer: fine) {
+  .action:hover,
+  .dialogue:hover {
+    background: var(--surface-hover);
+  }
+}
+.del {
+  color: var(--text-disabled);
+  text-decoration-thickness: 1px;
+}
+.ins {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.quote {
+  display: grid;
+  margin-bottom: 32px;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.quoteRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0;
+  padding: 12px 16px;
+}
+.quoteRow + .quoteRow {
+  border-top: 1px solid var(--border);
+}
+.price {
+  font-weight: 500;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+.prompts {
+  display: grid;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prompt {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+}
+.promptNum {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+.promptHead {
+  margin: 0 0 4px;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+.promptText {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+
+@media (max-width: 767px) {
+  .doc {
+    padding: 24px 16px 32px;
+  }
+  .dialogue {
+    padding-left: 12%;
+  }
+}

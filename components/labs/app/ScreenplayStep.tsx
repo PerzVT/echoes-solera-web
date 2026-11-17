@@ -4,13 +4,13 @@ import { useRouter } from "next/navigation";
 import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppShell } from "./AppShell";
 import { Button, ButtonLink } from "@/components/labs/Button";
-import { AnimatedMark, ChevronIcon } from "@/components/labs/fx";
+import { AnimatedMark, ChevronIcon, GestureIcon } from "@/components/labs/fx";
 import { cancelRouteSkeleton } from "@/components/labs/fx/RouteSkeleton";
 import { useCast } from "./CastProvider";
 import { crossfade } from "./fx/crossfade";
 import m from "./fx/motion.module.css";
-import { BlockedAction, Empty, EpisodeTitle, Panel, RecentScripts, Status, Stepper, focusSoon } from "./parts";
-import { EPISODE, processingStages, screenplay, shotOf, startingNotes, type Block, type Note } from "@/lib/labs/maker";
+import { BlockedAction, EpisodeTitle, Panel, RecentScripts, Status, Stepper, focusSoon, revealOnPhone } from "./parts";
+import { EPISODE, processingStages, recentScripts, screenplay, shotOf, startingNotes, type Block, type Note } from "@/lib/labs/maker";
 import s from "./maker.module.css";
 import p from "./ScreenplayStep.module.css";
 
@@ -255,6 +255,33 @@ type Composer = { block: string; type: Note["type"]; quote: string; text: string
 
 const textOf = (b: Block) => (b.kind === "action" || b.kind === "dialogue" ? b.text : "");
 const passageId = (block: string) => `passage-${block}`;
+const noteId = (id: string) => `note-${id}`;
+/** Where each passage sits in the screenplay, so the comment cards follow the text. */
+const orderOf = Object.fromEntries(screenplay.map((b, i) => [b.id, i]));
+/** The shot the prompt shows before a passage is chosen: the first one. */
+const firstShot = screenplay.find((b): b is Extract<Block, { kind: "camera" }> => b.kind === "camera");
+const scriptTitle = recentScripts[0].title;
+const phone = () => window.matchMedia("(max-width: 900px)").matches;
+
+/** A passage with a suggested change pending: the words it replaces struck through, then the new words. */
+function Suggested({ text, note }: { text: string; note: Note }) {
+  const at = text.indexOf(note.quote);
+  const [before, was, after] = at >= 0 ? [text.slice(0, at), note.quote, text.slice(at + note.quote.length)] : ["", text, ""];
+  return (
+    <>
+      {before}
+      <del className={p.was}>
+        <span className="sr-only">Was: </span>
+        {was}
+      </del>{" "}
+      <ins className={p.now}>
+        <span className="sr-only">Suggested: </span>
+        {note.body}
+      </ins>
+      {after}
+    </>
+  );
+}
 
 function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) {
   const router = useRouter();
@@ -270,6 +297,8 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
   const [rewriting, setRewriting] = useState(false);
   const [changed, setChanged] = useState<Set<string>>(new Set());
   const [said, setSaid] = useState("");
+  /** The passage whose comment is pointed at: hovering or focusing either the card or the passage lights both. */
+  const [active, setActive] = useState<string | null>(null);
   /** Where the person tried to go with comments unsent. */
   const [leaving, setLeaving] = useState<{ href: string; from: HTMLElement | null } | null>(null);
   const menuFirst = useRef<HTMLButtonElement>(null);
@@ -352,8 +381,32 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
   const focusPassage = (block: string) => focusSoon(() => document.getElementById(passageId(block)));
 
   const pick = (id: string) => {
+    // On a phone the cards sit under the screenplay: a commented passage leads to its card.
+    const card = notes.find((n) => n.block === id);
+    if (card && !rewriting && phone()) {
+      setActive(id);
+      revealOnPhone(document.getElementById(noteId(card.id)));
+      return;
+    }
     setSelected(id);
     setMenu(true);
+  };
+
+  /** A card leads to its passage, scrolled into view inside the screenplay. */
+  const showPassage = (block: string) => {
+    setActive(block);
+    document.getElementById(passageId(block))?.scrollIntoView({ block: "center", behavior: reduced() ? "auto" : "smooth" });
+  };
+
+  const removeNote = (n: Note) => {
+    const last = notes.length === 1 && !composer;
+    crossfade(comments.current);
+    setNotes((all) => all.filter((x) => x.id !== n.id));
+    setActive(null);
+    setSaid(n.type === "comment" ? "Comment removed." : "Suggestion removed.");
+    // With the last one gone the panel goes too, so the keyboard returns to the passage.
+    if (last) focusPassage(n.block);
+    else focusSoon(() => commentsHeading.current);
   };
 
   const open = (type: Note["type"]) => {
@@ -408,6 +461,8 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
         setNotes([]);
         setRewriting(false);
         setSaid("Comments sent. Changed passages are marked.");
+        // The comments panel closes with nothing left in it: the keyboard goes to the screenplay heading rather than nowhere.
+        focusSoon(() => (document.activeElement === document.body ? pageHeading.current : null));
         // Only from the page the comments were sent on: never pull someone back who has moved on.
         if (after.current && location.pathname === here) router.push(after.current);
       },
@@ -426,7 +481,12 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
   };
 
   const noted = new Set(notes.map((n) => n.block));
-  const shot = selected ? shotOf(selected) : undefined;
+  const shot = (selected ? shotOf(selected) : undefined) ?? firstShot;
+  /** The cards in the order of their passages; two on one passage keep the order they were added in. */
+  const ordered = [...notes].sort((a, b) => orderOf[a.block] - orderOf[b.block]);
+  /** The latest suggestion on each passage, drawn in the text. */
+  const suggestionOf = new Map(notes.filter((n) => n.type === "suggestion").map((n) => [n.block, n]));
+  const panelOpen = notes.length > 0 || Boolean(composer) || rewriting;
 
   let action;
   if (leaving)
@@ -455,6 +515,16 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
       </div>
     );
   else if (rewriting) action = <BlockedAction id="continue-why" label="Continue to references" reason="Rewriting the screenplay." />;
+  else if (notes.length > 0)
+    // Unsent comments make sending the next step; going on stays one press away and asks first.
+    action = (
+      <div className={s.barGroup}>
+        <ButtonLink variant="secondary" href="/app/episode/references">
+          Continue to references
+        </ButtonLink>
+        <Button onClick={() => send()}>Send comments</Button>
+      </div>
+    );
   else action = <ButtonLink href="/app/episode/references">Continue to references</ButtonLink>;
 
   return (
@@ -467,9 +537,9 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
       <p className="sr-only" aria-live="polite">
         {said}
       </p>
-      <div className={`${s.split} ${s.fill}`}>
+      <div className={`${p.layout} ${s.fill}`} data-panel={panelOpen}>
         <Panel
-          title="Screenplay"
+          title={scriptTitle}
           level={1}
           flush
           busy={rewriting}
@@ -480,16 +550,10 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
             </Button>
           }
         >
-          {showPrompt && (
+          {showPrompt && shot && (
             <div id="sp-prompt" className={`${s.inset} ${p.prompt} ${m.enter}`}>
-              {shot ? (
-                <>
-                  <p className="label muted">Prompt for {shot.text}</p>
-                  <p className="small">{shot.prompt}</p>
-                </>
-              ) : (
-                <p className="small muted">Select a passage to see the prompt for its shot.</p>
-              )}
+              <p className="label muted">Prompt for {shot.text}</p>
+              <p className="small">{shot.prompt}</p>
             </div>
           )}
           <div className={p.page} data-dim={rewriting}>
@@ -509,6 +573,9 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
                 );
               const isSel = selected === b.id;
               const menuId = `menu-${b.id}`;
+              const hasNote = noted.has(b.id);
+              const suggestion = suggestionOf.get(b.id);
+              const words = suggestion ? <Suggested text={texts[b.id]} note={suggestion} /> : texts[b.id];
               return (
                 <div key={b.id} className={p.passageWrap}>
                   <button
@@ -517,22 +584,27 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
                     className={p.passage}
                     data-kind={b.kind}
                     data-selected={isSel}
-                    data-noted={noted.has(b.id)}
+                    data-noted={hasNote}
+                    data-active={hasNote && active === b.id}
                     data-changed={changed.has(b.id)}
                     aria-expanded={isSel && menu}
                     aria-controls={isSel && menu ? menuId : undefined}
                     disabled={rewriting}
                     onClick={() => pick(b.id)}
+                    onPointerEnter={hasNote ? () => setActive(b.id) : undefined}
+                    onPointerLeave={hasNote ? () => setActive(null) : undefined}
+                    onFocus={hasNote ? () => setActive(b.id) : undefined}
+                    onBlur={hasNote ? () => setActive(null) : undefined}
                   >
                     {b.kind === "dialogue" ? (
                       <>
                         <span className={p.cue}>{b.cue}</span>
-                        <span className={p.lineText}>{texts[b.id]}</span>
+                        <span className={p.lineText}>{words}</span>
                       </>
                     ) : (
-                      texts[b.id]
+                      words
                     )}
-                    {noted.has(b.id) && <span className="sr-only">, has a comment</span>}
+                    {hasNote && !suggestion && <span className="sr-only">, has a comment</span>}
                     {changed.has(b.id) && <span className={`${p.changed} ${m.fade}`}>Changed</span>}
                   </button>
                   {isSel && menu && (
@@ -553,7 +625,7 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
                       </button>
                       <span aria-hidden="true" />
                       <button type="button" onClick={() => open("suggestion")}>
-                        Suggest change
+                        Suggest
                       </button>
                     </div>
                   )}
@@ -563,125 +635,109 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
           </div>
         </Panel>
 
-        <Panel
-          as="aside"
-          title="Comments"
-          panelRef={comments}
-          className={arrived ? m.enter : undefined}
-          headingRef={commentsHeading}
-          foot={
-            notes.length > 0 && !rewriting ? (
-              <>
-                <Button variant="secondary" size="small" onClick={() => send()}>
-                  Send comments
-                </Button>
+        {panelOpen && (
+          <Panel
+            as="aside"
+            title="Comments"
+            panelRef={comments}
+            className={m.enter}
+            headingRef={commentsHeading}
+            foot={
+              notes.length > 0 && !rewriting ? (
                 <Button
                   variant="quiet"
                   size="small"
                   onClick={() => {
+                    const keep = Boolean(composer);
                     discard();
-                    focusSoon(() => commentsHeading.current);
+                    focusSoon(() => (keep ? commentsHeading.current : pageHeading.current));
                   }}
                 >
                   Discard comments
                 </Button>
-              </>
-            ) : undefined
-          }
-        >
-          {rewriting ? (
-            <p>
-              <Status icon="spinner">Rewriting the screenplay</Status>
-            </p>
-          ) : (
-            <>
-              {notes.length === 0 && !composer && (
-                <Empty>{changed.size ? "Comments sent. Changed passages are marked." : "Select a passage to comment on it or suggest a change."}</Empty>
-              )}
-              <ul className={p.notes}>
-                {notes.map((n) => (
-                  <li key={n.id} className={`${p.note} ${m.enter}`}>
-                    <div className={p.noteHead}>
-                      <span className={p.avatar} aria-hidden="true">
-                        NL
-                      </span>
-                      <span>You</span>
-                      <span className={p.noteType}>{n.type === "comment" ? "Comment" : "Suggested change"}</span>
-                    </div>
-                    {n.type === "suggestion" ? (
-                      <>
-                        <del className={p.quote}>
-                          <span className="sr-only">Was: </span>
-                          {n.quote}
-                        </del>
-                        <ins className={`small ${p.ins}`}>
-                          <span className="sr-only">Now: </span>
-                          {n.body}
-                        </ins>
-                      </>
-                    ) : (
-                      <>
-                        <blockquote className={p.quote}>{n.quote}</blockquote>
-                        <p className="small">{n.body}</p>
-                      </>
-                    )}
-                    <div className={p.noteActions}>
-                      <Button
-                        variant="quiet"
-                        size="small"
-                        onClick={() => {
-                          crossfade(comments.current);
-                          setNotes((all) => all.filter((x) => x.id !== n.id));
-                          focusSoon(() => commentsHeading.current);
-                        }}
-                        aria-label={`Remove ${n.type === "comment" ? "comment" : "suggested change"} on "${n.quote}"`}
-                      >
-                        Remove
+              ) : undefined
+            }
+          >
+            {rewriting ? (
+              <p>
+                <Status icon="spinner">Rewriting the screenplay</Status>
+              </p>
+            ) : (
+              <>
+                <ul className={p.notes}>
+                  {ordered.map((n) => (
+                    <li
+                      key={n.id}
+                      id={noteId(n.id)}
+                      className={`${p.note} ${m.enter}`}
+                      data-active={active === n.block}
+                      onPointerEnter={() => setActive(n.block)}
+                      onPointerLeave={() => setActive(null)}
+                    >
+                      <button type="button" className={p.noteMain} onClick={() => showPassage(n.block)} onFocus={() => setActive(n.block)} onBlur={() => setActive(null)}>
+                        <span className={p.noteHead}>
+                          <span className={p.avatar} aria-hidden="true">
+                            NL
+                          </span>
+                          <span>You</span>
+                          <span className={p.noteType}>{n.type === "comment" ? "Comment" : "Suggested change"}</span>
+                        </span>
+                        {n.type === "suggestion" ? (
+                          <span className={`small ${p.noteBody}`}>{n.body}</span>
+                        ) : (
+                          <>
+                            <span className={p.quote}>{n.quote}</span>
+                            <span className={`small ${p.noteBody}`}>{n.body}</span>
+                          </>
+                        )}
+                      </button>
+                      <Button variant="quiet" size="small" className={p.remove} onClick={() => removeNote(n)} aria-label="Remove comment">
+                        <GestureIcon name="close" size={16} />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+                {composer && (
+                  <div className={`${p.composer} ${m.enter}`}>
+                    <p className="small">{composer.quote}</p>
+                    <label htmlFor="composer" className="sr-only">
+                      {composer.type === "comment" ? "Comment" : "Suggested text"}
+                    </label>
+                    <textarea
+                      id="composer"
+                      className={s.textarea}
+                      placeholder={composer.type === "comment" ? "Write a comment" : "Write the new text"}
+                      value={composer.text}
+                      autoFocus
+                      onChange={(e) => setComposer({ ...composer, text: e.target.value })}
+                      onKeyDown={(e) => {
+                        if (e.key === "Escape") closeComposer();
+                      }}
+                    />
+                    <div className={s.actions}>
+                      {composer.text.trim() && composer.text.trim() !== (composer.type === "suggestion" ? composer.quote : "") ? (
+                        <Button variant="secondary" size="small" onClick={add}>
+                          {composer.type === "comment" ? "Add comment" : "Add suggestion"}
+                        </Button>
+                      ) : (
+                        <BlockedAction
+                          id="composer-why"
+                          variant="secondary"
+                          size="small"
+                          label={composer.type === "comment" ? "Add comment" : "Add suggestion"}
+                          reason={composer.type === "comment" ? "Write the comment first." : "Change the text first."}
+                        />
+                      )}
+                      <Button variant="quiet" size="small" onClick={closeComposer}>
+                        Cancel
                       </Button>
                     </div>
-                  </li>
-                ))}
-              </ul>
-              {composer && (
-                <div className={`${p.composer} ${m.enter}`}>
-                  <p className="small">{composer.quote}</p>
-                  <label htmlFor="composer" className="sr-only">
-                    {composer.type === "comment" ? "Comment" : "Suggested text"}
-                  </label>
-                  <textarea
-                    id="composer"
-                    className={s.textarea}
-                    placeholder={composer.type === "comment" ? "Write a comment" : "Write the new text"}
-                    value={composer.text}
-                    autoFocus
-                    onChange={(e) => setComposer({ ...composer, text: e.target.value })}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") closeComposer();
-                    }}
-                  />
-                  <div className={s.actions}>
-                    {composer.text.trim() && composer.text.trim() !== (composer.type === "suggestion" ? composer.quote : "") ? (
-                      <Button variant="secondary" size="small" onClick={add}>
-                        {composer.type === "comment" ? "Add comment" : "Add suggestion"}
-                      </Button>
-                    ) : (
-                      <BlockedAction
-                        id="composer-why"
-                        variant="secondary"
-                        size="small"
-                        label={composer.type === "comment" ? "Add comment" : "Add suggestion"}
-                        reason={composer.type === "comment" ? "Write the comment first." : "Change the text first."}
-                      />
-                    )}
-                    <Button variant="quiet" size="small" onClick={closeComposer}>
-                      Cancel
-                    </Button>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-        </Panel>
+                )}
+              </>
+            )}
+          </Panel>
+        )}
       </div>
     </AppShell>
   );

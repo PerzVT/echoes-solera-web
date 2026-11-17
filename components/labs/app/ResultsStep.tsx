@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { AppShell } from "./AppShell";
 import { Button } from "@/components/labs/Button";
-import btn from "@/components/labs/Button.module.css";
 import { Icon } from "@/components/labs/Icon";
-import { AnimatedMark, AsciiField, CheckIcon, ChevronIcon, GestureIcon, MediaFrame, PlayPauseIcon, ReplayIcon, VolumeIcon } from "@/components/labs/fx";
+import { AnimatedMark, AsciiField, CheckIcon, GestureIcon, MediaFrame, PlayPauseIcon, ReplayIcon, VolumeIcon } from "@/components/labs/fx";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { AppIcon } from "./AppIcon";
 import { crossfade } from "./fx/crossfade";
 import m from "./fx/motion.module.css";
 import { SwapText } from "./fx/SwapText";
-import { BlockedAction, ConfirmDialog, EpisodeTitle, Panel, Progress, Status, Stepper, focusSoon, revealOnPhone } from "./parts";
+import { BlockedAction, ConfirmDialog, EpisodeTitle, Panel, Status, Stepper, focusSoon, revealOnPhone } from "./parts";
 import {
   clock,
   confirmRetry,
@@ -42,6 +41,7 @@ const hasClip = (g: Gen) => g.status === "Ready" || g.status === "Kept";
 /** "Kept" describes the take on show: after a reroll the new take is Ready even when an older take is kept. */
 const shownStatus = (g: Gen): Generation["status"] => (hasClip(g) ? (g.kept === g.takes[g.take].name ? "Kept" : "Ready") : g.status);
 const trimOf = (g: Gen) => (g.trim && g.trim.take === g.takes[g.take].name ? g.trim.range : undefined);
+const startFixes = ["Pose"];
 
 type Reroll = { n: number; edit?: string };
 
@@ -61,18 +61,44 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
   const [retry, setRetry] = useState(false);
   const [rerolling, setRerolling] = useState<Reroll | null>(null);
   const [playAll, setPlayAll] = useState(false);
-  /** The generation whose clip has just arrived, for a moment: its panel reveals the clip instead of cutting to it. */
+  /** The generation whose clip has just arrived, for a moment: the stage brings the clip up from the dimmed poster. */
   const [landed, setLanded] = useState<number | null>(null);
   const [said, setSaid] = useState("");
   const spareAt = useRef(0);
   const side = useRef<HTMLElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
   const sideHeading = useRef<HTMLHeadingElement>(null);
   const pageHeading = useRef<HTMLHeadingElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const useFrame = useRef<HTMLButtonElement>(null);
 
   const g = gens.find((x) => x.n === selected)!;
   const update = (n: number, fn: (x: Gen) => Gen) => setGens((all) => all.map((x) => (x.n === n ? fn(x) : x)));
+  const take = g.takes[g.take];
+  const trim = trimOf(g);
 
-  /** A clip has arrived: the list says so for screen readers, and the tile and the panel reveal it. */
+  // What belongs to the take on show: the player's time and sound, and the forms open on it. A new take starts them over.
+  const shown = `${g.n}-${take.src}`;
+  const [seenTake, setSeenTake] = useState(shown);
+  const [time, setTime] = useState(initial === "harvest" ? 14 : 0);
+  const [length, setLength] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [trimming, setTrimming] = useState<[number, number] | null>(null);
+  const [fixes, setFixes] = useState<string[]>(startFixes);
+  const [note, setNote] = useState("");
+  if (seenTake !== shown) {
+    setSeenTake(shown);
+    setTime(0);
+    setLength(0);
+    setPlaying(false);
+    setMuted(false);
+    setTrimming(null);
+    setFixes(startFixes);
+    setNote("");
+  }
+
+  /** A clip has arrived: the list says so for screen readers, and the tile and the stage reveal it. */
   const arrive = (n: number) => {
     setLanded(n);
     setSaid(`Generation ${n} is ready.`);
@@ -107,6 +133,10 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    if (harvesting) video.current?.pause();
+  }, [harvesting]);
+
   const run = (n: number, after: (x: Gen) => Gen) => {
     update(n, (x) => ({ ...x, status: "Generating" }));
     setTimeout(
@@ -124,6 +154,7 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
   const reroll = (n: number) => {
     setEdits(false);
     setHarvesting(false);
+    setTrimming(null);
     // The panel now shows "Generating": keep the keyboard on its heading.
     focusSoon(() => sideHeading.current);
     run(n, (x) => {
@@ -133,12 +164,39 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
     });
   };
 
+  const seek = (t: number) => {
+    const v = video.current;
+    if (v) v.currentTime = t;
+    setTime(t);
+  };
+
   const ready = gens.filter(hasClip);
   /** Frames that were there when the page opened stay put; one harvested now lands. */
   const startingCount = initial === "harvest" ? startingHarvest.length : 0;
-  const take = g.takes[g.take];
-  const trim = trimOf(g);
   const pending = rerolling ? gens.find((x) => x.n === rerolling.n) : undefined;
+  const clip = hasClip(g);
+  const kept = g.kept === take.name;
+  const feeds = g.n < LAST ? g.n + 1 : undefined;
+
+  const openTrim = () => {
+    setTrimming(trimming ? null : (trim ?? [0, length || 25]));
+    setHarvesting(false);
+    setEdits(false);
+  };
+  const openFrame = () => {
+    setHarvesting(true);
+    setTrimming(null);
+    setEdits(false);
+  };
+  const openEdits = () => {
+    setEdits(!edits);
+    setTrimming(null);
+    setHarvesting(false);
+  };
+  const closeFrame = () => {
+    setHarvesting(false);
+    focusSoon(() => useFrame.current);
+  };
 
   return (
     <AppShell
@@ -146,39 +204,24 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
       title={<EpisodeTitle />}
       bar={<Stepper current="results" />}
       actions={
-        <>
-          {hasClip(g) ? (
-            // A plain link, built as the shared button is: a download is not a navigation.
-            <a className={`${btn.btn} ${btn.primary}`} href={take.src} download={`second-chance-ep1-generation-${g.n}-take-${g.takes.length - g.take}.mp4`}>
-              <span className={btn.wash} aria-hidden="true" />
-              <span className={btn.icon}>
-                <GestureIcon name="download" size={18} />
-              </span>
-              <span className={btn.label}>Download generation {g.n}</span>
-            </a>
-          ) : (
-            <BlockedAction id="download-why" label={`Download generation ${g.n}`} reason={`Generation ${g.n} has no clip yet.`} />
-          )}
-          {ready.length ? (
-            <Button variant="secondary" icon={<Icon name="play" size={16} />} onClick={() => setPlayAll(true)}>
-              Play episode
-            </Button>
-          ) : (
-            <BlockedAction id="play-why" variant="secondary" icon={<Icon name="play" size={16} />} label="Play episode" reason="No generation has a clip yet." />
-          )}
-        </>
+        ready.length ? (
+          <Button icon={<Icon name="play" size={16} />} onClick={() => setPlayAll(true)}>
+            Play episode
+          </Button>
+        ) : (
+          <BlockedAction id="play-why" icon={<Icon name="play" size={16} />} label="Play episode" reason="No generation has a clip yet." />
+        )
       }
     >
       <p className="sr-only" aria-live="polite">
         {said}
       </p>
-      <div className={`${s.split} ${s.fill} ${r.split}`}>
-        <Panel title="Generations" level={1} headingRef={pageHeading}>
-          <Progress label="Generations with a clip" items={gens.map((x) => ({ name: `Generation ${x.n}`, done: hasClip(x) }))} />
-          <ul className={r.tiles}>
+      <div className={`${s.fill} ${r.split}`}>
+        <Panel title="Generations" level={1} headingRef={pageHeading} className={r.list} flush>
+          <ul className={r.gens}>
             {gens.map((x) => (
               <li key={x.n}>
-                <GenTile
+                <GenRow
                   g={x}
                   selected={x.n === selected}
                   onSelect={() => {
@@ -186,7 +229,7 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
                     setSelected(x.n);
                     setHarvesting(false);
                     setEdits(false);
-                    requestAnimationFrame(() => revealOnPhone(side.current));
+                    requestAnimationFrame(() => revealOnPhone(stage.current));
                   }}
                 />
               </li>
@@ -195,22 +238,20 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
 
           {harvests.length > 0 && (
             <section aria-labelledby="frames-title" className={r.frames}>
-              <h2 id="frames-title" className={s.label} tabIndex={-1}>
+              <h2 id="frames-title" className={`${s.label} ${r.framesTitle}`} tabIndex={-1}>
                 Continuity frames
               </h2>
               <ul className={r.frameList}>
                 {harvests.map((h, i) => (
                   <li key={`${h.gen}-${h.time}-${i}`} className={`${r.frame} ${i >= startingCount ? m.land : ""}`}>
                     <span className={`${s.thumb} ${r.frameArt}`}>
-                      <Image src={h.poster} alt="" fill sizes="64px" />
+                      <Image src={h.poster} alt="" fill sizes="32px" />
                     </span>
                     <span className={r.frameText}>
                       <span>
                         Generation {h.gen}, {clock(h.time)}
                       </span>
-                      <span className={s.cardSub}>
-                        {h.fixes}, feeds generation {h.feeds}
-                      </span>
+                      <span className={r.muted}>{h.fixes}</span>
                     </span>
                   </li>
                 ))}
@@ -219,484 +260,124 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
           )}
         </Panel>
 
+        <div className={r.stage} ref={stage}>
+          {g.status === "Failed" ? (
+            <>
+              <div className={r.screenBox}>
+                <div className={`${r.screen} ${r.noClipScreen}`}>
+                  <span className={r.noClip}>
+                    <img src="/labs/app/empty/no-clip.svg" alt="" width={80} height={70} />
+                    No clip
+                  </span>
+                </div>
+              </div>
+              <div className={r.under}>
+                <div className={r.failed} role="status">
+                  <p className={r.failedTitle}>Failed</p>
+                  <p className={r.muted}>{failReason}</p>
+                </div>
+                <Button variant="secondary" size="small" onClick={() => setRetry(true)}>
+                  Try again
+                </Button>
+              </div>
+            </>
+          ) : g.status === "Generating" ? (
+            <>
+              <div className={r.screenBox}>
+                <div className={`${r.screen} ${r.making}`}>{take?.poster && <Image src={take.poster} alt="" fill sizes="340px" />}</div>
+              </div>
+              <div className={r.under}>
+                <p role="status">
+                  <Status icon="spinner">Generating</Status>
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={r.screenBox}>
+                <Player
+                  key={shown}
+                  g={g}
+                  take={take}
+                  arrived={landed === g.n}
+                  videoRef={video}
+                  harvesting={harvesting}
+                  trim={trim}
+                  time={time}
+                  playing={playing}
+                  muted={muted}
+                  onTime={setTime}
+                  onLength={setLength}
+                  onPlaying={setPlaying}
+                  onMuted={setMuted}
+                />
+              </div>
+              {harvesting ? (
+                <div className={`${r.under} ${r.scrub} ${m.enter}`}>
+                  <span>{clock(time)}</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={length || 25}
+                    step={0.1}
+                    value={time}
+                    onChange={(e) => seek(Number(e.target.value))}
+                    aria-label="Frame time"
+                    aria-valuetext={clock(time)}
+                    style={{ "--p": `${(time / (length || 25)) * 100}%` } as React.CSSProperties}
+                  />
+                  <span>{length ? clock(length) : ""}</span>
+                </div>
+              ) : (
+                <div className={`${r.under} ${r.actions} ${m.fade}`}>
+                  {/* The tick has its place whether or not the take is kept, so keeping it moves nothing: the tick draws on, and off. */}
+                  <Button
+                    variant={kept ? "secondary" : "primary"}
+                    size="small"
+                    aria-pressed={kept}
+                    icon={
+                      <span className={r.keepTick}>
+                        <Icon name="check" size={16} />
+                        <CheckIcon shown={kept} size={16} />
+                      </span>
+                    }
+                    onClick={() => {
+                      setSaid(kept ? `${take.name} of generation ${g.n} is no longer kept.` : `${take.name} of generation ${g.n} kept.`);
+                      update(g.n, (x) => (x.kept === take.name ? { ...x, kept: undefined } : { ...x, kept: take.name }));
+                    }}
+                  >
+                    Keep this take
+                  </Button>
+                  <Button variant="secondary" size="small" aria-expanded={Boolean(trimming)} onClick={openTrim}>
+                    Trim
+                  </Button>
+                  {feeds && (
+                    <Button ref={useFrame} variant="secondary" size="small" onClick={openFrame}>
+                      Use a frame
+                    </Button>
+                  )}
+                  <Button variant="secondary" size="small" onClick={() => setRerolling({ n: g.n })}>
+                    Reroll
+                  </Button>
+                  <Button variant="secondary" size="small" aria-expanded={edits} onClick={openEdits}>
+                    Reroll with edits
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
         <Panel
           as="aside"
           panelRef={side}
           headingRef={sideHeading}
           className={r.side}
+          bodyClassName={r.sideBody}
           title={`Generation ${g.n}`}
           sub={trim ? `${g.summary}. ${take.name} trimmed to ${clock(trim[0])} to ${clock(trim[1])}.` : g.summary}
         >
-          {g.status === "Failed" ? (
-            <Failed g={g} onRetry={() => setRetry(true)} />
-          ) : g.status === "Generating" ? (
-            <Making g={g} />
-          ) : (
-            <Selected
-              key={`${g.n}-${take.src}`}
-              g={g}
-              arrived={landed === g.n}
-              onSaid={setSaid}
-              harvesting={harvesting}
-              setHarvesting={setHarvesting}
-              edits={edits}
-              setEdits={setEdits}
-              onTake={(i) => update(g.n, (x) => ({ ...x, take: i }))}
-              onKeep={() => update(g.n, (x) => (x.kept === take.name ? { ...x, kept: undefined } : { ...x, kept: take.name }))}
-              onTrim={(t) => update(g.n, (x) => ({ ...x, trim: t ? { take: take.name, range: t } : undefined }))}
-              onReroll={(edit) => setRerolling({ n: g.n, edit })}
-              onHarvest={(h) => {
-                setHarvests((all) => [...all, h]);
-                setHarvesting(false);
-                focusSoon(() => document.getElementById("frames-title"));
-              }}
-            />
-          )}
-        </Panel>
-      </div>
-
-      <ConfirmDialog
-        open={Boolean(rerolling)}
-        onClose={() => setRerolling(null)}
-        onConfirm={() => {
-          if (rerolling) reroll(rerolling.n);
-          setRerolling(null);
-        }}
-        title={`Reroll generation ${rerolling?.n ?? g.n}`}
-        makes={pending ? `Generation ${pending.n}, Take ${pending.takes.length + 1}${rerolling?.edit ? `, with this change: ${rerolling.edit}` : ", from the same prompt"}` : ""}
-        confirmLabel={rerolling?.edit ? "Reroll with this change" : "Reroll"}
-      />
-
-      <ConfirmDialog
-        open={retry}
-        onClose={() => setRetry(false)}
-        onConfirm={() => {
-          setRetry(false);
-          // "Try again" leaves with the failed state: keep the keyboard on the panel heading, as a reroll does.
-          focusSoon(() => sideHeading.current);
-          run(6, (x) => ({ ...x, attempt: "Second" }));
-        }}
-        title={confirmRetry.title}
-        makes={confirmRetry.makes}
-        confirmLabel="Try generation 6 again"
-      />
-
-      <PlayAll open={playAll} onClose={() => setPlayAll(false)} clips={ready.map((x) => ({ n: x.n, ...(x.takes.find((t) => t.name === x.kept) ?? x.takes[x.take]) }))} />
-    </AppShell>
-  );
-}
-
-/**
- * Over a clip that is still being made: glyph noise in the manner of the portal, with a band of density crossing it.
- * The poster shows dimly through it. One still frame under reduced motion.
- */
-function Developing({ cell = 8 }: { cell?: number }) {
-  return <AsciiField mode="scan" cell={cell} intensity={0.5} speed={1.15} className={r.developing} />;
-}
-
-/**
- * One generation in the list. While it is being made the poster is dimmed under a scan of glyphs; when the clip
- * arrives that cover is drawn off the tile from the top, once, and the poster is left.
- */
-function GenTile({ g, selected, onSelect }: { g: Gen; selected: boolean; onSelect: () => void }) {
-  const [seen, setSeen] = useState(g.status);
-  const [arriving, setArriving] = useState(false);
-  if (seen !== g.status) {
-    setSeen(g.status);
-    if (seen === "Generating" && g.status === "Ready") setArriving(true);
-  }
-  useEffect(() => {
-    if (!arriving) return;
-    const t = setTimeout(() => setArriving(false), 900);
-    return () => clearTimeout(t);
-  }, [arriving]);
-  const poster = g.takes[g.take].poster;
-
-  return (
-    <button type="button" className={s.tile} aria-pressed={selected} onClick={onSelect}>
-      <span className={`${s.tileArt} ${r.tileArt}`} data-status={g.status} data-empty={g.status === "Failed" || undefined}>
-        {g.status === "Failed" ? (
-          <span className={r.noClip}>
-            <img src="/labs/app/empty/no-clip.svg" alt="" width={80} height={70} />
-            No clip
-          </span>
-        ) : (
-          <>
-            <Image src={poster} alt="" fill sizes="(max-width: 900px) 30vw, 120px" />
-            {(g.status === "Generating" || arriving) && (
-              <span className={r.develop} data-leaving={arriving || undefined}>
-                <Developing />
-              </span>
-            )}
-          </>
-        )}
-      </span>
-      <span className={s.tileName}>Generation {g.n}</span>
-      <GenStatus g={g} />
-    </button>
-  );
-}
-
-/** The state of the take on show. The words change in place; a tick is drawn when the state has just been reached, and stays still otherwise. */
-function GenStatus({ g }: { g: Gen }) {
-  const status = shownStatus(g);
-  const [seen, setSeen] = useState(status);
-  const [changes, setChanges] = useState(0);
-  if (seen !== status) {
-    setSeen(status);
-    setChanges(changes + 1);
-  }
-  return (
-    <span className={s.status} data-tone={status === "Failed" ? "danger" : undefined}>
-      {status === "Failed" ? (
-        <AppIcon name="warning" size={16} />
-      ) : status === "Generating" ? (
-        <AnimatedMark variant="busy" size={16} />
-      ) : (
-        <span key={changes} className={s.ok}>
-          {changes ? <CheckIcon size={16} /> : <Icon name="check" size={16} />}
-        </span>
-      )}
-      <SwapText>{status}</SwapText>
-    </span>
-  );
-}
-
-function PromptBox({ text }: { text: string }) {
-  return (
-    <div className={`${s.inset} ${m.enter}`}>
-      <p className="label muted">Prompt</p>
-      <p className="small">{text}</p>
-    </div>
-  );
-}
-
-/** "Show prompt" and its kind: a quiet button whose chevron turns with what it opens. */
-function Disclose({ open, onToggle, children }: { open: boolean; onToggle: () => void; children: React.ReactNode }) {
-  return (
-    <Button variant="quiet" size="small" icon={<ChevronIcon open={open} size={16} />} aria-expanded={open} onClick={onToggle}>
-      {children}
-    </Button>
-  );
-}
-
-function Failed({ g, onRetry }: { g: Gen; onRetry: () => void }) {
-  const [prompt, setPrompt] = useState(false);
-  return (
-    <>
-      <div className={r.failed} role="status">
-        <p className={r.failedTitle}>Failed</p>
-        <p className="small">{failReason}</p>
-      </div>
-      <dl className={s.facts}>
-        <div>
-          <dt>Attempt</dt>
-          <dd>{g.attempt}</dd>
-        </div>
-        <div>
-          <dt>Take</dt>
-          <dd>None</dd>
-        </div>
-      </dl>
-      <p className="small muted">Trying again is a new attempt. It is confirmed before it runs.</p>
-      <div className={s.actions}>
-        <Button variant="secondary" size="small" onClick={onRetry}>
-          Try again
-        </Button>
-        <Disclose open={prompt} onToggle={() => setPrompt((v) => !v)}>
-          {prompt ? "Hide prompt" : "Show prompt"}
-        </Disclose>
-      </div>
-      {prompt && <PromptBox text={g.prompt} />}
-    </>
-  );
-}
-
-/** A generation being made: the frame the clip will fill is already in its place, developing, so nothing moves when the clip arrives. */
-function Making({ g }: { g: Gen }) {
-  const [prompt, setPrompt] = useState(false);
-  const poster = g.takes[g.take]?.poster;
-  return (
-    <>
-      <div className={r.head}>
-        <div className={r.player}>
-          {poster && <Image src={poster} alt="" fill sizes="180px" />}
-          <span className={r.develop}>
-            <Developing cell={10} />
-          </span>
-        </div>
-        <div className={r.info}>
-          <p role="status">
-            <Status icon="spinner">Generating</Status>
-          </p>
-          <p className="small muted">The clip shows here when it is ready.</p>
-          <div className={r.stack}>
-            <Disclose open={prompt} onToggle={() => setPrompt((v) => !v)}>
-              {prompt ? "Hide prompt" : "Show prompt"}
-            </Disclose>
-          </div>
-        </div>
-      </div>
-      {prompt && <PromptBox text={g.prompt} />}
-    </>
-  );
-}
-
-type SelectedProps = {
-  g: Gen;
-  /** The clip has just arrived: the frame reveals it once. */
-  arrived: boolean;
-  onSaid: (text: string) => void;
-  harvesting: boolean;
-  setHarvesting: (v: boolean) => void;
-  edits: boolean;
-  setEdits: (v: boolean) => void;
-  onTake: (i: number) => void;
-  onKeep: () => void;
-  onTrim: (t: [number, number] | undefined) => void;
-  onReroll: (edit?: string) => void;
-  onHarvest: (h: Harvest) => void;
-};
-
-function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdits, onTake, onKeep, onTrim, onReroll, onHarvest }: SelectedProps) {
-  const take = g.takes[g.take];
-  const trim = trimOf(g);
-  const feeds = g.n < LAST ? g.n + 1 : undefined;
-  const video = useRef<HTMLVideoElement>(null);
-  const useFrame = useRef<HTMLButtonElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
-  /** Held for the length of the reveal, so it finishes even though `arrived` is only true for a moment. */
-  const [reveal] = useState(arrived);
-  const [time, setTime] = useState(harvesting ? 14 : 0);
-  const [length, setLength] = useState(0);
-  const [prompt, setPrompt] = useState(false);
-  const [trimming, setTrimming] = useState<[number, number] | null>(null);
-  const [fixes, setFixes] = useState<string[]>(["Pose"]);
-  const [source, setSource] = useState(false);
-  const [note, setNote] = useState("");
-
-  const toggle = () => {
-    const v = video.current;
-    if (!v) return;
-    if (v.paused) v.play().catch(() => {});
-    else v.pause();
-  };
-
-  useEffect(() => {
-    if (harvesting) video.current?.pause();
-  }, [harvesting]);
-
-  const seek = (t: number) => {
-    const v = video.current;
-    if (v) v.currentTime = t;
-    setTime(t);
-  };
-
-  const kept = g.kept === take.name;
-
-  return (
-    <>
-      <div className={r.head}>
-        <div className={r.player}>
-          <MediaFrame fill>
-          <video
-            ref={video}
-            src={take.src}
-            poster={take.poster}
-            muted={muted}
-            playsInline
-            preload="metadata"
-            onClick={harvesting ? undefined : toggle}
-            onPlay={() => setPlaying(true)}
-            onPause={() => setPlaying(false)}
-            onLoadedMetadata={(e) => {
-              setLength(e.currentTarget.duration);
-              if (harvesting) e.currentTarget.currentTime = time;
-              else if (trim) e.currentTarget.currentTime = trim[0];
-            }}
-            onTimeUpdate={(e) => {
-              const v = e.currentTarget;
-              if (!harvesting) setTime(v.currentTime);
-              if (trim && v.currentTime >= trim[1]) {
-                v.pause();
-                v.currentTime = trim[0];
-              }
-            }}
-            aria-label={`Generation ${g.n}, ${take.name}`}
-          />
-          </MediaFrame>
-          {reveal && (
-            <span className={r.develop} data-leaving="true">
-              <Developing cell={10} />
-            </span>
-          )}
-          {!harvesting && (
-            <>
-              <button type="button" className={r.play} onClick={toggle} aria-label={playing ? "Pause" : "Play"}>
-                <PlayPauseIcon playing={playing} size={18} />
-                <span>{clock(time)}</span>
-              </button>
-              <button type="button" className={r.mute} onClick={() => setMuted(!muted)} aria-label={muted ? "Turn sound on" : "Turn sound off"}>
-                <VolumeIcon muted={muted} size={18} />
-              </button>
-            </>
-          )}
-        </div>
-        <div className={r.info}>
-          <div>
-            <p className={s.label} id="takes-label">
-              Takes
-            </p>
-            <div className={r.takes} role="group" aria-labelledby="takes-label">
-              {g.takes.map((t, i) => (
-                <button key={t.name} type="button" className={s.chip} aria-pressed={i === g.take} onClick={() => onTake(i)}>
-                  {i === g.take && <CheckIcon size={16} />}
-                  {t.name}
-                  {g.kept === t.name && <span className="sr-only">, kept</span>}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className={r.stack}>
-            <Disclose open={prompt} onToggle={() => setPrompt((v) => !v)}>
-              {prompt ? "Hide prompt" : "Show prompt"}
-            </Disclose>
-            {!harvesting && feeds && (
-              <Button ref={useFrame} variant="quiet" size="small" onClick={() => setHarvesting(true)}>
-                Use a frame
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {prompt && <PromptBox text={g.prompt} />}
-
-      {harvesting ? (
-        <div className={`${r.mode} ${m.enter}`}>
-          <div className={r.scrub}>
-            <span>{clock(time)}</span>
-            <input
-              type="range"
-              min={0}
-              max={length || 25}
-              step={0.1}
-              value={time}
-              onChange={(e) => seek(Number(e.target.value))}
-              aria-label="Frame time"
-              aria-valuetext={clock(time)}
-              style={{ "--p": `${(time / (length || 25)) * 100}%` } as React.CSSProperties}
-            />
-            <span>{length ? clock(length) : ""}</span>
-          </div>
-          {time === 0 && <p className={s.hint}>The frame is at 0:00. Move the slider to the frame you want.</p>}
-          <fieldset className={s.fieldset}>
-            <legend className={s.label}>This frame fixes</legend>
-            <div className={s.chips}>
-              {frameFixes.map((f) => {
-                const on = fixes.includes(f);
-                return (
-                  <button
-                    key={f}
-                    type="button"
-                    className={s.chip}
-                    aria-pressed={on}
-                    onClick={() => setFixes((all) => (on ? all.filter((x) => x !== f) : [...all, f]))}
-                  >
-                    {on && <CheckIcon size={16} />}
-                    {f}
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-          <div className={s.actions}>
-            {fixes.length ? (
-              <Button
-                variant="secondary"
-                size="small"
-                onClick={() =>
-                  onHarvest({ gen: g.n, time: Math.floor(time), fixes: fixes.join(", "), feeds: feeds ?? g.n, poster: take.poster })
-                }
-              >
-                Use for continuity
-              </Button>
-            ) : (
-              <>
-                <Button variant="secondary" size="small" aria-disabled="true" aria-describedby="harvest-why">
-                  Use for continuity
-                </Button>
-                <span id="harvest-why" className={s.reason}>
-                  Choose what the frame fixes.
-                </span>
-              </>
-            )}
-            <Disclose open={source} onToggle={() => setSource((v) => !v)}>
-              Source details
-            </Disclose>
-            <Button
-              variant="quiet"
-              size="small"
-              onClick={() => {
-                setHarvesting(false);
-                focusSoon(() => useFrame.current);
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-          {source && (
-            <dl className={`${s.facts} ${m.enter}`}>
-              <div>
-                <dt>Source</dt>
-                <dd>
-                  Generation {g.n}, {take.name}
-                </dd>
-              </div>
-              <div>
-                <dt>Time</dt>
-                <dd>{time.toFixed(1)} seconds</dd>
-              </div>
-              <div>
-                <dt>File</dt>
-                <dd>{take.src.split("/").pop()}</dd>
-              </div>
-              {feeds && (
-                <div>
-                  <dt>Feeds</dt>
-                  <dd>Generation {feeds}</dd>
-                </div>
-              )}
-            </dl>
-          )}
-        </div>
-      ) : (
-        <div className={`${r.mode} ${m.fade}`}>
-          <div className={s.actions}>
-            {/* The tick has its place whether or not the take is kept, so keeping it moves nothing: the tick draws on, and off. */}
-            <Button
-              variant="secondary"
-              size="small"
-              aria-pressed={kept}
-              icon={
-                <span className={r.keepTick}>
-                  <Icon name="check" size={16} />
-                  <CheckIcon shown={kept} size={16} />
-                </span>
-              }
-              onClick={() => {
-                onSaid(kept ? `${take.name} of generation ${g.n} is no longer kept.` : `${take.name} of generation ${g.n} kept.`);
-                onKeep();
-              }}
-            >
-              Keep this take
-            </Button>
-            <Disclose open={Boolean(trimming)} onToggle={() => setTrimming(trimming ? null : (trim ?? [0, length || 25]))}>
-              Trim
-            </Disclose>
-          </div>
-          {trimming && (
+          {clip && trimming && (
             <div className={`${s.inset} ${r.trim} ${m.enter}`}>
               <label>
                 <span className="small">Start {clock(trimming[0])}</span>
@@ -741,7 +422,7 @@ function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdi
                   onClick={() => {
                     // The whole clip is no trim at all.
                     const whole = trimming[0] <= 0.05 && trimming[1] >= (length || 25) - 0.05;
-                    onTrim(whole ? undefined : trimming);
+                    update(g.n, (x) => ({ ...x, trim: whole ? undefined : { take: take.name, range: trimming } }));
                     setTrimming(null);
                   }}
                 >
@@ -752,7 +433,7 @@ function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdi
                     variant="quiet"
                     size="small"
                     onClick={() => {
-                      onTrim(undefined);
+                      update(g.n, (x) => ({ ...x, trim: undefined }));
                       setTrimming(null);
                     }}
                   >
@@ -765,16 +446,60 @@ function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdi
               </div>
             </div>
           )}
-          <hr className={r.rule} />
-          <div className={s.actions}>
-            <Button variant="quiet" size="small" onClick={() => onReroll()}>
-              Reroll
-            </Button>
-            <Disclose open={edits} onToggle={() => setEdits(!edits)}>
-              Reroll with edits
-            </Disclose>
-          </div>
-          {edits && (
+
+          {clip && harvesting && (
+            <div className={`${r.form} ${m.enter}`}>
+              <fieldset className={s.fieldset}>
+                <legend className={s.label}>This frame fixes</legend>
+                <div className={s.chips}>
+                  {frameFixes.map((f) => {
+                    const on = fixes.includes(f);
+                    return (
+                      <button
+                        key={f}
+                        type="button"
+                        className={s.chip}
+                        aria-pressed={on}
+                        onClick={() => setFixes((all) => (on ? all.filter((x) => x !== f) : [...all, f]))}
+                      >
+                        {on && <CheckIcon size={16} />}
+                        {f}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+              <div className={s.actions}>
+                {fixes.length ? (
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => {
+                      setHarvests((all) => [...all, { gen: g.n, time: Math.floor(time), fixes: fixes.join(", "), feeds: feeds ?? g.n, poster: take.poster }]);
+                      setHarvesting(false);
+                      focusSoon(() => document.getElementById("frames-title"));
+                    }}
+                  >
+                    Use for continuity
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="secondary" size="small" aria-disabled="true" aria-describedby="harvest-why">
+                      Use for continuity
+                    </Button>
+                    <span id="harvest-why" className="sr-only">
+                      Choose what the frame fixes.
+                    </span>
+                  </>
+                )}
+                <Button variant="quiet" size="small" onClick={closeFrame}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {clip && edits && (
             <div className={`${s.field} ${m.enter}`}>
               <label htmlFor="reroll-edit" className={s.label}>
                 What should change
@@ -789,7 +514,7 @@ function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdi
               />
               <div className={s.actions}>
                 {note.trim() ? (
-                  <Button variant="secondary" size="small" onClick={() => onReroll(note.trim())}>
+                  <Button variant="secondary" size="small" onClick={() => setRerolling({ n: g.n, edit: note.trim() })}>
                     Reroll with this change
                   </Button>
                 ) : (
@@ -797,7 +522,7 @@ function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdi
                     <Button variant="secondary" size="small" aria-disabled="true" aria-describedby="send-why">
                       Reroll with this change
                     </Button>
-                    <span id="send-why" className={s.reason}>
+                    <span id="send-why" className="sr-only">
                       Write the change first.
                     </span>
                   </>
@@ -808,9 +533,227 @@ function Selected({ g, arrived, onSaid, harvesting, setHarvesting, edits, setEdi
               </div>
             </div>
           )}
-        </div>
+
+          {clip && (
+            <section aria-labelledby="takes-label">
+              <h3 className={s.label} id="takes-label">
+                Takes
+              </h3>
+              <ul className={r.takes}>
+                {g.takes.map((t, i) => (
+                  <li key={t.name}>
+                    <button type="button" className={`${s.tile} ${r.take}`} aria-pressed={i === g.take} onClick={() => update(g.n, (x) => ({ ...x, take: i }))}>
+                      <span className={`${s.tileArt} ${r.takeArt}`}>
+                        <Image src={t.poster} alt="" fill sizes="72px" />
+                      </span>
+                      <span className={r.takeName}>
+                        {t.name}
+                        {g.kept === t.name && (
+                          <span className={s.status}>
+                            <span className={s.ok}>
+                              <Icon name="check" size={16} />
+                            </span>
+                            <span className="sr-only">, kept</span>
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section aria-labelledby="prompt-label">
+            <h3 className={s.label} id="prompt-label">
+              Prompt
+            </h3>
+            <p className={`${s.inset} small`}>{g.prompt}</p>
+          </section>
+        </Panel>
+      </div>
+
+      <ConfirmDialog
+        open={Boolean(rerolling)}
+        onClose={() => setRerolling(null)}
+        onConfirm={() => {
+          if (rerolling) reroll(rerolling.n);
+          setRerolling(null);
+        }}
+        title={`Reroll generation ${rerolling?.n ?? g.n}`}
+        makes={pending ? `Generation ${pending.n}, Take ${pending.takes.length + 1}${rerolling?.edit ? `, with this change: ${rerolling.edit}` : ", from the same prompt"}` : ""}
+        confirmLabel={rerolling?.edit ? "Reroll with this change" : "Reroll"}
+      />
+
+      <ConfirmDialog
+        open={retry}
+        onClose={() => setRetry(false)}
+        onConfirm={() => {
+          setRetry(false);
+          // "Try again" leaves with the failed state: keep the keyboard on the panel heading, as a reroll does.
+          focusSoon(() => sideHeading.current);
+          run(6, (x) => ({ ...x, attempt: "Second" }));
+        }}
+        title={confirmRetry.title}
+        makes={confirmRetry.makes}
+        confirmLabel="Try generation 6 again"
+      />
+
+      <PlayAll open={playAll} onClose={() => setPlayAll(false)} clips={ready.map((x) => ({ n: x.n, ...(x.takes.find((t) => t.name === x.kept) ?? x.takes[x.take]) }))} />
+    </AppShell>
+  );
+}
+
+/**
+ * Over a clip that is still being made: glyph noise in the manner of the portal, with a band of density crossing it.
+ * The poster shows dimly through it. One still frame under reduced motion.
+ */
+function Developing({ cell = 8 }: { cell?: number }) {
+  return <AsciiField mode="scan" cell={cell} intensity={0.5} speed={1.15} className={r.developing} />;
+}
+
+/**
+ * One generation in the list. While it is being made the poster is dimmed under a scan of glyphs; when the clip
+ * arrives that cover is drawn off the thumbnail from the top, once, and the poster is left.
+ */
+function GenRow({ g, selected, onSelect }: { g: Gen; selected: boolean; onSelect: () => void }) {
+  const [seen, setSeen] = useState(g.status);
+  const [arriving, setArriving] = useState(false);
+  if (seen !== g.status) {
+    setSeen(g.status);
+    if (seen === "Generating" && g.status === "Ready") setArriving(true);
+  }
+  useEffect(() => {
+    if (!arriving) return;
+    const t = setTimeout(() => setArriving(false), 900);
+    return () => clearTimeout(t);
+  }, [arriving]);
+  const poster = g.takes[g.take].poster;
+
+  return (
+    <button type="button" className={r.gen} aria-pressed={selected} onClick={onSelect}>
+      <span className={r.genArt} data-empty={g.status === "Failed" || undefined}>
+        {g.status !== "Failed" && (
+          <>
+            <Image src={poster} alt="" fill sizes="64px" />
+            {(g.status === "Generating" || arriving) && (
+              <span className={r.develop} data-leaving={arriving || undefined}>
+                <Developing cell={6} />
+              </span>
+            )}
+          </>
+        )}
+      </span>
+      <span className={r.genText}>
+        <span className={r.genName}>Generation {g.n}</span>
+        <span className={r.genNum} aria-hidden="true">
+          {g.n}
+        </span>
+        <span className={r.genSummary}>{g.summary}</span>
+        <GenStatus g={g} />
+      </span>
+    </button>
+  );
+}
+
+/** The state of the take on show. The words change in place; a tick is drawn when the state has just been reached, and stays still otherwise. */
+function GenStatus({ g }: { g: Gen }) {
+  const status = shownStatus(g);
+  const [seen, setSeen] = useState(status);
+  const [changes, setChanges] = useState(0);
+  if (seen !== status) {
+    setSeen(status);
+    setChanges(changes + 1);
+  }
+  return (
+    <span className={`${s.status} ${r.genStatus}`} data-tone={status === "Failed" ? "danger" : undefined}>
+      {status === "Failed" ? (
+        <AppIcon name="warning" size={16} />
+      ) : status === "Generating" ? (
+        <AnimatedMark variant="busy" size={16} />
+      ) : (
+        <span key={changes} className={s.ok}>
+          {changes ? <CheckIcon size={16} /> : <Icon name="check" size={16} />}
+        </span>
       )}
-    </>
+      <SwapText className={r.statusWord}>{status}</SwapText>
+    </span>
+  );
+}
+
+type PlayerProps = {
+  g: Gen;
+  take: Take;
+  /** The clip has just arrived: the frame brings it up from the dimmed poster, once. */
+  arrived: boolean;
+  videoRef: RefObject<HTMLVideoElement | null>;
+  harvesting: boolean;
+  trim: [number, number] | undefined;
+  time: number;
+  playing: boolean;
+  muted: boolean;
+  onTime: (t: number) => void;
+  onLength: (t: number) => void;
+  onPlaying: (v: boolean) => void;
+  onMuted: (v: boolean) => void;
+};
+
+/** The selected take, as large as the stage allows. Mounted once per take, so its frame loads and reveals each time. */
+function Player({ g, take, arrived, videoRef, harvesting, trim, time, playing, muted, onTime, onLength, onPlaying, onMuted }: PlayerProps) {
+  /** Held for the length of the reveal, so it finishes even though `arrived` is only true for a moment. */
+  const [reveal] = useState(arrived);
+
+  const toggle = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
+  };
+
+  return (
+    <div className={`${r.screen} ${m.fade}`} data-arrived={reveal || undefined}>
+      <MediaFrame fill>
+        <video
+          ref={videoRef}
+          src={take.src}
+          poster={take.poster}
+          muted={muted}
+          playsInline
+          preload="metadata"
+          onClick={harvesting ? undefined : toggle}
+          onPlay={() => onPlaying(true)}
+          onPause={() => onPlaying(false)}
+          onLoadedMetadata={(e) => {
+            onLength(e.currentTarget.duration);
+            if (harvesting) e.currentTarget.currentTime = time;
+            else if (trim) e.currentTarget.currentTime = trim[0];
+          }}
+          onTimeUpdate={(e) => {
+            const v = e.currentTarget;
+            if (!harvesting) onTime(v.currentTime);
+            if (trim && v.currentTime >= trim[1]) {
+              v.pause();
+              v.currentTime = trim[0];
+            }
+          }}
+          aria-label={`Generation ${g.n}, ${take.name}`}
+        />
+      </MediaFrame>
+      <a className={`${r.over} ${r.download}`} href={take.src} download={`second-chance-ep1-generation-${g.n}-take-${g.takes.length - g.take}.mp4`} aria-label={`Download generation ${g.n}`}>
+        <GestureIcon name="download" size={20} />
+      </a>
+      {!harvesting && (
+        <>
+          <button type="button" className={`${r.over} ${r.play}`} onClick={toggle} aria-label={playing ? "Pause" : "Play"}>
+            <PlayPauseIcon playing={playing} size={20} />
+            <span>{clock(time)}</span>
+          </button>
+          <button type="button" className={`${r.over} ${r.mute}`} onClick={() => onMuted(!muted)} aria-label={muted ? "Turn sound on" : "Turn sound off"}>
+            <VolumeIcon muted={muted} size={20} />
+          </button>
+        </>
+      )}
+    </div>
   );
 }
 

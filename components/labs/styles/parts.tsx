@@ -1,46 +1,108 @@
-import { MediaFrame } from "@/components/labs/fx";
+import { Facts } from "@/components/labs/app/parts";
 import { Picture as Image } from "@/components/labs/fx/Picture";
-import { chartSlots, type ChartKey, type Media, type Style } from "@/lib/labs/styles";
+import { chartSlots, ruleFields, type ChartKey, type Media, type RuleKey, type Style } from "@/lib/labs/styles";
+import { Clip } from "./Clip";
 import s from "./styles.module.css";
 
-/** A named place for art. Filled when media exists; otherwise the slot keeps its name and reads "Not made yet". */
-export function Slot({ name, media, sizes = "(max-width: 720px) 50vw, 25vw", className, eager }: { name: string; media?: Media; sizes?: string; className?: string; eager?: boolean }) {
+type SlotProps = {
+  name: string;
+  media?: Media;
+  sizes?: string;
+  className?: string;
+  eager?: boolean;
+  /** Opens the image full screen. A clip keeps its own controls instead. */
+  onOpen?: () => void;
+};
+
+/** A named place for art. Filled when media exists; otherwise a dashed tile with the name alone. */
+export function Slot({ name, media, sizes = "(max-width: 720px) 50vw, 25vw", className, eager, onOpen }: SlotProps) {
   if (!media) {
     return (
       <div className={[s.slot, className].filter(Boolean).join(" ")}>
         <span className={s.slotLabel}>{name}</span>
-        <span className={s.slotState}>Not made yet</span>
       </div>
     );
   }
+  const caption = media.label ?? name;
+  if (media.video) {
+    return (
+      <figure className={[s.slot, s.filled, className].filter(Boolean).join(" ")}>
+        <Clip src={media.video} poster={media.src} label={media.alt} />
+        <figcaption className={`${s.slotName} ${s.slotNameTop}`}>{caption}</figcaption>
+      </figure>
+    );
+  }
+  const image = <Image key={media.src} src={media.src} alt={media.alt} fill sizes={sizes} loading={eager ? "eager" : undefined} unoptimized={media.src.startsWith("blob:")} />;
   return (
     <figure className={[s.slot, s.filled, className].filter(Boolean).join(" ")}>
-      {media.video ? (
-        <MediaFrame fill key={media.src}>
-          <video src={media.video} poster={media.src} muted loop playsInline controls preload="none" aria-label={media.alt} />
-        </MediaFrame>
+      {onOpen ? (
+        <button type="button" className={s.slotOpen} onClick={onOpen} aria-label={`${caption}, full screen`}>
+          {image}
+        </button>
       ) : (
-        <Image key={media.src} src={media.src} alt={media.alt} fill sizes={sizes} loading={eager ? "eager" : undefined} unoptimized={media.src.startsWith("blob:")} />
+        image
       )}
-      <figcaption className={media.video ? `${s.slotName} ${s.slotNameTop}` : s.slotName}>{media.label ?? name}</figcaption>
+      <figcaption className={s.slotName}>{caption}</figcaption>
     </figure>
   );
 }
 
-/** The chart's five subjects, the ones with art first so the large slot is never the empty one. */
-export function orderedSlots(chart: Style["chart"]) {
+/** The chart's subjects that have art, in chart order, and the ones still empty. */
+export function splitSlots(chart: Style["chart"]) {
   const has = (k: ChartKey) => Boolean(chart[k]);
-  return [...chartSlots.filter((c) => has(c.key)), ...chartSlots.filter((c) => !has(c.key))];
+  return { filled: chartSlots.filter((c) => has(c.key)), empty: chartSlots.filter((c) => !has(c.key)) };
 }
 
-export function Chart({ chart }: { chart: Style["chart"] }) {
+/** The chart's still images in the order the chart draws them, each named by its subject: what the full-screen view steps through. */
+export function chartImages(chart: Style["chart"]): Media[] {
+  const out: Media[] = [];
+  for (const c of splitSlots(chart).filled) {
+    const m = chart[c.key]!;
+    if (m.video || out.some((x) => x.src === m.src && x.alt === m.alt)) continue;
+    out.push({ ...m, label: m.label ?? c.label });
+  }
+  return out;
+}
+
+/**
+ * The style chart. Subjects with art share the space and the first is the largest. Subjects without art are
+ * small dashed tiles after them, so an empty slot is never a large tile.
+ */
+export function Chart({ chart, onOpen, className }: { chart: Style["chart"]; onOpen?: (media: Media) => void; className?: string }) {
+  const { filled, empty } = splitSlots(chart);
   return (
-    <div className={s.chart}>
-      {orderedSlots(chart).map((c, i) => (
-        <Slot key={c.key} name={c.label} media={chart[c.key]} eager={i < 3} sizes={i === 0 ? "(max-width: 720px) 100vw, 30vw" : "(max-width: 720px) 50vw, 20vw"} />
-      ))}
+    <div className={[s.chartWrap, className].filter(Boolean).join(" ")}>
+      {filled.length > 0 && (
+        <div className={s.chartArt} data-count={filled.length}>
+          {filled.map((c, i) => {
+            const media = chart[c.key]!;
+            return (
+              <Slot
+                key={c.key}
+                name={c.label}
+                media={media}
+                eager={i < 3}
+                sizes={i === 0 ? "(max-width: 720px) 100vw, 40vw" : "(max-width: 720px) 50vw, 25vw"}
+                onOpen={onOpen && !media.video ? () => onOpen(media) : undefined}
+              />
+            );
+          })}
+        </div>
+      )}
+      {empty.length > 0 && (
+        <div className={s.chartEmpty}>
+          {empty.map((c) => (
+            <Slot key={c.key} name={c.label} />
+          ))}
+        </div>
+      )}
     </div>
   );
+}
+
+/** The rules as read-only rows, only the ones that hold a value. Editing happens on the Rules step. */
+export function RulesList({ rules }: { rules: Partial<Record<RuleKey, string>> }) {
+  return <Facts rows={ruleFields.filter((f) => rules[f.key]?.trim()).map((f) => ({ label: f.label, value: rules[f.key] }))} />;
 }
 
 /** The guide's text with every paragraph holding the conflicting term marked. */

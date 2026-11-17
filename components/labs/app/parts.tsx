@@ -205,14 +205,14 @@ export function Status({ children, icon, tone, drawn }: { children: ReactNode; i
   );
 }
 
-/** A blocked main action with its reason written beside it. It stays reachable by Tab, so the reason is read with it. */
+/** A blocked main action. Its reason is kept for screen readers and not shown. It stays reachable by Tab, so the reason is read with it. */
 export function BlockedAction({ label, reason, id, variant, size, icon }: { label: string; reason: ReactNode; id: string; variant?: "secondary"; size?: "small"; icon?: ReactNode }) {
   return (
     <span className={s.barGroup}>
       <Button variant={variant} size={size} icon={icon} aria-disabled="true" aria-describedby={id}>
         {label}
       </Button>
-      <span id={id} className={s.reason}>
+      <span id={id} className="sr-only">
         {reason}
       </span>
     </span>

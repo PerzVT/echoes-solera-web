@@ -8,7 +8,7 @@ import { GestureIcon } from "@/components/labs/fx";
 import fx from "@/components/labs/app/fx/motion.module.css";
 import m from "@/components/labs/app/maker.module.css";
 import { chartSlots, environmentGuide, environmentSamples, getStyle, GUIDE_FILE, readGuide, ruleFields, type ChartKey, type CreatorStep as StepKey, type RuleKey, type Style, CREATOR_STEPS } from "@/lib/labs/styles";
-import { Chart, GuideText, Slot, readImported } from "./parts";
+import { Chart, GuideText, RulesList, Slot, readImported } from "./parts";
 import s from "./styles.module.css";
 
 
@@ -89,11 +89,18 @@ export function Creator({ initialStep = "chart" }: { initialStep?: StepKey }) {
     </>
   );
 
+  // Chart and Samples show the rules to look at, not to edit: only the ones that hold a value.
+  const rulesPanel = (
+    <Panel as="aside" title="Rules">
+      <RulesList rules={rules} />
+    </Panel>
+  );
+
   let main;
   let side;
   if (step === "source") {
     main = (
-      <Panel title={file.name} level={1} sub="The guide this draft was imported from." headingRef={heading}>
+      <Panel title={file.name} level={1} headingRef={heading}>
         <GuideText text={file.text} term={source.conflict?.term} />
       </Panel>
     );
@@ -120,7 +127,7 @@ export function Creator({ initialStep = "chart" }: { initialStep?: StepKey }) {
     );
   } else if (step === "rules") {
     main = (
-      <Panel title="Rules" level={1} sub="Rendering guidance only. It never sets identity or story." headingRef={heading}>
+      <Panel title="Rules" level={1} headingRef={heading}>
         {ruleEditor}
       </Panel>
     );
@@ -146,6 +153,7 @@ export function Creator({ initialStep = "chart" }: { initialStep?: StepKey }) {
         title="Style chart"
         level={1}
         headingRef={heading}
+        bodyClassName={s.fillBody}
         actions={
           <Button variant="quiet" size="small" icon={<GestureIcon name="plus" size={16} />} onClick={picker.open}>
             Add reference
@@ -163,14 +171,10 @@ export function Creator({ initialStep = "chart" }: { initialStep?: StepKey }) {
         {picker.node}
       </Panel>
     );
-    side = (
-      <Panel as="aside" title="Rules">
-        {ruleEditor}
-      </Panel>
-    );
+    side = rulesPanel;
   } else {
     main = (
-      <Panel title="Samples" level={1} sub="Locations from the guide, one image each." headingRef={heading}>
+      <Panel title="Samples" level={1} headingRef={heading}>
         <div className={s.samples}>
           {environmentSamples.map((x) => (
             <Slot key={x.name} name={x.name} media={x.src ? { src: x.src, alt: x.name } : undefined} />
@@ -178,31 +182,26 @@ export function Creator({ initialStep = "chart" }: { initialStep?: StepKey }) {
         </div>
       </Panel>
     );
-    side = (
-      <Panel as="aside" title="Rules">
-        <Facts rows={ruleFields.map((f) => ({ label: f.label, value: rules[f.key] }))} />
-      </Panel>
-    );
+    side = rulesPanel;
   }
 
   return (
     <AppShell
       section="/app/styles"
       title={<EpisodeTitle series="Styles" seriesHref="/app/styles" page={`${name}, draft`} />}
-      bar={
+      bar={<Stepper current={step} steps={CREATOR_STEPS} label="Style steps" onSelect={go} />}
+      actions={
         <>
-          <Button onClick={() => setSaved(`Saved ${name} ${version} as a draft.`)}>Save version</Button>
-          <span className={m.divider} aria-hidden="true" />
-          <Stepper current={step} steps={CREATOR_STEPS} label="Style steps" onSelect={go} />
-          <p className={m.reason} role="status">
+          <p className={`${m.reason} ${s.saved}`} role="status">
             {saved}
           </p>
+          <Button onClick={() => setSaved(`Saved ${name} ${version} as a draft.`)}>Save version</Button>
         </>
       }
     >
       {/* A new step fades up as it arrives. It is not dissolved from the old one: copying two panels of pictures
           on every press cost a frame, and this stepper is pressed often. */}
-      <div key={step} className={`${m.split} ${s.split} ${fx.enter}`}>
+      <div key={step} className={`${m.split} ${m.fill} ${s.split} ${s.fillSplit} ${fx.enter}`}>
         {main}
         {side}
       </div>

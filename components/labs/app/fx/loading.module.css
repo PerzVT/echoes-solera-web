@@ -1,71 +1,88 @@
 /* The few shapes the creator's loading states need beyond the real screens' own classes. */
-.field {
+
+/* On a card that is not a Panel: a placeholder is one step lighter than the card, or it could not be seen on it. */
+.onSurface {
+  --skeleton: var(--surface-hover);
+}
+
+/* A placeholder standing for one line of text: 12 to 16px of block in a 20 to 24px line. */
+.metaLine,
+.factLine {
+  margin-block: 4px;
+}
+.factValue {
   display: grid;
-  gap: 12px;
-  min-width: 0;
+}
+.quiet {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding-inline: 16px;
 }
 .lines {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
+
+/* A sheet tile: art, name and tag, as the tile button sets them. */
 .tile {
   display: grid;
-  gap: 12px;
+  align-content: start;
+  gap: 8px;
   min-width: 0;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
   list-style: none;
 }
-.facts {
-  display: grid;
-}
-.facts > span {
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  align-items: center;
+
+/* New series: the tool cards and style stills at the real cards' size. */
+.tool {
   gap: 12px;
-  min-height: 37px;
-  border-bottom: 1px solid var(--border);
+  min-height: 100px;
+  cursor: default;
 }
-.facts > span:last-child {
-  border-bottom: 0;
-}
-.stack {
+.styleTile {
   display: grid;
-  justify-items: start;
   align-content: start;
-  gap: 14px;
+  gap: 8px;
 }
-.centre {
+
+/* Series: the faces in the cast strip, the art and the quiet button of a style card. */
+.faceArt {
+  justify-self: center;
+}
+.styleArt {
+  margin-bottom: 8px;
+}
+.styleUse {
+  margin-top: 12px;
+}
+
+/* Cast: a character tab with its face and two lines. */
+.whoTab {
+  cursor: default;
+}
+
+/* The style chart: a slot fills its grid cell. */
+.slot {
+  min-height: 0;
+}
+
+/* Results: the actions under the clip at their own widths; on a phone they pair up at full width. A take tile. */
+.action {
+  width: var(--w);
+}
+.take {
   display: grid;
-  justify-items: center;
-  width: min(100%, 320px);
-  margin: 32px auto 0;
-}
-.centre > * {
-  justify-items: center;
+  gap: 8px;
+  width: 72px;
 }
 
-/* Series card rows, at the height of an episode link. */
-.episode {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 44px;
-}
-.episode + .episode {
-  border-top: 1px solid var(--border);
-}
-.homeAdd {
-  align-items: center;
-  gap: 28px;
-  min-height: 40px;
-  margin-left: 0;
-}
-
-/* The screenplay page as lines. */
+/* The screenplay page as lines. One full column, so a line's percentage width is of the page. */
 .page {
   display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: start;
   gap: 14px;
 }
@@ -86,8 +103,13 @@
   margin-top: 8px;
 }
 
+@media (max-width: 900px) {
+  .action {
+    width: 100%;
+  }
+}
 @media (max-width: 720px) {
-  .facts > span {
-    grid-template-columns: 96px minmax(0, 1fr);
+  .tool {
+    min-height: 82px;
   }
 }

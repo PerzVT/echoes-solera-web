@@ -175,13 +175,25 @@ button.step:active {
   background: var(--surface-hover);
 }
 
-/* On a phone the four steps keep one line: steps other than the current one show their number or tick, with the name kept for screen readers. */
+/* On a phone the steps share one line across the full width: each step is an equal segment showing its number or
+   tick, and the current one takes the room its name needs. The other names are kept for screen readers. */
 @media (max-width: 560px) {
   .steps {
     flex-wrap: nowrap;
+    width: 100%;
+  }
+  .steps > li {
+    flex: 1 1 0;
+    display: flex;
+    min-width: 0;
+  }
+  .steps > li:has([aria-current="step"]) {
+    flex: 0 0 auto;
   }
   .step {
-    padding-inline: 12px;
+    flex: 1 1 auto;
+    justify-content: center;
+    padding-inline: 8px;
   }
   .step:not([aria-current="step"]) .stepLabel {
     position: absolute;

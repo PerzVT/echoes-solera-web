@@ -28,7 +28,8 @@ export type SeriesCard = {
   cover: string;
   /** Label of the add action at the foot of the card. */
   add: string;
-  episodes: { name: string; stage: string; href: string }[];
+  /** `title` is the episode's own title from its script, where it has one. */
+  episodes: { name: string; stage: string; href: string; title?: string }[];
 };
 
 const stageHref: Record<string, string> = {
@@ -38,7 +39,7 @@ const stageHref: Record<string, string> = {
   References: "/app/episode/references",
   Results: "/app/episode/results",
 };
-const ep = (name: string, stage: string) => ({ name, stage, href: stageHref[stage] });
+const ep = (name: string, stage: string, title?: string) => ({ name, stage, href: stageHref[stage], ...(title ? { title } : {}) });
 
 export const seriesCards: SeriesCard[] = [
   {
@@ -47,7 +48,7 @@ export const seriesCards: SeriesCard[] = [
     tool: "Mini-series",
     cover: "/labs/mini-series/second-chance/cover.webp",
     add: "New episode",
-    episodes: [ep("Episode 1", "Results"), ep("Episode 2", "Screenplay")],
+    episodes: [ep("Episode 1", "Results", "Reflection"), ep("Episode 2", "Screenplay", "The Crimson Pact")],
   },
   {
     title: "The Scent of the Moonflower",
@@ -55,7 +56,7 @@ export const seriesCards: SeriesCard[] = [
     tool: "Mini-series",
     cover: "/labs/mini-series/moonflower/cover.webp",
     add: "New episode",
-    episodes: [ep("Episode 7", "Results"), ep("Episode 8", "Script")],
+    episodes: [ep("Episode 7", "Results", "The Lantern Road"), ep("Episode 8", "Script", "What the Garden Kept")],
   },
   {
     title: "Heart of the Gray Winter",
@@ -63,7 +64,7 @@ export const seriesCards: SeriesCard[] = [
     tool: "Mini-series",
     cover: "/labs/mini-series/gray-winter/cover.webp",
     add: "New episode",
-    episodes: [ep("Episode 1", "Results"), ep("Episode 2", "References")],
+    episodes: [ep("Episode 1", "Results", "First Snow"), ep("Episode 2", "References", "The Wolf at the Gate")],
   },
   {
     title: "Echoes of Solera",
@@ -71,7 +72,7 @@ export const seriesCards: SeriesCard[] = [
     tool: "Anime",
     cover: "/labs/anime/hero-bg.webp",
     add: "New episode",
-    episodes: [ep("Episode 1", "References")],
+    episodes: [ep("Episode 1", "References", "Rain over Solera")],
   },
   {
     title: "Shoujo Supper",

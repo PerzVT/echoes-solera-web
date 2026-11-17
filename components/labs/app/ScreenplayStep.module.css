@@ -66,6 +66,17 @@
 }
 
 /* ---------- Screenplay ---------- */
+/* The screenplay takes the full width until there is a comment; then the comments take a column at its right.
+   Positioned, so the copy a dissolving comments panel leaves behind is placed against it. */
+.layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+.layout[data-panel="true"] {
+  grid-template-columns: minmax(0, 1fr) 380px;
+}
 /* The prompt stays in view at the top of the scrolling page. */
 .prompt {
   position: sticky;
@@ -144,9 +155,20 @@
 .passage[data-noted="true"] {
   background: var(--accent-soft);
 }
-.passage[data-selected="true"] {
+.passage[data-selected="true"],
+.passage[data-active="true"] {
   border-color: var(--accent);
   background: var(--accent-soft);
+}
+/* A suggested change drawn where it applies: the old words struck and muted, the new words in the accent. */
+.was {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.now {
+  color: var(--accent);
+  text-decoration: none;
 }
 /* A passage the rewrite changed: it is lit for a moment and settles to the bar on its left, which stays. */
 .passage[data-changed="true"] {
@@ -240,6 +262,13 @@
   height: 16px;
   background: var(--border-strong);
 }
+/* By touch every action in the popover is a 44px target. */
+@media (pointer: coarse), (max-width: 720px) {
+  .menu button {
+    min-height: 44px;
+    padding: 0 16px;
+  }
+}
 
 /* ---------- Comments panel ---------- */
 .notes {
@@ -253,17 +282,46 @@
   display: none;
 }
 .note {
-  display: grid;
-  gap: 8px;
-  padding: 12px 16px 4px;
+  position: relative;
   border: 1px solid var(--border);
   border-radius: var(--r-control);
   background: var(--surface-sunken);
+  transition: border-color var(--dur-feedback) var(--ease-out), background-color var(--dur-feedback) var(--ease-out);
+}
+.note[data-active="true"] {
+  border-color: var(--accent);
+}
+/* The card is one button that leads to its passage; Remove sits over its top-right corner. */
+.noteMain {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 56px 16px 16px;
+  border-radius: inherit;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.noteMain:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.noteBody {
+  display: block;
+}
+.remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: var(--h);
+  padding-inline: 0;
 }
 .noteHead {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 24px;
   font-weight: 500;
   font-size: 0.875rem;
 }
@@ -283,22 +341,12 @@
   color: var(--text-muted);
 }
 .quote {
+  display: block;
   margin: 0;
   padding-left: 12px;
   border-left: 2px solid var(--accent);
   font-size: 0.875rem;
   color: var(--text-muted);
-}
-del.quote {
-  display: block;
-  text-decoration: line-through;
-}
-.ins {
-  display: block;
-  text-decoration: none;
-}
-.noteActions {
-  margin-left: -16px;
 }
 .composer {
   display: grid;
@@ -316,10 +364,24 @@ del.quote {
   .menu {
     animation-name: fade-in;
   }
+  .note {
+    transition: none;
+  }
 }
 @media (max-width: 1100px) {
   .page {
     padding-inline: 24px;
+  }
+  .layout[data-panel="true"] {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 30vw);
+  }
+}
+/* Phone: the screenplay first at full width, the comments as a section under it. */
+@media (max-width: 900px) {
+  .layout,
+  .layout[data-panel="true"] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
 }
 @media (max-width: 720px) {

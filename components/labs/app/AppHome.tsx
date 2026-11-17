@@ -7,8 +7,15 @@ import { GestureIcon } from "@/components/labs/fx";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { seriesCards } from "@/lib/labs/maker";
 import { useCast } from "./CastProvider";
-import { episodeCount, episodesOf, seriesExtra } from "./creator";
+import { episodeCount, episodesOf, seriesExtra, type EpisodeItem } from "./creator";
 import h from "./Series.module.css";
+
+/** Where a series stands: its latest episode not yet at Results, or its last episode when all are. */
+function standing(episodes: EpisodeItem[]) {
+  const open = episodes.filter((e) => e.stage !== "Results");
+  const e = open.at(-1) ?? episodes.at(-1);
+  return e ? `${e.name} at ${e.stage}` : "";
+}
 
 /** /app: every series as one full-width card. The card opens the series. */
 export function AppHome() {
@@ -37,7 +44,11 @@ export function AppHome() {
                     </span>
                   )}
                   <span className={h.cover}>
-                    {c.cover ? <Image src={c.cover} alt="" fill sizes="160px" loading={i < 3 ? "eager" : undefined} /> : <span className={h.coverEmpty}>{c.title.charAt(0)}</span>}
+                    {c.cover ? (
+                      <Image src={c.cover} alt="" fill sizes="(max-width: 720px) 72px, 94px" loading={i < 3 ? "eager" : undefined} />
+                    ) : (
+                      <span className={h.coverEmpty}>{c.title.charAt(0)}</span>
+                    )}
                   </span>
                   <span className={h.seriesText}>
                     <span className={h.seriesName}>{c.title}</span>
@@ -45,10 +56,13 @@ export function AppHome() {
                       <span>{c.tool}</span>
                       <span className={h.dot} aria-hidden="true" />
                       <span>{episodeCount(episodes.length, c.tool === "Cooking")}</span>
+                      {episodes.length > 0 && (
+                        <>
+                          <span className={`${h.dot} ${h.standingDot}`} aria-hidden="true" />
+                          <span className={h.standing}>{standing(episodes)}</span>
+                        </>
+                      )}
                     </span>
-                  </span>
-                  <span className={h.seriesOpen} aria-hidden="true">
-                    <GestureIcon name="arrow" size={20} />
                   </span>
                 </Link>
               </li>

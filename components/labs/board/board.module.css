@@ -1,0 +1,983 @@
+/* The anime storyboard: the shot panel at the left, the stage in the middle, the strip of shots along the foot. Full bleed. */
+.app {
+  --panel: 380px;
+  --top: 56px;
+  --strip: 200px;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: var(--panel) minmax(0, 1fr);
+  grid-template-rows: var(--top) minmax(0, 1fr) var(--strip);
+  grid-template-areas:
+    "top top"
+    "panel stage"
+    "panel strip";
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Top bar ---------- */
+.top {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 16px 0 12px;
+  border-bottom: 1px solid var(--border);
+}
+.markLink {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.markLink:active {
+  scale: 0.97;
+}
+.tools {
+  display: flex;
+  gap: 2px;
+  min-width: 0;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tool {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.tool[aria-current="page"] {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tool:hover {
+    color: var(--text);
+  }
+}
+.title {
+  min-width: 0;
+  margin: 0 0 0 8px;
+  overflow: hidden;
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.topEnd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.playNarrow {
+  display: none;
+}
+
+/* ---------- Shot panel ---------- */
+.panel {
+  grid-area: panel;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+  border-right: 1px solid var(--border);
+}
+.panelBody {
+  display: grid;
+  align-content: start;
+  gap: 24px;
+  min-height: 0;
+  padding: 24px 24px 16px;
+  overflow-y: auto;
+}
+.panelHead {
+  display: grid;
+  gap: 8px;
+}
+.shotTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+.shotTitle .num {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+}
+.scene {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.action {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+.fields {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+}
+.field {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.field dt {
+  padding-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+.field dd {
+  min-width: 0;
+  margin: 0;
+}
+.field[data-block] {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.field[data-block] dt {
+  padding-top: 0;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding-left: 4px;
+}
+.chip svg {
+  color: var(--text-muted);
+}
+.face {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--surface-sunken);
+}
+.face img {
+  object-fit: cover;
+  object-position: 50% 6%;
+  scale: 2.4;
+  transform-origin: 50% 0;
+}
+.placeThumb,
+.styleThumb {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 20px;
+  margin-left: -6px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--surface-sunken);
+}
+.styleThumb {
+  width: 20px;
+}
+.placeThumb[data-big] {
+  width: 56px;
+  height: 32px;
+  margin-left: 0;
+}
+.placeThumb img,
+.styleThumb img {
+  object-fit: cover;
+}
+.prompt {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color var(--dur-feedback) var(--ease-out);
+}
+.prompt:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .prompt:hover {
+    border-color: var(--border-strong);
+  }
+}
+.value {
+  padding-top: 8px;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.panelFoot {
+  display: grid;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--border);
+}
+.takes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.take {
+  position: relative;
+  display: block;
+  width: 64px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 6px;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--dur-feedback) var(--ease-out);
+}
+.take img {
+  object-fit: cover;
+}
+.take[aria-pressed="true"] {
+  outline-color: var(--text);
+}
+
+/* ---------- Popovers in the panel ---------- */
+.popWrap {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+.pop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  max-height: min(420px, 60dvh);
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.5);
+  animation: pop-in var(--dur-enter) var(--ease-out);
+}
+.pop[data-wide] {
+  left: -76px;
+  width: calc(var(--panel) - 48px);
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+.menu {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  text-align: left;
+}
+.item[aria-pressed="true"] {
+  font-weight: 500;
+}
+.itemName {
+  flex: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .item:hover {
+    background: var(--surface-hover);
+  }
+}
+.styles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+}
+.style {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+}
+.styleArt {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--surface-sunken);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--dur-feedback) var(--ease-out);
+}
+.styleArt img {
+  object-fit: cover;
+}
+.style[aria-pressed="true"] .styleArt {
+  outline-color: var(--text);
+}
+.styleLabel {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+.style[aria-pressed="true"] .styleLabel {
+  color: var(--text);
+}
+
+/* ---------- Stage ---------- */
+.stage {
+  grid-area: stage;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  background: #0b1017;
+}
+.stageBar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px 0;
+}
+.switch {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.switchBtn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.switchBtn[aria-pressed="true"] {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .switchBtn:hover {
+    color: var(--text);
+  }
+}
+.shotStage {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 0;
+  padding: 8px 32px 16px;
+  animation: view-in var(--dur-move) var(--ease-out);
+}
+@keyframes view-in {
+  from {
+    opacity: 0;
+  }
+}
+.frameBox {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  container-type: size;
+}
+.frame {
+  position: relative;
+  width: min(100cqw, 100cqh * 16 / 9);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #000;
+}
+.frame video,
+.frame > div > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.frame img {
+  object-fit: cover;
+}
+.frame[data-empty] {
+  border: 1px dashed var(--border-strong);
+  background: transparent;
+}
+.frameNote {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  height: 100%;
+  color: var(--danger);
+}
+.frameNote p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.cap {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  margin: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.5);
+  font-size: 0.75rem;
+  color: var(--on-media);
+}
+.frame[data-empty] .cap {
+  background: transparent;
+  color: var(--text-muted);
+}
+.controls {
+  position: absolute;
+  z-index: 2;
+  left: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 8px;
+}
+.over {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 0.55);
+  color: var(--on-media);
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .over:hover {
+    background: rgb(0 0 0 / 0.75);
+  }
+}
+.ends {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+.slotArt {
+  position: relative;
+  display: block;
+  width: 96px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--surface-sunken);
+}
+.slotArt img {
+  object-fit: cover;
+}
+.slotArt[data-empty] {
+  border: 1px dashed var(--border-strong);
+  background: transparent;
+}
+
+/* ---------- Board view ---------- */
+.boardGrid {
+  display: grid;
+  align-content: start;
+  gap: 32px;
+  min-height: 0;
+  padding: 8px 32px 32px;
+  overflow-y: auto;
+  animation: view-in var(--dur-move) var(--ease-out);
+}
+.boardScene {
+  display: grid;
+  gap: 12px;
+}
+.boardCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.boardCard {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+}
+.boardCard[aria-pressed="true"] .thumb {
+  outline-color: var(--text);
+}
+.cardAction {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+.cardStatus {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.cardStatus[data-status="ready"] {
+  color: var(--success);
+}
+.cardStatus[data-status="generating"] {
+  color: var(--progress);
+}
+.cardStatus[data-status="failed"] {
+  color: var(--danger);
+}
+
+/* ---------- Shared: scene heading, shot card ---------- */
+.sceneHead {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.sceneHead > span {
+  color: var(--text);
+}
+.num {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.cardLabel {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.cardName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.thumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-sunken);
+  color: var(--danger);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--dur-feedback) var(--ease-out);
+}
+.thumb img {
+  object-fit: cover;
+}
+.thumb[data-empty] {
+  border: 1px dashed var(--border-strong);
+  background: transparent;
+}
+.mark {
+  position: absolute;
+  z-index: 2;
+  right: 6px;
+  bottom: 6px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-pill);
+  color: var(--on-media);
+}
+.mark[data-status="ready"] {
+  background: var(--success);
+  color: #0e141c;
+}
+.mark[data-status="generating"] {
+  background: rgb(0 0 0 / 0.6);
+}
+.mark[data-status="empty"] {
+  width: 10px;
+  height: 10px;
+  right: 8px;
+  bottom: 8px;
+  border: 1.5px solid var(--text-disabled);
+}
+.mark[data-status="failed"] {
+  display: none;
+}
+.develop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgb(14 20 28 / 0.8);
+}
+.glyphs {
+  color: var(--text);
+}
+.develop[data-leaving] {
+  animation: develop-off 640ms var(--ease-curtain) both;
+}
+@keyframes develop-off {
+  to {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+/* ---------- Strip ---------- */
+.strip {
+  grid-area: strip;
+  min-width: 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.stripScroll {
+  position: relative;
+  display: flex;
+  gap: 32px;
+  height: 100%;
+  padding: 16px 24px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.stripScene {
+  flex: none;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+}
+.stripScene > .sceneHead {
+  position: sticky;
+  left: 16px;
+  justify-self: start;
+}
+.stripCards {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stripCard,
+.newCard {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  width: 176px;
+  text-align: left;
+}
+.stripCard[aria-pressed="true"] .thumb {
+  outline-color: var(--text);
+}
+.newCard {
+  width: 112px;
+  color: var(--text-muted);
+}
+.newArt {
+  display: grid;
+  place-items: center;
+  height: 99px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .newCard:hover {
+    color: var(--text);
+  }
+  .newCard:hover .newArt {
+    background: var(--surface-hover);
+  }
+  .stripCard:hover:not([aria-pressed="true"]) .thumb,
+  .boardCard:hover:not([aria-pressed="true"]) .thumb {
+    outline-color: var(--border-strong);
+  }
+}
+.stripCard:active .thumb,
+.boardCard:active .thumb,
+.newCard:active .newArt {
+  scale: 0.98;
+}
+
+/* ---------- Play episode ---------- */
+.play {
+  margin: auto;
+  width: min(1000px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+}
+.play::backdrop {
+  background: rgb(0 0 0 / 0.7);
+}
+.playWrap {
+  display: grid;
+  gap: 12px;
+}
+.playFrame {
+  position: relative;
+  width: min(100%, calc((100dvh - 140px) * 16 / 9));
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+.playFrame video,
+.playFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.playBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.playCount {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .develop[data-leaving] {
+    animation: none;
+    opacity: 0;
+  }
+  .shotStage,
+  .boardGrid {
+    animation: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app {
+    --panel: 340px;
+  }
+}
+
+/* ---------- Phone: the stage, the strip, then the panel; Generate pinned to the foot ---------- */
+@media (max-width: 767px) {
+  .app {
+    --top: 52px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .top {
+    position: sticky;
+    z-index: 30;
+    top: 0;
+    height: var(--top);
+    padding: 0 8px;
+    gap: 4px;
+    background: var(--bg);
+  }
+  .markLink {
+    width: 44px;
+    height: 44px;
+  }
+  .tool,
+  .switchBtn {
+    height: 40px;
+  }
+  .toolMore {
+    display: none;
+  }
+  .title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .topEnd {
+    gap: 0;
+  }
+  .playWide {
+    display: none;
+  }
+  .playNarrow {
+    display: inline-grid;
+  }
+  .top,
+  .stage,
+  .strip,
+  .panel {
+    flex: none;
+  }
+  .stage {
+    order: 1;
+    display: block;
+  }
+  .strip {
+    order: 2;
+  }
+  .panel {
+    order: 3;
+  }
+  .stageBar {
+    padding: 8px 16px;
+  }
+  .shotStage {
+    padding: 0 16px 16px;
+  }
+  .frameBox {
+    container-type: normal;
+  }
+  .frame {
+    width: 100%;
+  }
+  .ends {
+    justify-content: flex-start;
+    gap: 16px;
+  }
+  .slotArt {
+    width: 80px;
+  }
+  .boardGrid {
+    padding: 0 16px 24px;
+    gap: 24px;
+  }
+  .boardCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
+  .stripScroll {
+    gap: 24px;
+    padding: 16px;
+  }
+  .stripCard {
+    width: 144px;
+  }
+  .newCard {
+    width: 96px;
+  }
+  .newArt {
+    height: 81px;
+  }
+  .panel {
+    display: block;
+    border-right: 0;
+    border-top: 1px solid var(--border);
+  }
+  .panelBody {
+    padding: 24px 16px;
+    overflow: visible;
+  }
+  .panelFoot {
+    padding: 0 16px 16px;
+    border-top: 0;
+  }
+  .go {
+    position: fixed;
+    z-index: 25;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .take {
+    width: 80px;
+  }
+  .item {
+    min-height: 44px;
+  }
+  .pop,
+  .pop[data-wide] {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: auto;
+    min-width: 0;
+    max-height: 75dvh;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    animation-name: sheet-in;
+  }
+  .over {
+    width: 44px;
+    height: 44px;
+  }
+}
+@keyframes sheet-in {
+  from {
+    translate: 0 24px;
+    opacity: 0;
+  }
+}

@@ -1,6 +1,19 @@
-div.split {
-  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+/* New series: one centred column that reads top to bottom, its actions at the foot. Spacing: 4, 8, 12, 16, 24, 32. */
+.form {
+  display: grid;
+  gap: 24px;
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
 }
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
 .tools {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -11,7 +24,6 @@ div.split {
   display: grid;
   align-content: start;
   gap: 4px;
-  min-height: 96px;
   padding: 16px;
   border: 1px solid var(--border-strong);
   border-radius: var(--r-control);
@@ -40,21 +52,34 @@ div.split {
 .toolName {
   font-weight: 500;
 }
-.styles {
+
+/* One row of style stills that scrolls sideways. The padding leaves room for the focus ring. */
+.styleRow {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: 132px;
+  gap: 12px;
+  margin: -6px;
+  padding: 6px 6px 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 6px;
+}
+label.styleTile {
+  scroll-snap-align: start;
+}
+span.styleArt {
+  aspect-ratio: 4 / 5;
+}
+
+.cast {
+  display: grid;
   gap: 12px;
 }
-label.styleCard {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 0;
-  padding: 12px;
-}
-.styleArt {
-  position: relative;
-  flex: none;
+ul.castRows {
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
 }
 .castRow {
   align-items: start;
@@ -64,27 +89,44 @@ label.styleCard {
   gap: 4px;
   min-width: 0;
 }
-.below {
-  display: grid;
-  gap: 12px;
-  padding: 16px 24px;
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.formCreate {
+  display: contents;
+}
+/* The header's actions carry Create series on phones only, where they are pinned to the foot of the screen. */
+.phoneAction {
+  display: flex;
+  min-width: 0;
+}
+.phoneAction > *,
+.phoneAction > span > :is(a, button) {
+  flex: 1 1 auto;
+}
+@media (min-width: 721px) {
+  .phoneAction {
+    display: none;
+  }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 720px) {
+  .title {
+    font-size: 1.625rem;
+  }
   .tools {
     grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
   }
-  .tool {
-    min-height: 0;
+  .styleRow {
+    grid-auto-columns: 112px;
   }
-}
-@media (max-width: 900px) {
-  div.split {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 720px) {
-  .below {
-    padding-inline: 16px;
+  .formCreate {
+    display: none;
   }
 }

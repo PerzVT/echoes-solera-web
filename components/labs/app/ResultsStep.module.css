@@ -1,18 +1,97 @@
+/* Three columns filling the work area: the generations, the stage with the clip, the side panel for the take. */
 div.split {
-  grid-template-columns: minmax(0, 1.55fr) minmax(360px, 1fr);
-}
-.tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
-  gap: 12px;
+  grid-template-columns: 280px minmax(0, 1fr) 344px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 24px;
+}
+
+/* ---------- Generations ---------- */
+/* Focus is moved to the page heading by script on arrival; the heading is not a control, so it shows no ring. */
+.list h1:focus,
+.list h1:focus-visible {
+  outline: none;
+}
+.gens {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-/* Clips are vertical: the shared tile at 9:16. */
-span.tileArt {
-  aspect-ratio: 9 / 16;
+.gens > li + li {
+  border-top: 1px solid var(--border);
 }
+.gen {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 24px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .gen:hover {
+    background: var(--surface-hover);
+  }
+}
+.gen:active {
+  background: var(--surface-sunken);
+}
+/* The one way a row shows it is current: raised fill and the pink edge. */
+.gen[aria-pressed="true"] {
+  background: var(--surface-hover);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.gen:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.genArt {
+  position: relative;
+  display: block;
+  width: 36px;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-thumb);
+  background: var(--surface-sunken);
+  transition:
+    border-color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out);
+}
+.genArt img {
+  object-fit: cover;
+}
+.genArt[data-empty="true"] {
+  border: 1.5px dashed var(--border-strong);
+}
+.genText {
+  display: grid;
+  min-width: 0;
+  font-size: 0.875rem;
+  line-height: 1.43;
+}
+.genName {
+  font-weight: 500;
+}
+.genNum {
+  display: none;
+}
+.genSummary,
+.muted {
+  color: var(--text-muted);
+}
+.genSummary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.genStatus {
+  justify-self: start;
+}
+
 /* A clip still being made: its poster dimmed under the sunken surface, with glyph noise and a band of density crossing it.
    When the clip arrives that cover is drawn off from the top, once, behind a pink edge, and the poster is left. */
 .develop {
@@ -20,9 +99,6 @@ span.tileArt {
   inset: 0;
   z-index: 1;
   background: rgb(14 20 28 / 0.8);
-}
-.player img {
-  object-fit: cover;
 }
 .developing {
   color: var(--text);
@@ -59,29 +135,22 @@ span.tileArt {
     opacity: 0;
   }
 }
-.noClip {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  padding: 8px;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  text-align: center;
-}
-.noClip img {
-  width: min(80px, 100%);
-  height: auto;
-}
 
 .frames {
   display: grid;
-  gap: 12px;
-  margin-top: 8px;
+  padding: 16px 24px 8px;
+  border-top: 1px solid var(--border);
+}
+.framesTitle:focus {
+  outline: none;
+}
+.framesTitle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 .frameList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 32px;
+  display: grid;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -91,42 +160,142 @@ span.tileArt {
   align-items: center;
   gap: 12px;
 }
-.frameArt {
-  width: 48px;
+span.frameArt {
+  width: 28px;
   height: auto;
   aspect-ratio: 9 / 16;
+  border-radius: 6px;
 }
 .frameText {
   display: grid;
+  min-width: 0;
   font-size: 0.875rem;
+  line-height: 1.43;
 }
 
-/* ---------- Side panel ---------- */
-.head {
+/* ---------- Stage ---------- */
+.stage {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 16px;
-  align-items: start;
+  min-width: 0;
+  min-height: 0;
+  scroll-margin-top: 16px;
 }
-.player {
+/* The room the clip has: the clip takes all of its height, or all of its width when the column is narrow. */
+.screenBox {
+  container-type: size;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+}
+.screen {
   position: relative;
+  height: min(100cqh, 100cqw * 16 / 9);
   aspect-ratio: 9 / 16;
   overflow: hidden;
-  border-radius: var(--r-control);
+  border-radius: var(--r-card);
   background: #000;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
 }
-.player video {
+.screen video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
 }
-/* The two states of the panel under the clip: the take's actions, or picking a frame. */
-.mode {
+.screen img {
+  object-fit: cover;
+}
+/* Being made: the poster stays in place, dim, so nothing moves when the clip arrives. */
+.making img {
+  opacity: 0.4;
+}
+/* Arrived: the clip comes up from the dimmed poster. */
+.screen[data-arrived] {
+  animation: screen-arrive 480ms var(--ease-out) both;
+}
+@keyframes screen-arrive {
+  from {
+    opacity: 0.4;
+  }
+}
+.noClipScreen {
   display: grid;
-  gap: 16px;
-  min-width: 0;
+  place-items: center;
+  border: 1.5px dashed var(--border-strong);
+  background: var(--surface-sunken);
+  box-shadow: none;
+}
+.noClip {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* The overlays on the clip: play and time, sound, download. */
+.over {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  border-radius: var(--r-pill);
+  background: rgb(0 0 0 / 0.6) !important;
+  color: #fff !important;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .over:hover {
+    background: rgb(0 0 0 / 0.78) !important;
+  }
+}
+.over:active {
+  scale: 0.96;
+}
+.over:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.download {
+  top: 12px;
+  right: 12px;
+}
+.mute {
+  right: 12px;
+  bottom: 12px;
+}
+.play {
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 0 12px;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Under the clip: the take's actions, the frame scrubber, or the state of a clip that is not there. */
+.under {
+  justify-self: center;
+  width: min(100%, 680px);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+/* The five actions keep one row under the clip: a little less room inside each shoulder than the shared default. */
+.actions > button {
+  padding-inline: 24px;
 }
 /* The tick's place on "Keep this take": a faint tick while the take is not kept, drawn over in green when it is. */
 .keepTick {
@@ -141,79 +310,28 @@ span.tileArt {
 .keepTick > :last-child {
   color: var(--success);
 }
-.play,
-.mute {
-  z-index: 2;
-}
-.mute {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--r-pill);
-  background: rgb(0 0 0 / 0.6) !important;
-  color: #fff !important;
-  transition: scale var(--dur-press) var(--ease-out);
-}
-.mute:active {
-  scale: 0.96;
-}
-.play {
-  position: absolute;
-  left: 8px;
-  bottom: 8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 36px;
-  padding: 0 12px 0 8px;
-  border-radius: var(--r-pill);
-  background: rgb(0 0 0 / 0.6) !important;
-  color: #fff !important;
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-  transition: scale var(--dur-press) var(--ease-out);
-}
-.play:active {
-  scale: 0.96;
-}
-.info {
-  display: grid;
-  gap: 16px;
-  min-width: 0;
-}
-.takes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.stack {
-  display: grid;
-  justify-items: start;
-  margin-left: -16px;
-}
-.rule {
-  height: 0;
-  margin: 0;
-  border: 0;
-  border-top: 1px solid var(--border);
-}
 .failed {
   display: grid;
   gap: 4px;
-  padding: 12px 16px;
-  border-radius: var(--r-control);
-  background: var(--danger-soft);
+  font-size: 0.875rem;
+  line-height: 1.43;
 }
 .failedTitle {
   font-weight: 500;
+  font-size: 1rem;
   color: var(--danger);
 }
+.under:has(.failed) {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.under:has([role="status"]) {
+  text-align: center;
+}
 
-/* Scrubber over the clip, for picking a frame. */
+/* Scrubber under the clip, for picking a frame. */
 .scrub {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -222,6 +340,10 @@ span.tileArt {
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
+}
+.under.scrub {
+  width: min(100%, 420px);
+  min-height: 40px;
 }
 .scrub input,
 .trim input {
@@ -282,6 +404,15 @@ span.tileArt {
   border-radius: 50%;
   background: var(--text);
 }
+
+/* ---------- Side panel ---------- */
+div.sideBody {
+  gap: 24px;
+}
+.form {
+  display: grid;
+  gap: 16px;
+}
 .trim {
   gap: 8px;
 }
@@ -291,8 +422,30 @@ span.tileArt {
 .editBox {
   margin-bottom: 8px;
 }
+.takes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+button.take {
+  width: 72px;
+}
+span.takeArt {
+  aspect-ratio: 9 / 16;
+}
+.takeName {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.43;
+}
 
-/* Play episode */
+/* ---------- Play episode ---------- */
 .playDialog {
   width: min(460px, calc(100vw - 32px));
   padding: 16px;
@@ -359,21 +512,102 @@ span.tileArt {
     scale: 1;
   }
 }
-@media (max-width: 900px) {
+
+/* A window between the phone layout and a wide one: the two side columns narrow so the clip keeps its room. */
+@media (min-width: 901px) and (max-width: 1200px) {
   div.split {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 520px) {
-  .head {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .player {
-    width: min(220px, 100%);
+    grid-template-columns: 240px minmax(0, 1fr) 300px;
+    gap: 16px;
   }
 }
 
-/* The side panel; a phone scrolls it into view after a tile is chosen. */
-.side {
-  scroll-margin-top: 16px;
+/* ---------- Phone: the generations as a strip, then the clip, its actions and the side panel ---------- */
+@media (max-width: 900px) {
+  div.split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: 16px;
+  }
+  .gens {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 12px 16px;
+    scrollbar-width: none;
+  }
+  .gens > li {
+    flex: none;
+  }
+  .gens > li + li {
+    border-top: 0;
+  }
+  .gen {
+    grid-template-columns: none;
+    justify-items: center;
+    gap: 4px;
+    width: 64px;
+    padding: 4px;
+    border-radius: var(--r-control);
+  }
+  .gen[aria-pressed="true"] {
+    background: none;
+    box-shadow: none;
+  }
+  .gen[aria-pressed="true"] .genArt {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .gen:active {
+    background: none;
+  }
+  .genArt {
+    width: 56px;
+  }
+  .genText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .genNum {
+    display: inline;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .genName,
+  .genSummary,
+  .statusWord {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .frames {
+    padding: 12px 16px 8px;
+  }
+  .stage {
+    grid-template-rows: auto auto;
+  }
+  .screenBox {
+    container-type: inline-size;
+  }
+  /* Keep takes the full width; the other actions pair up under it, equal widths. */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .actions > button {
+    width: 100%;
+    padding-inline: 20px;
+  }
+  .actions > :first-child,
+  .actions > :nth-child(even):last-child {
+    grid-column: 1 / -1;
+  }
+  .screen {
+    height: min(60dvh, 100cqw * 16 / 9);
+  }
 }

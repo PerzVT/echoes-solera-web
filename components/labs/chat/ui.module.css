@@ -1,0 +1,217 @@
+/* The chat screen's controls. Rounded rectangles, 40px tall (44px on touch), one radius. */
+.btn {
+  --h: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--h);
+  padding-inline: 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.btn:active:not(:disabled) {
+  scale: 0.97;
+}
+.btn:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.small {
+  --h: 32px;
+  padding-inline: 12px;
+  font-size: 0.8125rem;
+}
+.wide {
+  width: 100%;
+}
+.primary {
+  background: var(--action);
+  color: var(--on-action);
+}
+.secondary {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.ghost {
+  color: var(--text-muted);
+}
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover:not(:disabled) {
+    background: var(--action-hover);
+  }
+  .secondary:hover:not(:disabled),
+  .ghost:hover:not(:disabled) {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+}
+
+.iconBtn {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.iconBtn:active:not(:disabled) {
+  scale: 0.97;
+}
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .iconBtn:hover:not(:disabled) {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  color: var(--text);
+  text-align: left;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.pill:active {
+  scale: 0.97;
+}
+.pill[data-on] {
+  border-color: var(--text);
+  background: var(--surface-hover);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pill:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+  }
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .btn {
+    --h: 44px;
+  }
+  .iconBtn {
+    width: 44px;
+    height: 44px;
+  }
+  .pill {
+    min-height: 44px;
+  }
+}
+
+/* ---------- Tool switch ---------- */
+.tools {
+  position: relative;
+  flex: none;
+}
+.toolRow {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--surface);
+  list-style: none;
+}
+.tool {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.tool[aria-current="page"] {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tool:hover {
+    color: var(--text);
+  }
+}
+.toolMenu {
+  display: none;
+}
+.toolButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.toolPanel {
+  position: fixed;
+  z-index: 50;
+  top: 52px;
+  left: 8px;
+  right: 8px;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.5);
+  list-style: none;
+}
+.toolItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+}
+.toolItem[aria-current="page"] {
+  background: var(--surface-hover);
+}
+@media (max-width: 767px) {
+  .toolRow {
+    display: none;
+  }
+  .toolMenu {
+    display: block;
+  }
+}

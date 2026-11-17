@@ -1,0 +1,21 @@
+/* The work: media on the dark stage, small captions, few borders. */
+.meta {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.danger {
+  color: var(--danger);
+}
+.groupName {
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+

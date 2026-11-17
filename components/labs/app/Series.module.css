@@ -56,10 +56,11 @@
 }
 
 /* ---------- /app: one full-width card per series ---------- */
+/* Four cards fit a 900px-high screen under the heading. */
 .seriesList {
   display: grid;
-  gap: 24px;
-  margin: 0;
+  gap: 12px;
+  margin: -8px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -67,10 +68,11 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 144px minmax(0, 1fr) auto;
+  grid-template-columns: 94px minmax(0, 1fr);
   align-items: center;
-  gap: 32px;
-  padding: 24px 32px 24px 24px;
+  gap: 24px;
+  height: 156px;
+  padding: 12px 32px 12px 12px;
   border: 1px solid var(--border);
   border-radius: var(--r-card);
   background: var(--surface);
@@ -102,7 +104,7 @@
 }
 .cover {
   position: relative;
-  width: 144px;
+  width: 94px;
   aspect-ratio: 5 / 7;
   border-radius: var(--r-control);
   overflow: hidden;
@@ -122,23 +124,19 @@
   min-width: 0;
 }
 .seriesName {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 2rem;
+  font-size: 1.75rem;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
-.seriesOpen {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-pill);
-  background: rgb(18 25 35 / 0.6);
-  transition:
-    background-color var(--dur-feedback) var(--ease-out),
-    color var(--dur-feedback) var(--ease-out);
+/* Where the series stands reads in full text colour: it is the line the owner scans for. */
+.standing {
+  color: var(--text);
 }
 @media (hover: hover) and (pointer: fine) {
   .seriesCard:hover {
@@ -147,23 +145,19 @@
   .seriesCard:hover .backdrop {
     opacity: 0.7;
   }
-  .seriesCard:hover .seriesOpen {
-    background: var(--action);
-    color: var(--on-action);
-  }
 }
 
 /* ---------- One series: heading and tabs ---------- */
 .seriesHead {
   flex: none;
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
   align-items: center;
   gap: 24px;
 }
 .headCover {
   position: relative;
-  width: 96px;
+  width: 72px;
   aspect-ratio: 5 / 7;
   border-radius: var(--r-control);
   overflow: hidden;
@@ -227,9 +221,16 @@
 }
 
 /* ---------- Episodes tab ---------- */
+.episodesTab {
+  display: grid;
+  gap: 32px;
+}
+.episodeGrid > li {
+  min-width: 0;
+}
 .episodeGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
   gap: 24px;
   margin: 0;
   padding: 0;
@@ -284,14 +285,23 @@
   padding: 0 8px 8px;
 }
 .episodeName {
-  font-weight: 500;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-weight: 400;
   font-size: 1.125rem;
   line-height: 1.4;
+}
+.episodeNum {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 .episodeStage {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 4px 8px;
   font-size: 0.875rem;
   line-height: 1.43;
   color: var(--text);
@@ -314,16 +324,19 @@
   line-height: 1.43;
   color: var(--text-muted);
 }
+/* Built like an episode card, art area then two lines, so it is the same size wherever it lands. */
 .addCard {
-  align-content: center;
-  justify-items: center;
-  min-height: 320px;
   border-style: dashed;
   border-color: var(--border-strong);
   background: transparent;
   font: inherit;
-  text-align: center;
+  text-align: left;
   cursor: pointer;
+}
+.addArt {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
 }
 .addIcon {
   display: grid;
@@ -343,34 +356,152 @@
   }
 }
 
+/* The cast strip: one row of faces, the whole row opening the Cast tab. */
+.castStrip {
+  display: block;
+  margin-inline: -8px;
+  padding: 8px;
+  border-radius: var(--r-card);
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+.castStrip:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .castStrip:hover {
+    background: var(--surface-hover);
+  }
+}
+.faces {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+.face {
+  flex: none;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 8px;
+  width: 80px;
+}
+.faceArt,
+.faceMore {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.faceArt img {
+  object-fit: cover;
+}
+/* A sheet with no face crop: its close-up sits at the right, so the circle zooms into that corner. */
+.faceArt[data-crop] img {
+  object-position: 92% 22%;
+  scale: 2.4;
+  transform-origin: 88% 22%;
+}
+.faceMore {
+  display: grid;
+  place-items: center;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.morePhone {
+  display: none;
+}
+.face[data-wide-hidden] {
+  display: none;
+}
+.faceName {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  width: 100%;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* On a wide screen the cast is a card beside the episodes, so a series with few episodes still fills the row. */
+@media (min-width: 1100px) {
+  .episodesTab:has(> section + section) {
+    grid-template-columns: minmax(0, 1fr) 312px;
+    align-items: start;
+  }
+  .episodesTab > section + section {
+    padding: 20px 16px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    background: var(--surface);
+  }
+  /* Beside the cast the episode cards share the row, up to a width that keeps the art in view. */
+  .episodesTab:has(> section + section) .episodeGrid {
+    grid-template-columns: repeat(auto-fit, minmax(232px, 296px));
+  }
+  .episodesTab > section + section .sectionTitle {
+    margin: 0 8px 8px;
+  }
+  .episodesTab .faces {
+    flex-wrap: wrap;
+    gap: 16px 0;
+  }
+  .episodesTab .face {
+    width: calc(100% / 3);
+  }
+}
+
 /* ---------- Style tab ---------- */
+/* The pinned style at the left, the styles it could pin instead filling the rest of the row. */
 .styleTab {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
   gap: 48px;
 }
+/* The stills are 540 by 960: shown at 220 wide they stay sharp on a 2x screen. */
 .pinnedCard {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  align-items: center;
-  gap: 32px;
-  padding: 24px;
+  grid-template-columns: 220px minmax(160px, 200px);
+  align-items: end;
+  gap: 24px;
+  padding: 16px;
   border: 1px solid var(--border);
   border-radius: var(--r-card);
   background: var(--surface);
 }
 .pinnedArt {
   position: relative;
-  grid-column: span 7;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 9 / 16;
   border-radius: var(--r-control);
   overflow: hidden;
   background: var(--surface-sunken);
 }
 .pinnedText {
-  grid-column: span 5;
   display: grid;
   justify-items: start;
   gap: 16px;
+  padding-bottom: 8px;
+}
+@media (max-width: 1100px) {
+  .styleTab {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pinnedCard {
+    justify-self: start;
+  }
 }
 .pinnedName {
   font-family: var(--font-display);
@@ -419,19 +550,35 @@
   .pageTitle {
     font-size: 1.625rem;
   }
+  .seriesList {
+    margin-top: 0;
+  }
   .seriesCard {
-    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     gap: 16px;
+    height: 132px;
     padding: 16px;
   }
   .cover {
-    width: 88px;
+    width: 72px;
+  }
+  .seriesText {
+    gap: 4px;
   }
   .seriesName {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
   }
-  .seriesOpen {
+  .seriesCard .seriesMeta {
+    gap: 0 8px;
+    font-size: 0.875rem;
+    line-height: 1.43;
+  }
+  /* On a phone where the series stands takes its own line. */
+  .standingDot {
     display: none;
+  }
+  .standing {
+    flex-basis: 100%;
   }
   .backdrop {
     inset: 0;
@@ -460,17 +607,44 @@
   .episodeText {
     padding: 0 4px 4px;
   }
-  .addCard {
-    min-height: 240px;
+  .episodeName {
+    font-size: 1rem;
+  }
+  .faces {
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .face {
+    width: 60px;
+  }
+  .faceArt,
+  .faceMore {
+    width: 52px;
+    height: 52px;
+  }
+  .face[data-phone-hidden] {
+    display: none;
+  }
+  .face[data-wide-hidden] {
+    display: grid;
+  }
+  .moreWide {
+    display: none;
+  }
+  .morePhone {
+    display: inline;
+  }
+  .styleTab {
+    gap: 32px;
   }
   .pinnedCard {
-    grid-template-columns: minmax(0, 1fr);
+    justify-self: stretch;
+    grid-template-columns: 128px minmax(0, 1fr);
     gap: 16px;
-    padding: 16px;
+    padding: 12px;
   }
-  .pinnedArt,
-  .pinnedText {
-    grid-column: auto;
+  .pinnedName {
+    font-size: 1.375rem;
   }
   .styleGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
