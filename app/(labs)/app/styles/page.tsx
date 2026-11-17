@@ -66,7 +66,6 @@ export default async function StyleHub({ searchParams }: { searchParams: Promise
   return (
     <AppShell section="/app/styles" title={<span className={m.headerMuted}>Styles</span>} bar={bar}>
       <h1 className="sr-only">Styles</h1>
-      <p className={s.intro}>A style fixes how a project is drawn: line, colour, light and texture. A series pins one.</p>
       {listed.length === 0 ? (
         <Empty
           action={
@@ -81,7 +80,7 @@ export default async function StyleHub({ searchParams }: { searchParams: Promise
         groups.map((g) => {
           const items = listed.filter((x) => x.group === g);
           if (items.length === 0) return null;
-          // Open styles first, then the ones still waiting for art.
+          // Open styles first, then any still waiting for art.
           items.sort((a, b) => Number(isComingSoon(a)) - Number(isComingSoon(b)));
           const id = `group-${g.replace(" ", "-").toLowerCase()}`;
           return (

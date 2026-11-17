@@ -1,190 +1,384 @@
-div.split {
-  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
-}
-.progress {
-  padding: 16px 24px;
-}
-/* The side panel's place in the split; a phone scrolls it into view after a choice. */
-.side {
+/* References: one image-first grid per group. Spacing: 8, 16, 24, 32, 48. */
+.page {
   display: grid;
-  min-width: 0;
-  min-height: 0;
-  scroll-margin-top: 16px;
+  align-content: start;
+  gap: 48px;
 }
-.side > * {
-  min-height: 0;
+.title {
+  margin-bottom: -16px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
-
-/* The list sizes its rows to its own width, not the window's, so the name never loses its column. */
-.list {
-  container: refs / inline-size;
+.group {
+  display: grid;
+  gap: 16px;
 }
-/* Room for Choose and Upload, so matched and unmatched rows line up. */
-.rowActions {
-  min-width: 176px;
+.groupTitle {
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.4;
 }
-
-/* A mid-width list (a laptop with the side panel open, an iPad): two lines per row.
-   The name and its status share the first line; where it is used and the actions share the second. */
-@container refs (max-width: 720px) {
-  .list .refRow[data-actions="true"] {
-    grid-template-columns: 48px minmax(0, 1fr) auto;
-    grid-template-rows: auto auto;
-    column-gap: 12px;
-    row-gap: 0;
-    padding-block: 8px;
-    padding-right: 12px;
-  }
-  .list .refRow[data-actions="true"] > .thumbCell {
-    grid-column: 1;
-    grid-row: 1 / 3;
-  }
-  .list .refRow[data-actions="true"] > .text {
-    display: contents;
-  }
-  .list .refRow[data-actions="true"] .name {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: end;
-  }
-  .list .refRow[data-actions="true"] .used {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: start;
-  }
-  .list .refRow[data-actions="true"] > .status {
-    grid-column: 3;
-    grid-row: 1;
-    justify-self: end;
-    align-self: end;
-  }
-  .list .refRow[data-actions="true"] > .rowActions {
-    grid-column: 3;
-    grid-row: 2;
-    justify-self: end;
-    min-width: 0;
-  }
-}
-/* A narrow list (a small laptop with the side panel open): the actions get their own line,
-   so a matched row's two buttons never squeeze the name. */
-@container refs (max-width: 560px) {
-  .list .refRow[data-actions="true"] {
-    grid-template-rows: auto auto auto;
-  }
-  .list .refRow[data-actions="true"] > .thumbCell {
-    grid-row: 1 / 4;
-    align-self: start;
-  }
-  .list .refRow[data-actions="true"] .used {
-    grid-column: 2 / 4;
-  }
-  .list .refRow[data-actions="true"] > .rowActions {
-    grid-column: 2 / 4;
-    grid-row: 3;
-    justify-self: start;
-    margin-left: -12px;
-  }
-}
-/* A phone: one column, the status and the actions under the name. */
-@container refs (max-width: 420px) {
-  .list .refRow[data-actions="true"] {
-    grid-template-columns: 48px minmax(0, 1fr);
-    grid-template-rows: none;
-    padding-right: 16px;
-  }
-  .list .refRow[data-actions="true"] > .thumbCell {
-    grid-row: 1 / 3;
-  }
-  .list .refRow[data-actions="true"] .used {
-    grid-column: 2;
-  }
-  .list .refRow[data-actions="true"] > .status {
-    grid-column: 2;
-    grid-row: 3;
-    justify-self: start;
-    align-self: center;
-  }
-  .list .refRow[data-actions="true"] > .rowActions {
-    grid-column: 2;
-    grid-row: 4;
-    justify-self: start;
-    margin-left: -16px;
-  }
+/* Three cards to a row on the 12-column grid, two on a narrow screen, one on a phone. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.search {
+.card {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+/* The picture box: 4:3, the shape of a character sheet. The picture is shown whole, never cropped. */
+.art {
   position: relative;
-  display: block;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-control);
+  overflow: hidden;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: inherit;
 }
-.reasonSwap {
-  display: inline-grid;
+button.art {
+  cursor: zoom-in;
 }
-.reasonSwap > * {
-  grid-area: 1 / 1;
-  align-self: center;
+button.art:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
-.reasonSwap > [data-hidden] {
-  visibility: hidden;
+.img {
+  object-fit: contain;
 }
-/* A row still being looked up: its answer keeps its place, hidden, under a placeholder of the same size. */
-.refRow [data-waiting] {
-  position: relative;
-}
-.refRow [data-waiting] > :not(.cover) {
-  visibility: hidden;
-}
-.refRow [data-waiting] > .cover {
+.zoom {
   position: absolute;
-  left: 0;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  background: rgb(8 11 16 / 0.7);
+  color: var(--on-media);
+  opacity: 0;
+  transition: opacity var(--dur-feedback) var(--ease-out);
+}
+button.art:focus-visible .zoom {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  button.art:hover .zoom {
+    opacity: 1;
+  }
+}
+@media (hover: none) {
+  .zoom {
+    opacity: 1;
+  }
+}
+
+.art[data-empty="true"] {
+  gap: 8px;
+  border: 1.5px dashed var(--border-strong);
+  text-align: center;
+}
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+.emptyText {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 8px 8px;
+}
+.metaText {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.name {
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+.tag {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+.meta > button {
+  flex: none;
+  margin-right: -8px;
+}
+
+/* ---------- Full screen picture ---------- */
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(8 11 16 / 0.96);
+  color: var(--text);
+}
+.lightbox[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.lightbox::backdrop {
+  background: rgb(8 11 16 / 0.9);
+}
+.lbBar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.lbText {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.lbName {
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.lbCount {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.lbStage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 24px 88px;
+}
+.lbImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--r-control);
+  animation: lb-in var(--dur-media) var(--ease-out);
+}
+@keyframes lb-in {
+  from {
+    opacity: 0;
+  }
+}
+.lbNav {
+  position: absolute;
   top: 50%;
   translate: 0 -50%;
-  width: 100%;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
 }
-.rowActions[data-waiting] > .cover {
-  left: auto;
-  right: 0;
-  width: min(100%, 96px);
+.lbNav:active {
+  scale: 0.96;
 }
-/* A sheet tile that is still being looked up. */
-.waitTile {
+.lbNav:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .lbNav:hover {
+    background: var(--surface-hover);
+  }
+}
+.lbPrev {
+  left: 24px;
+}
+.lbNext {
+  right: 24px;
+}
+
+/* ---------- Choose an image ---------- */
+.choose {
+  width: min(880px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 24px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 32px 80px rgb(0 0 0 / 0.5);
+}
+.choose[open] {
+  display: grid;
+  gap: 24px;
+}
+.choose::backdrop {
+  background: rgb(8 11 16 / 0.7);
+}
+.chooseHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.chooseHead > button {
+  margin-right: -8px;
+}
+.chooseTitle {
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.chooseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.option {
   display: grid;
   gap: 8px;
+  width: 100%;
+  padding: 8px 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-feedback) var(--ease-out);
 }
-.search svg {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  translate: 0 -50%;
+.option > :not(.optionArt) {
+  padding-inline: 8px;
+}
+.option[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.option:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .option:hover {
+    border-color: var(--border-strong);
+  }
+}
+.optionArt {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-control);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+.chooseEmpty {
   color: var(--text-muted);
-  pointer-events: none;
 }
-.search input {
-  padding-left: 48px;
-}
-ul.sheets {
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-}
-.screenplayLine {
-  font-family: var(--font-screenplay), "Courier New", monospace;
-  font-size: 1rem;
-}
-.options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-span.frameArt {
-  aspect-ratio: 16 / 9;
-  margin: 0;
+.chooseFoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-@media (max-width: 900px) {
-  div.split {
-    grid-template-columns: minmax(0, 1fr);
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 720px) {
-  .progress {
-    padding-inline: 16px;
+  .page {
+    gap: 32px;
+  }
+  .title {
+    font-size: 1.625rem;
+    margin-bottom: -8px;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .lbBar {
+    gap: 16px;
+    padding: 16px;
+  }
+  .lbCount {
+    display: none;
+  }
+  .lbStage {
+    padding: 16px 16px 88px;
+  }
+  .lbNav {
+    top: auto;
+    bottom: 16px;
+    translate: none;
+  }
+  .lbPrev {
+    left: calc(50% - 56px);
+  }
+  .lbNext {
+    right: calc(50% - 56px);
+  }
+  .chooseGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lbImg {
+    animation: none;
   }
 }

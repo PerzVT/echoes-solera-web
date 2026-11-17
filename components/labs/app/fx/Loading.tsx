@@ -1,11 +1,13 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Skeleton, SkeletonButton, SkeletonGroup, SkeletonText } from "@/components/labs/fx";
-import { AppShell } from "../AppShell";
+import { AppShell, Crumbs } from "../AppShell";
 import { Panel, Stepper, TitleSkeleton as EpisodeTitle } from "../parts";
-import { generations, refGroups, refRows, recentScripts, seriesCards, tools } from "@/lib/labs/maker";
+import { generations, recentScripts, seriesCards, tools } from "@/lib/labs/maker";
+import { elementGroups, startingElements } from "../creator";
 import { CREATOR_STEPS, allStyles, chartSlots, ruleFields } from "@/lib/labs/styles";
 import s from "../maker.module.css";
-import home from "../AppHome.module.css";
+import home from "../Series.module.css";
+import script from "../ScriptStep.module.css";
 import cast from "../Cast.module.css";
 import series from "../NewSeries.module.css";
 import refs from "../ReferencesStep.module.css";
@@ -78,50 +80,30 @@ function FactsSk({ rows }: { rows: number }) {
   );
 }
 
-const episodeBar = (current: string, button = 168) => (
-  <>
-    <SkeletonButton width={button} />
-    <span className={s.divider} aria-hidden="true" />
-    <Stepper current={current} pending />
-  </>
-);
+/** The episode steps at the left of the bar, the main action's place at the right. */
+const episodeBar = (current: string, button = 168) => ({
+  bar: <Stepper current={current} pending />,
+  actions: <SkeletonButton width={button} />,
+});
 
-/** /app: the series cards, each with as many episode rows as the series has. */
+/** /app: the heading with New series, and one full-width card per series. */
 export function HomeLoading() {
   return (
-    <AppShell
-      section="/app"
-      title={<span className={s.headerMuted}>Your series</span>}
-      bar={
-        <>
-          <SkeletonButton width={132} />
-          <span className={s.divider} aria-hidden="true" />
-          <ChipsSk widths={[56, 108, 76, 88]} />
-        </>
-      }
-    >
-      <Work>
-        <ul className={home.grid} aria-hidden="true">
+    <AppShell section="/app" title={<Crumbs items={[{ label: "Series" }]} />}>
+      <Work className={home.page}>
+        <div className={home.pageHead}>
+          <h1 className={home.pageTitle}>Your series</h1>
+          <SkeletonButton width={148} />
+        </div>
+        <ul className={home.seriesList} aria-hidden="true">
           {seriesCards.map((c, i) => (
-            <li key={c.slug} className={`${s.card} ${home.series}`}>
-              <div className={home.top}>
-                <Skeleton width={64} ratio="2 / 3" radius="var(--r-thumb)" index={i} />
+            <li key={c.slug}>
+              <div className={home.seriesCard}>
+                <Skeleton width="100%" ratio="5 / 7" radius="var(--r-control)" index={i} />
                 <span className={l.lines}>
-                  <Skeleton width={180} height={18} index={i} />
-                  <Skeleton width={84} height={12} index={i} />
+                  <Skeleton width={320} height={28} index={i} />
+                  <Skeleton width={160} height={12} index={i} />
                 </span>
-              </div>
-              <div className={home.eps}>
-                {c.episodes.map((e) => (
-                  <span key={e.name} className={l.episode}>
-                    <Skeleton width={72} height={12} index={i} />
-                    <Skeleton width={64} height={12} index={i} />
-                  </span>
-                ))}
-              </div>
-              <div className={cx(home.add, l.homeAdd)}>
-                <Skeleton width={96} height={12} index={i} />
-                <Skeleton width={40} height={12} index={i} />
               </div>
             </li>
           ))}
@@ -136,11 +118,11 @@ export function NewSeriesLoading() {
   return (
     <AppShell
       section="/app"
-      title={<span className={s.headerMuted}>New series</span>}
-      bar={
+      title={<Crumbs items={[{ label: "Series", href: "/app" }, { label: "New series" }]} />}
+      actions={
         <>
-          <SkeletonButton width={152} />
           <SkeletonButton width={104} />
+          <SkeletonButton width={152} />
         </>
       }
     >
@@ -164,7 +146,7 @@ export function NewSeriesLoading() {
             </span>
           </span>
         </Panel>
-        <Panel as="aside" title="Cast sheets" sub="Name the character on each sheet.">
+        <Panel as="aside" title="Cast sheets">
           <SkeletonText lines={2} widths={["88%", "56%"]} />
           <Skeleton width="100%" height={72} radius="var(--r-control)" />
         </Panel>
@@ -187,7 +169,7 @@ export function CastLoading() {
       }
     >
       <Work className={cx(s.split, s.fill, cast.split)}>
-        <Panel title="Cast" level={1} sub="Sheets by character. A sheet is found by its tag.">
+        <Panel title="Characters" level={1}>
           {range(2).map((g) => (
             <div key={g} className={cast.group} aria-hidden="true">
               <div className={cast.groupHead}>
@@ -213,38 +195,31 @@ export function CastLoading() {
   );
 }
 
-/** The recent scripts panel: numbered rows. */
-function RecentSk() {
-  return (
-    <Panel title="Recent scripts" flush>
-      <ul className={s.rows} aria-hidden="true">
-        {recentScripts.map((r, i) => (
-          <li key={r.title}>
-            <div className={s.row}>
-              <Skeleton width={48} height={48} radius="var(--r-thumb)" index={i} />
-              <span className={l.lines}>
-                <Skeleton width="72%" height={12} index={i} />
-                <Skeleton width={84} height={12} index={i} />
-              </span>
-              <Skeleton width={56} height={12} index={i} />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </Panel>
-  );
-}
-
-/** /app/episode/script: the drop zone and the paste box, and the recent scripts. */
+/** /app/episode/script: the heading, then the upload, paste and recent scripts cards. */
 export function ScriptLoading() {
   return (
-    <AppShell section="/app" title={<EpisodeTitle />} bar={episodeBar("script", 164)}>
-      <Work className={cx(s.split, s.fill)}>
-        <Panel title="Bring your script" level={1}>
-          <Skeleton width="100%" height={176} radius="var(--r-control)" />
-          <FieldSk height={200} label={76} />
-        </Panel>
-        <RecentSk />
+    <AppShell section="/app" title={<EpisodeTitle />} {...episodeBar("script", 164)}>
+      <Work className={script.page}>
+        <h1 className={script.title}>Bring your script</h1>
+        <div className={script.grid} aria-hidden="true">
+          {["Upload a file", "Paste the text"].map((t, i) => (
+            <div key={t} className={script.card}>
+              <p className={script.cardTitle}>{t}</p>
+              <Skeleton width="100%" height={280} radius="var(--r-control)" index={i} />
+            </div>
+          ))}
+          <div className={script.card}>
+            <p className={script.cardTitle}>Recent scripts</p>
+            <span className={l.stack}>
+              {recentScripts.map((r, i) => (
+                <span key={r.title} className={l.lines}>
+                  <Skeleton width="64%" height={12} index={i} />
+                  <Skeleton width={84} height={12} index={i} />
+                </span>
+              ))}
+            </span>
+          </div>
+        </div>
       </Work>
     </AppShell>
   );
@@ -256,9 +231,9 @@ const PAGE: ("heading" | "camera" | "cue" | number)[] = ["heading", "camera", 96
 /** /app/episode/screenplay: the page as skeleton lines, and the comments panel. */
 export function ScreenplayLoading() {
   return (
-    <AppShell section="/app" title={<EpisodeTitle />} bar={episodeBar("screenplay", 228)}>
+    <AppShell section="/app" title={<EpisodeTitle />} {...episodeBar("screenplay", 228)}>
       <Work className={cx(s.split, s.fill)}>
-        <Panel title="Screenplay" level={1} sub="Read only. Changes are made in the script." flush>
+        <Panel title="Screenplay" level={1} flush>
           <div className={cx(screenplay.page, l.page)} aria-hidden="true">
             {PAGE.map((x, i) =>
               x === "heading" ? (
@@ -283,52 +258,31 @@ export function ScreenplayLoading() {
   );
 }
 
-/** /app/episode/references: every row the episode has, under its group, and the sheets at the side. */
+/** /app/episode/references: the groups of element cards, each a picture box, a name and an ID. */
 export function ReferencesLoading() {
+  const elements = startingElements("default");
   return (
-    <AppShell section="/app" title={<EpisodeTitle />} bar={episodeBar("references", 184)}>
-      <Work className={cx(s.split, s.fill, refs.split)}>
-        <Panel title="Cast and references" level={1} flush bodyClassName={refs.list}>
-          <div className={refs.progress} aria-hidden="true">
-            <Skeleton width="100%" height={8} radius="var(--r-pill)" />
-          </div>
-          {refGroups.map((g) => {
-            const rows = refRows.filter((x) => x.kind === g.kind);
-            if (!rows.length) return null;
-            return (
-              <div key={g.kind}>
-                <h2 className={s.groupLabel}>{g.label}</h2>
-                <ul className={s.rows} aria-hidden="true">
-                  {rows.map((x, i) => (
-                    <li key={x.id} className={`${s.row} ${refs.refRow}`} data-actions="true">
-                      <Skeleton width={48} height={48} radius="var(--r-thumb)" index={i} className={refs.thumbCell} />
-                      <span className={`${s.rowText} ${refs.text} ${l.lines}`}>
-                        <Skeleton width={140} height={12} index={i} className={refs.name} />
-                        <Skeleton width={96} height={12} index={i} className={refs.used} />
-                      </span>
-                      <span className={refs.status}>
-                        <Skeleton width={104} height={12} index={i} />
-                      </span>
-                      <span className={`${s.rowActions} ${refs.rowActions}`}>
-                        <SkeletonButton small width={96} index={i} />
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
-        </Panel>
-        <div className={refs.side}>
-          <Panel as="aside" title="Sheets">
-            <Skeleton width="100%" height={48} radius="var(--r-control)" />
-            <ul className={`${s.tiles} ${refs.sheets}`} aria-hidden="true">
-              {range(6).map((i) => (
-                <TileSk key={i} index={i} />
-              ))}
+    <AppShell section="/app" title={<EpisodeTitle />} {...episodeBar("references", 184)}>
+      <Work className={refs.page}>
+        <h1 className={refs.title}>References</h1>
+        {elementGroups.map((g) => (
+          <section key={g.kind} className={refs.group}>
+            <h2 className={refs.groupTitle}>{g.label}</h2>
+            <ul className={refs.grid} aria-hidden="true">
+              {elements
+                .filter((x) => x.kind === g.kind)
+                .map((x, i) => (
+                  <li key={x.id} className={refs.card}>
+                    <Skeleton width="100%" ratio="4 / 3" radius="var(--r-control)" index={i} />
+                    <span className={l.lines}>
+                      <Skeleton width={96} height={16} index={i} />
+                      <Skeleton width={140} height={12} index={i} />
+                    </span>
+                  </li>
+                ))}
             </ul>
-          </Panel>
-        </div>
+          </section>
+        ))}
       </Work>
     </AppShell>
   );
@@ -340,12 +294,11 @@ export function ResultsLoading() {
     <AppShell
       section="/app"
       title={<EpisodeTitle />}
-      bar={
+      bar={<Stepper current="results" pending />}
+      actions={
         <>
           <SkeletonButton width={236} />
           <SkeletonButton width={164} />
-          <span className={s.divider} aria-hidden="true" />
-          <Stepper current="results" pending />
         </>
       }
     >

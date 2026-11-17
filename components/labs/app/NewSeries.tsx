@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AppShell } from "./AppShell";
+import { AppShell, Crumbs } from "./AppShell";
 import { Button, ButtonLink } from "@/components/labs/Button";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { useCast } from "./CastProvider";
@@ -76,7 +76,8 @@ export function NewSeries() {
     rowsRef.current = [];
     // The button works until the script step takes the screen.
     setCreating(true);
-    router.push("/app/episode/script");
+    store.keep(`style:${slug}`, style);
+    router.push(`/app/series/${slug}`);
   };
 
   const unnamed = rows.filter((r) => !r.name.trim());
@@ -85,15 +86,15 @@ export function NewSeries() {
   return (
     <AppShell
       section="/app"
-      title={<span className={s.headerMuted}>New series</span>}
-      bar={
+      title={<Crumbs items={[{ label: "Series", href: "/app" }, { label: "New series" }]} />}
+      actions={
         <>
-          {reason ? <BlockedAction id="create-why" label="Create series" reason={reason} /> : <Button onClick={create} loading={creating}>
-              Create series
-            </Button>}
           <ButtonLink href="/app" variant="secondary">
             Cancel
           </ButtonLink>
+          {reason ? <BlockedAction id="create-why" label="Create series" reason={reason} /> : <Button onClick={create} loading={creating}>
+              Create series
+            </Button>}
         </>
       }
     >
@@ -138,7 +139,7 @@ export function NewSeries() {
           </fieldset>
         </Panel>
 
-        <Panel as="aside" title="Cast sheets" sub="Name the character on each sheet." flush>
+        <Panel as="aside" title="Cast sheets" flush>
           {rows.length ? (
             <ul className={s.rows}>
               {rows.map((r, i) => (

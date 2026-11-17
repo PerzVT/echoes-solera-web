@@ -162,7 +162,8 @@ function Processing({ onDone }: { onDone: () => void }) {
     <AppShell
       section="/app"
       title={<EpisodeTitle />}
-      bar={
+      bar={<Stepper current="script" />}
+      actions={
         <>
           {/* Loading keeps the label and the fill; a second press does nothing. */}
           <Button loading icon={<AnimatedMark variant="busy" size={18} tone="mono" />} aria-describedby="processing-why">
@@ -171,8 +172,6 @@ function Processing({ onDone }: { onDone: () => void }) {
           <span id="processing-why" className="sr-only">
             The script is being read.
           </span>
-          <span className={s.divider} aria-hidden="true" />
-          <Stepper current="script" />
         </>
       }
     >
@@ -462,13 +461,8 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
     <AppShell
       section="/app"
       title={<EpisodeTitle />}
-      bar={
-        <>
-          {action}
-          <span className={s.divider} aria-hidden="true" />
-          <Stepper current="screenplay" />
-        </>
-      }
+      bar={<Stepper current="screenplay" />}
+      actions={action}
     >
       <p className="sr-only" aria-live="polite">
         {said}
@@ -477,7 +471,6 @@ function Screenplay({ seeded, arrived }: { seeded: boolean; arrived: boolean }) 
         <Panel
           title="Screenplay"
           level={1}
-          sub="Read only. Changes are made in the script."
           flush
           busy={rewriting}
           headingRef={pageHeading}

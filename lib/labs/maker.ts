@@ -1,4 +1,5 @@
 /** Fixed demo data for the creator app. One working episode: Second Chance at Your Heart, episode 1. */
+import { notionCast } from "./cast";
 
 export const EPISODE = {
   series: "Second Chance at Your Heart",
@@ -55,6 +56,14 @@ export const seriesCards: SeriesCard[] = [
     cover: "/labs/mini-series/moonflower/cover.webp",
     add: "New episode",
     episodes: [ep("Episode 7", "Results"), ep("Episode 8", "Script")],
+  },
+  {
+    title: "Heart of the Gray Winter",
+    slug: "gray-winter",
+    tool: "Mini-series",
+    cover: "/labs/mini-series/gray-winter/cover.webp",
+    add: "New episode",
+    episodes: [ep("Episode 1", "Results"), ep("Episode 2", "References")],
   },
   {
     title: "Echoes of Solera",
@@ -475,27 +484,21 @@ export type CastSheet = {
   tagEdited?: boolean;
   /** The uploaded file's name, which can give the tag (chloe_ep07.png gives @chloe_ep07). */
   file?: string;
+  /** The episode or outfit the sheet is for, as the Notion character page labels it ("Episode 4", "Episode 15, second look"). */
+  variant?: string;
+  /** The Notion page shows this sheet without a tag; the tag follows the character's other tags. */
+  tagMade?: boolean;
 };
 /** A location, prop or continuity frame uploaded on References. */
 export type OtherSheet = { id: string; kind: "location" | "prop" | "continuity"; tag: string; who: string; src: string };
 export type SeriesCast = { characters: CastCharacter[]; sheets: CastSheet[]; others?: OtherSheet[] };
 
-const castOf = (names: string[]): SeriesCast => {
-  const characters = [...new Set(sheets.character.map((x) => x.who))]
-    .filter((who) => names.includes(who))
-    .map((who) => ({ id: who.toLowerCase(), name: who }));
-  return {
-    characters,
-    sheets: sheets.character
-      .filter((x) => names.includes(x.who))
-      .map((x) => ({ id: x.tag, tag: x.tag, character: x.who.toLowerCase(), src: x.src!, face: x.face })),
-  };
-};
-
-/** The cast each series starts with. Only the demo series has sheets. */
+/**
+ * The cast each series starts with. The three mini-series hold every approved character sheet from Notion
+ * (lib/labs/cast.ts), grouped by character; the other series start empty.
+ */
 export const startingCast: Record<string, SeriesCast> = {
-  "second-chance": castOf(["Chloe", "Elena", "Julian"]),
-  moonflower: { characters: [], sheets: [] },
+  ...notionCast,
   "echoes-of-solera": { characters: [], sheets: [] },
   "shoujo-supper": { characters: [], sheets: [] },
 };

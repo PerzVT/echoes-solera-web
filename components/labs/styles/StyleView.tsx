@@ -12,6 +12,7 @@ import m from "@/components/labs/app/maker.module.css";
 import { seriesCards } from "@/lib/labs/maker";
 import { environmentGuide, environmentSamples, getStyle, ruleFields } from "@/lib/labs/styles";
 import { Chart, GuideText, Slot } from "./parts";
+import { Review } from "./Review";
 import s from "./styles.module.css";
 
 /** One style: its chart, and one panel of facts. "Use in project" pins it to a series in this session. */
@@ -44,7 +45,7 @@ export function StyleView({ slug }: { slug: string }) {
     >
       <div className={`${m.split} ${s.split}`}>
         <Panel
-          title="Style chart"
+          title={style.review ? style.name : "Style chart"}
           level={1}
           actions={
             style.hasGuide && (
@@ -54,7 +55,7 @@ export function StyleView({ slug }: { slug: string }) {
             )
           }
         >
-          <Chart chart={style.chart} />
+          {style.review ? <Review name={style.name} still={style.review.still} clip={style.review.clip} /> : <Chart chart={style.chart} />}
           {samples.length > 0 && (
             <>
               <h2 className={m.subhead}>Samples</h2>

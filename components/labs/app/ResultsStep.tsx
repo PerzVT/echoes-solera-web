@@ -144,7 +144,8 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
     <AppShell
       section="/app"
       title={<EpisodeTitle />}
-      bar={
+      bar={<Stepper current="results" />}
+      actions={
         <>
           {hasClip(g) ? (
             // A plain link, built as the shared button is: a download is not a navigation.
@@ -165,8 +166,6 @@ export function ResultsStep({ initial }: { initial: ResultsState }) {
           ) : (
             <BlockedAction id="play-why" variant="secondary" icon={<Icon name="play" size={16} />} label="Play episode" reason="No generation has a clip yet." />
           )}
-          <span className={s.divider} aria-hidden="true" />
-          <Stepper current="results" />
         </>
       }
     >

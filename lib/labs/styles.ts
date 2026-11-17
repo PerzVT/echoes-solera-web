@@ -39,6 +39,8 @@ export type Style = {
   hidden?: boolean;
   /** Shows the guide's location samples. */
   samples?: boolean;
+  /** A generated style-library direction: one still and its clip, reviewed side by side in place of the chart. */
+  review?: { still: string; clip: string };
 };
 
 export const ruleFields = [
@@ -269,7 +271,10 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-/** The style-library directions. Each holds one frame and its clip: two chart subjects. */
+/**
+ * The generated style library: the 18 directions in app/studio/styles-7c9e4a2b/styleData.ts, read where they are
+ * (public/style-library). Each is one vertical still and its clip. The library holds a name for each and no written rules.
+ */
 const library: Style[] = directions.map((d) => ({
   slug: slugify(d.title),
   name: d.title,
@@ -279,24 +284,25 @@ const library: Style[] = directions.map((d) => ({
   status: "Draft",
   group: "Library",
   source: "Style library",
-  card: { src: d.poster, alt: `${d.title}, frame` },
+  card: { src: d.poster, alt: `${d.title}, still` },
   chart: {
-    inScene: { src: d.poster, alt: `${d.title}, frame` },
+    inScene: { src: d.poster, alt: `${d.title}, still` },
     example: { src: d.poster, video: d.video, alt: `${d.title}, clip` },
   },
   rules: {},
   versions: [],
+  review: { still: d.poster, clip: d.video },
 }));
 
 export const allStyles: Style[] = [...inUse, draft, ...library];
 
-/** A style page needs at least three chart subjects with art. Below that the style is listed as coming soon. */
+/** A style page needs at least three chart subjects with art, or a library still and clip. Below that the style is listed as coming soon. */
 export const MIN_CHART = 3;
 export function filledSlots(style: Pick<Style, "chart">) {
   return chartSlots.filter((c) => style.chart[c.key]).length;
 }
 export function isComingSoon(style: Style) {
-  return style.group === "Library" && !style.hidden && filledSlots(style) < MIN_CHART;
+  return style.group === "Library" && !style.hidden && !style.review && filledSlots(style) < MIN_CHART;
 }
 
 export function getStyle(slug: string) {

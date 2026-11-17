@@ -15,9 +15,10 @@ import {
   type SeriesCast,
   type Tool,
 } from "@/lib/labs/maker";
+import type { EpisodeItem } from "./creator";
 
-/** The series the episode screens work on. */
-export type Working = { slug: string; title: string };
+/** The series and episode the episode screens work on. */
+export type Working = { slug: string; title: string; episode: string };
 
 /** The cast of every series, plus the series made in this session, held in React state for the whole /app section. */
 type Store = {
@@ -41,7 +42,10 @@ type Store = {
   /** Series made with New series in this session, newest first. */
   created: SeriesCard[];
   addSeries: (title: string, tool: Tool) => string;
-  /** The series the episode screens show. */
+  /** Episodes started with New episode in this session, by series. */
+  addedEpisodes: Record<string, EpisodeItem[]>;
+  addEpisode: (series: string, episode: EpisodeItem) => void;
+  /** The series and episode the episode screens show. */
   working: Working;
   setWorking: (w: Working) => void;
   /** State a screen keeps when the person leaves it and comes back, such as the matches on References. */
@@ -70,7 +74,8 @@ export function findSeries(slugValue: string | undefined, created: SeriesCard[])
 export function CastProvider({ children }: { children: ReactNode }) {
   const [all, setAll] = useState<Record<string, SeriesCast>>(startingCast);
   const [created, setCreated] = useState<SeriesCard[]>([]);
-  const [working, setWorking] = useState<Working>({ slug: "second-chance", title: EPISODE.series });
+  const [working, setWorking] = useState<Working>({ slug: "second-chance", title: EPISODE.series, episode: EPISODE.episode });
+  const [addedEpisodes, setAddedEpisodes] = useState<Record<string, EpisodeItem[]>>({});
   const memo = useRef(new Map<string, unknown>());
   /**
    * Tags handed out since the cast was last drawn. Several adds in one event each see the tags the earlier ones took,
@@ -153,15 +158,18 @@ export function CastProvider({ children }: { children: ReactNode }) {
           episodes: [{ name: tool === "Cooking" ? "Video 1" : "Episode 1", stage: tool === "Cooking" ? "Recipe" : "Script", href: "/app/episode/script" }],
         };
         setCreated((x) => [card, ...x]);
-        setWorking({ slug: key, title });
+        setWorking({ slug: key, title, episode: card.episodes[0].name });
         return key;
       },
+      addedEpisodes,
+      addEpisode: (series, episode) =>
+        setAddedEpisodes((a) => (a[series]?.some((x) => x.name === episode.name) ? a : { ...a, [series]: [...(a[series] ?? []), episode] })),
       working,
       setWorking,
       kept: <T,>(key: string) => memo.current.get(key) as T | undefined,
       keep: (key, value) => void memo.current.set(key, value),
     }),
-    [all, get, edit, created, working],
+    [all, get, edit, created, working, addedEpisodes],
   );
 
   return <Ctx.Provider value={store}>{children}</Ctx.Provider>;

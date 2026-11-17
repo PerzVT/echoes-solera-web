@@ -3,14 +3,6 @@
    the hub grid and cards, the chart and its slots, the guide text and the conflict note. */
 
 /* Hub */
-.intro {
-  max-width: 64ch;
-  margin-bottom: 32px;
-  font-size: 1.125rem;
-  line-height: 1.5;
-  color: var(--text-muted);
-  text-wrap: pretty;
-}
 .group + .group {
   margin-top: 48px;
 }
@@ -185,6 +177,69 @@ div.splitEven {
   aspect-ratio: 16 / 9;
 }
 
+/* Review: a library still beside its clip, both vertical 9:16. */
+.review {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 600px;
+}
+.reviewItem {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+.reviewFrame {
+  position: relative;
+  display: block;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.reviewFrame img,
+.reviewFrame video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.reviewPlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.reviewPlayIcon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgb(10 14 20 / 0.72);
+  transition: scale var(--dur-press) var(--ease-out);
+}
+.reviewPlay:active .reviewPlayIcon {
+  scale: 0.94;
+}
+.reviewPlay:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -4px;
+  border-radius: var(--r-control);
+}
+.reviewCaption {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
 /* Guide text */
 .guide {
   margin: 0;
@@ -286,11 +341,15 @@ div.splitEven {
   .avoid {
     grid-template-columns: 1fr;
   }
+  .review {
+    gap: 12px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .cardArt img,
   .drop,
-  .choice {
+  .choice,
+  .reviewPlayIcon {
     transition: none;
   }
   a.card:hover .cardArt img {

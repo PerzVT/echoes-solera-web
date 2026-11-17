@@ -7,45 +7,31 @@ import { Button } from "@/components/labs/Button";
 import { Icon } from "@/components/labs/Icon";
 import { AnimatedMark, CheckIcon, ChevronIcon, GestureIcon } from "@/components/labs/fx";
 import { AppIcon } from "./AppIcon";
+import { Crumbs } from "./AppShell";
 import m from "./fx/motion.module.css";
 import { useCast } from "./CastProvider";
 import { EPISODE, STEPS, recentScripts } from "@/lib/labs/maker";
 import s from "./maker.module.css";
 
-/** Header text: the series (a link when given one), a small separator, then the page. Defaults to the series and episode being worked on. */
-export function EpisodeTitle({ series, page = EPISODE.episode, seriesHref }: { series?: string; page?: ReactNode; seriesHref?: string }) {
+/** Header trail: Series, the series (a link), then the page. Defaults to the series and episode being worked on. */
+export function EpisodeTitle({ series, page, seriesHref }: { series?: string; page?: ReactNode; seriesHref?: string }) {
   const { working } = useCast();
   const name = series ?? working.title;
+  const href = seriesHref ?? `/app/series/${working.slug}`;
   useEffect(() => {
-    if (!series) shownSeries = working.title;
-  }, [series, working.title]);
-  return (
-    <span className={s.episodeTitle}>
-      {seriesHref ? (
-        <Link href={seriesHref} className={`${s.series} ${s.seriesLink}`}>
-          {name}
-        </Link>
-      ) : (
-        <span className={s.series}>{name}</span>
-      )}
-      <span className={s.sep} aria-hidden="true" />
-      <span>{page}</span>
-    </span>
-  );
+    if (!series) shown = { title: working.title, slug: working.slug, episode: working.episode };
+  }, [series, working]);
+  // The style screens name "Styles" as their parent; the shell already puts Series in front of it.
+  const top = seriesHref && !seriesHref.startsWith("/app/series") ? [] : [{ label: "Series", href: "/app" }];
+  return <Crumbs items={[...top, { label: name, href }, { label: page ?? working.episode }]} />;
 }
 
-/** The series name the header last showed. A route skeleton is drawn outside the cast provider, so it reads the name from here. */
-let shownSeries: string = EPISODE.series;
+/** The series and episode the header last showed. A route skeleton is drawn outside the cast provider, so it reads them from here. */
+let shown = { title: EPISODE.series, slug: "second-chance", episode: EPISODE.episode };
 
-/** The header text for a route skeleton: the series as the header last showed it, then the page. */
-export function TitleSkeleton({ series, page = EPISODE.episode }: { series?: string; page?: ReactNode }) {
-  return (
-    <span className={s.episodeTitle}>
-      <span className={s.series}>{series ?? shownSeries}</span>
-      <span className={s.sep} aria-hidden="true" />
-      <span>{page}</span>
-    </span>
-  );
+/** The header trail for a route skeleton: the series and episode as the header last showed them. */
+export function TitleSkeleton({ series, page }: { series?: string; page?: ReactNode }) {
+  return <Crumbs items={[{ label: "Series", href: "/app" }, { label: series ?? shown.title, href: `/app/series/${shown.slug}` }, { label: page ?? shown.episode }]} />;
 }
 
 type StepItem = { key: string; label: string; href?: string };
@@ -67,7 +53,7 @@ const lastStep = new Map<string, string>();
 
 /**
  * The one stepper. Done steps carry a tick and go back; the current one carries the shoulder.
- * On an episode, later steps are not reachable yet. With onSelect (the style creator), every step can be opened.
+ * Every step can be opened at any time: a link on an episode, a button with onSelect (the style creator).
  * When the current step changes, here or across a route change, the shoulder comes in from the side it left
  * and the steps just finished draw their ticks. Steps that were already done stay as they are.
  */
@@ -116,7 +102,7 @@ export function Stepper({ current, steps = STEPS, label = "Episode steps", onSel
                 {inner}
               </button>
             );
-          else if (i < at && step.href)
+          else if (step.href)
             node = (
               <Link href={step.href} className={s.step}>
                 {inner}
@@ -481,10 +467,12 @@ type ConfirmProps = {
   confirmLabel: string;
   /** The confirmed work has started and the screen is about to change: the button shows it and takes no second press. */
   busy?: boolean;
+  /** More label and value rows after Makes. */
+  facts?: { label: string; value: ReactNode }[];
 };
 
 /** Says what will be made before anything is submitted. One confirm button. */
-export function ConfirmDialog({ open, onClose, onConfirm, title, makes, confirmLabel, busy }: ConfirmProps) {
+export function ConfirmDialog({ open, onClose, onConfirm, title, makes, confirmLabel, busy, facts = [] }: ConfirmProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   const { working } = useCast();
@@ -501,15 +489,20 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, makes, confirmL
         {title}
       </h2>
       <p className="muted small">
-        {working.title}, {EPISODE.episode}
+        {working.title}, {working.episode}
       </p>
       <dl className={s.facts}>
         <div>
           <dt>Makes</dt>
           <dd>{makes}</dd>
         </div>
+        {facts.map((f) => (
+          <div key={f.label}>
+            <dt>{f.label}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))}
       </dl>
-      <p className="small muted">Each generation is submitted once. Nothing retries on its own.</p>
       <div className={s.dialogActions}>
         <Button variant="quiet" onClick={onClose}>
           Cancel
