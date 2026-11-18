@@ -14,5 +14,6 @@ export async function POST(request: NextRequest) {
   response.cookies.delete({ name: SESSION_COOKIE, path: "/" });
   // A __Host- cookie is replaced only by one that is Secure on path "/", so it is cleared by setting it empty and expired.
   if (request.nextUrl.protocol === "https:") response.cookies.set(HOST_SESSION_COOKIE, "", { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 0 });
+  response.headers.set("cache-control", "no-store");
   return response;
 }

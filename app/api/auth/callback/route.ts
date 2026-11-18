@@ -7,6 +7,7 @@ type IdToken = { iss?: string; aud?: string; exp?: number; email?: string; email
 const fail = (request: NextRequest, error: string) => {
   const response = NextResponse.redirect(new URL(`/sign-in?error=${error}`, request.url));
   response.cookies.delete({ name: STATE_COOKIE, path: "/api/auth" });
+  response.headers.set("cache-control", "no-store");
   return response;
 };
 
@@ -64,5 +65,7 @@ export async function GET(request: NextRequest) {
     maxAge: SESSION_DAYS * 86400,
   });
   response.cookies.delete({ name: STATE_COOKIE, path: "/api/auth" });
+  // The answer carries the session cookie: no cache may keep it.
+  response.headers.set("cache-control", "no-store");
   return response;
 }

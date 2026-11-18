@@ -13,8 +13,50 @@ const backdrops = (() => {
 /** The public address of the Blob store that holds the site's videos. */
 const MEDIA = "https://xdkyhndo0jxmfyrf.public.blob.vercel-storage.com";
 
+/**
+ * The full Content-Security-Policy, sent report-only for now (see headers()). Inline scripts are allowed because
+ * the pages are built ahead of time and cannot carry a per-request nonce. Videos and creator uploads come from Blob
+ * stores; browser uploads go to vercel.com/api/blob.
+ */
+const BLOB = "https://*.public.blob.vercel-storage.com";
+const policy = (parts: Record<string, string>) =>
+  Object.entries(parts)
+    .map(([k, v]) => `${k} ${v}`)
+    .join("; ");
+const pagePolicy = policy({
+  "default-src": "'self'",
+  "script-src": "'self' 'unsafe-inline'",
+  "style-src": "'self' 'unsafe-inline'",
+  "img-src": `'self' data: blob: ${BLOB}`,
+  "media-src": `'self' blob: ${BLOB}`,
+  "font-src": "'self' data:",
+  "connect-src": `'self' https://vercel.com ${BLOB}`,
+  "worker-src": "'self' blob:",
+  "frame-src": "'self'",
+  "form-action": "'self'",
+  "base-uri": "'self'",
+  "object-src": "'none'",
+  "frame-ancestors": "'self'",
+});
+const gamePolicy = policy({
+  "default-src": "'self'",
+  "script-src": "'self' 'unsafe-inline'",
+  "style-src": "'self' 'unsafe-inline'",
+  "img-src": "'self' data: blob:",
+  "media-src": "'self' data: blob:",
+  "font-src": "'self' data:",
+  "connect-src": "'self' data: blob:",
+  "worker-src": "'self' blob:",
+  "form-action": "'self'",
+  "base-uri": "'self'",
+  "object-src": "'none'",
+  "frame-ancestors": "'self'",
+});
+
 const nextConfig: NextConfig = {
   devIndicators: false,
+  // The response does not need to name the framework.
+  poweredByHeader: false,
   env: { NL_SERIES_BACKDROPS: backdrops.join(",") },
   images: { formats: ["image/avif", "image/webp"], minimumCacheTTL: 86400, qualities: [75, 90] },
   // app/walk/route.ts serves the Tidebell Cove HTML; the game loads garments from /assets/wardrobe/.
@@ -36,6 +78,21 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    // Every response. The site has inline scripts on statically built pages, so a nonce policy is not possible
+    // without making every page dynamic: the enforced policy holds only what cannot break a page, and the full
+    // policy runs in report-only mode until the browser console shows it is clean on every page.
+    const always = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Strict-Transport-Security", value: "max-age=63072000" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()" },
+    ];
+    // Pages only: API routes set their own policy where they serve content (/api/creator/files sandboxes everything).
+    // Development leaves the report-only policy out, because React's dev build uses eval and would fill the console.
+    const pages = [
+      { key: "Content-Security-Policy", value: "base-uri 'self'; object-src 'none'; frame-ancestors 'self'" },
+      ...(process.env.NODE_ENV === "production" ? [{ key: "Content-Security-Policy-Report-Only", value: pagePolicy }] : []),
+    ];
     const catalogHeaders = [
       { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, nosnippet, noimageindex" },
       { key: "Referrer-Policy", value: "no-referrer" },
@@ -43,11 +100,22 @@ const nextConfig: NextConfig = {
     ];
     const closed = [
       { key: "X-Frame-Options", value: "DENY" },
-      { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+      { key: "Content-Security-Policy", value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'" },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "Referrer-Policy", value: "same-origin" },
     ];
+    // The game is a third-party build with inline script and style, WebGL and blob: textures. Only this site may frame it.
+    const game = [{ key: "Content-Security-Policy-Report-Only", value: gamePolicy }];
+    // Later entries override earlier ones for the same header, so the site-wide set comes first.
     return [
+      { source: "/:path*", headers: always },
+      { source: "/:path((?!api/).*)", headers: pages },
+      { source: "/sign-in", headers: [{ key: "Content-Security-Policy", value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'" }] },
+      ...(process.env.NODE_ENV === "production" ? [{ source: "/walk", headers: game }] : []),
+      // The old portal's sign-in and the bare game page carry no robots tag of their own; every other page says noindex.
+      { source: "/login", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      { source: "/walk", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      { source: "/app", headers: closed },
       { source: "/app/:path*", headers: closed },
       { source: "/studio/media-6e4b9a", headers: catalogHeaders },
       { source: "/media-preview/:path*", headers: catalogHeaders },

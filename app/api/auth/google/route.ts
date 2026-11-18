@@ -33,5 +33,6 @@ export async function GET(request: NextRequest) {
     path: "/api/auth",
     maxAge: 600,
   });
+  response.headers.set("cache-control", "no-store");
   return response;
 }

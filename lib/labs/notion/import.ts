@@ -69,8 +69,26 @@ export async function importScript(by: string, pageId: string, episodeId: string
 const MAX_PAGES = 20;
 const MAX_IMAGES = 40;
 
+/**
+ * Notion signs its file links on a public hostname. One that is an address, or a name only a private network
+ * resolves, is refused, so a link in an API answer can never point the server at itself or its neighbours.
+ */
+function publicHttps(raw: string) {
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return false;
+  }
+  const host = url.hostname.toLowerCase();
+  if (url.protocol !== "https:" || url.username || url.password || (url.port && url.port !== "443")) return false;
+  if (host.startsWith("[") || /^[\d.]+$/.test(host) || !host.includes(".")) return false;
+  return !/(^|\.)(localhost|local|internal|localdomain|home|lan|corp)$/.test(host);
+}
+
 /** Downloads one Notion-hosted file, up to the upload cap, and returns it only if it is a picture the cast accepts. */
 async function download(file: NotionFile) {
+  if (!publicHttps(file.url)) return null;
   let res: Response;
   try {
     res = await fetch(file.url, { cache: "no-store", signal: AbortSignal.timeout(30_000) });
