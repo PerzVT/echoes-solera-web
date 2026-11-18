@@ -27,23 +27,44 @@
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
+/* The balloon is three layers, so the tail joins it the way an inked tail does: the outlined oval at the
+   back, the tail over its outline, and the oval's white face on top, which hides the tail's root. */
 .speech {
-  padding: 0.85em 1.05em;
-  background: #fff;
-  border: max(1.5px, 0.28cqw) solid #111;
+  --line: max(1.5px, 0.28cqw);
+  isolation: isolate;
+  padding: calc(0.85em + var(--line)) calc(1.05em + var(--line));
+}
+.speech::before,
+.speech::after {
+  content: "";
+  position: absolute;
   border-radius: 50% / 46%;
+  background: #fff;
+}
+.speech::before {
+  inset: 0;
+  z-index: -3;
+  border: var(--line) solid #111;
+}
+.speech::after {
+  inset: var(--line);
+  z-index: -1;
 }
 /* Lettering for a balloon already drawn into the art: text only. */
 .inset {
   padding: 0.2em;
 }
 
+/* Away from its middle the oval's edge rises above the box; --lift is that rise at the tail, as a share of the
+   balloon's height. The tail starts half an em inside the face and is kept clear of the balloon's sides. */
 .tail {
+  --lift: calc(46% * (1 - sqrt(1 - pow((var(--tail-n, 50) - 50) / 50, 2))));
   position: absolute;
-  left: var(--tail-at, 30%);
-  top: calc(100% - max(1.5px, 0.28cqw) - 1px);
+  z-index: -2;
+  left: min(var(--tail-at, 30%), calc(100% - 1.9em));
+  top: calc(100% - var(--lift) - 0.5em);
   width: 1.3em;
-  height: 1.45em;
+  height: calc(var(--lift) + 1.75em);
   overflow: visible;
 }
 .tail[data-flip] {
@@ -51,7 +72,7 @@
 }
 .tail[data-up] {
   top: auto;
-  bottom: calc(100% - max(1.5px, 0.28cqw) - 1px);
+  bottom: calc(100% - var(--lift) - 0.5em);
   transform: scaleY(-1);
 }
 .tail[data-up][data-flip] {

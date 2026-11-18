@@ -1,23 +1,22 @@
 import { Nav } from "@/components/labs/Nav";
 import { Skeleton, SkeletonGroup } from "@/components/labs/fx/Skeleton";
-import styles from "./reader.module.css";
+import styles from "@/components/labs/manga/series.module.css";
+import t from "@/components/labs/Title.module.css";
 
-/** The reader: the title row and the first page. */
+/** The series page: the hero and the chapter cards. */
 export default function PageSkeleton() {
   return (
-    <SkeletonGroup className={styles.page}>
+    <SkeletonGroup className={t.page}>
       <Nav />
-      <div className={styles.header} aria-hidden="true">
-        <Skeleton width={84} height={14} />
-        <div className={styles.titles}>
-          <Skeleton width="min(420px, 80%)" height={34} radius={10} />
-          <Skeleton width="min(320px, 60%)" height={12} index={1} />
-        </div>
-        <Skeleton width={96} height={12} index={2} />
-      </div>
-      <div className={styles.reader}>
-        <div className={styles.pages}>
-          <Skeleton ratio="1024 / 1536" width="100%" radius="var(--r-thumb)" index={3} />
+      <div className={styles.main} aria-hidden="true">
+        <Skeleton className={styles.hero} width="100%" radius="var(--r-stage)" />
+        <div className={styles.chapters}>
+          <Skeleton width={160} height={30} radius={10} index={1} />
+          <div className={styles.cards}>
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} ratio="2 / 3" width="100%" radius="var(--r-card)" index={2 + i} />
+            ))}
+          </div>
         </div>
       </div>
     </SkeletonGroup>

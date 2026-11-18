@@ -1,0 +1,631 @@
+/* The manga reader: a bar of reading options, the stage, the scrubber and the chapter end. */
+.page {
+  padding: 16px 24px 0;
+}
+.main {
+  max-width: 1344px;
+  margin: 16px auto 0;
+}
+
+.root {
+  position: relative;
+  border-radius: var(--r-stage);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05);
+}
+/* Full screen: the reader is the page, and scrolls itself. */
+.root:fullscreen,
+.root[data-fullscreen] {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-radius: 0;
+  background: var(--surface-sunken);
+}
+
+/* ---------- Bar ---------- */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 60px;
+  padding: 8px;
+  border-radius: var(--r-stage) var(--r-stage) 0 0;
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-1);
+}
+.root[data-fullscreen] .bar {
+  border-radius: 0;
+}
+.options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.optionsMenu {
+  position: relative;
+  display: none;
+  margin-left: auto;
+}
+.bar > .iconButton:last-child:first-child,
+.chapterMenu + .iconButton {
+  margin-left: auto;
+}
+@media (max-width: 1180px) {
+  .options {
+    display: none;
+  }
+  .optionsMenu {
+    display: block;
+  }
+}
+
+.iconButton {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-control);
+  color: var(--text);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.iconButton:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .iconButton:not(:disabled):hover {
+    background: var(--surface-hover);
+  }
+}
+.iconButton:not(:disabled):active {
+  scale: 0.94;
+}
+.iconButton[aria-expanded="true"],
+.iconButton[aria-pressed="true"] {
+  background: var(--surface-hover);
+}
+
+.chapterMenu {
+  position: relative;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.chapterButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: var(--r-control);
+  font-weight: 500;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .chapterButton:hover {
+    background: var(--surface-hover);
+  }
+}
+.chapterButton[aria-expanded="true"] {
+  background: var(--surface-hover);
+}
+.chapterNumber {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.chapterTitle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chapterButton svg {
+  flex: none;
+  color: var(--text-muted);
+}
+
+/* Segmented controls: radio buttons drawn as one rounded group. */
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+}
+.segment {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--r-thumb);
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.segment input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .segment:hover {
+    color: var(--text);
+  }
+}
+.segment[data-on] {
+  color: var(--on-action);
+  background: var(--action);
+  box-shadow: var(--elev-1);
+}
+.segment:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Panels that open under the bar: the chapter list and, on narrower screens, the reading options. */
+.panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  width: min(380px, calc(100vw - 32px));
+  max-height: calc(100svh - 140px);
+  overflow: auto;
+  padding: 8px;
+  border-radius: var(--r-card);
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-4);
+}
+.panel:focus {
+  outline: none;
+}
+.panelEnd {
+  left: auto;
+  right: 0;
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+.optionGroup {
+  display: grid;
+  gap: 8px;
+}
+.optionLabel {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.panelEnd .segmented {
+  display: flex;
+}
+.panelEnd .segment {
+  flex: 1;
+}
+.panelTitle {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--r-control);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .panelTitle:hover {
+    background: var(--surface-hover);
+  }
+}
+.chapterList {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+}
+.chapterRow {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  padding: 8px 12px 8px 8px;
+  border-radius: var(--r-control);
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .chapterRow:hover {
+    background: var(--surface-hover);
+  }
+}
+.chapterRow[aria-current] {
+  background: var(--surface-hover);
+}
+.chapterRow > svg {
+  color: var(--text-muted);
+}
+.chapterRow[data-state="read"] > svg {
+  color: var(--success);
+}
+.rowThumb {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: var(--r-inner);
+}
+.chapterRow:is([data-state="locked"], [data-state="coming"]) .rowThumb {
+  opacity: 0.55;
+}
+.rowText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.rowTitle {
+  font-weight: 500;
+}
+.rowMeta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Stage ---------- */
+.stage {
+  position: relative;
+  height: var(--avail, calc(100svh - 200px));
+  padding: 16px;
+  container-type: size;
+  touch-action: pan-y pinch-zoom;
+}
+.stage[data-hover="left"],
+.stage[data-hover="right"] {
+  cursor: pointer;
+}
+.stage[data-pending] {
+  min-height: 320px;
+}
+.root[data-fit="width"] .stage {
+  height: auto;
+  min-height: var(--avail, calc(100svh - 200px));
+  container-type: inline-size;
+}
+
+.view {
+  --pw: min(100cqw, 100cqh * 2 / 3);
+  display: grid;
+  grid-template-columns: var(--pw);
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+}
+.view[data-spread] {
+  --pw: min(50cqw, 100cqh * 2 / 3);
+  grid-template-columns: repeat(2, var(--pw));
+}
+.root[data-fit="width"] .view {
+  --pw: min(100cqw, 1100px);
+  align-content: start;
+  height: auto;
+}
+.root[data-fit="width"] .view[data-spread] {
+  --pw: 50cqw;
+}
+
+/* Each page is the size container its lettering is measured against. */
+.sheet {
+  position: relative;
+  width: var(--pw);
+  aspect-ratio: 2 / 3;
+  margin: 0;
+  container-type: inline-size;
+  overflow: hidden;
+  border-radius: var(--r-thumb);
+  background: #fff;
+  box-shadow: var(--elev-2);
+}
+.sheet:not([data-loaded]) {
+  background: var(--skeleton);
+}
+/* Lettering waits for its art, so balloons never float on an empty page. */
+.sheet:not([data-loaded]) > :not(img) {
+  visibility: hidden;
+}
+.sheet[data-col] {
+  grid-row: 1;
+}
+.sheet[data-col="1"] {
+  grid-column: 1;
+  border-radius: var(--r-thumb) 0 0 var(--r-thumb);
+}
+.sheet[data-col="2"] {
+  grid-column: 2;
+  border-radius: 0 var(--r-thumb) var(--r-thumb) 0;
+}
+/* The spine: a soft shade on each page where the two meet, over the art. */
+.sheet[data-col]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.view[data-spread] .sheet[data-col="1"]::after {
+  box-shadow: inset -14px 0 18px -14px rgb(0 0 0 / 0.35);
+}
+.view[data-spread] .sheet[data-col="2"]::after {
+  box-shadow: inset 14px 0 18px -14px rgb(0 0 0 / 0.35);
+}
+.img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- Scrubber ---------- */
+.scrub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 64px;
+  padding: 8px 16px;
+}
+.scrub[data-sticky] {
+  position: sticky;
+  bottom: 8px;
+  z-index: 10;
+  width: min(720px, calc(100% - 32px));
+  margin: 0 auto;
+  border-radius: var(--r-card);
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-3);
+}
+.scrubLabel {
+  min-width: 76px;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  color: var(--text-muted);
+}
+.range {
+  --fill: 0%;
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(to right, var(--progress) var(--fill), rgb(246 243 236 / 0.18) var(--fill));
+}
+.range[dir="rtl"]::-webkit-slider-runnable-track {
+  background: linear-gradient(to left, var(--progress) var(--fill), rgb(246 243 236 / 0.18) var(--fill));
+}
+.range::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: var(--elev-1);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.range::-moz-range-track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: rgb(246 243 236 / 0.18);
+}
+.range::-moz-range-progress {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--progress);
+}
+.range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--text);
+}
+.range:focus-visible {
+  outline: none;
+}
+.range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.range:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ---------- Vertical scroll ---------- */
+.scroll {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 16px;
+  list-style: none;
+  container-type: inline-size;
+}
+.scrollItem {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  scroll-margin-top: calc(var(--bar-h, 60px) + 8px);
+}
+.scroll .sheet {
+  --pw: min(100cqw, 900px);
+}
+.root[data-fit="height"] .scroll .sheet {
+  --pw: min(100cqw, var(--page-h, 80svh) * 2 / 3);
+}
+
+/* ---------- Lock, announcement and chapter end ---------- */
+.gate {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 72px) 24px;
+}
+.gateCover {
+  width: clamp(180px, 22vw, 260px);
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--r-card);
+  box-shadow: var(--img-outline), var(--elev-3);
+}
+.gateBody {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.gateBody h2,
+.gateBody h3 {
+  margin-bottom: 4px;
+  text-wrap: balance;
+}
+.gateTime {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+.gateMeta {
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+.lockMark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  color: var(--on-action);
+  background: var(--action);
+  box-shadow: var(--elev-2);
+}
+.textButton {
+  padding: 6px 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: rgb(174 180 192 / 0.4);
+  text-underline-offset: 4px;
+  transition: color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .textButton:hover {
+    color: var(--text);
+  }
+}
+.end {
+  display: grid;
+  place-items: center;
+}
+.stage > .end {
+  height: 100%;
+  overflow: auto;
+  touch-action: pan-y pinch-zoom;
+}
+.root[data-mode="scroll"] .end {
+  padding-bottom: 24px;
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 16px 0;
+  }
+  .main {
+    margin-top: 8px;
+  }
+  .root {
+    margin-inline: -16px;
+    border-radius: 0;
+  }
+  .bar {
+    border-radius: 0;
+    padding: 8px 8px 8px 4px;
+  }
+  .chapterMenu {
+    flex: 1 1 auto;
+  }
+  /* Panels hang from the bar itself and span it, so neither runs off the screen. */
+  .chapterMenu,
+  .optionsMenu {
+    position: static;
+  }
+  .panel {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    top: calc(100% + 4px);
+  }
+  .stage {
+    padding: 8px;
+  }
+  .scroll {
+    padding: 8px 0;
+    gap: 8px;
+  }
+  .scroll .sheet {
+    border-radius: 0;
+  }
+  .scrub {
+    padding: 8px;
+  }
+  .scrub[data-sticky] {
+    width: calc(100% - 16px);
+  }
+  .scrubLabel {
+    min-width: 56px;
+  }
+  .gate {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 24px;
+    padding: 32px 20px;
+    text-align: center;
+  }
+  .gateBody {
+    justify-items: center;
+  }
+  .gateCover {
+    width: min(52vw, 220px);
+  }
+  .stage > .end .gate {
+    padding: 16px 20px;
+  }
+  .stage > .end .gateCover {
+    width: min(40vw, 180px);
+  }
+}

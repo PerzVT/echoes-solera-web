@@ -31,6 +31,8 @@ export function Lettering({ letters }: { letters: Letter[] }) {
           "--rot": l.rotate ? `${l.rotate}deg` : undefined,
           "--sfx-scale": l.scale,
           "--tail-at": l.tail ? `${l.tail.at}%` : undefined,
+          // Where the tail's middle meets the balloon, unitless, so the CSS can find the oval's edge there.
+          "--tail-n": l.tail ? Math.min(94, l.tail.at + 6) : undefined,
         } as CSSProperties;
         return (
           <p key={i} className={`${styles.letter} ${styles[l.kind]}`} style={style}>
@@ -41,6 +43,7 @@ export function Lettering({ letters }: { letters: Letter[] }) {
                 data-up={l.tail.up ? "" : undefined}
                 data-flip={l.tail.flip ? "" : undefined}
                 viewBox="0 0 20 22"
+                preserveAspectRatio="none"
                 aria-hidden="true"
               >
                 <path d="M1 0 L19 0 L5 21 Z" className={styles.tailFill} />
