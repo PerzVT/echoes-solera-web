@@ -163,3 +163,38 @@ create table if not exists nl_jobs (
 create index if not exists nl_jobs_owner on nl_jobs (owner, created_at desc);
 create index if not exists nl_jobs_episode on nl_jobs (episode_id, created_at desc);
 create index if not exists nl_jobs_created on nl_jobs (created_at);
+
+-- Tidebell Cove multiplayer (app/api/cove, lib/labs/store/cove.ts). One row per visitor in the cove, found by
+-- the sha-256 of the token the server handed it. state is the validated duck {x,z,yaw,band,wave,fish,catchId,fishSeq}.
+-- addr is the hashed client address. Times are epoch milliseconds from the function's clock. tokens and at are
+-- the visitor's request bucket.
+create table if not exists nl_cove_players (
+  id            text primary key,
+  room          text not null,
+  token_hash    text not null,
+  addr          text not null,
+  state         jsonb,
+  fish_started  bigint not null default 0,
+  tokens        double precision not null,
+  at            bigint not null,
+  seen          bigint not null
+);
+create unique index if not exists nl_cove_players_token on nl_cove_players (token_hash);
+create index if not exists nl_cove_players_room on nl_cove_players (room, seen);
+
+-- The print press shared by everyone in a room: the order running or last run.
+create table if not exists nl_cove_porch (
+  room     text primary key,
+  id       text not null,
+  design   text not null,
+  started  bigint not null,
+  owner    text not null
+);
+
+-- Request buckets per hashed client address, so one address cannot flood the cove with tokens or requests.
+create table if not exists nl_cove_limits (
+  key     text primary key,
+  tokens  double precision not null,
+  at      bigint not null
+);
+create index if not exists nl_cove_limits_at on nl_cove_limits (at);
