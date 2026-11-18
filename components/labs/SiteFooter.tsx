@@ -8,8 +8,6 @@ import styles from "./SiteFooter.module.css";
 const links = [
   { href: "/", label: "Projects" },
   { href: "/studio", label: "Studio" },
-  { href: "/lab", label: "Lab" },
-  { href: "/pipeline", label: "Pipeline" },
 ];
 
 /** Full-screen surfaces that have no page foot: the creator and the visual novel. */

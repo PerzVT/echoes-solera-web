@@ -61,9 +61,6 @@ const routes: Route[] = [
   route(/^\/shop$/, () => import("@/app/(labs)/shop/skeleton")),
   route(/^\/shop\/[^/]+$/, () => import("@/app/(labs)/shop/[slug]/skeleton")),
   route(/^\/studio$/, () => import("@/app/(labs)/studio/skeleton")),
-  route(/^\/lab$/, () => import("@/app/(labs)/lab/skeleton")),
-  route(/^\/pipeline$/, () => import("@/app/(labs)/pipeline/skeleton")),
-  route(/^\/pipeline\/[^/]+$/, () => import("@/app/(labs)/pipeline/[function]/skeleton")),
   // The creator.
   route(/^\/app$/, () => import("@/app/(labs)/app/skeleton")),
   route(/^\/app\/library$/, () => import("@/app/(labs)/app/library/skeleton")),
