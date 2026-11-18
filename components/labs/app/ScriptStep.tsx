@@ -1,13 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Composer } from "@/components/labs/chat/Composer";
 import { scriptTypes } from "@/lib/labs/maker";
 import { AppShell } from "./AppShell";
+import { cancelWave, preloadWave, sendWave } from "./fx/Wave";
 import { DRAFT, episodeKey, useCast } from "./CastProvider";
 import type { Episode } from "./api";
-import { makeScreenplay } from "./generate";
+import { generationReady, makeScreenplay } from "./generate";
 import { NotionImport } from "./NotionImport";
 import { focusSoon } from "./parts";
 import { NEW_SERIES as NEW, SeriesPicker } from "./SeriesPicker";
@@ -35,6 +36,7 @@ export function ScriptStep() {
   /** What a failed submit already saved, so trying again does not make a second series or episode. */
   const made = useRef<{ series?: string; title?: string; episode?: Episode }>({});
   const nameField = useRef<HTMLInputElement>(null);
+  useEffect(preloadWave, []);
 
   /** One script per episode: the first file is used. A .txt or .fdx file is read; others keep their name only. */
   const take = (files: File[]) => {
@@ -83,6 +85,7 @@ export function ScriptStep() {
     const source = file ? (fileText ?? (!fileObj && resume?.file === file ? resume.source : "")) : text;
     setGoing(true);
     setSaveError("");
+    sendWave(null, { when: generationReady() });
     try {
       const ep = await ensureEpisode();
       // A file saved earlier and still shown stays as it is; one removed on this visit is dropped.
@@ -104,6 +107,7 @@ export function ScriptStep() {
       store.patch(key, { blocks });
       router.push(`${store.profile.steps.screenplay}?state=processing`);
     } catch (e) {
+      cancelWave();
       setSaveError(e instanceof Error ? e.message : "That did not save. Try again.");
       setGoing(false);
     }

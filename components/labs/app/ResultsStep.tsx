@@ -321,6 +321,7 @@ function Player({ g, take, onFull, big }: { g: Gen; take: Take; onFull?: () => v
           ref={video}
           src={take.src}
           poster={take.poster || undefined}
+          crossOrigin="anonymous"
           muted={muted}
           autoPlay
           playsInline

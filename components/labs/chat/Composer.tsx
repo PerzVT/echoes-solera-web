@@ -198,7 +198,7 @@ export const Composer = forwardRef<HTMLTextAreaElement, ComposerProps>(function 
           {tools}
           {leading && <div className={c.leading}>{leading}</div>}
           {onSubmit && (
-            <Button className={c.send} disabled={!canSend && !sending} loading={sending} onClick={send} iconAfter={<Icon name="arrow" size={18} />}>
+            <Button className={c.send} data-wave-source="" disabled={!canSend && !sending} loading={sending} onClick={send} iconAfter={<Icon name="arrow" size={18} />}>
               {submitLabel}
             </Button>
           )}

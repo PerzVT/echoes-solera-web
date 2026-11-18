@@ -48,7 +48,7 @@ export function StylePicker({ groups, chosen, onChoose, extra }: Props) {
         <div className={st.screen}>
           {clip ? (
             <MediaFrame key={clip} fill>
-              <video src={clip} poster={stillOf(style)} muted loop playsInline autoPlay preload="metadata" aria-label={`${style.name}, clip`} />
+              <video src={clip} poster={stillOf(style)} crossOrigin="anonymous" muted loop playsInline autoPlay preload="metadata" aria-label={`${style.name}, clip`} />
             </MediaFrame>
           ) : (
             <Image key={style.slug} src={stillOf(style)} alt={style.card!.alt} fill sizes="420px" />

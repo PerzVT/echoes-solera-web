@@ -6,7 +6,8 @@ import { Btn } from "@/components/labs/chat/ui";
 import { Icon } from "@/components/labs/Icon";
 import { AppShell } from "./AppShell";
 import { useCast, useEpisode } from "./CastProvider";
-import { makeClips } from "./generate";
+import { preloadWave, sendWave } from "./fx/Wave";
+import { generationReady, makeClips } from "./generate";
 import { SaveAction, useSaveThen } from "./parts";
 import { StylePicker } from "./StylePicker";
 import { stylesFor } from "./tools";
@@ -24,13 +25,18 @@ export function StyleStep() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chosen]);
 
-  const generate = () =>
-    saving.go(async () => {
+  useEffect(preloadWave, []);
+
+  const generate = (btn: HTMLButtonElement) => {
+    const taken = saving.go(async () => {
       // Generating starts the clips over: every one is made again and waits for a decision.
       const { gens } = await makeClips({ tool: store.tool, blocks: ep.blocks, texts: ep.texts, cast: ep.elements ?? store.profile.elements, style: chosen, episodeId: ep.id });
       patch({ gens });
       router.push(`${store.profile.steps.results}?state=new`);
     });
+    // The results are clips: the wave runs back when a clip could not be made.
+    sendWave(btn, { when: Promise.all([taken, generationReady(true)]).then((ok) => ok.every(Boolean)) });
+  };
 
   return (
     <AppShell
@@ -38,7 +44,7 @@ export function StyleStep() {
       fit
       action={
         <SaveAction error={saving.error}>
-          <Btn kind="primary" loading={saving.busy} icon={<Icon name="generate" size={16} />} onClick={generate}>
+          <Btn kind="primary" loading={saving.busy} icon={<Icon name="generate" size={16} />} onClick={(e) => void generate(e.currentTarget)}>
             Generate
           </Btn>
         </SaveAction>

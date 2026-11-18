@@ -10,7 +10,8 @@ import { Icon } from "@/components/labs/Icon";
 import { Btn } from "@/components/labs/chat/ui";
 import type { MangaLetter, MangaPage } from "./api";
 import { PAGE_COUNTS, mangaStyles } from "./fixtures";
-import { makeMangaPages, regeneratePage } from "./generate";
+import { cancelWave, preloadWave, sendWave } from "./fx/Wave";
+import { generationReady, makeMangaPages, regeneratePage } from "./generate";
 import { Alert, SaveAction, revealOnPhone, useSaveThen } from "./parts";
 import { LibraryGrid } from "./LibraryGrid";
 import { Record } from "./Record";
@@ -75,6 +76,7 @@ export function MangaStart({ edit }: { edit: boolean }) {
   const submit = async (source: string, seriesId: string | null) => {
     setSending(true);
     setError("");
+    sendWave();
     try {
       if (editing) {
         if (source !== editing.source) work.patch({ source, pages: [], step: "style" });
@@ -86,6 +88,7 @@ export function MangaStart({ edit }: { edit: boolean }) {
       }
       router.push("/app/manga/style");
     } catch (e) {
+      cancelWave();
       setError(message(e));
       setSending(false);
     }
@@ -123,6 +126,7 @@ export function MangaStyle() {
   const router = useRouter();
   const work = useCurrentManga();
   const saving = useSaveThen(work.flush);
+  useEffect(preloadWave, []);
   const manga = work.current;
   if (!manga) return <WorkLoading tool="manga" steps={MANGA_STEPS} step="style" error={work.openError} />;
   const chosen = manga.style ?? mangaStyles[0].slug;
@@ -152,9 +156,11 @@ export function MangaStyle() {
             kind="primary"
             loading={saving.busy}
             icon={<Icon name="generate" size={16} />}
-            onClick={() => {
+            onClick={(e) => {
+              const btn = e.currentTarget;
               work.patch({ style: chosen, pages: [], step: "pages" });
-              void saving.go(() => router.push("/app/manga/pages"));
+              const taken = saving.go(() => router.push("/app/manga/pages"));
+              sendWave(btn, { when: Promise.all([taken, generationReady()]).then((ok) => ok.every(Boolean)) });
             }}
           >
             Generate
@@ -223,6 +229,7 @@ export function MangaPages() {
       },
       (e: unknown) => {
         if (!alive.current || s.signal.aborted) return;
+        cancelWave();
         setProgress(null);
         setMaking(false);
         setMakeError(message(e, "The pages did not come back. Try again."));

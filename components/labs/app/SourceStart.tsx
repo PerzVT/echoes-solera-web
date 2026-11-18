@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Composer } from "@/components/labs/chat/Composer";
 import { NotionImport } from "./NotionImport";
+import { preloadWave } from "./fx/Wave";
 import { focusSoon } from "./parts";
 import { fdxToText } from "./script";
 import { NEW_SERIES, NO_SERIES, SeriesPicker } from "./SeriesPicker";
@@ -44,6 +45,7 @@ export function SourceStart({ tool, steps, reached, label, placeholder, initial 
   const [seriesError, setSeriesError] = useState("");
   const [saving, setSaving] = useState(false);
   const nameField = useRef<HTMLInputElement>(null);
+  useEffect(preloadWave, []);
 
   const take = (files: File[]) => {
     const [f] = files;

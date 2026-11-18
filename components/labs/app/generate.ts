@@ -110,7 +110,17 @@ async function ready() {
   return status;
 }
 
-const needEpisode = (episodeId: string | undefined): string => {
+/**
+ * Whether a generation started now would be taken: always in test mode, else when the server is set up (and, for
+ * clips, has a video provider). Read from what is already loaded, so it answers at once after the first call.
+ */
+export async function generationReady(video = false): Promise<boolean> {
+  if (await isTestMode()) return true;
+  const status = await aiStatus();
+  return status.ready && (!video || Boolean(status.video));
+}
+
+const needEpisode =(episodeId: string | undefined): string => {
   if (!episodeId) throw new GenerationError("Save the episode first.");
   return episodeId;
 };

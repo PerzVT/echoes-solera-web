@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AsciiField, MediaFrame, PlayPauseIcon, VolumeIcon } from "@/components/labs/fx";
 import { Icon } from "@/components/labs/Icon";
 import { Btn } from "../chat/ui";
+import { cancelWave } from "@/components/labs/app/fx/Wave";
 import { makeCookingTake } from "@/components/labs/app/generate";
 import { Alert } from "@/components/labs/app/parts";
 import { chefSrc, clock, lengthOf, seconds, type Recipe, type Video } from "./data";
@@ -40,6 +41,7 @@ export function Result({ recipe, chef, style, onAnother }: { recipe: Recipe; che
       },
       (e: unknown) => {
         if (stop.signal.aborted) return;
+        cancelWave();
         setError(e instanceof Error && e.message ? e.message : "This take did not come back. Try again.");
       },
     );
@@ -217,7 +219,7 @@ function Player({ video, poster, title, ready, failed }: { video: string; poster
     <div className={r.screen} aria-busy={!ready}>
       {ready ? (
         <MediaFrame fill>
-          <video ref={ref} src={video} poster={poster || undefined} muted={muted} playsInline loop preload="auto" onClick={toggle} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} aria-label={title} />
+          <video ref={ref} src={video} poster={poster || undefined} crossOrigin="anonymous" muted={muted} playsInline loop preload="auto" onClick={toggle} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} aria-label={title} />
         </MediaFrame>
       ) : (
         poster && <Image src={poster} alt="" fill sizes="480px" className={r.under} />

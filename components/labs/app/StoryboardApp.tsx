@@ -11,7 +11,8 @@ import { useDismiss } from "@/components/labs/chat/hooks";
 import type { Frame } from "./api";
 import { AppIcon } from "./AppIcon";
 import { storyboardStyles } from "./fixtures";
-import { makeStoryboard, regenerateFrame } from "./generate";
+import { cancelWave, preloadWave, sendWave } from "./fx/Wave";
+import { generationReady, makeStoryboard, regenerateFrame } from "./generate";
 import { Alert, SaveAction, useSaveThen } from "./parts";
 import { LibraryGrid } from "./LibraryGrid";
 import { Record } from "./Record";
@@ -45,6 +46,7 @@ export function StoryboardStart({ edit }: { edit: boolean }) {
   const submit = async (source: string, seriesId: string | null) => {
     setSending(true);
     setError("");
+    sendWave();
     try {
       if (editing) {
         // A changed scene is boarded again from the start.
@@ -57,6 +59,7 @@ export function StoryboardStart({ edit }: { edit: boolean }) {
       }
       router.push("/app/storyboard/style");
     } catch (e) {
+      cancelWave();
       setError(message(e));
       setSending(false);
     }
@@ -95,6 +98,7 @@ export function StoryboardStyle() {
   const router = useRouter();
   const work = useCurrentBoard();
   const saving = useSaveThen(work.flush);
+  useEffect(preloadWave, []);
   const board = work.current;
   if (!board) return <WorkLoading tool="storyboard" steps={BOARD_STEPS} step="style" error={work.openError} />;
   const chosen = board.style ?? storyboardStyles[0].slug;
@@ -112,10 +116,12 @@ export function StoryboardStyle() {
             kind="primary"
             loading={saving.busy}
             icon={<Icon name="generate" size={16} />}
-            onClick={() => {
+            onClick={(e) => {
+              const btn = e.currentTarget;
               // Generating draws every frame again in the chosen style.
               work.patch({ style: chosen, frames: [], step: "board" });
-              void saving.go(() => router.push("/app/storyboard/board"));
+              const taken = saving.go(() => router.push("/app/storyboard/board"));
+              sendWave(btn, { when: Promise.all([taken, generationReady()]).then((ok) => ok.every(Boolean)) });
             }}
           >
             Generate
@@ -183,6 +189,7 @@ export function StoryboardBoard() {
       },
       (e: unknown) => {
         if (!alive.current || s.signal.aborted) return;
+        cancelWave();
         setProgress(null);
         setMaking(false);
         setMakeError(message(e, "The board did not come back. Try again."));

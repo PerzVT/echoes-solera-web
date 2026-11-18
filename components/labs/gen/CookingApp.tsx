@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GestureIcon } from "@/components/labs/fx";
 import { Btn } from "@/components/labs/chat/ui";
+import { preloadWave, sendWave } from "@/components/labs/app/fx/Wave";
+import { generationReady } from "@/components/labs/app/generate";
 import { WorkShell, type WorkStepDef } from "@/components/labs/app/WorkShell";
 import { defaultStyle, recipeByKey, styleBySlug, type Recipe, type Video } from "./data";
 import { Feed } from "./Feed";
@@ -28,10 +30,13 @@ export const COOKING_STEPS = (made?: number): WorkStepDef[] => [
 export function CookingApp() {
   const { recipe, chef, style, setRecipe, setChef } = useCooking();
   const [made, setMade] = useState<Made | null>(null);
+  useEffect(preloadWave, []);
 
   const generate = () => {
     const pick = chosenRecipe(recipe);
     if (!pick || !chef) return;
+    // The take opens on this screen; its first request goes out as the video step mounts.
+    sendWave(null, { when: generationReady(true) });
     setMade((m) => ({ n: (m?.n ?? 0) + 1, recipe: pick, chef, style: { slug: style.slug, name: style.name } }));
   };
   const another = () => {

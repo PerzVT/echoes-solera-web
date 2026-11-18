@@ -37,15 +37,18 @@ export function SaveAction({ error, children }: { error?: string; children: Reac
 export function useSaveThen(flush: () => Promise<void>) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  /** Saves, then runs `then`. Settles with whether both went through. */
   const go = async (then: () => void | Promise<void>) => {
     setBusy(true);
     setError("");
     try {
       await flush();
       await then();
+      return true;
     } catch (e) {
       setError(e instanceof Error && e.message ? e.message : "That did not save. Try again.");
       setBusy(false);
+      return false;
     }
   };
   return { busy, error, go };
