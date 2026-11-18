@@ -61,7 +61,10 @@ const nextConfig: NextConfig = {
   images: { formats: ["image/avif", "image/webp"], minimumCacheTTL: 86400, qualities: [75, 90] },
   // app/walk/route.ts serves the Tidebell Cove HTML; the game loads garments from /assets/wardrobe/.
   // The creator's postgres adapter reads its schema from lib/labs/store/schema.sql when it first connects.
-  outputFileTracingIncludes: { "/walk": ["./lib/labs/cove/tidebell-cove.html"], "/api/creator/**": ["./lib/labs/store/schema.sql"] },
+  outputFileTracingIncludes: { "/walk": ["./lib/labs/cove/tidebell-cove.html"], "/api/creator/**": ["./lib/labs/store/schema.sql"], "/api/cove": ["./lib/labs/store/schema.sql"] },
+  // lib/labs/ai/images.ts builds a path under public/ at run time, which made the tracer copy all of public/
+  // into every server function. Functions fetch those pictures from the site instead, so public/ stays out.
+  outputFileTracingExcludes: { "/**": ["./public/**"] },
   async rewrites() {
     return [{ source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" }];
   },
