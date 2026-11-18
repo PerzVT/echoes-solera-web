@@ -13,7 +13,7 @@ export const notionToken = () => process.env.NOTION_TOKEN?.trim() || null;
 
 export function requireNotion() {
   const token = notionToken();
-  if (!token) throw new Bad("not_linked", "Notion is not linked.", 503);
+  if (!token) throw new Bad("not_linked", "Notion integration not set up.", 503);
   return token;
 }
 
@@ -40,7 +40,7 @@ export async function notion<T>(req: ReadPath): Promise<T> {
   }
   if (res.ok) return (await res.json()) as T;
   const code = ((await res.json().catch(() => null)) as { code?: string } | null)?.code ?? "";
-  if (res.status === 401) throw new Bad("not_linked", "Notion is not linked.", 503);
+  if (res.status === 401) throw new Bad("not_linked", "Notion integration not set up.", 503);
   if (res.status === 403 || res.status === 404 || code === "object_not_found") throw new Bad("not_found", "That page is not shared with the site's Notion connection.", 404);
   if (res.status === 429) throw new Bad("busy", "Notion is busy. Try again in a minute.", 429);
   throw new Bad("notion_error", "Notion had a problem. Try again.", 502);

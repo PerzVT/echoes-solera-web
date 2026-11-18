@@ -142,7 +142,7 @@ function NotionDialog(props: Props & { onClose: () => void }) {
   let body: ReactNode;
   if (statusError) body = <Alert>{statusError}</Alert>;
   else if (!status) body = <Status icon="spinner">Connecting to Notion</Status>;
-  else if (!status.linked) body = <p className={n.line}>Notion is not connected.</p>;
+  else if (!status.linked) body = <p className={n.line}>Notion integration not set up.</p>;
   else if (phase.at === "done")
     body = (
       <p className={n.line} role="status">

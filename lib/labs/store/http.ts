@@ -5,7 +5,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { currentUser, sameOrigin, type Session } from "@/lib/labs/auth";
-import { Bad, LIMITS } from "./validate";
+import { dropBytes, readDirectUpload } from "./bytes";
+import { getStore } from "./index";
+import { Bad, LIMITS, fileName } from "./validate";
 
 const NO_STORE = { "cache-control": "no-store" };
 
@@ -79,6 +81,28 @@ export async function readForm(request: NextRequest, max: number): Promise<FormD
     return await new Response(bytes as BodyInit, { headers: { "content-type": type } }).formData();
   } catch {
     throw new Bad("invalid", "That form could not be read.");
+  }
+}
+
+/**
+ * A file the browser sent straight to the Blob store: the form's `upload` (the pathname it was given) and
+ * `uploadName`. The bytes are read back and `typeOf` checks them before anything is saved; a refused file is
+ * dropped from the store. Null when the form has no `upload`.
+ */
+export async function sentFile(form: FormData, typeOf: (name: string, bytes: Uint8Array) => string) {
+  const pathname = form.get("upload");
+  if (typeof pathname !== "string" || !pathname) return null;
+  // One record per stored file: a second claim on the same upload would let one delete pull the other's bytes.
+  const key = /([a-f0-9]{24})$/.exec(pathname)?.[1];
+  if (key && (await getStore().getFile(key))) throw new Bad("invalid", "That upload was already saved.");
+  const got = await readDirectUpload(pathname, LIMITS.upload);
+  const raw = form.get("uploadName");
+  const name = fileName(typeof raw === "string" ? raw : "");
+  try {
+    return { name, type: typeOf(name, got.bytes), bytes: got.bytes, sent: { key: got.key, location: got.location } };
+  } catch (e) {
+    await dropBytes([got.location]);
+    throw e;
   }
 }
 

@@ -28,6 +28,35 @@ const json = (method: string, body: unknown): RequestInit => ({ method, headers:
 
 export const fileUrl = (key: string) => `/api/creator/files/${key}`;
 
+/** The site's functions refuse bodies over about 4.5 MB, so larger files go straight to the Blob store first. */
+const DIRECT_OVER = 4 * 1024 * 1024;
+
+/**
+ * Puts a file on the form: as the file itself, or, over 4 MB with a Blob store set up, sent to the store on a
+ * presigned address and named by `upload` and `uploadName`. The route checks it either way before keeping it.
+ */
+async function attach(form: FormData, field: string, kind: "script" | "cast", file: File) {
+  if (file.size > DIRECT_OVER) {
+    const got = await call<{ direct: boolean; pathname?: string; url?: string; headers?: Record<string, string> }>(
+      "/api/creator/uploads",
+      json("POST", { kind, name: file.name, type: file.type, size: file.size }),
+    );
+    if (got.direct && got.pathname && got.url) {
+      let res: Response;
+      try {
+        res = await fetch(got.url, { method: "PUT", headers: got.headers, body: file });
+      } catch {
+        throw new SaveError("The file did not upload. Check the connection and try again.");
+      }
+      if (!res.ok) throw new SaveError("The file did not upload. Try again.");
+      form.set("upload", got.pathname);
+      form.set("uploadName", file.name);
+      return;
+    }
+  }
+  form.set(field, file);
+}
+
 export const api = {
   listAll: () => call<{ series: Series[]; episodes: Episode[] }>("/api/creator/series"),
   createSeries: (title: string, tool: Tool = "mini-series") => call<{ series: Series }>("/api/creator/series", json("POST", { title, tool })).then((d) => d.series),
@@ -40,10 +69,10 @@ export const api = {
   patchEpisode: (id: string, step: Step) => call<{ episode: Episode }>(`/api/creator/episodes/${id}`, json("PATCH", { step })).then((d) => d.episode),
   deleteEpisode: (id: string, keepalive = false) => call(`/api/creator/episodes/${id}`, { method: "DELETE", keepalive }),
 
-  saveScript: (id: string, text: string, file: File | null, clearFile: boolean) => {
+  saveScript: async (id: string, text: string, file: File | null, clearFile: boolean) => {
     const form = new FormData();
     form.set("text", text);
-    if (file) form.set("file", file);
+    if (file) await attach(form, "file", "script", file);
     if (clearFile) form.set("clearFile", "1");
     return call<{ script: Script }>(`/api/creator/episodes/${id}/script`, { method: "PUT", body: form }).then((d) => d.script);
   },
@@ -52,12 +81,12 @@ export const api = {
   saveChoices: (id: string, body: { cast?: CastChoice[]; style?: string | null; references?: string[] }) => call<{ choices: Choices }>(`/api/creator/episodes/${id}/choices`, json("PUT", body)),
 
   listCast: (seriesId: string) => call<{ sheets: CastSheet[] }>(`/api/creator/cast?series=${encodeURIComponent(seriesId)}`).then((d) => d.sheets),
-  addCast: (seriesId: string, character: string, tag: string, image: File) => {
+  addCast: async (seriesId: string, character: string, tag: string, image: File) => {
     const form = new FormData();
     form.set("seriesId", seriesId);
     form.set("character", character);
     if (tag) form.set("tag", tag);
-    form.set("image", image);
+    await attach(form, "image", "cast", image);
     return call<{ sheet: CastSheet }>("/api/creator/cast", { method: "POST", body: form }).then((d) => d.sheet);
   },
   patchCast: (id: string, patch: { character?: string; tag?: string }) => call<{ sheet: CastSheet }>(`/api/creator/cast/${id}`, json("PATCH", patch)).then((d) => d.sheet),

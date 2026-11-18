@@ -112,11 +112,12 @@ async function episodeOrThrow(id: string) {
 
 /* ---------- Files ---------- */
 
-export type Upload = { name: string; type: string; bytes: Uint8Array };
+/** `sent` is set when the browser already put the bytes in the Blob store (see startDirectUpload). */
+export type Upload = { name: string; type: string; bytes: Uint8Array; sent?: { key: string; location: string } };
 
 async function storeFile(by: string, upload: Upload) {
-  const key = hex(12);
-  const location = await saveBytes(key, upload.type, upload.bytes);
+  const key = upload.sent?.key ?? hex(12);
+  const location = upload.sent?.location ?? (await saveBytes(key, upload.type, upload.bytes));
   const file: StoredFile = { key, name: upload.name, type: upload.type, size: upload.bytes.byteLength, location, owner: by, createdAt: new Date().toISOString() };
   await getStore().putFile(file);
   return file;
