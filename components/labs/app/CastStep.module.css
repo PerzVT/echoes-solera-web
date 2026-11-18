@@ -253,6 +253,16 @@
   .tools {
     grid-template-columns: 1fr;
   }
+  /* Half-width cards: a long label wraps inside its button rather than running past the card. */
+  .tools > button {
+    min-width: 0;
+    height: auto;
+    min-height: 44px;
+    padding-block: 6px;
+    padding-inline: 8px;
+    white-space: normal;
+    line-height: 1.25;
+  }
   .variant {
     min-height: 44px;
   }
@@ -286,4 +296,26 @@
   color: var(--text);
   font: inherit;
   font-weight: 600;
+}
+
+/* The page heading and the Notion import beside it. */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+.failed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+/* A choice the cast match left to the person. */
+.question {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text);
 }

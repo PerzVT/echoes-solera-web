@@ -34,6 +34,13 @@ export const seriesCards: SeriesCard[] = [
   { title: "Heart of the Gray Winter", slug: "gray-winter", cover: "/labs/mini-series/gray-winter/cover.webp" },
 ];
 
+/** The anime in the Library before anything is saved. Episodes are named by number only. */
+export const animeSeriesCards: SeriesCard[] = [
+  { title: "Catalyst", slug: "catalyst", cover: "/labs/anime/catalyst.webp" },
+  { title: "Back to Me", slug: "back-to-me", cover: "/labs/anime/dances/cloud-dance.webp" },
+  { title: "Echoes of Solera", slug: "echoes-of-solera", cover: "/labs/anime/hero-bg.webp" },
+];
+
 /* ---------- Script ---------- */
 
 export const scriptTypes = [".txt", ".docx", ".fdx", ".pdf"];
@@ -44,7 +51,7 @@ export const processingStages = ["Reading the scenes", "Splitting into generatio
 
 export type Block =
   | { id: string; kind: "heading"; number: number; text: string }
-  | { id: string; kind: "camera"; text: string; prompt: string }
+  | { id: string; kind: "camera"; text: string; prompt: string; /** Acting, light and blocking notes for the shot, from a generated screenplay. */ direction?: string }
   | { id: string; kind: "action"; text: string; rewrite: string }
   | { id: string; kind: "dialogue"; cue: string; text: string; rewrite: string };
 
@@ -155,8 +162,6 @@ const clip = (file: string, name = "Take 1"): Take => ({ name, src: `${E}/${file
 /** The six clips an episode's generations show, in order, each a different shot from public/labs/mini-series/second-chance/episodes. */
 export const clips = ["ep-01", "1", "7", "6", "5", "ep-05"].map((f) => clip(f));
 
-/** Clips a retry lands on, in turn: ones no generation starts with. */
-export const retakes = ["ep-03", "ep-04", "2"].map((f) => clip(f));
 
 type CastCharacter = { id: string; name: string };
 export type CastSheet = {

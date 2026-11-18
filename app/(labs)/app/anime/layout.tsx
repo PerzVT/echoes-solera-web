@@ -1,6 +1,6 @@
-import { AnimeProvider } from "@/components/labs/board/store";
+import { CastProvider } from "@/components/labs/app/CastProvider";
 
-/** The anime tool keeps its canvases and the anime being made across its pages. */
+/** Anime runs the same episode flow as mini-series, with its own series, cast, styles and clips. */
 export default function AnimeLayout({ children }: { children: React.ReactNode }) {
-  return <AnimeProvider>{children}</AnimeProvider>;
+  return <CastProvider tool="anime">{children}</CastProvider>;
 }

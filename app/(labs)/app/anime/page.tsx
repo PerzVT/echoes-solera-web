@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { CanvasList } from "@/components/labs/board/CanvasList";
+import { ScriptStep } from "@/components/labs/app/ScriptStep";
 
 export const metadata: Metadata = { title: "Anime" };
 
-export default function AnimePage() {
-  return <CanvasList />;
+export default function AnimeStartPage() {
+  return <ScriptStep />;
 }

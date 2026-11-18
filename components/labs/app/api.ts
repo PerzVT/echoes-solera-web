@@ -1,7 +1,10 @@
 /** The creator's calls to its own API (app/api/creator). Every failure becomes a SaveError with a plain message. */
-import type { CastChoice, CastSheet, Choices, Episode, Note, Screenplay, Script, Series, Step } from "@/lib/labs/store/types";
+import type { NotionImportCastResult, NotionImportScriptResult, NotionSearchResult, NotionStatus } from "@/lib/labs/ai/contract";
+import type { CastChoice, CastSheet, Choices, Episode, Frame, Manga, MangaLetter, MangaPage, MangaStep, Note, Screenplay, Script, Series, Step, Storyboard, StoryboardStep, Tool } from "@/lib/labs/store/types";
 
-export type { CastChoice, CastSheet, Episode, Series, Step };
+export type { CastChoice, CastSheet, Episode, Frame, Manga, MangaLetter, MangaPage, MangaStep, Series, Step, Storyboard, StoryboardStep };
+export type StoryboardPatch = Partial<Pick<Storyboard, "title" | "source" | "style" | "frames" | "step">>;
+export type MangaPatch = Partial<Pick<Manga, "title" | "source" | "style" | "pageCount" | "pages" | "step">>;
 export type EpisodeDetail = { episode: Episode; script: Script | null; screenplay: Screenplay | null; choices: Choices | null };
 
 export class SaveError extends Error {}
@@ -27,7 +30,7 @@ export const fileUrl = (key: string) => `/api/creator/files/${key}`;
 
 export const api = {
   listAll: () => call<{ series: Series[]; episodes: Episode[] }>("/api/creator/series"),
-  createSeries: (title: string) => call<{ series: Series }>("/api/creator/series", json("POST", { title, tool: "mini-series" })).then((d) => d.series),
+  createSeries: (title: string, tool: Tool = "mini-series") => call<{ series: Series }>("/api/creator/series", json("POST", { title, tool })).then((d) => d.series),
   patchSeries: (id: string, patch: { title?: string; style?: string | null; cover?: string | null }) =>
     call<{ series: Series }>(`/api/creator/series/${id}`, json("PATCH", patch)).then((d) => d.series),
   deleteSeries: (id: string, keepalive = false) => call(`/api/creator/series/${id}`, { method: "DELETE", keepalive }),
@@ -59,4 +62,37 @@ export const api = {
   },
   patchCast: (id: string, patch: { character?: string; tag?: string }) => call<{ sheet: CastSheet }>(`/api/creator/cast/${id}`, json("PATCH", patch)).then((d) => d.sheet),
   deleteCast: (id: string) => call(`/api/creator/cast/${id}`, { method: "DELETE" }),
+
+  listStoryboards: () => call<{ storyboards: Storyboard[] }>("/api/creator/storyboards").then((d) => d.storyboards),
+  createStoryboard: (title: string, source: string) => call<{ storyboard: Storyboard }>("/api/creator/storyboards", json("POST", { title, source })).then((d) => d.storyboard),
+  getStoryboard: (id: string) => call<{ storyboard: Storyboard }>(`/api/creator/storyboards/${id}`).then((d) => d.storyboard),
+  saveStoryboard: (id: string, patch: StoryboardPatch) => call<{ storyboard: Storyboard }>(`/api/creator/storyboards/${id}`, json("PUT", patch)).then((d) => d.storyboard),
+  deleteStoryboard: (id: string, keepalive = false) => call(`/api/creator/storyboards/${id}`, { method: "DELETE", keepalive }),
+
+  listMangas: () => call<{ mangas: Manga[] }>("/api/creator/mangas").then((d) => d.mangas),
+  createManga: (title: string, source: string) => call<{ manga: Manga }>("/api/creator/mangas", json("POST", { title, source })).then((d) => d.manga),
+  getManga: (id: string) => call<{ manga: Manga }>(`/api/creator/mangas/${id}`).then((d) => d.manga),
+  saveManga: (id: string, patch: MangaPatch) => call<{ manga: Manga }>(`/api/creator/mangas/${id}`, json("PUT", patch)).then((d) => d.manga),
+  deleteManga: (id: string, keepalive = false) => call(`/api/creator/mangas/${id}`, { method: "DELETE", keepalive }),
+
+  notionStatus: () => {
+    notionRead ??= call<NotionStatus>("/api/creator/notion/status").catch((e) => {
+      notionRead = null;
+      throw e;
+    });
+    return notionRead;
+  },
+  /** What the Notion connection can see: a search, or the pages of one database (`inDb`). */
+  notionSearch: (q: string, inDb: string | null, cursor: string | null) => {
+    const p = new URLSearchParams();
+    if (inDb) p.set("in", inDb);
+    else if (q.trim()) p.set("q", q.trim());
+    if (cursor) p.set("cursor", cursor);
+    return call<NotionSearchResult>(`/api/creator/notion/search?${p}`);
+  },
+  notionImportScript: (pageId: string, episodeId: string) => call<NotionImportScriptResult>("/api/creator/notion/import/script", json("POST", { pageId, episodeId })),
+  notionImportCast: (seriesId: string, pageIds: string[]) => call<NotionImportCastResult>("/api/creator/notion/import/cast", json("POST", { seriesId, pageIds })),
 };
+
+/** The Notion connection's state, read once per visit: it changes only when the site's settings do. */
+let notionRead: Promise<NotionStatus> | null = null;

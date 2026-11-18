@@ -1,145 +1,11 @@
-/* The start screen: the heading and one large box, centred. */
-.page {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 32px;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px 0 10vh;
-}
-.title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2rem, 1.4rem + 2vw, 2.75rem);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-align: center;
-  text-wrap: balance;
-}
-
-.box {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: 320px;
-  border: 1px solid var(--border-strong);
-  border-radius: 20px;
-  background: var(--surface);
-  transition:
-    border-color var(--dur-feedback) var(--ease-out),
-    background-color var(--dur-feedback) var(--ease-out);
-}
-.box:has(.text:focus-visible) {
-  border-color: var(--text-muted);
-}
-.box[data-over="true"] {
-  border-color: var(--text);
-  background: var(--surface-hover);
-}
-.text {
-  flex: 1 1 auto;
-  width: 100%;
-  min-height: 220px;
-  padding: 24px 24px 8px;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  resize: none;
-}
-.text::placeholder {
-  color: var(--text-muted);
-  opacity: 1;
-}
-.text:focus {
-  outline: none;
-}
-.dropping {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  border-radius: inherit;
-  background: rgb(14 20 28 / 0.6);
-  pointer-events: none;
-}
-.alert {
-  margin: 0 24px 8px;
-}
-.foot {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-}
-.submit {
-  margin-left: auto;
-  min-width: 112px;
-}
-.chosen {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  padding-left: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface-sunken);
-  font-size: 0.875rem;
-}
-.chosenName {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-/* Phones: the box takes the screen under the bar, its foot with Submit held at the bottom within reach. */
-@media (max-width: 767px) {
-  .page {
-    justify-content: flex-start;
-    gap: 16px;
-    padding: 8px 0 0;
-  }
-  .title {
-    font-size: 1.75rem;
-    text-align: left;
-  }
-  .box {
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-  .text {
-    padding: 16px 16px 8px;
-  }
-  .foot {
-    position: sticky;
-    bottom: 0;
-    padding: 12px;
-    border-top: 1px solid var(--border);
-    border-radius: 0 0 20px 20px;
-    background: var(--surface);
-  }
-  .submit {
-    flex: 1;
-  }
-}
-
-/* ---------- Series ---------- */
+/* The series picker in the start box's foot. */
 .end {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
-  margin-left: auto;
   min-width: 0;
-}
-.end .submit {
-  margin-left: 0;
 }
 .series {
   display: flex;
@@ -192,9 +58,6 @@
   outline-offset: 1px;
 }
 @media (max-width: 767px) {
-  .foot {
-    flex-wrap: wrap;
-  }
   .end {
     flex: 1 1 100%;
     display: grid;

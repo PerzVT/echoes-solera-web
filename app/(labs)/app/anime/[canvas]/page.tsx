@@ -1,10 +1,6 @@
-import type { Metadata } from "next";
-import { CanvasBoard } from "@/components/labs/board/Storyboard";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Storyboard" };
-
-export default async function CanvasPage({ params, searchParams }: { params: Promise<{ canvas: string }>; searchParams: Promise<{ ep?: string }> }) {
-  const { canvas } = await params;
-  const { ep } = await searchParams;
-  return <CanvasBoard id={canvas} ep={Number(ep) || 1} />;
+/** The old anime canvases are gone: their addresses open the anime Library. */
+export default function OldCanvasPage() {
+  redirect("/app/anime/library");
 }

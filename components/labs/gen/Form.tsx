@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { GestureIcon } from "@/components/labs/fx";
 import { Icon } from "@/components/labs/Icon";
 import { Btn } from "../chat/ui";
+import { Composer } from "../chat/Composer";
 import { chefs, genStyles, lengthOf, searchRecipes, seconds, type Recipe } from "./data";
 import { chosenRecipe, useCooking, type RecipeState } from "./store";
 import g from "./gen.module.css";
@@ -64,7 +65,7 @@ export function Form({ onGenerate }: { onGenerate: () => void }) {
           <dd>{seconds(lengthOf(chosen))}</dd>
         </dl>
         <div className={g.go}>
-          <Btn kind="primary" className={g.generate} disabled={!ready} onClick={onGenerate}>
+          <Btn kind="primary" className={g.generate} icon={<Icon name="generate" size={16} />} disabled={!ready} onClick={onGenerate}>
             Generate
           </Btn>
         </div>
@@ -133,21 +134,13 @@ function RecipeField({ state, onChange }: { state: RecipeState; onChange: (s: Re
         <div className={g.picked}>
           <Thumb r={state.picked} />
           <span className={g.rowTitle}>{state.picked.title}</span>
-          <Btn kind="ghost" small onClick={change}>
+          <Btn kind="ghost" small icon={<Icon name="create" size={16} />} onClick={change}>
             Change
           </Btn>
         </div>
       ) : state.mode === "custom" ? (
         <div className={g.custom}>
-          <textarea
-            ref={area}
-            className={g.area}
-            aria-label="Your recipe"
-            placeholder="Paste a recipe"
-            rows={5}
-            value={state.text}
-            onChange={(e) => onChange({ ...state, text: e.target.value })}
-          />
+          <Composer ref={area} size="compact" label="Your recipe" placeholder="Paste a recipe" value={state.text} onChange={(text) => onChange({ ...state, text })} />
         </div>
       ) : (
         <div className={g.searchBox}>

@@ -27,7 +27,13 @@ const nextConfig: NextConfig = {
   // in public/, so every .mp4 address on the site is sent there. A new video is uploaded to the store at
   // its public/ path; nothing else changes.
   async redirects() {
-    return [{ source: "/:path(.*\\.mp4)", destination: `${MEDIA}/:path`, permanent: false }];
+    return [
+      { source: "/:path(.*\\.mp4)", destination: `${MEDIA}/:path`, permanent: false },
+      // Anime now runs the episode flow: the old anime addresses open its steps.
+      { source: "/app/anime/new", destination: "/app/anime", permanent: false },
+      { source: "/app/anime/new/:step(screenplay|cast|style)", destination: "/app/anime/episode/:step", permanent: false },
+      { source: "/app/anime/new/storyboard", destination: "/app/anime/episode/results", permanent: false },
+    ];
   },
   async headers() {
     const catalogHeaders = [

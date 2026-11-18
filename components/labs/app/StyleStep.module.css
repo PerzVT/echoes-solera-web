@@ -162,3 +162,10 @@
   font-size: 1.125rem;
   line-height: 1.4;
 }
+
+/* A run of tiles under its own heading. */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

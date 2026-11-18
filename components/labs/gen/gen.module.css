@@ -173,7 +173,7 @@
 }
 .custom {
   display: grid;
-  justify-items: start;
+  justify-items: stretch;
   gap: 8px;
 }
 .area {

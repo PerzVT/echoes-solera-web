@@ -1,10 +1,12 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { clips, screenplay, seriesCards, startingCast, type Block, type Note, type SeriesCard, type SeriesCast } from "@/lib/labs/maker";
+import { type Block, type Note, type SeriesCard, type SeriesCast } from "@/lib/labs/maker";
 import { api, type Episode, type Series, type Step } from "./api";
-import { episodesOf, nextEpisodeName, startingElements, type Element, type EpisodeItem } from "./creator";
-import { generationsFor, parseScript, type Gen } from "./script";
+import { episodesOf, nextEpisodeName, type Element, type EpisodeItem } from "./creator";
+import { loadScreenplay, plannedClips } from "./generate";
+import type { Gen } from "./script";
+import { PROFILES, type FlowTool, type Profile } from "./tools";
 
 /**
  * One episode's own work: its script read into blocks, the comments and edits on it, its cast, style and clip
@@ -47,6 +49,9 @@ type Saved = {
 type Remote = { series: Series[]; episodes: Episode[] };
 
 type Store = {
+  /** The tool this flow makes: mini-series or anime. Its profile holds the routes, demo data and styles. */
+  tool: FlowTool;
+  profile: Profile;
   get: (series: string) => SeriesCast;
   /** The series in the Library, in order: saved ones first, newest first, then the built-in ones. */
   series: SeriesCard[];
@@ -83,22 +88,12 @@ type Store = {
 };
 
 const Ctx = createContext<Store | null>(null);
-const empty: SeriesCast = { characters: [], sheets: [] };
-const STORAGE = "nine-lives:mini-series";
-/** The episode a step shows when it is opened directly with nothing submitted: the demo script, not yet finished. */
+/** The episode a step shows when it is opened directly with nothing submitted: empty, not yet finished. */
 export const DRAFT = "draft";
 export const REACHED = "flow:reached";
 export const episodeKey = (series: string, episode: string) => `${series}/${episode}`;
 
 const ORDER: Step[] = ["script", "screenplay", "cast", "style", "results", "done"];
-const HREF: Record<Step, string> = {
-  script: "/app",
-  screenplay: "/app/episode/screenplay",
-  cast: "/app/episode/cast",
-  style: "/app/episode/style",
-  results: "/app/episode/results",
-  done: "/app/episode/results",
-};
 /** A deleted series or episode can be undone for this long before it is deleted on the server. */
 const UNDO_MS = 6500;
 const SAVE_MS = 700;
@@ -108,7 +103,11 @@ const numberOf = (name: string) => Number(/(\d+)$/.exec(name)?.[1] ?? 0);
 
 type Job = { run: () => Promise<unknown>; body: string };
 
-export function CastProvider({ children }: { children: ReactNode }) {
+/** One per flow tool: app/(labs)/app/layout.tsx holds the mini-series one, app/(labs)/app/anime/layout.tsx the anime one. */
+export function CastProvider({ tool = "mini-series", children }: { tool?: FlowTool; children: ReactNode }) {
+  const profile = PROFILES[tool];
+  const STORAGE = profile.storage;
+  const HREF: Record<Step, string> = { ...profile.steps, done: profile.steps.results };
   const [saved, setSaved] = useState<Saved>(blank);
   const savedRef = useRef<Saved>(blank);
   const [remote, setRemote] = useState<Remote>({ series: [], episodes: [] });
@@ -153,13 +152,13 @@ export function CastProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
     };
-  }, [editRemote]);
+  }, [editRemote, STORAGE]);
   useEffect(() => {
     if (!ready) return;
     try {
       sessionStorage.setItem(STORAGE, JSON.stringify(saved));
     } catch {}
-  }, [saved, ready]);
+  }, [saved, ready, STORAGE]);
 
   const run = useCallback((name: string) => {
     clearTimeout(timers.current.get(name));
@@ -224,18 +223,18 @@ export function CastProvider({ children }: { children: ReactNode }) {
   }, [run]);
 
   const store = useMemo<Store>(() => {
-    const savedSeries = remote.series.filter((s) => s.tool === "mini-series");
+    const savedSeries = remote.series.filter((s) => s.tool === tool);
     const isSaved = (slug: string) => savedSeries.some((s) => s.id === slug);
     const savedCards: SeriesCard[] = [...savedSeries].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((s) => ({ slug: s.id, title: s.title, cover: s.cover ?? "" }));
-    const all = [...savedCards, ...seriesCards];
+    const all = [...savedCards, ...profile.seriesCards];
     const series = all.filter((c) => !saved.deletedSeries.includes(c.slug)).map((c) => ({ ...c, title: saved.renamed[c.slug] ?? c.title }));
     const seriesTitle = (slug: string) => saved.renamed[slug] ?? all.find((c) => c.slug === slug)?.title ?? slug;
 
     const episodesIn = (slug: string) => {
       const savedEps: EpisodeItem[] = remote.episodes
         .filter((e) => e.seriesId === slug)
-        .map((e) => ({ name: e.title, id: e.id, step: e.step, poster: e.step === "done" ? clips[0].poster : undefined }));
-      const base = isSaved(slug) ? [] : episodesOf(slug, saved.added[slug]);
+        .map((e) => ({ name: e.title, id: e.id, step: e.step, poster: e.step === "done" ? profile.clips[0].poster : undefined }));
+      const base = isSaved(slug) ? [] : episodesOf(slug, saved.added[slug], profile.extra);
       const merged = [...base.filter((b) => !savedEps.some((s) => s.name === b.name)), ...savedEps].sort((a, b) => numberOf(a.name) - numberOf(b.name));
       return merged.filter((e) => !saved.deletedEpisodes.includes(episodeKey(slug, e.name)));
     };
@@ -244,12 +243,12 @@ export function CastProvider({ children }: { children: ReactNode }) {
       const had = saved.episodes[key];
       if (had) return had;
       if (key === DRAFT) {
-        const s = series[0]?.slug ?? "second-chance";
-        return { series: s, episode: nextEpisodeName(episodesIn(s)), isNew: true, source: "", blocks: screenplay };
+        const s = series[0]?.slug ?? profile.seriesCards[0].slug;
+        return { series: s, episode: nextEpisodeName(episodesIn(s)), isNew: true, source: "", blocks: [] };
       }
       // A finished episode from the Library: the demo script, the default cast, every clip approved.
       const at = key.indexOf("/");
-      return { series: key.slice(0, at), episode: key.slice(at + 1), isNew: false, source: "", blocks: screenplay, elements: startingElements, gens: generationsFor(screenplay, true) };
+      return { series: key.slice(0, at), episode: key.slice(at + 1), isNew: false, source: "", blocks: profile.demo, elements: profile.elements, gens: plannedClips(tool, profile.demo, true) };
     };
     const latest = (key: string) => savedRef.current.episodes[key] ?? episodeOf(key);
 
@@ -273,7 +272,9 @@ export function CastProvider({ children }: { children: ReactNode }) {
     const putSeries = (s: Series) => editRemote((r) => ({ ...r, series: [...r.series.filter((x) => x.id !== s.id), s] }));
 
     return {
-      get: (s) => startingCast[s] ?? empty,
+      tool,
+      profile,
+      get: (s) => profile.cast(s),
       series,
       seriesTitle,
       isSaved,
@@ -291,7 +292,7 @@ export function CastProvider({ children }: { children: ReactNode }) {
       createEpisode: async (target) => {
         let slug: string;
         if ("title" in target) {
-          const s = await api.createSeries(target.title);
+          const s = await api.createSeries(target.title, tool);
           putSeries(s);
           slug = s.id;
         } else slug = target.series;
@@ -307,6 +308,7 @@ export function CastProvider({ children }: { children: ReactNode }) {
       openSaved: async (id) => {
         const d = await api.getEpisode(id);
         const e = d.episode;
+        const { blocks } = await loadScreenplay({ tool, episodeId: id });
         putEpisode(e);
         const source = d.script?.text ?? "";
         const key = episodeKey(e.seriesId, e.title);
@@ -318,7 +320,7 @@ export function CastProvider({ children }: { children: ReactNode }) {
           isNew: e.step !== "done",
           source,
           file: d.script?.fileName ?? undefined,
-          blocks: source.trim() ? parseScript(source) : screenplay,
+          blocks,
           texts: d.screenplay?.texts,
           notes: d.screenplay?.notes,
           changed: d.screenplay?.changed,
@@ -428,7 +430,8 @@ export function CastProvider({ children }: { children: ReactNode }) {
       kept: <T,>(key: string) => memo.current.get(key) as T | undefined,
       keep: (key, value) => void memo.current.set(key, value),
     };
-  }, [saved, remote, edit, editRemote, schedule, flush]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saved, remote, edit, editRemote, schedule, flush, tool]);
 
   return <Ctx.Provider value={store}>{ready ? children : null}</Ctx.Provider>;
 }

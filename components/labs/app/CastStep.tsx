@@ -10,8 +10,10 @@ import type { CastSheet } from "@/lib/labs/maker";
 import { api, fileUrl, type CastSheet as Upload } from "./api";
 import { AppShell } from "./AppShell";
 import { useCast, useEpisode } from "./CastProvider";
-import { libraryPlaces, startingElements, type Element } from "./creator";
-import { SaveAction, SaveError, SheetImage, useFilePicker, useSaveThen } from "./parts";
+import type { Element } from "./creator";
+import { matchCast } from "./generate";
+import { NotionImport } from "./NotionImport";
+import { Alert, SaveAction, SaveError, SheetImage, Status, useFilePicker, useSaveThen } from "./parts";
 import c from "./CastStep.module.css";
 
 /** What the open picker chooses from: the sheets of one character, or the whole library for one element. */
@@ -26,9 +28,8 @@ export function CastStep() {
   const router = useRouter();
   const store = useCast();
   const { ep, patch } = useEpisode();
-  // The demo cast library is Second Chance at Your Heart's; a new series has no sheets of its own yet.
-  const series = store.get("second-chance");
-  const [elements, setElements] = useState<Element[]>(() => ep.elements ?? startingElements);
+  const series = store.get(ep.series);
+  const [elements, setElements] = useState<Element[]>(() => ep.elements ?? []);
   const [picking, setPicking] = useState<Picking | null>(null);
   const uploadFor = useRef<string | null>(null);
   /** Sheets uploaded to this series, saved on the server. Only a saved episode reads and adds them. */
@@ -36,17 +37,35 @@ export function CastStep() {
   const [busy, setBusy] = useState<Record<string, Busy>>({});
   const saving = useSaveThen(store.flush);
   const saved = Boolean(ep.id);
+  /** A saved episode with no cast chosen yet is matched against the series' sheets. */
+  const [unmatched] = useState(() => saved && !ep.elements?.length);
+  const [matching, setMatching] = useState(false);
+  const [matchError, setMatchError] = useState("");
+  const [matchTry, setMatchTry] = useState(0);
   useEffect(() => {
     if (!saved) return;
-    let alive = true;
-    api
-      .listCast(ep.series)
-      .then((list) => alive && setUploads(list))
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, [saved, ep.series]);
+    const stop = new AbortController();
+    void (async () => {
+      const list = await api.listCast(ep.series).catch(() => [] as Upload[]);
+      if (stop.signal.aborted) return;
+      setUploads(list);
+      if (!unmatched || stop.signal.aborted) return;
+      setMatching(true);
+      setMatchError("");
+      setElements([]);
+      try {
+        const r = await matchCast({ tool: store.tool, episodeId: ep.id, seriesId: ep.series, blocks: ep.blocks, texts: ep.texts, library: series, uploads: list }, stop.signal);
+        setElements(r.elements);
+        setMatching(false);
+      } catch (e) {
+        if (stop.signal.aborted) return;
+        setMatchError(e instanceof Error && e.message ? e.message : "The cast did not come back. Try again.");
+        setMatching(false);
+      }
+    })();
+    return () => stop.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saved, ep.series, matchTry]);
   const mark = (id: string, b: Busy) => setBusy((all) => ({ ...all, [id]: b }));
   const failed = (id: string, e: unknown) => mark(id, { error: e instanceof Error && e.message ? e.message : "That did not save. Try again." });
   useEffect(() => {
@@ -120,7 +139,7 @@ export function CastStep() {
   if (pickingEl && picking?.mode === "sheet") choices = sheetsOf(pickingEl.who).map((s) => fromSheet(s));
   else if (pickingEl && pickingEl.kind === "character")
     choices = [...series.characters.flatMap((ch) => sheetsOf(ch.id).map((s) => ({ ...fromSheet(s), group: ch.name }))), ...uploads.map(fromUpload)];
-  else if (pickingEl) choices = [...libraryPlaces.map((p) => ({ key: p.tag, src: p.src, tag: p.tag, name: p.name })), ...uploads.map(fromUpload)];
+  else if (pickingEl) choices = [...store.profile.places.map((p) => ({ key: p.tag, src: p.src, tag: p.tag, name: p.name })), ...uploads.map(fromUpload)];
 
   const choose = (x: Choice) => {
     if (!pickingEl) return;
@@ -143,7 +162,7 @@ export function CastStep() {
       }}
       action={
         <SaveAction error={saving.error}>
-          <Btn kind="primary" loading={saving.busy} onClick={() => saving.go(() => router.push("/app/episode/style"))}>
+          <Btn kind="primary" disabled={matching} loading={saving.busy} iconAfter={<Icon name="arrow" size={16} />} onClick={() => saving.go(() => router.push(store.profile.steps.style))}>
             Next
           </Btn>
         </SaveAction>
@@ -151,8 +170,44 @@ export function CastStep() {
     >
       {picker.node}
       <div className={c.page}>
-        <h1 className={c.title}>Cast</h1>
-        {groups.map((g) => (
+        <div className={c.head}>
+          <h1 className={c.title}>Cast</h1>
+          <NotionImport
+            mode="cast"
+            label="Import sheets from Notion"
+            seriesId={ep.series}
+            disabled={matching}
+            onCast={({ sheets }) => {
+              setUploads((all) => [...all, ...sheets.filter((s) => !all.some((x) => x.id === s.id))]);
+              setElements((all) => {
+                const next = [...all];
+                for (const s of sheets) {
+                  const src = fileUrl(s.image);
+                  const name = s.character.toLowerCase();
+                  const at = next.findIndex((x) => x.name.toLowerCase() === name && !x.src);
+                  if (at >= 0) next[at] = { ...next[at], src, sheet: s.id, variant: s.variant ?? undefined, question: undefined };
+                  else if (!next.some((x) => x.sheet === s.id || (x.name.toLowerCase() === name && x.src)))
+                    next.push({ id: `notion-${s.id}`, kind: "character", name: s.character, tag: s.tag, src, sheet: s.id, variant: s.variant ?? undefined });
+                }
+                return next;
+              });
+            }}
+          />
+        </div>
+        {matchError && (
+          <div className={c.failed}>
+            <Alert>{matchError}</Alert>
+            <Btn kind="secondary" icon={<Icon name="replay" size={16} />} onClick={() => setMatchTry((t) => t + 1)}>
+              Try again
+            </Btn>
+          </div>
+        )}
+        {matching && (
+          <p role="status">
+            <Status icon="spinner">Finding who the screenplay needs</Status>
+          </p>
+        )}
+        {!matching && groups.filter((g) => elements.some((x) => x.kind === g.kind)).map((g) => (
           <section key={g.kind} className={c.group} aria-labelledby={`cast-${g.kind}`}>
             <h2 id={`cast-${g.kind}`} className={c.groupTitle}>
               {g.title}
@@ -214,7 +269,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload, busy, onRename, onRemo
   };
   const tools = (
     <div className={c.tools}>
-      <Btn kind="secondary" small onClick={onLibrary}>
+      <Btn kind="secondary" small icon={<Icon name="library" size={16} />} onClick={onLibrary}>
         Choose from library
       </Btn>
       <Btn kind="secondary" small icon={<GestureIcon name="upload" size={16} />} loading={busy.work === "upload"} success={busy.done} onClick={onUpload}>
@@ -225,6 +280,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload, busy, onRename, onRemo
           <Btn
             kind="ghost"
             small
+            icon={<Icon name="create" size={16} />}
             loading={busy.work === "rename"}
             onClick={() => {
               setDraft(el.name);
@@ -233,7 +289,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload, busy, onRename, onRemo
           >
             Rename
           </Btn>
-          <Btn kind="ghost" small loading={busy.work === "remove"} onClick={onRemove}>
+          <Btn kind="ghost" small icon={<Icon name="close" size={16} />} loading={busy.work === "remove"} onClick={onRemove}>
             Remove
           </Btn>
         </>
@@ -269,6 +325,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload, busy, onRename, onRemo
         <div className={c.text}>
           {title}
           <p className={c.tag}>{el.tag}</p>
+          {el.question && <p className={c.question}>{el.question}</p>}
         </div>
         {tools}
       </article>
@@ -281,6 +338,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload, busy, onRename, onRemo
       <div className={c.text}>
         {title}
         <p className={c.tag}>{el.tag}</p>
+        {el.question && <p className={c.question}>{el.question}</p>}
       </div>
       {el.kind === "character" && sheets > 1 && (
         <button type="button" className={c.variant} onClick={onSheet} aria-label={`Choose another sheet of ${el.name}`}>

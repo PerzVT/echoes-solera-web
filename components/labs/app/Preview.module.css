@@ -1,0 +1,87 @@
+/* Full screen over the page: the picture as large as the window allows. */
+.dialog {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(8 10 14 / 0.94);
+  color: #fff;
+}
+.dialog::backdrop {
+  background: transparent;
+}
+.stage {
+  position: absolute;
+  inset: 56px 72px;
+  display: grid;
+  place-items: center;
+}
+.stage > * {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+}
+/* A frame fills the width it can; a page keeps its full height in view. */
+.stage[data-shape="frame"] > * {
+  width: 100%;
+  height: 100%;
+}
+.stage[data-shape="page"] > * {
+  height: 100%;
+  aspect-ratio: 2 / 3;
+}
+.close,
+.prev,
+.next {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+  transition: background-color var(--dur-feedback) var(--ease-out);
+}
+.close {
+  top: 8px;
+  right: 8px;
+}
+.prev,
+.next {
+  top: 50%;
+  translate: 0 -50%;
+}
+.prev {
+  left: 12px;
+}
+.next {
+  right: 12px;
+}
+.close:focus-visible,
+.prev:focus-visible,
+.next:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .close:hover,
+  .prev:hover,
+  .next:hover {
+    background: rgb(255 255 255 / 0.2);
+  }
+}
+@media (max-width: 767px) {
+  .stage {
+    inset: 56px 8px 72px;
+  }
+  .prev,
+  .next {
+    top: auto;
+    bottom: 12px;
+    translate: none;
+  }
+}

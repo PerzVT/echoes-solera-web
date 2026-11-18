@@ -54,24 +54,7 @@ export const searchRecipes = (q: string) => {
   return t ? recipes.filter((r) => fold(r.title).includes(t)) : recipes;
 };
 
-/** Releases whose poster shows only the dish, no chef: the stand-in for a chef who has none of her own. */
-const dishOnly = releases.filter((r) => ["kacchi-biryani", "mushroom-stroganoff"].includes(slug(r)));
 
-/**
- * The clip a take plays. It must show the chef chosen: her own episode of this dish first, then her other
- * episodes in turn; a chef with no episode gets a dish-only clip, so no other chef appears in her place.
- */
-export function clipFor(r: Recipe, chef: string, take = 0): { video: string; poster: string } {
-  const hers = releases.filter((x) => x.chef === chef);
-  if (hers.length) {
-    const own = r.release && r.release.chef === chef ? [r.release, ...hers.filter((x) => x !== r.release)] : hers;
-    return own[take % own.length];
-  }
-  if (dishOnly.length) return dishOnly[take % dishOnly.length];
-  // No clip fits: her portrait holds the frame and the nearest dish plays once it has developed.
-  const near = r.release ?? releases[take % releases.length];
-  return { video: near.video, poster: chefSrc(chef) ?? near.poster };
-}
 
 /** The show's videos, newest first. */
 export const releasedVideos: Video[] = [...released].reverse().map((r) => ({

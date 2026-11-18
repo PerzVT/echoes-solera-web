@@ -41,8 +41,8 @@ export function nextEpisodeName(episodes: { name: string }[]) {
 }
 
 /** A series' episodes: the fixed ones, then any finished in this session. */
-export function episodesOf(slug: string, added: EpisodeItem[] = []): EpisodeItem[] {
-  const base = seriesExtra[slug]?.episodes ?? [];
+export function episodesOf(slug: string, added: EpisodeItem[] = [], extra = seriesExtra): EpisodeItem[] {
+  const base = extra[slug]?.episodes ?? [];
   return [...base, ...added.filter((a) => !base.some((b) => b.name === a.name))];
 }
 
@@ -51,7 +51,7 @@ export function episodesOf(slug: string, added: EpisodeItem[] = []): EpisodeItem
 type ElementKind = "character" | "location";
 
 /** One character or place the script needs. `tag` is the element ID the prompts use; `src` is its picture, if it has one. `who` is the character id in the series cast. */
-export type Element = { id: string; kind: ElementKind; name: string; tag: string; src?: string; who?: string; variant?: string; /** The uploaded cast sheet the picture is, if it is one. */ sheet?: string };
+export type Element = { id: string; kind: ElementKind; name: string; tag: string; src?: string; who?: string; variant?: string; /** The uploaded cast sheet the picture is, if it is one. */ sheet?: string; /** A choice the cast match could not make, put to the person. */ question?: string };
 
 type PoolImage = { tag: string; name: string; src: string };
 

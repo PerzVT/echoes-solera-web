@@ -227,14 +227,14 @@ function Viewer({ list, current, onMove, onClose, onUse, onDelete }: { list: Vid
               </div>
             </dl>
             <div className={f.actions}>
-              <Btn kind="primary" onClick={() => onUse(current)}>
+              <Btn kind="primary" icon={<Icon name="create" size={16} />} onClick={() => onUse(current)}>
                 Use these settings
               </Btn>
               <a className={f.download} href={current.video} download={fileName(current)}>
                 <GestureIcon name="download" size={16} />
                 Download
               </a>
-              <Btn kind="ghost" className={f.delete} onClick={() => onDelete(current)}>
+              <Btn kind="ghost" className={f.delete} icon={<Icon name="close" size={16} />} onClick={() => onDelete(current)}>
                 Delete
               </Btn>
             </div>

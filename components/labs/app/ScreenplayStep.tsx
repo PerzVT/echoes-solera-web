@@ -5,11 +5,13 @@ import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppShell } from "./AppShell";
 import { Btn, IconBtn } from "@/components/labs/chat/ui";
 import { ChevronIcon, GestureIcon } from "@/components/labs/fx";
+import { Icon } from "@/components/labs/Icon";
 import { useCast, useEpisode } from "./CastProvider";
 import { crossfade } from "./fx/crossfade";
 import m from "./fx/motion.module.css";
-import { Panel, SaveAction, Status, focusSoon, revealOnPhone, useSaveThen } from "./parts";
-import { EPISODE, processingStages, type Block, type Note } from "@/lib/labs/maker";
+import { Panel, SaveAction, SaveError, Status, focusSoon, revealOnPhone, useSaveThen } from "./parts";
+import { processingStages, type Block, type Note } from "@/lib/labs/maker";
+import { reviseScreenplay } from "./generate";
 import s from "./maker.module.css";
 import p from "./ScreenplayStep.module.css";
 
@@ -18,12 +20,13 @@ export type Phase = "processing" | "screenplay";
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function ScreenplayStep({ initial }: { initial: Phase }) {
+  const store = useCast();
   const [phase, setPhase] = useState<Phase>(initial);
   const [arrived, setArrived] = useState(false);
   return phase === "processing" ? (
     <Processing
       onDone={() => {
-        window.history.replaceState(null, "", "/app/episode/screenplay");
+        window.history.replaceState(null, "", store.profile.steps.screenplay);
         setArrived(true);
         setPhase("screenplay");
       }}
@@ -89,8 +92,9 @@ function Processing({ onDone }: { onDone: () => void }) {
   const [now, setNow] = useState(0);
   const [still, setStill] = useState(false);
   const { ep } = useEpisode();
+  const { profile } = useCast();
   const screenplay = ep.blocks;
-  const file = ep.file ?? (ep.source ? "Your script" : EPISODE.file);
+  const file = ep.file ?? (ep.source ? "Your script" : profile.demoFile);
   const [headY, setHeadY] = useState(0);
   const page = useRef<HTMLDivElement>(null);
   const done = useRef(onDone);
@@ -161,7 +165,7 @@ function Processing({ onDone }: { onDone: () => void }) {
       step="screenplay"
       fit
       action={
-        <Btn kind="primary" disabled>
+        <Btn kind="primary" disabled iconAfter={<Icon name="arrow" size={16} />}>
           Next
         </Btn>
       }
@@ -296,6 +300,7 @@ function Screenplay({ arrived }: { arrived: boolean }) {
   const [rewriting, setRewriting] = useState(false);
   const [changed, setChanged] = useState<Set<string>>(() => new Set(ep.changed));
   const [said, setSaid] = useState("");
+  const [reviseError, setReviseError] = useState("");
   /** The passage whose comment is pointed at: hovering or focusing either the card or the passage lights both. */
   const [active, setActive] = useState<string | null>(null);
   const menuFirst = useRef<HTMLButtonElement>(null);
@@ -335,9 +340,9 @@ function Screenplay({ arrived }: { arrived: boolean }) {
   const draft = composer && composer.text.trim() && composer.text.trim() !== (composer.type === "suggestion" ? composer.quote : "") ? composer : null;
   const draftNote = (c: Composer): Note => ({ id: `n${Date.now()}`, block: c.block, type: c.type, quote: c.quote, body: c.text.trim() });
 
-  /** The rewrite in progress, so leaving the screen stops it. */
-  const rewrite = useRef<number | undefined>(undefined);
-  useEffect(() => () => clearTimeout(rewrite.current), []);
+  /** The rewrite in progress. Leaving the screen drops its answer. */
+  const rewrite = useRef(0);
+  useEffect(() => () => void (rewrite.current += 1), []);
 
   const focusPassage = (block: string) => focusSoon(() => document.getElementById(passageId(block)));
 
@@ -394,35 +399,32 @@ function Screenplay({ arrived }: { arrived: boolean }) {
     const sent = draft ? [...notes, draftNote(draft)] : notes;
     crossfade(comments.current);
     setRewriting(true);
+    setReviseError("");
     setNotes(sent);
     setComposer(null);
     setMenu(false);
     setSaid("Rewriting the screenplay.");
     focusSoon(() => commentsHeading.current);
-    clearTimeout(rewrite.current);
-    rewrite.current = window.setTimeout(
-      () => {
-        setTexts((t) => {
-          const next = { ...t };
-          for (const n of sent) {
-            if (n.type === "suggestion") {
-              next[n.block] = next[n.block].includes(n.quote) ? next[n.block].replace(n.quote, n.body) : n.body;
-            } else {
-              const b = screenplay.find((x) => x.id === n.block);
-              if (b && (b.kind === "action" || b.kind === "dialogue")) next[n.block] = b.rewrite;
-            }
-          }
-          return next;
-        });
+    const asked = ++rewrite.current;
+    void reviseScreenplay({ tool: store.tool, blocks: screenplay, texts, notes: sent, episodeId: ep.id }).then(
+      ({ texts: next, blocks: rewritten, changed: marked }) => {
+        if (asked !== rewrite.current) return;
+        if (rewritten) patch({ blocks: rewritten });
+        setTexts(next);
         crossfade(comments.current);
-        setChanged((c) => new Set([...c, ...sent.map((n) => n.block)]));
+        setChanged((c) => new Set([...c, ...(marked ?? sent.map((n) => n.block))]));
         setNotes([]);
         setRewriting(false);
         setSaid("Comments sent. Changed passages are marked.");
         // The comments panel closes with nothing left in it: the keyboard goes to the screenplay heading rather than nowhere.
         focusSoon(() => (document.activeElement === document.body ? pageHeading.current : null));
       },
-      reduced() ? 1200 : 2600,
+      (e: unknown) => {
+        if (asked !== rewrite.current) return;
+        setRewriting(false);
+        setReviseError(e instanceof Error && e.message ? e.message : "The rewrite did not come back. Send the comments again.");
+        setSaid("The rewrite did not come back. Send the comments again.");
+      },
     );
   };
 
@@ -446,7 +448,7 @@ function Screenplay({ arrived }: { arrived: boolean }) {
       fit
       action={
         <SaveAction error={saving.error}>
-          <Btn kind="primary" disabled={rewriting} loading={saving.busy} onClick={() => saving.go(() => router.push("/app/episode/cast"))}>
+          <Btn kind="primary" disabled={rewriting} loading={saving.busy} iconAfter={<Icon name="arrow" size={16} />} onClick={() => saving.go(() => router.push(store.profile.steps.cast))}>
             Next
           </Btn>
         </SaveAction>
@@ -566,12 +568,14 @@ function Screenplay({ arrived }: { arrived: boolean }) {
             foot={
               notes.length > 0 && !rewriting ? (
                 <>
-                  <Btn kind="secondary" small onClick={send}>
+                  <SaveError>{reviseError}</SaveError>
+                  <Btn kind="secondary" small icon={<Icon name="send" size={16} />} onClick={send}>
                     Send comments
                   </Btn>
                   <Btn
                     kind="ghost"
                     small
+                    icon={<Icon name="close" size={16} />}
                     onClick={() => {
                       const keep = Boolean(composer);
                       discard();
@@ -641,10 +645,10 @@ function Screenplay({ arrived }: { arrived: boolean }) {
                       }}
                     />
                     <div className={s.actions}>
-                      <Btn kind="secondary" small disabled={!draft} onClick={add}>
+                      <Btn kind="secondary" small icon={<Icon name="comment" size={16} />} disabled={!draft} onClick={add}>
                         {composer.type === "comment" ? "Add comment" : "Add suggestion"}
                       </Btn>
-                      <Btn kind="ghost" small onClick={closeComposer}>
+                      <Btn kind="ghost" small icon={<Icon name="close" size={16} />} onClick={closeComposer}>
                         Cancel
                       </Btn>
                     </div>

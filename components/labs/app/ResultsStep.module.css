@@ -87,7 +87,8 @@
 .status[data-status="approved"] {
   color: var(--success, #7fd1a1);
 }
-.status[data-status="denied"] {
+.status[data-status="denied"],
+.status[data-status="failed"] {
   color: var(--danger, #f08a7a);
 }
 
@@ -262,4 +263,8 @@
   .title {
     font-size: 1.5rem;
   }
+}
+
+.none {
+  color: var(--text-muted);
 }

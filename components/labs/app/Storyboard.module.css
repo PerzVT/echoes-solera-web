@@ -1,0 +1,328 @@
+/* The storyboard and manga screens: a heading row, then the work. Spacing from the creator's scale. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.headActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.2;
+  text-wrap: balance;
+  min-width: 0;
+}
+.failed {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.loading {
+  display: grid;
+  gap: 24px;
+}
+
+/* ---------- Board ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0 0 48px;
+  list-style: none;
+}
+.card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  transition:
+    opacity var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out);
+}
+.card[draggable="true"] {
+  cursor: grab;
+}
+.card[data-dragging] {
+  opacity: 0.45;
+  border-style: dashed;
+}
+.art {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--surface-sunken);
+  cursor: zoom-in;
+}
+.art img {
+  object-fit: cover;
+}
+.art:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.num {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: rgb(8 10 14 / 0.72);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+.develop {
+  position: absolute;
+  inset: 0;
+  background: rgb(8 10 14 / 0.55);
+}
+.glyphs {
+  position: absolute;
+  inset: 0;
+}
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.frameTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+}
+.frameTitle:hover {
+  border-color: var(--border);
+}
+.frameTitle:focus-visible,
+.note:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.note {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Full screen: the frame large, its note under it. */
+.viewed {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin: 0;
+}
+.viewedArt {
+  position: relative;
+  display: block;
+  min-height: 0;
+}
+.viewedArt img {
+  object-fit: contain;
+}
+.viewedCaption {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-align: center;
+  color: rgb(255 255 255 / 0.86);
+}
+
+/* ---------- Menus ---------- */
+.more {
+  position: relative;
+  flex: none;
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 168px;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  list-style: none;
+}
+.menu[data-wide] {
+  min-width: 200px;
+}
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+.menuItem:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .menuItem:hover {
+    background: var(--surface-hover);
+  }
+}
+
+/* ---------- Library ---------- */
+.library {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.libItem {
+  position: relative;
+}
+.libCard {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+}
+.libArt {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--surface);
+}
+.libArt[data-wide] {
+  aspect-ratio: 16 / 10;
+}
+.libArt img {
+  object-fit: cover;
+  transition: scale var(--dur-feedback) var(--ease-out);
+}
+.libBusy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(8 10 14 / 0.5);
+}
+.libCard:focus-visible .libArt {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .libCard:hover .libArt img {
+    scale: 1.03;
+  }
+}
+.libName {
+  padding-right: 44px;
+  font-weight: 500;
+}
+.libMore {
+  position: absolute;
+  right: 0;
+  bottom: -6px;
+}
+.emptyLink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 767px) {
+  .title {
+    font-size: 1.625rem;
+  }
+  .grid {
+    gap: 16px;
+  }
+}
+
+/* Printing the board: frames only, two to a row, nothing of the app around them. */
+@media print {
+  :global(body) * {
+    visibility: hidden;
+  }
+  .page,
+  .page * {
+    visibility: visible;
+  }
+  .page {
+    position: absolute;
+    inset: 0 auto auto 0;
+    color: #000;
+  }
+  .headActions,
+  .cardHead button,
+  .more {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .card {
+    break-inside: avoid;
+    border-color: #999;
+    background: #fff;
+  }
+  .note,
+  .frameTitle {
+    border: 0;
+    background: #fff;
+    color: #000;
+    resize: none;
+  }
+}

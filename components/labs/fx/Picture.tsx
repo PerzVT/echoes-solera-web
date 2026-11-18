@@ -18,6 +18,8 @@ type Props = ImageProps & {
  * so nothing shifts.
  */
 export function Picture({ bare, className, alt, ...rest }: Props) {
+  // Pictures behind the session (/api/creator/files) and ones made in this tab cannot go through the image optimiser.
+  if (rest.unoptimized === undefined && typeof rest.src === "string" && /^(\/api\/|blob:|data:)/.test(rest.src)) rest = { ...rest, unoptimized: true };
   const ref = useRef<HTMLImageElement>(null);
   const [state, setState] = useState<"idle" | "wait" | "in" | "done">("idle");
 

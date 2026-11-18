@@ -1,5 +1,5 @@
 /** Reads a submitted script into screenplay blocks, and the generations the blocks make. */
-import { clips, type Block, type Take } from "@/lib/labs/maker";
+import { clips as defaultClips, type Block, type Take } from "@/lib/labs/maker";
 
 const HEADING = /^(INT\.?\/EXT\.?|EXT\.?\/INT\.?|I\/E\.?|INT\.|EXT\.)\s*/i;
 
@@ -83,10 +83,19 @@ function firstWords(text: string, n = 7) {
   return words.length > n ? `${words.slice(0, n).join(" ")}...` : words.join(" ");
 }
 
-export type Gen = { n: number; block: string; summary: string; takes: Take[]; decision?: "approved" | "denied" };
+export type Gen = {
+  n: number;
+  block: string;
+  summary: string;
+  takes: Take[];
+  decision?: "approved" | "denied";
+  /** The prompt and reference sheet ids a generated take is made from (components/labs/app/generate.ts). */
+  prompt?: string;
+  references?: string[];
+};
 
-/** One generation per action or dialogue block, up to six. */
-export function generationsFor(blocks: Block[], approved: boolean): Gen[] {
+/** One generation per action or dialogue block, up to one per clip in the pool (six). */
+export function generationsFor(blocks: Block[], approved: boolean, clips: Take[] = defaultClips): Gen[] {
   return blocks
     .filter((b): b is Extract<Block, { kind: "action" | "dialogue" }> => b.kind === "action" || b.kind === "dialogue")
     .slice(0, clips.length)

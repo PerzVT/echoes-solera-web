@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { Skeleton, SkeletonGroup, SkeletonText } from "@/components/labs/fx";
+import { GestureIcon, Skeleton, SkeletonGroup, SkeletonText } from "@/components/labs/fx";
 import { AppBar, type AppStep, type AppView } from "@/components/labs/chat/AppBar";
 import { Btn } from "@/components/labs/chat/ui";
-import { STEPS, type StepKey } from "@/lib/labs/maker";
+import { Icon } from "@/components/labs/Icon";
+import { FLOW_STEPS, PROFILES, type FlowStep, type FlowTool } from "../tools";
 import shell from "../AppShell.module.css";
 import l from "./loading.module.css";
 
@@ -13,21 +14,37 @@ import l from "./loading.module.css";
  * step before the one loading as reached.
  */
 
+/** The step's action carries the same icon here as on the screen it stands in for. */
+const actionIcon = (action: string) =>
+  action === "Next" || action === "Read"
+    ? { iconAfter: <Icon name="arrow" size={16} /> }
+    : action === "Generate"
+      ? { icon: <Icon name="generate" size={16} /> }
+      : action === "Finish"
+        ? { icon: <Icon name="save" size={16} /> }
+        : action === "Done"
+          ? { icon: <Icon name="check" size={16} /> }
+          : action === "New"
+            ? { icon: <GestureIcon name="plus" size={18} /> }
+            : {};
+
 const range = (n: number) => Array.from({ length: n }, (_, i) => i);
 
-function Frame({ step, view, action, children }: { step?: StepKey; view?: AppView; action?: string; children: ReactNode }) {
-  const at = step ? STEPS.findIndex((s) => s.key === step) : -1;
-  const steps: AppStep[] | undefined = step ? STEPS.map((s, i) => ({ key: s.key, label: s.label, state: i === at ? "current" : i < at ? "done" : "todo" })) : undefined;
+type Tool = { tool?: FlowTool };
+
+function Frame({ step, view, action, tool = "mini-series", children }: { step?: FlowStep; view?: AppView; action?: string; children: ReactNode } & Tool) {
+  const at = step ? FLOW_STEPS.findIndex((s) => s.key === step) : -1;
+  const steps: AppStep[] | undefined = step ? FLOW_STEPS.map((s, i) => ({ key: s.key, label: s.label, href: PROFILES[tool].steps[s.key], state: i === at ? "current" : i < at ? "done" : "todo" })) : undefined;
   return (
     <div className={shell.shell} data-fit="">
       <AppBar
-        tool="mini-series"
+        tool={tool}
         view={view ?? (step ? "create" : "library")}
         steps={steps}
         current={step}
         action={
           action && (
-            <Btn kind="primary" disabled>
+            <Btn kind="primary" disabled {...actionIcon(action)}>
               {action}
             </Btn>
           )
@@ -40,9 +57,9 @@ function Frame({ step, view, action, children }: { step?: StepKey; view?: AppVie
   );
 }
 
-export function StartLoading() {
+export function StartLoading({ tool }: Tool = {}) {
   return (
-    <Frame step="script">
+    <Frame tool={tool} step="script">
       <div className={l.start}>
         <Skeleton width="60%" height={44} radius={8} style={{ margin: "0 auto" }} />
         <Skeleton height={320} radius={20} />
@@ -51,9 +68,9 @@ export function StartLoading() {
   );
 }
 
-export function ScreenplayLoading() {
+export function ScreenplayLoading({ tool }: Tool = {}) {
   return (
-    <Frame step="screenplay" action="Next">
+    <Frame tool={tool} step="screenplay" action="Next">
       <div className={l.doc}>
         <Skeleton width={160} height={32} radius={8} />
         <SkeletonText lines={14} />
@@ -62,9 +79,9 @@ export function ScreenplayLoading() {
   );
 }
 
-export function CastLoading() {
+export function CastLoading({ tool }: Tool = {}) {
   return (
-    <Frame step="cast" action="Next">
+    <Frame tool={tool} step="cast" action="Next">
       <div className={l.wide}>
         <Skeleton width={120} height={36} radius={8} />
         <div className={l.cards}>
@@ -77,9 +94,9 @@ export function CastLoading() {
   );
 }
 
-export function StyleLoading() {
+export function StyleLoading({ tool }: Tool = {}) {
   return (
-    <Frame step="style" action="Generate">
+    <Frame tool={tool} step="style" action="Generate">
       <div className={l.split}>
         <div className={l.tiles}>
           {range(12).map((i) => (
@@ -92,9 +109,9 @@ export function StyleLoading() {
   );
 }
 
-export function ResultsLoading() {
+export function ResultsLoading({ tool }: Tool = {}) {
   return (
-    <Frame step="results" action="Finish">
+    <Frame tool={tool} step="results" action="Finish">
       <div className={l.results}>
         <div className={l.rows}>
           {range(6).map((i) => (
@@ -107,9 +124,9 @@ export function ResultsLoading() {
   );
 }
 
-export function LibraryLoading() {
+export function LibraryLoading({ tool }: Tool = {}) {
   return (
-    <Frame action="New">
+    <Frame tool={tool} action="New">
       <div className={l.wide}>
         <Skeleton width={160} height={36} radius={8} />
         <div className={l.series}>
@@ -122,9 +139,9 @@ export function LibraryLoading() {
   );
 }
 
-export function SeriesLoading() {
+export function SeriesLoading({ tool }: Tool = {}) {
   return (
-    <Frame action="New">
+    <Frame tool={tool} action="New">
       <div className={l.wide}>
         <Skeleton width={320} height={44} radius={8} />
         <div className={l.cards}>

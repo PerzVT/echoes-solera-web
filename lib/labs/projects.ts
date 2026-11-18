@@ -40,7 +40,7 @@ export const projects: Project[] = [
     slug: "anime",
     name: "Anime Production",
     line: "Turn an idea into a short anime video.",
-    primary: { label: "Create an anime", href: "/app/anime/new" },
+    primary: { label: "Create an anime", href: "/app/anime" },
     secondary: { label: "Watch Echoes of Solera", href: "/anime/echoes-of-solera" },
     tone: "dark",
     // One montage of hard cuts: full-screen Catalyst and dance cuts, with the row of four vertical shorts between them.

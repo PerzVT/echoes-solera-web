@@ -13,13 +13,13 @@ import { AppShell } from "./AppShell";
 import { Alert } from "./parts";
 import type { EpisodeItem } from "./creator";
 import { episodeKey, useCast } from "./CastProvider";
-import { seriesExtra } from "./creator";
 import l from "./Library.module.css";
 
 function NewButton() {
   const router = useRouter();
+  const { profile } = useCast();
   return (
-    <Btn kind="primary" icon={<GestureIcon name="plus" size={18} />} onClick={() => router.push("/app")}>
+    <Btn kind="primary" icon={<GestureIcon name="plus" size={18} />} onClick={() => router.push(profile.steps.script)}>
       New
     </Btn>
   );
@@ -89,7 +89,7 @@ function UndoLine({ undo, onDone }: { undo: Undo; onDone: () => void }) {
 }
 
 /** A saved series has no backdrop of its own; until its first episode is finished it has no cover either. */
-const backdropOf = (c: SeriesCard) => seriesExtra[c.slug]?.backdrop ?? c.cover;
+const backdropOf = (c: SeriesCard, extra: Record<string, { backdrop: string }>) => extra[c.slug]?.backdrop ?? c.cover;
 
 function useUndo() {
   const [undo, setUndo] = useState<Undo>(null);
@@ -97,7 +97,7 @@ function useUndo() {
   return { undo, setUndo, clear };
 }
 
-/** /app/library: the mini-series as cards. A card opens the series; its menu renames or deletes it. */
+/** /app/library and /app/anime/library: the tool's series as cards. A card opens the series; its menu renames or deletes it. */
 export function LibraryScreen() {
   const store = useCast();
   const [renaming, setRenaming] = useState<string | null>(null);
@@ -123,7 +123,7 @@ export function LibraryScreen() {
             const art = (
               <>
                 <span className={l.backdrop} aria-hidden="true">
-                  {backdropOf(c) && <Image src={backdropOf(c)} alt="" fill sizes="(max-width: 767px) 100vw, 50vw" loading={i < 3 ? "eager" : undefined} />}
+                  {backdropOf(c, store.profile.extra) && <Image src={backdropOf(c, store.profile.extra)} alt="" fill sizes="(max-width: 767px) 100vw, 50vw" loading={i < 3 ? "eager" : undefined} />}
                 </span>
                 <span className={l.cover}>{c.cover && <Image src={c.cover} alt="" fill sizes="(max-width: 767px) 72px, 104px" loading="eager" />}</span>
               </>
@@ -149,7 +149,7 @@ export function LibraryScreen() {
                   </div>
                 ) : (
                   <>
-                    <Link href={`/app/series/${c.slug}`} className={l.card}>
+                    <Link href={store.profile.seriesHref(c.slug)} className={l.card}>
                       {art}
                       <span className={l.name}>{c.title}</span>
                     </Link>
@@ -209,7 +209,7 @@ export function SeriesEpisodes({ slug }: { slug: string }) {
       <AppShell view="library" action={<NewButton />}>
         <div className={l.page}>
           <h1 className={l.title}>Not found</h1>
-          <Link href="/app/library" className={l.link}>
+          <Link href={store.profile.library} className={l.link}>
             Library
           </Link>
         </div>
@@ -229,7 +229,7 @@ export function SeriesEpisodes({ slug }: { slug: string }) {
           {store.episodesIn(slug).map((e) => (
             <li key={e.name} className={l.cardItem}>
               <Link
-                href={e.id ? "/app/episode/results" : `/app/episode/results?series=${encodeURIComponent(slug)}&episode=${encodeURIComponent(e.name)}`}
+                href={e.id ? store.profile.steps.results : `${store.profile.steps.results}?series=${encodeURIComponent(slug)}&episode=${encodeURIComponent(e.name)}`}
                 className={l.episode}
                 aria-busy={opening === e.id || undefined}
                 onClick={
