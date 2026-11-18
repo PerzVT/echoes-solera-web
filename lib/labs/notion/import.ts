@@ -42,8 +42,8 @@ export async function listDatabase(dataSourceId: string, cursor: string | null):
   return { items: (data.results ?? []).map(toItem).filter((x) => x !== null), next: data.has_more ? (data.next_cursor ?? null) : null };
 }
 
-/** The page as text: Notion's markdown of it, with its title as the first line. */
-export async function importScript(by: string, pageId: string, episodeId: string): Promise<NotionImportScriptResult> {
+/** The page as text: Notion's markdown of it, with its title as the first line, cut to the script limit. */
+export async function pageText(pageId: string): Promise<{ text: string; title: string; truncated: boolean }> {
   const [page, md] = await Promise.all([
     notion<NotionPage>({ method: "GET", path: `/pages/${pageId}` }),
     notion<{ markdown?: string; truncated?: boolean }>({ method: "GET", path: `/pages/${pageId}/markdown` }),
@@ -56,6 +56,12 @@ export async function importScript(by: string, pageId: string, episodeId: string
     truncated = true;
   }
   if (!text.trim()) throw new Bad("invalid", "That page has no text.");
+  return { text, title, truncated };
+}
+
+/** The page's text as an episode's script. */
+export async function importScript(by: string, pageId: string, episodeId: string): Promise<NotionImportScriptResult> {
+  const { text, truncated } = await pageText(pageId);
   const script = await saveScript(by, episodeId, { text });
   return { script, truncated };
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type DragEvent } from "react";
-import { AnimatedMark, AsciiField, GestureIcon, Skeleton } from "@/components/labs/fx";
+import { AsciiField, GestureIcon, Skeleton } from "@/components/labs/fx";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { Icon } from "@/components/labs/Icon";
 import { Btn, IconBtn } from "@/components/labs/chat/ui";
@@ -13,7 +13,9 @@ import { AppIcon } from "./AppIcon";
 import { storyboardStyles } from "./fixtures";
 import { makeStoryboard, regenerateFrame } from "./generate";
 import { Alert, SaveAction, useSaveThen } from "./parts";
-import { Preview } from "./Preview";
+import { LibraryGrid } from "./LibraryGrid";
+import { Record } from "./Record";
+import { seriesTitle, useSeriesOptions } from "./seriesOptions";
 import { SourceStart } from "./SourceStart";
 import { StylePicker } from "./StylePicker";
 import { titleOf, useStoryboards } from "./work";
@@ -40,16 +42,17 @@ export function StoryboardStart({ edit }: { edit: boolean }) {
   const editing = edit ? work.current : null;
   if (edit && work.opening) return <WorkLoading tool="storyboard" steps={BOARD_STEPS} step="scene" />;
 
-  const submit = async (source: string) => {
+  const submit = async (source: string, seriesId: string | null) => {
     setSending(true);
     setError("");
     try {
       if (editing) {
         // A changed scene is boarded again from the start.
         if (source !== editing.source) work.patch({ source, frames: [], step: "style" });
+        if (seriesId !== (editing.seriesId ?? null)) work.patch({ seriesId });
         await work.flush();
       } else {
-        await work.create(titleOf(source, "Storyboard"), source);
+        await work.create(titleOf(source, "Storyboard"), source, seriesId);
         work.patch({ step: "style" });
       }
       router.push("/app/storyboard/style");
@@ -68,6 +71,7 @@ export function StoryboardStart({ edit }: { edit: boolean }) {
       label="Scene"
       placeholder="Paste a scene or a script passage"
       initial={editing?.source}
+      initialSeries={editing?.seriesId}
       sending={sending}
       error={error}
       onSubmit={submit}
@@ -130,6 +134,7 @@ export function StoryboardStyle() {
 export function StoryboardBoard() {
   const router = useRouter();
   const work = useCurrentBoard();
+  const series = useSeriesOptions();
   const saving = useSaveThen(work.flush);
   const board = work.current;
   const frames = board?.frames ?? [];
@@ -212,7 +217,7 @@ export function StoryboardBoard() {
         if (!alive.current) return;
         // Applied to the board as it is now, so edits made meanwhile stay.
         const latest = work.current?.frames ?? [];
-        work.patch({ frames: latest.map((x) => (x.id === f.id ? { ...x, image: frame.image } : x)) });
+        work.patch({ frames: latest.map((x) => (x.id === f.id ? { ...x, image: frame.image, made: frame.made } : x)) });
         setSaid("Frame drawn again.");
       })
       .catch((e: unknown) => {
@@ -351,27 +356,20 @@ export function StoryboardBoard() {
           </ol>
         )}
       </div>
-      <Preview
+      <Record
         open={Boolean(viewed)}
         label={viewed ? `Frame ${(viewing ?? 0) + 1}` : "Frame"}
         onClose={() => setViewing(null)}
         onPrev={viewing !== null && viewing > 0 ? () => setViewing(viewing - 1) : undefined}
         onNext={viewing !== null && viewing < frames.length - 1 ? () => setViewing(viewing + 1) : undefined}
+        info={
+          viewed
+            ? { title: `Frame ${(viewing ?? 0) + 1}. ${viewed.title}`, note: viewed.note, made: viewed.made, tool: "Storyboard", project: seriesTitle(series, board.seriesId) ?? board.title, owner: board.owner }
+            : null
+        }
       >
-        {viewed && (
-          <figure className={b.viewed}>
-            <span className={b.viewedArt}>
-              <Image src={viewed.image} alt={viewed.note} fill sizes="100vw" />
-            </span>
-            <figcaption className={b.viewedCaption}>
-              <strong>
-                {(viewing ?? 0) + 1}. {viewed.title}
-              </strong>{" "}
-              {viewed.note}
-            </figcaption>
-          </figure>
-        )}
-      </Preview>
+        {viewed && <Image src={viewed.image} alt={viewed.note} fill sizes="(max-width: 900px) 100vw, 70vw" />}
+      </Record>
     </WorkShell>
   );
 }
@@ -477,6 +475,7 @@ function Export({ title, frames, disabled }: { title: string; frames: Frame[]; d
 export function StoryboardLibrary() {
   const router = useRouter();
   const work = useStoryboards();
+  const series = useSeriesOptions();
   const [error, setError] = useState("");
   const [opening, setOpening] = useState<string | null>(null);
   const open = async (id: string) => {
@@ -508,14 +507,25 @@ export function StoryboardLibrary() {
         </Btn>
       }
     >
-      <WorkCards
-        title="Library"
+      <LibraryGrid
+        shape="wide"
         loading={!work.listed}
         error={error}
-        items={work.list.map((t) => ({ id: t.id, title: t.title, cover: t.frames[0]?.image, wide: true }))}
-        opening={opening}
-        onOpen={(id) => void open(id)}
-        onDelete={(id) => work.remove(id).catch((e: unknown) => setError(message(e, "That did not delete. Try again.")))}
+        items={work.list.map((t) => {
+          const style = storyboardStyles.find((s) => s.slug === t.style) ?? storyboardStyles[0];
+          return {
+            id: t.id,
+            title: t.title,
+            date: t.createdAt,
+            meta: seriesTitle(series, t.seriesId),
+            // Every drawn frame in turn, so one picture that fails to load gives way to the next; a board not drawn
+            // yet shows its style's picture.
+            covers: [...t.frames.map((f) => f.image).filter(Boolean), style.card?.src].filter((x): x is string => Boolean(x)),
+            busy: opening === t.id,
+            onOpen: () => void open(t.id),
+            menu: [{ label: "Delete", run: () => void work.remove(t.id).catch((e: unknown) => setError(message(e, "That did not delete. Try again."))) }],
+          };
+        })}
         empty={
           <Link href="/app/storyboard" className={b.emptyLink} onClick={() => work.clear()}>
             New storyboard
@@ -523,66 +533,6 @@ export function StoryboardLibrary() {
         }
       />
     </WorkShell>
-  );
-}
-
-/** Saved work as cards: shared by the storyboard and manga libraries. */
-export function WorkCards({
-  title,
-  loading,
-  error,
-  items,
-  opening,
-  onOpen,
-  onDelete,
-  empty,
-}: {
-  title: string;
-  loading: boolean;
-  error: string;
-  items: { id: string; title: string; cover?: string; wide?: boolean }[];
-  opening: string | null;
-  onOpen: (id: string) => void;
-  onDelete: (id: string) => void;
-  empty: React.ReactNode;
-}) {
-  return (
-    <div className={b.page}>
-      <h1 className={b.title}>{title}</h1>
-      {error && <Alert>{error}</Alert>}
-      {loading ? (
-        <ul className={b.library} aria-busy="true">
-          {Array.from({ length: 4 }, (_, i) => (
-            <li key={i}>
-              <Skeleton ratio="16 / 10" radius={16} index={i} />
-            </li>
-          ))}
-        </ul>
-      ) : items.length === 0 ? (
-        empty
-      ) : (
-        <ul className={b.library}>
-          {items.map((it, i) => (
-            <li key={it.id} className={b.libItem}>
-              <button type="button" className={b.libCard} aria-busy={opening === it.id || undefined} onClick={() => onOpen(it.id)}>
-                <span className={b.libArt} data-wide={it.wide || undefined}>
-                  {it.cover && <Image src={it.cover} alt="" fill sizes="(max-width: 767px) 100vw, 33vw" loading={i < 6 ? "eager" : undefined} />}
-                  {opening === it.id && (
-                    <span className={b.libBusy}>
-                      <AnimatedMark variant="busy" size={20} />
-                    </span>
-                  )}
-                </span>
-                <span className={b.libName}>{it.title}</span>
-              </button>
-              <span className={b.libMore}>
-                <Menu label={`More for ${it.title}`} items={[{ label: "Delete", run: () => onDelete(it.id) }]} />
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
   );
 }
 

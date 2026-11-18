@@ -2,6 +2,9 @@
  * Every generation the creator starts goes through this module. Screens build the inputs and use the outputs, and
  * hold no generation logic of their own.
  *
+ * Test mode (components/labs/app/testMode.ts) comes first: while it is on, every function answers from
+ * components/labs/app/simulate.ts and nothing reaches the server's generators. Otherwise:
+ *
  * On first use it reads GET /api/creator/ai/status once. When generation is not set up (no key on the server) every
  * function fails at once with "API token not set up.", the same words the server uses, so the whole flow can be
  * walked and each screen shows its error. When it is set up each function creates the matching job
@@ -27,9 +30,11 @@ import type {
   ScreenplayBlock,
   StoryboardFrame,
 } from "@/lib/labs/ai/contract";
-import type { CastChoice, CastSheet as Upload, Frame, MangaLetter, MangaPage } from "@/lib/labs/store/types";
+import type { CastChoice, CastSheet as Upload, Frame, Made, MangaLetter, MangaPage } from "@/lib/labs/store/types";
 import type { Element } from "./creator";
 import { generationsFor, type Gen } from "./script";
+import * as sim from "./simulate";
+import { isTestMode } from "./testMode";
 import { PROFILES, type FlowTool } from "./tools";
 
 let n = 0;
@@ -145,6 +150,11 @@ type InputOf<K extends JobKind> = Extract<CreateJobRequest, { kind: K }>["input"
  * its turn. Aborting cancels the job on the server.
  */
 async function runJob<K extends Exclude<JobKind, "clip">>(kind: K, input: InputOf<K>, signal?: AbortSignal): Promise<JobResultFor[K]> {
+  return (await runJobWithId(kind, input, signal)).result;
+}
+
+/** runJob, with the id of the job that made the result. */
+async function runJobWithId<K extends Exclude<JobKind, "clip">>(kind: K, input: InputOf<K>, signal?: AbortSignal): Promise<{ result: JobResultFor[K]; job: string }> {
   const deadline = Date.now() + GIVE_UP;
   let job: JobView<K> | undefined;
   for (let ms = POLL_FIRST; !job; ms = later(ms)) {
@@ -160,7 +170,7 @@ async function runJob<K extends Exclude<JobKind, "clip">>(kind: K, input: InputO
   const cancel = () => void fetch(`/api/creator/jobs/${id}/cancel`, { method: "POST", keepalive: true }).catch(() => {});
   try {
     for (let ms = POLL_FIRST; ; ms = later(ms)) {
-      if (job.status === "done" && job.result) return job.result;
+      if (job.status === "done" && job.result) return { result: job.result, job: id };
       if (job.status === "failed") throw new GenerationError(job.error ?? "That did not work. Try again.");
       if (Date.now() + ms > deadline) {
         cancel();
@@ -180,10 +190,10 @@ async function runJob<K extends Exclude<JobKind, "clip">>(kind: K, input: InputO
   }
 }
 
-/** A finished image job's picture, at the address the creator serves it from. */
-async function drawImage(input: ImageInput, signal?: AbortSignal) {
-  const r = await runJob("image", input, signal);
-  return r.url;
+/** A finished image job's picture, at the address the creator serves it from, and its record. */
+async function drawImage(input: ImageInput, signal?: AbortSignal): Promise<{ url: string; made: Made }> {
+  const { result, job } = await runJobWithId("image", input, signal);
+  return { url: result.url, made: { job, at: new Date().toISOString(), prompt: input.prompt } };
 }
 
 /**
@@ -283,7 +293,8 @@ export type MakeScreenplayInput = { tool: FlowTool; source: string; /** The save
 export type MakeScreenplayOutput = { blocks: Block[] };
 
 /** Adapts a submitted script into screenplay blocks with shots. Without typed text the server reads the episode's saved script. */
-export async function makeScreenplay({ source, episodeId }: MakeScreenplayInput, signal?: AbortSignal): Promise<MakeScreenplayOutput> {
+export async function makeScreenplay({ tool, source, episodeId }: MakeScreenplayInput, signal?: AbortSignal): Promise<MakeScreenplayOutput> {
+  if (await isTestMode()) return sim.screenplay(tool, source, episodeId, signal);
   await ready();
   const r = await runJob("screenplay", { episodeId: needEpisode(episodeId), script: source.trim() ? source : undefined }, signal);
   return { blocks: r.blocks.map(toBlock) };
@@ -301,10 +312,11 @@ export async function loadScreenplay({ episodeId }: LoadScreenplayInput, signal?
     const [made, revised] = await Promise.all([q("screenplay"), q("revise")]);
     const last = [...made, ...revised].filter((j) => j.status === "done" && j.result).sort((a, b) => (b.finishedAt ?? "").localeCompare(a.finishedAt ?? ""))[0];
     const blocks = (last?.result as { blocks?: ScreenplayBlock[] } | null)?.blocks;
-    return { blocks: blocks?.map(toBlock) ?? [] };
+    // An episode made in test mode has no jobs; its screenplay was kept in this browser.
+    return { blocks: blocks?.map(toBlock) ?? sim.keptScreenplay(episodeId) ?? [] };
   } catch (e) {
     if (signal?.aborted) throw e;
-    return { blocks: [] };
+    return { blocks: sim.keptScreenplay(episodeId) ?? [] };
   }
 }
 
@@ -317,6 +329,7 @@ export type ReviseScreenplayOutput = { texts: Record<string, string>; blocks?: B
 
 /** Rewrites the passages the comments and suggestions are on. */
 export async function reviseScreenplay({ blocks, texts, notes, episodeId }: ReviseScreenplayInput, signal?: AbortSignal): Promise<ReviseScreenplayOutput> {
+  if (await isTestMode()) return sim.revise(blocks, texts, notes, episodeId, signal);
   await ready();
   const r = await runJob("revise", { episodeId: needEpisode(episodeId), blocks: toPassages(blocks, texts), notes }, signal);
   return { texts: r.texts, blocks: r.blocks.map(toBlock), changed: r.changed };
@@ -343,7 +356,8 @@ const fileSrc = (key: string) => `/api/creator/files/${key}`;
  * Matches the screenplay against the series' cast sheets. Matched names come back with their sheet, unmatched ones
  * as cards that need a picture, and a conflict as a card with the question a person has to answer.
  */
-export async function matchCast({ episodeId, seriesId, blocks, texts, library, uploads }: MatchCastInput, signal?: AbortSignal): Promise<MatchCastOutput> {
+export async function matchCast({ tool, episodeId, seriesId, blocks, texts, library, uploads }: MatchCastInput, signal?: AbortSignal): Promise<MatchCastOutput> {
+  if (await isTestMode()) return sim.matchCast(tool, blocks, library.sheets, signal);
   await ready();
   const r: MatchCastResult = await runJob("match-cast", { episodeId: needEpisode(episodeId), seriesId, blocks: toPassages(blocks, texts) }, signal);
   const byName = new Map<string, Element>();
@@ -388,6 +402,7 @@ const emptyTake: Take = { name: "Take 1", src: "", poster: "" };
  * then made with makeClip.
  */
 export async function makeClips({ tool, blocks, texts, style, episodeId }: MakeClipsInput, signal?: AbortSignal): Promise<MakeClipsOutput> {
+  if (await isTestMode()) return sim.clips(blocks, texts, signal);
   await ready();
   needEpisode(episodeId);
   const passages = toPassages(blocks, texts);
@@ -444,7 +459,8 @@ async function clipTake(tool: FlowTool, prompt: string, references: string[], si
 }
 
 /** Makes one generation's first take. */
-export async function makeClip({ tool, gen }: MakeClipInput, signal?: AbortSignal): Promise<MakeClipOutput> {
+export async function makeClip({ tool, gen, index, style }: MakeClipInput, signal?: AbortSignal): Promise<MakeClipOutput> {
+  if (await isTestMode()) return { take: await sim.clipTake(tool, gen, index, style, signal) };
   return { take: await clipTake(tool, gen.prompt ?? gen.summary, gen.references ?? [], signal) };
 }
 
@@ -452,7 +468,8 @@ export type RetakeClipInput = { tool: FlowTool; gen: Gen; style: string; feedbac
 export type RetakeClipOutput = { take: Take };
 
 /** A new take of one generation, made with the person's feedback. */
-export async function retakeClip({ tool, gen, feedback }: RetakeClipInput, signal?: AbortSignal): Promise<RetakeClipOutput> {
+export async function retakeClip({ tool, gen, feedback, attempt }: RetakeClipInput, signal?: AbortSignal): Promise<RetakeClipOutput> {
+  if (await isTestMode()) return { take: await sim.retake(tool, gen, feedback, attempt, signal) };
   const prompt = `${gen.prompt ?? gen.summary}\n\nChange for this take: ${feedback.trim()}`;
   return { take: await clipTake(tool, prompt, gen.references ?? [], signal) };
 }
@@ -469,15 +486,16 @@ export type MakeCookingTakeInput = {
   take: number;
   feedback?: string;
 };
-export type MakeCookingTakeOutput = { video: string; poster: string };
+export type MakeCookingTakeOutput = { video: string; poster: string; made?: Made };
 
 /** One cooking video take, made as a clip. */
 export async function makeCookingTake({ recipe, chef, style, take, feedback }: MakeCookingTakeInput, signal?: AbortSignal): Promise<MakeCookingTakeOutput> {
+  if (await isTestMode()) return sim.cookingTake(recipe, chef, style, take, feedback, signal);
   const prompt = [`A cooking video in the ${style.name} style. ${chef} cooks ${recipe} in a home kitchen, the dish and her hands in frame.`, feedback?.trim() ? `Change for this take: ${feedback.trim()}` : ""]
     .filter(Boolean)
     .join("\n\n");
   const t = await clipTake("mini-series", prompt, [], signal);
-  return { video: t.src, poster: t.poster };
+  return { video: t.src, poster: t.poster, made: t.made };
 }
 
 /* ======================================================================================================
@@ -500,6 +518,7 @@ const MAX_FRAMES = 12;
 
 /** Splits a scene into numbered frames, each with a picture and a shot note. */
 export async function makeStoryboard({ source, style, onFrames }: MakeStoryboardInput, signal?: AbortSignal): Promise<MakeStoryboardOutput> {
+  if (await isTestMode()) return sim.storyboard(source, style, onFrames, signal);
   await ready();
   const plan = await runJob("storyboard", { source, maxFrames: MAX_FRAMES, aspect: "landscape" }, signal);
   let frames: Frame[] = plan.frames.map((f) => ({ id: newId("f"), title: f.shot || f.title, note: frameNote(f), image: "" }));
@@ -510,10 +529,10 @@ export async function makeStoryboard({ source, style, onFrames }: MakeStoryboard
     const p = byItem.get(`frame-${f.number}`);
     const prompt = p?.prompt ?? frameNote(f);
     const references = p?.references ?? [];
-    const image = await drawImage({ purpose: "storyboard-frame", prompt, references, aspect: "landscape" }, s);
+    const { url, made } = await drawImage({ purpose: "storyboard-frame", prompt, references, aspect: "landscape" }, s);
     const id = frames[i].id;
     drawn.set(id, { prompt, references });
-    frames = frames.map((x) => (x.id === id ? { ...x, image } : x));
+    frames = frames.map((x) => (x.id === id ? { ...x, image: url, made } : x));
     onFrames?.(frames);
   });
   return { frames };
@@ -524,6 +543,7 @@ export type RegenerateFrameOutput = { frame: Frame };
 
 /** Draws one frame again from its note. Its title and note stay; the picture changes. */
 export async function regenerateFrame({ frame, style }: RegenerateFrameInput, signal?: AbortSignal): Promise<RegenerateFrameOutput> {
+  if (await isTestMode()) return sim.redrawFrame(frame, style, signal);
   await ready();
   let made = drawn.get(frame.id);
   if (!made) {
@@ -532,8 +552,8 @@ export async function regenerateFrame({ frame, style }: RegenerateFrameInput, si
     made = { prompt: prompts[0]?.prompt ?? `${frame.title}. ${frame.note}`, references: prompts[0]?.references ?? [] };
     drawn.set(frame.id, made);
   }
-  const image = await drawImage({ purpose: "storyboard-frame", prompt: made.prompt, references: made.references, aspect: "landscape" }, signal);
-  return { frame: { ...frame, image } };
+  const drew = await drawImage({ purpose: "storyboard-frame", prompt: made.prompt, references: made.references, aspect: "landscape" }, signal);
+  return { frame: { ...frame, image: drew.url, made: drew.made } };
 }
 
 /* ======================================================================================================
@@ -589,6 +609,7 @@ const pageAlt = (page: MangaPagePlan) =>
 
 /** Draws the pages of a manga with their lettering, as live text over wordless art. */
 export async function makeMangaPages({ source, style, pageCount, onPages }: MakeMangaPagesInput, signal?: AbortSignal): Promise<MakeMangaPagesOutput> {
+  if (await isTestMode()) return sim.mangaPages(pageCount, style, onPages, signal);
   await ready();
   const plan = await runJob("manga", { source, maxPages: Math.max(1, Math.min(24, pageCount)) }, signal);
   let pages: MangaPage[] = plan.pages.map((p) => ({ id: newId("pg"), image: "", alt: pageAlt(p), letters: letteringFor(p, plan.readingDirection) }));
@@ -599,10 +620,10 @@ export async function makeMangaPages({ source, style, pageCount, onPages }: Make
     const made = byItem.get(`page-${p.number}`);
     const prompt = made?.prompt ?? pageAlt(p);
     const references = made?.references ?? [];
-    const image = await drawImage({ purpose: "manga-page", prompt, references, aspect: "portrait" }, s);
+    const drew = await drawImage({ purpose: "manga-page", prompt, references, aspect: "portrait" }, s);
     const id = pages[i].id;
     drawn.set(id, { prompt, references });
-    pages = pages.map((x) => (x.id === id ? { ...x, image } : x));
+    pages = pages.map((x) => (x.id === id ? { ...x, image: drew.url, made: drew.made } : x));
     onPages?.(pages);
   });
   return { pages };
@@ -613,6 +634,7 @@ export type RegeneratePageOutput = { page: MangaPage };
 
 /** Draws one page again. The lettering stays where it was. */
 export async function regeneratePage({ page, style }: RegeneratePageInput, signal?: AbortSignal): Promise<RegeneratePageOutput> {
+  if (await isTestMode()) return sim.redrawPage(page, style, signal);
   await ready();
   let made = drawn.get(page.id);
   if (!made) {
@@ -621,6 +643,6 @@ export async function regeneratePage({ page, style }: RegeneratePageInput, signa
     made = { prompt: prompts[0]?.prompt ?? page.alt, references: prompts[0]?.references ?? [] };
     drawn.set(page.id, made);
   }
-  const image = await drawImage({ purpose: "manga-page", prompt: made.prompt, references: made.references, aspect: "portrait" }, signal);
-  return { page: { ...page, image } };
+  const drew = await drawImage({ purpose: "manga-page", prompt: made.prompt, references: made.references, aspect: "portrait" }, signal);
+  return { page: { ...page, image: drew.url, made: drew.made } };
 }

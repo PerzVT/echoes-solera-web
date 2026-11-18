@@ -1,6 +1,6 @@
 /** Shown by RouteSkeleton (components/labs/fx) while this route is on its way. */
-import { LibraryLoading } from "@/components/labs/app/fx/Loading";
+import { LibrarySkeleton } from "@/components/labs/app/fx/StartSkeleton";
 
 export default function Loading() {
-  return <LibraryLoading tool="anime" />;
+  return <LibrarySkeleton tool="anime" shape="wide" />;
 }

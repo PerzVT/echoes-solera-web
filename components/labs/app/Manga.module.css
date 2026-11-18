@@ -281,3 +281,19 @@
   overflow: hidden;
   background: var(--surface-sunken);
 }
+
+/* A page as a Library cover: laid out at four times its width and scaled down, like the page thumbnails. */
+.cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #fff;
+}
+.cover > .sheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400%;
+  transform: scale(0.25);
+  transform-origin: 0 0;
+}

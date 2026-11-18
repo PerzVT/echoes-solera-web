@@ -100,10 +100,13 @@ create table if not exists nl_storyboards (
   title       text not null check (char_length(title) between 1 and 120),
   source      text not null,
   style       text,
+  series_id   text,
   frames      jsonb not null default '[]',
   step        text not null check (step in ('scene', 'style', 'board'))
 );
 create index if not exists nl_storyboards_owner on nl_storyboards (owner);
+-- Added after the first release: the series a board or manga belongs to, null for one on its own.
+alter table nl_storyboards add column if not exists series_id text;
 
 -- A manga is one record: its story, style, page count and pages with their lettering (pages as jsonb).
 create table if not exists nl_mangas (
@@ -115,11 +118,13 @@ create table if not exists nl_mangas (
   title       text not null check (char_length(title) between 1 and 120),
   source      text not null,
   style       text,
+  series_id   text,
   page_count  integer not null check (page_count between 1 and 24),
   pages       jsonb not null default '[]',
   step        text not null check (step in ('story', 'style', 'pages', 'read'))
 );
 create index if not exists nl_mangas_owner on nl_mangas (owner);
+alter table nl_mangas add column if not exists series_id text;
 
 -- Uploaded scripts and cast images. The bytes live in Blob storage (or on disk in development); location says where.
 create table if not exists nl_files (

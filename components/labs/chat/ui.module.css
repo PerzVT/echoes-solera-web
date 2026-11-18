@@ -240,7 +240,20 @@
   .toolRow {
     display: none;
   }
+  /* The menu button gives way before the row runs past the screen: its name ends in an ellipsis. */
+  .tools {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
   .toolMenu {
     display: block;
+    min-width: 0;
+  }
+  .toolButton {
+    max-width: 100%;
+  }
+  .toolButtonLabel {
+    max-width: none;
+    min-width: 0;
   }
 }

@@ -8,6 +8,7 @@ import { Btn } from "../chat/ui";
 import { makeCookingTake } from "@/components/labs/app/generate";
 import { Alert } from "@/components/labs/app/parts";
 import { chefSrc, clock, lengthOf, seconds, type Recipe, type Video } from "./data";
+import type { Made as VideoMade } from "@/lib/labs/store/types";
 import { useCooking } from "./store";
 import r from "./result.module.css";
 
@@ -23,7 +24,7 @@ export function Result({ recipe, chef, style, onAnother }: { recipe: Recipe; che
   const [feedback, setFeedback] = useState("");
   /** The feedback the take being made was asked for with. */
   const [asked, setAsked] = useState("");
-  const [made, setMade] = useState<{ video: string; poster: string } | null>(null);
+  const [made, setMade] = useState<{ video: string; poster: string; made?: VideoMade } | null>(null);
   const [error, setError] = useState("");
   const another = useRef<HTMLButtonElement>(null);
   const clip = made ?? { video: "", poster: "" };
@@ -64,6 +65,7 @@ export function Result({ recipe, chef, style, onAnother }: { recipe: Recipe; che
         recipeKey: recipe.key,
         style: style.slug,
         status: "ready",
+        made: made?.made,
       };
       approve(video);
     }

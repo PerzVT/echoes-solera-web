@@ -225,8 +225,12 @@ export function CastProvider({ tool = "mini-series", children }: { tool?: FlowTo
   const store = useMemo<Store>(() => {
     const savedSeries = remote.series.filter((s) => s.tool === tool);
     const isSaved = (slug: string) => savedSeries.some((s) => s.id === slug);
-    const savedCards: SeriesCard[] = [...savedSeries].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((s) => ({ slug: s.id, title: s.title, cover: s.cover ?? "" }));
-    const all = [...savedCards, ...profile.seriesCards];
+    const savedCards: SeriesCard[] = [...savedSeries].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((s) => ({ slug: s.id, title: s.title, cover: s.cover ?? "", createdAt: s.createdAt }));
+    // A series' date is when it last had work saved: its newest episode, or the series itself. Newest first; the
+    // built-in series nothing has been saved to keep their order at the end.
+    const lastWork = (c: SeriesCard) => remote.episodes.filter((e) => e.seriesId === c.slug).reduce<string | undefined>((at, e) => (!at || e.createdAt > at ? e.createdAt : at), c.createdAt);
+    const all = [...savedCards, ...profile.seriesCards].map((c) => ({ ...c, createdAt: lastWork(c) }));
+    all.sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
     const series = all.filter((c) => !saved.deletedSeries.includes(c.slug)).map((c) => ({ ...c, title: saved.renamed[c.slug] ?? c.title }));
     const seriesTitle = (slug: string) => saved.renamed[slug] ?? all.find((c) => c.slug === slug)?.title ?? slug;
 

@@ -1,6 +1,6 @@
 /** Shown by RouteSkeleton (components/labs/fx) while this route is on its way. */
-import { CookingLibrarySkeleton } from "@/components/labs/gen/Skeletons";
+import { LibrarySkeleton } from "@/components/labs/app/fx/StartSkeleton";
 
-export default function CookingLibraryLoading() {
-  return <CookingLibrarySkeleton />;
+export default function Loading() {
+  return <LibrarySkeleton tool="cooking" shape="clip" />;
 }

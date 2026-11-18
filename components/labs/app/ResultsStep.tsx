@@ -11,6 +11,7 @@ import { AppShell } from "./AppShell";
 import { useCast } from "./CastProvider";
 import { makeClip, plannedClips, retakeClip } from "./generate";
 import { Alert, SaveAction, revealOnPhone } from "./parts";
+import { Record } from "./Record";
 import type { Gen as Saved } from "./script";
 import r from "./ResultsStep.module.css";
 
@@ -42,6 +43,7 @@ export function ResultsStep({ initial, open }: { initial: ResultsState; open?: s
   const [selected, setSelected] = useState(1);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [said, setSaid] = useState("");
+  const [full, setFull] = useState(false);
   const retakeAt = useRef(0);
   const alive = useRef(true);
   const stage = useRef<HTMLDivElement>(null);
@@ -205,7 +207,7 @@ export function ResultsStep({ initial, open }: { initial: ResultsState; open?: s
         </section>
 
         <div className={r.stage} ref={stage}>
-          <Player key={`${g.n}-${take.src}-${g.developing}`} g={g} take={take} />
+          <Player key={`${g.n}-${take.src}-${g.developing}`} g={g} take={take} onFull={() => setFull(true)} />
           <div className={r.under}>
             <div className={r.caption}>
               <h2 className={r.genTitle}>
@@ -263,12 +265,32 @@ export function ResultsStep({ initial, open }: { initial: ResultsState; open?: s
         </div>
       </div>
       )}
+      {g && take && (
+        <Record
+          open={full && !g.developing && Boolean(take.src)}
+          shape="clip"
+          label={`Generation ${g.n}`}
+          onClose={() => setFull(false)}
+          onPrev={gens.indexOf(g) > 0 ? () => setSelected(gens[gens.indexOf(g) - 1].n) : undefined}
+          onNext={gens.indexOf(g) < gens.length - 1 ? () => setSelected(gens[gens.indexOf(g) + 1].n) : undefined}
+          info={{
+            title: `Generation ${g.n}`,
+            made: take.made ?? (g.prompt ? { at: "", prompt: g.prompt } : undefined),
+            note: g.summary,
+            tool: store.tool === "anime" ? "Anime" : "Mini-series",
+            project: store.series.find((c) => c.slug === ep.series)?.title ?? ep.newSeries ?? null,
+            take: g.takes.length > 1 ? `${take.name}, ${g.takes.length - g.takes.indexOf(take)} of ${g.takes.length}` : null,
+          }}
+        >
+          <Player key={`full-${g.n}-${take.src}`} g={g} take={take} big />
+        </Record>
+      )}
     </AppShell>
   );
 }
 
 /** The selected take, large: plays muted on a loop, with play and pause and sound. While it is being made, glyphs scan over its poster. */
-function Player({ g, take }: { g: Gen; take: Take }) {
+function Player({ g, take, onFull, big }: { g: Gen; take: Take; onFull?: () => void; big?: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
@@ -293,7 +315,7 @@ function Player({ g, take }: { g: Gen; take: Take }) {
     );
 
   return (
-    <div className={r.screen}>
+    <div className={r.screen} data-big={big || undefined}>
       <MediaFrame fill>
         <video
           ref={video}
@@ -316,9 +338,16 @@ function Player({ g, take }: { g: Gen; take: Take }) {
           <PlayPauseIcon playing={playing} size={18} />
           <span className={r.time}>{clock(time)}</span>
         </button>
-        <button type="button" className={r.over} onClick={() => setMuted(!muted)} aria-label={muted ? "Turn sound on" : "Turn sound off"}>
-          <VolumeIcon muted={muted} size={18} />
-        </button>
+        <span className={r.overs}>
+          <button type="button" className={r.over} onClick={() => setMuted(!muted)} aria-label={muted ? "Turn sound on" : "Turn sound off"}>
+            <VolumeIcon muted={muted} size={18} />
+          </button>
+          {onFull && (
+            <button type="button" className={r.over} onClick={onFull} aria-label="Full screen">
+              <Icon name="fullscreen" size={18} />
+            </button>
+          )}
+        </span>
       </div>
     </div>
   );

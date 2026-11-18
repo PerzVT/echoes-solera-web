@@ -6,6 +6,7 @@ import { Icon } from "@/components/labs/Icon";
 import { FLOW_STEPS, PROFILES, type FlowStep, type FlowTool } from "../tools";
 import shell from "../AppShell.module.css";
 import l from "./loading.module.css";
+import { StartSkeleton } from "./StartSkeleton";
 
 /*
  * What each mini-series route shows while it is on its way (the skeleton.tsx beside each page; RouteSkeleton
@@ -57,15 +58,8 @@ function Frame({ step, view, action, tool = "mini-series", children }: { step?: 
   );
 }
 
-export function StartLoading({ tool }: Tool = {}) {
-  return (
-    <Frame tool={tool} step="script">
-      <div className={l.start}>
-        <Skeleton width="60%" height={44} radius={8} style={{ margin: "0 auto" }} />
-        <Skeleton height={320} radius={20} />
-      </div>
-    </Frame>
-  );
+export function StartLoading({ tool = "mini-series" }: Tool = {}) {
+  return <StartSkeleton tool={tool} steps={FLOW_STEPS.map((s) => ({ key: s.key, label: s.label, href: PROFILES[tool].steps[s.key] }))} label="Script" placeholder="Paste or write a script" />;
 }
 
 export function ScreenplayLoading({ tool }: Tool = {}) {
@@ -119,21 +113,6 @@ export function ResultsLoading({ tool }: Tool = {}) {
           ))}
         </div>
         <Skeleton className={l.player} radius={16} />
-      </div>
-    </Frame>
-  );
-}
-
-export function LibraryLoading({ tool }: Tool = {}) {
-  return (
-    <Frame tool={tool} action="New">
-      <div className={l.wide}>
-        <Skeleton width={160} height={36} radius={8} />
-        <div className={l.series}>
-          {range(3).map((i) => (
-            <Skeleton key={i} index={i} height={200} radius={20} />
-          ))}
-        </div>
       </div>
     </Frame>
   );

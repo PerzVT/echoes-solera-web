@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { ChevronIcon } from "@/components/labs/fx";
 import { Composer } from "@/components/labs/chat/Composer";
 import { scriptTypes } from "@/lib/labs/maker";
 import { AppShell } from "./AppShell";
@@ -11,11 +10,9 @@ import type { Episode } from "./api";
 import { makeScreenplay } from "./generate";
 import { NotionImport } from "./NotionImport";
 import { focusSoon } from "./parts";
+import { NEW_SERIES as NEW, SeriesPicker } from "./SeriesPicker";
 import { fdxToText } from "./script";
 import { StartScreen } from "./StartScreen";
-import st from "./ScriptStep.module.css";
-
-const NEW = "__new";
 
 /** /app and /app/anime: the start of an episode. One box that takes a typed or pasted script, or a script file, and the series it belongs to. */
 export function ScriptStep() {
@@ -113,44 +110,19 @@ export function ScriptStep() {
   };
 
   const seriesPicker = (
-    <div className={st.end}>
-      <label className={st.series}>
-        <span className={st.seriesLabel}>Series</span>
-        <span className={st.selectWrap}>
-          <select
-            className={st.select}
-            value={series}
-            disabled={going}
-            onChange={(e) => {
-              setSeries(e.target.value);
-              if (e.target.value === NEW) focusSoon(() => nameField.current);
-            }}
-          >
-            {store.series.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                {s.title}
-              </option>
-            ))}
-            <option value={NEW}>New series</option>
-          </select>
-          <ChevronIcon open={false} size={16} />
-        </span>
-      </label>
-      {isNew && (
-        <input
-          ref={nameField}
-          className={st.name}
-          aria-label="Series name"
-          placeholder="Series name"
-          value={newName}
-          disabled={going}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") submit();
-          }}
-        />
-      )}
-    </div>
+    <SeriesPicker
+      ref={nameField}
+      value={series}
+      onChange={(v) => {
+        setSeries(v);
+        if (v === NEW) focusSoon(() => nameField.current);
+      }}
+      options={store.series.map((s) => ({ value: s.slug, label: s.title }))}
+      newName={newName}
+      onNewName={setNewName}
+      onEnter={submit}
+      disabled={going}
+    />
   );
 
   return (

@@ -1,177 +1,107 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { GestureIcon } from "@/components/labs/fx";
-import { Icon } from "@/components/labs/Icon";
-import { Btn } from "../chat/ui";
-import { Composer } from "../chat/Composer";
-import { chefs, genStyles, lengthOf, searchRecipes, seconds, type Recipe } from "./data";
-import { chosenRecipe, useCooking, type RecipeState } from "./store";
+import { useState } from "react";
+import { ChevronIcon } from "@/components/labs/fx";
+import { Composer } from "@/components/labs/chat/Composer";
+import { NotionImport } from "@/components/labs/app/NotionImport";
+import { StartScreen } from "@/components/labs/app/StartScreen";
+import st from "@/components/labs/app/ScriptStep.module.css";
+import { chefs, genStyles, recipes, searchRecipes } from "./data";
+import { chosenRecipe, useCooking } from "./store";
 import g from "./gen.module.css";
 
-/** The generator: recipe, chef, style, the length the recipe sets, and Generate. */
+const TYPES = [".txt", ".md"];
+
+/** A labelled select in the box's foot, drawn like the series picker on the other tools. */
+function Pick({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
+  return (
+    <label className={st.series}>
+      <span className={st.seriesLabel}>{label}</span>
+      <span className={st.selectWrap}>
+        <select className={st.select} value={value} onChange={(e) => onChange(e.target.value)}>
+          {options.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <ChevronIcon open={false} size={16} />
+      </span>
+    </label>
+  );
+}
+
+/**
+ * The cooking start, laid out like every other tool's: the question, the tools, and one box. The box takes a dish
+ * to search for or a whole recipe (typed, pasted, uploaded or imported from Notion); the chef and the style are
+ * picked in its foot. Matching recipes from the show are offered under the box.
+ */
 export function Form({ onGenerate }: { onGenerate: () => void }) {
   const { recipe, setRecipe, chef, setChef, style, setStyle } = useCooking();
+  const [rejected, setRejected] = useState("");
   const chosen = chosenRecipe(recipe);
-  const ready = !!chosen && !!chef;
+  const text = recipe.mode === "search" && recipe.picked ? recipe.picked.title : recipe.text;
+  const ready = Boolean(chosen) && Boolean(chef);
 
-  const onRecipe = (s: RecipeState) => {
-    if (s.picked && s.picked !== recipe.picked && s.picked.chef) setChef(s.picked.chef);
-    setRecipe(s);
+  const type = (t: string) => {
+    const exact = recipes.find((r) => r.title.toLowerCase() === t.trim().toLowerCase());
+    if (exact) {
+      if (exact.chef) setChef(exact.chef);
+      setRecipe({ mode: "search", picked: exact, text: t });
+    } else setRecipe({ mode: "custom", picked: null, text: t });
   };
+  const take = (files: File[]) => {
+    const [f] = files;
+    if (!f) return;
+    const ext = f.name.slice(f.name.lastIndexOf(".")).toLowerCase();
+    if (!TYPES.includes(ext)) return setRejected(`${f.name} cannot be read here. Use a .txt file, or paste the recipe.`);
+    setRejected("");
+    f.text().then(type, () => setRejected(`${f.name} could not be read. Paste the recipe instead.`));
+  };
+  // A short single line is a search: the show's recipes that match it are offered under the box.
+  const query = text.trim();
+  const searching = !recipe.picked && query.length > 0 && query.length < 60 && !query.includes("\n");
+  const matches = searching ? searchRecipes(query).slice(0, 6) : [];
 
   return (
-    <div className={g.form}>
-      <h1 className={g.heading}>What are we cooking?</h1>
-      <RecipeField state={recipe} onChange={onRecipe} />
-
-      <section className={g.field} aria-labelledby="f-chef">
-        <h2 id="f-chef" className={g.fieldLabel}>
-          Chef
-        </h2>
-        <ul className={g.chefs}>
-          {chefs.map((c) => (
-            <li key={c.name}>
-              <button type="button" className={g.chef} aria-pressed={c.name === chef} onClick={() => setChef(c.name)}>
-                <span className={g.chefArt}>
-                  <Image src={c.src} alt="" fill sizes="96px" />
-                </span>
-                <span className={g.chefName}>{c.name}</span>
+    <StartScreen tool="cooking">
+      <Composer
+        value={text}
+        onChange={type}
+        onSubmit={onGenerate}
+        submitLabel="Generate"
+        label="Recipe"
+        placeholder="Name a dish or paste a recipe"
+        attachment={{ accept: TYPES.join(","), onAttach: take, onRemove: () => {} }}
+        tools={<NotionImport mode="text" look="composer" onText={(r) => type(r.text)} />}
+        leading={
+          <div className={`${st.end} ${st.pair}`}>
+            <Pick label="Chef" value={chef ?? ""} onChange={(v) => setChef(v || null)} options={[{ value: "", label: "Choose" }, ...chefs.map((c) => ({ value: c.name, label: c.name }))]} />
+            <Pick label="Style" value={style.slug} onChange={(v) => setStyle(genStyles.find((s) => s.slug === v) ?? style)} options={genStyles.map((s) => ({ value: s.slug, label: s.name }))} />
+          </div>
+        }
+        ready={ready}
+        error={rejected}
+        autoFocus
+      />
+      {matches.length > 0 && (
+        <ul className={g.suggest} aria-label="Recipes from the show">
+          {matches.map((r) => (
+            <li key={r.key}>
+              <button
+                type="button"
+                className={g.suggestion}
+                onClick={() => {
+                  if (r.chef) setChef(r.chef);
+                  setRecipe({ mode: "search", picked: r, text: r.title });
+                }}
+              >
+                {r.title}
               </button>
             </li>
           ))}
         </ul>
-      </section>
-
-      <section className={g.field} aria-labelledby="f-style">
-        <h2 id="f-style" className={g.fieldLabel}>
-          Style <span className={g.fieldValue}>{style.name}</span>
-        </h2>
-        <ul className={g.styles}>
-          {genStyles.map((s) => (
-            <li key={s.slug}>
-              <button type="button" className={g.style} aria-pressed={s.slug === style.slug} aria-label={s.name} title={s.name} onClick={() => setStyle(s)}>
-                <span className={g.styleArt}>{s.card && <Image src={s.card.src} alt="" fill sizes="120px" />}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <div className={g.foot}>
-        <dl className={g.length}>
-          <dt>Length</dt>
-          <dd>{seconds(lengthOf(chosen))}</dd>
-        </dl>
-        <div className={g.go}>
-          <Btn kind="primary" className={g.generate} icon={<Icon name="generate" size={16} />} disabled={!ready} onClick={onGenerate}>
-            Generate
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DishIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="12" r="5" />
-    </svg>
-  );
-}
-
-function Thumb({ r }: { r: Recipe }) {
-  return <span className={g.thumb}>{r.release ? <Image src={r.release.dish} alt="" fill sizes="80px" /> : <DishIcon />}</span>;
-}
-
-function RecipeField({ state, onChange }: { state: RecipeState; onChange: (s: RecipeState) => void }) {
-  const [q, setQ] = useState("");
-  const [more, setMore] = useState(false);
-  const input = useRef<HTMLInputElement>(null);
-  const area = useRef<HTMLTextAreaElement>(null);
-  const focusNext = useRef<"search" | "custom" | null>(null);
-  const results = searchRecipes(q);
-  // Three recipes and a More row until a search or More asks for the rest, so Generate stays in view.
-  const shown = q.trim() || more ? results : results.slice(0, 3);
-
-  useEffect(() => {
-    if (focusNext.current === "search") input.current?.focus();
-    if (focusNext.current === "custom") area.current?.focus();
-    focusNext.current = null;
-  });
-
-  const change = () => {
-    focusNext.current = "search";
-    onChange({ ...state, mode: "search", picked: null });
-  };
-  const paste = () => {
-    focusNext.current = "custom";
-    onChange({ ...state, mode: "custom" });
-  };
-  const picking = state.mode === "search" && !state.picked;
-
-  return (
-    <section className={g.field} aria-labelledby="f-recipe">
-      <div className={g.labelRow}>
-        <h2 id="f-recipe" className={g.fieldLabel}>
-          Recipe
-        </h2>
-        {picking && (
-          <button type="button" className={g.textBtn} onClick={paste}>
-            Paste your own
-          </button>
-        )}
-        {state.mode === "custom" && (
-          <button type="button" className={g.textBtn} onClick={change}>
-            Search recipes
-          </button>
-        )}
-      </div>
-      {state.mode === "search" && state.picked ? (
-        <div className={g.picked}>
-          <Thumb r={state.picked} />
-          <span className={g.rowTitle}>{state.picked.title}</span>
-          <Btn kind="ghost" small icon={<Icon name="create" size={16} />} onClick={change}>
-            Change
-          </Btn>
-        </div>
-      ) : state.mode === "custom" ? (
-        <div className={g.custom}>
-          <Composer ref={area} size="compact" label="Your recipe" placeholder="Paste a recipe" value={state.text} onChange={(text) => onChange({ ...state, text })} />
-        </div>
-      ) : (
-        <div className={g.searchBox}>
-          <label className={g.search}>
-            <GestureIcon name="search" size={18} />
-            <span className="sr-only">Search recipes</span>
-            <input ref={input} type="search" placeholder="Search recipes" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" />
-          </label>
-          <ul className={g.results} aria-label="Recipes">
-            {shown.map((r) => (
-              <li key={r.key}>
-                <button type="button" className={g.row} onClick={() => onChange({ ...state, mode: "search", picked: r })}>
-                  <Thumb r={r} />
-                  <span className={g.rowTitle}>{r.title}</span>
-                </button>
-              </li>
-            ))}
-            {shown.length < results.length && (
-              <li>
-                <button type="button" className={g.row} aria-expanded={false} onClick={() => setMore(true)}>
-                  <span className={g.thumb}>
-                    <Icon name="plus" size={18} />
-                  </span>
-                  <span className={g.rowTitle}>More recipes</span>
-                </button>
-              </li>
-            )}
-            {results.length === 0 && <li className={g.none}>No recipes found</li>}
-          </ul>
-        </div>
       )}
-    </section>
+    </StartScreen>
   );
 }

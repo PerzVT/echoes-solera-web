@@ -2,7 +2,7 @@
  * Hand-written checks for what the creator's API accepts. Each returns the clean value or throws a Bad with a safe
  * code and a plain message; nothing from the request reaches the store unchecked.
  */
-import { MANGA_STEPS, STEPS, STORYBOARD_STEPS, TOOLS, type CastChoice, type Frame, type MangaLetter, type MangaPage, type MangaStep, type Note, type Step, type StoryboardStep, type Tool } from "./types";
+import { MANGA_STEPS, STEPS, STORYBOARD_STEPS, TOOLS, type CastChoice, type Frame, type Made, type MangaLetter, type MangaPage, type MangaStep, type Note, type Step, type StoryboardStep, type Tool } from "./types";
 
 export class Bad extends Error {
   constructor(
@@ -158,13 +158,27 @@ export const mangaStep = (v: unknown): MangaStep => {
   return v as MangaStep;
 };
 
+/** How a picture was made: optional, and only these fields. */
+export function made(v: unknown): Made | undefined {
+  if (v === undefined || v === null) return undefined;
+  if (!isObj(v) || typeof v.at !== "string" || Number.isNaN(Date.parse(v.at))) throw new Bad("invalid", "A picture's record is not valid.");
+  const out: Made = { at: new Date(v.at).toISOString() };
+  if (v.job !== undefined && v.job !== null) out.job = id(v.job, "A job");
+  if (v.test === true) out.test = true;
+  if (typeof v.prompt === "string" && v.prompt) out.prompt = text(v.prompt, "A prompt", 20000, { multiline: true });
+  if (typeof v.by === "string" && v.by) out.by = text(v.by, "A maker", 200);
+  return out;
+}
+
 export function frame(v: unknown): Frame {
   if (!isObj(v)) throw new Bad("invalid", "A frame is not valid.");
+  const m = made(v.made);
   return {
     id: text(v.id, "A frame id", 80, { min: 1 }),
     title: text(v.title, "A frame title", 120),
     note: text(v.note, "A shot note", 4000, { multiline: true }),
     image: sitePath(v.image, "A frame picture"),
+    ...(m ? { made: m } : {}),
   };
 }
 
@@ -191,10 +205,15 @@ function letter(v: unknown): MangaLetter {
 
 export function mangaPage(v: unknown): MangaPage {
   if (!isObj(v)) throw new Bad("invalid", "A page is not valid.");
+  const m = made(v.made);
   return {
     id: text(v.id, "A page id", 80, { min: 1 }),
     image: sitePath(v.image, "A page picture"),
     alt: text(v.alt, "A page description", 2000, { multiline: true }),
     letters: list(v.letters, "The lettering", 60, letter),
+    ...(m ? { made: m } : {}),
   };
 }
+
+/** A series a storyboard or manga belongs to: a saved series' id or a built-in slug, or null for none. */
+export const seriesRef = (v: unknown) => (v === null || v === undefined || v === "" ? null : id(v, "The series"));

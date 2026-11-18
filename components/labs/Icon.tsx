@@ -40,6 +40,7 @@ export const iconPaths = {
   generate: "M4 20 14.5 9.5M13 4.5v2M18.5 10h2M16.5 6l1.5-1.5M17 14l1.5 1.5M8.5 4.5 10 6",
   comment: "M4 5h16v11H9.5L4 20Z",
   save: "M6 3h12v18l-6-4.5L6 21Z",
+  copy: "M9 9h11v11H9ZM5 15H4V4h11v1",
   user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21q0-6 8-6t8 6",
   signout: "M10 4H5v16h5M14 8l4 4-4 4M18 12H9",
   signin: "M14 4h5v16h-5M10 8l4 4-4 4M14 12H4",

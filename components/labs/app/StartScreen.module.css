@@ -1,14 +1,15 @@
-/* A start screen: the heading, the tools, one large box, centred. */
+/* A start screen: the heading, the tools, one large box. It hangs from a fixed distance under the header rather
+   than being centred, so the heading and the box sit at the same place on every tool whatever comes under them. */
 .page {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 24px;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 24px 0 10vh;
+  padding: 12vh 0 48px;
 }
 .title {
   font-family: var(--font-display);

@@ -12,9 +12,11 @@ import type { MangaLetter, MangaPage } from "./api";
 import { PAGE_COUNTS, mangaStyles } from "./fixtures";
 import { makeMangaPages, regeneratePage } from "./generate";
 import { Alert, SaveAction, revealOnPhone, useSaveThen } from "./parts";
-import { Preview } from "./Preview";
+import { LibraryGrid } from "./LibraryGrid";
+import { Record } from "./Record";
+import { seriesTitle, useSeriesOptions } from "./seriesOptions";
 import { SourceStart } from "./SourceStart";
-import { Menu, WorkCards, WorkLoading } from "./StoryboardApp";
+import { Menu, WorkLoading } from "./StoryboardApp";
 import { StylePicker } from "./StylePicker";
 import { titleOf, useMangas } from "./work";
 import type { WorkStepDef } from "./WorkShell";
@@ -32,6 +34,15 @@ const LIBRARY = "/app/manga/library";
 const KIND: Record<MangaLetter["kind"], string> = { speech: "Speech", narration: "Narration", sfx: "Sound", inset: "Lettering" };
 
 const message = (e: unknown, fallback = "That did not save. Try again.") => (e instanceof Error && e.message ? e.message : fallback);
+
+/** A page as a card's cover: laid out at four times the size and scaled down, so the lettering keeps its proportions. */
+export function PageCover({ page }: { page: MangaPage }) {
+  return (
+    <span className={m.cover}>
+      <Page page={page} n={1} sizes="960px" />
+    </span>
+  );
+}
 
 /** A page as it is printed: the wordless art with its lettering set over it as live text. */
 function Page({ page, n, sizes, eager }: { page: MangaPage; n: number; sizes: string; eager?: boolean }) {
@@ -61,15 +72,16 @@ export function MangaStart({ edit }: { edit: boolean }) {
   const editing = edit ? work.current : null;
   if (edit && work.opening) return <WorkLoading tool="manga" steps={MANGA_STEPS} step="story" />;
 
-  const submit = async (source: string) => {
+  const submit = async (source: string, seriesId: string | null) => {
     setSending(true);
     setError("");
     try {
       if (editing) {
         if (source !== editing.source) work.patch({ source, pages: [], step: "style" });
+        if (seriesId !== (editing.seriesId ?? null)) work.patch({ seriesId });
         await work.flush();
       } else {
-        await work.create(titleOf(source, "Manga"), source);
+        await work.create(titleOf(source, "Manga"), source, seriesId);
         work.patch({ step: "style" });
       }
       router.push("/app/manga/style");
@@ -88,6 +100,7 @@ export function MangaStart({ edit }: { edit: boolean }) {
       label="Story"
       placeholder="Paste a story or a script passage"
       initial={editing?.source}
+      initialSeries={editing?.seriesId}
       sending={sending}
       error={error}
       onSubmit={submit}
@@ -241,7 +254,7 @@ export function MangaPages() {
       .then(({ page: drawn }) => {
         if (!alive.current) return;
         const latest = work.current?.pages ?? [];
-        work.patch({ pages: latest.map((x) => (x.id === p.id ? { ...x, image: drawn.image } : x)) });
+        work.patch({ pages: latest.map((x) => (x.id === p.id ? { ...x, image: drawn.image, made: drawn.made } : x)) });
         setSaid("Page drawn again.");
       })
       .catch((e: unknown) => {
@@ -402,24 +415,27 @@ export function MangaPages() {
           )}
         </aside>
       </div>
-      <PageViewer pages={pages} at={viewing} onAt={setViewing} />
+      <PageViewer manga={manga} pages={pages} at={viewing} onAt={setViewing} />
     </WorkShell>
   );
 }
 
-function PageViewer({ pages, at, onAt }: { pages: MangaPage[]; at: number | null; onAt: (n: number | null) => void }) {
+/** A page full screen as its record: the page with its lettering, and how its art was made. */
+function PageViewer({ manga, pages, at, onAt }: { manga: { title: string; owner: string; seriesId?: string | null }; pages: MangaPage[]; at: number | null; onAt: (n: number | null) => void }) {
+  const series = useSeriesOptions();
   const page = at !== null ? pages[at] : undefined;
   return (
-    <Preview
+    <Record
       open={Boolean(page)}
       shape="page"
       label={page ? `Page ${(at ?? 0) + 1}` : "Page"}
       onClose={() => onAt(null)}
       onPrev={at !== null && at > 0 ? () => onAt(at - 1) : undefined}
       onNext={at !== null && at < pages.length - 1 ? () => onAt(at + 1) : undefined}
+      info={page ? { title: `${manga.title}, page ${(at ?? 0) + 1}`, made: page.made, tool: "Manga", project: seriesTitle(series, manga.seriesId), owner: manga.owner } : null}
     >
-      {page && <Page page={page} n={(at ?? 0) + 1} sizes="100vw" eager />}
-    </Preview>
+      {page && <Page page={page} n={(at ?? 0) + 1} sizes="(max-width: 900px) 100vw, 60vw" eager />}
+    </Record>
   );
 }
 
@@ -465,7 +481,7 @@ export function MangaRead() {
           </ol>
         </div>
       </div>
-      <PageViewer pages={manga.pages} at={viewing} onAt={setViewing} />
+      <PageViewer manga={manga} pages={manga.pages} at={viewing} onAt={setViewing} />
     </WorkShell>
   );
 }
@@ -475,6 +491,7 @@ export function MangaRead() {
 export function MangaLibrary() {
   const router = useRouter();
   const work = useMangas();
+  const series = useSeriesOptions();
   const [error, setError] = useState("");
   const [opening, setOpening] = useState<string | null>(null);
   const open = async (id: string) => {
@@ -507,14 +524,26 @@ export function MangaLibrary() {
         </Btn>
       }
     >
-      <WorkCards
-        title="Library"
+      <LibraryGrid
+        shape="page"
         loading={!work.listed}
         error={error}
-        items={work.list.map((t) => ({ id: t.id, title: t.title, cover: t.pages[0]?.image }))}
-        opening={opening}
-        onOpen={(id) => void open(id)}
-        onDelete={(id) => work.remove(id).catch((e: unknown) => setError(message(e, "That did not delete. Try again.")))}
+        items={work.list.map((t) => {
+          const cover = t.pages.find((p) => p.image);
+          const style = mangaStyles.find((s) => s.slug === t.style) ?? mangaStyles[0];
+          return {
+            id: t.id,
+            title: t.title,
+            date: t.createdAt,
+            meta: seriesTitle(series, t.seriesId),
+            // The first drawn page with its lettering; a manga not drawn yet shows its style's example page.
+            art: cover ? <PageCover page={cover} /> : undefined,
+            covers: [style.chart?.example?.src, style.card?.src].filter((x): x is string => Boolean(x)),
+            busy: opening === t.id,
+            onOpen: () => void open(t.id),
+            menu: [{ label: "Delete", run: () => void work.remove(t.id).catch((e: unknown) => setError(message(e, "That did not delete. Try again."))) }],
+          };
+        })}
         empty={
           <Link href="/app/manga" className={b.emptyLink} onClick={() => work.clear()}>
             New manga

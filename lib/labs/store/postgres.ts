@@ -55,8 +55,8 @@ const FIELDS: { [T in Table]: (keyof Tables[T] & string)[] } = {
   screenplays: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "episodeId", "texts", "notes", "changed"],
   cast_sheets: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "seriesId", "character", "variant", "tag", "image"],
   choices: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "episodeId", "cast", "style", "references"],
-  storyboards: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "title", "source", "style", "frames", "step"],
-  mangas: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "title", "source", "style", "pageCount", "pages", "step"],
+  storyboards: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "title", "source", "style", "seriesId", "frames", "step"],
+  mangas: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "title", "source", "style", "seriesId", "pageCount", "pages", "step"],
 };
 const FILE_FIELDS: (keyof StoredFile)[] = ["key", "name", "type", "size", "location", "owner", "createdAt"];
 /** Fields kept as jsonb. */

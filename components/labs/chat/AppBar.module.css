@@ -179,7 +179,7 @@
   .row {
     gap: 4px;
     min-height: 56px;
-    padding: 0 8px;
+    padding: 0 4px;
   }
   .spacer {
     display: none;

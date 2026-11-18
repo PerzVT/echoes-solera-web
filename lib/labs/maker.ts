@@ -1,4 +1,5 @@
 /** Fixed demo data for the creator app. One working episode: Second Chance at Your Heart, episode 1. */
+import type { Made } from "./store/types";
 import { notionCast } from "./cast";
 
 export const EPISODE = {
@@ -25,6 +26,8 @@ export type SeriesCard = {
   /** Key of the series cast. */
   slug: string;
   cover: string;
+  /** When a saved series was made. The built-in series have none. */
+  createdAt?: string;
 };
 
 /** The three mini-series in the Library. Episodes are named by number only. */
@@ -154,7 +157,8 @@ export const sheets: Record<"character", Sheet[]> = {
 
 /* ---------- Results ---------- */
 
-export type Take = { name: string; src: string; poster: string };
+/** One take of a generation. `made` is how it was made, for the Library's record (lib/labs/store/types.ts Made). */
+export type Take = { name: string; src: string; poster: string; made?: Made };
 
 const E = "/labs/mini-series/second-chance/episodes";
 const clip = (file: string, name = "Take 1"): Take => ({ name, src: `${E}/${file}.mp4`, poster: `${E}/${file}.webp` });

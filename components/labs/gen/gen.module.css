@@ -340,3 +340,41 @@
     flex: 1;
   }
 }
+
+/* ---------- Start: the show's recipes under the box ---------- */
+.suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.suggestion {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  transition:
+    border-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+.suggestion:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .suggestion:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+}
+@media (max-width: 767px) {
+  .suggestion {
+    height: 44px;
+  }
+}

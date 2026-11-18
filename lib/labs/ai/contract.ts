@@ -31,7 +31,7 @@ export type AiUsage = {
  *
  * POST /api/creator/jobs        body CreateJobRequest  -> 201 { job: JobView }   (503 without a key; 429 when paused)
  * GET  /api/creator/jobs        ?episode=&kind=&limit= -> { jobs: JobView[] }   (the signed-in person's own, newest first)
- * GET  /api/creator/jobs/[id]   -> { job: JobView }    (poll every 2-3 s until status is done or failed)
+ * GET  /api/creator/jobs/[id]   -> { job: JobView; record: JobRecord }  (poll every 2-3 s until status is done or failed)
  * POST /api/creator/jobs/[id]/cancel -> { job: JobView }
  * ==================================================================================================== */
 
@@ -57,6 +57,23 @@ export type JobResultFor = {
   prompts: PromptsResult;
   image: ImageResult;
   clip: never;
+};
+
+/**
+ * How one job was made, for the Library's record view (GET /api/creator/jobs/[id] returns it beside the job, to the
+ * job's owner and to anyone signed in, since the whole team sees every record). The record view is the one place
+ * the creator shows cost. `prompt` is the prompt sent (for a text job, the start of its input); `model` is null for
+ * the development stand-in.
+ */
+export type JobRecord = {
+  id: string;
+  kind: JobKind;
+  owner: string;
+  prompt: string | null;
+  model: string | null;
+  costUsd: number | null;
+  createdAt: string;
+  finishedAt: string | null;
 };
 
 /** A job as the API returns it. No cost, provider ids or input are included. `error` is a plain sentence. */
@@ -302,6 +319,9 @@ export type NotionSearchResult = { items: NotionItem[]; next: string | null };
 export type NotionImportScriptRequest = { pageId: string; episodeId: string };
 /** The saved Script record (lib/labs/store/types.ts) and whether Notion cut the page short. */
 export type NotionImportScriptResult = { script: Script; truncated: boolean };
+
+/** POST /api/creator/notion/import/text { pageId }: a page's text for a box to take in, saved nowhere. */
+export type NotionImportTextResult = { text: string; title: string; truncated: boolean };
 
 /**
  * Each page is a character or place: its title is the name; every image in its file properties and body becomes a

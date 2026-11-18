@@ -11,7 +11,7 @@ import { api, type Manga, type MangaPatch, type Storyboard, type StoryboardPatch
 
 type Adapter<T, P> = {
   list: () => Promise<T[]>;
-  create: (title: string, source: string) => Promise<T>;
+  create: (title: string, source: string, seriesId?: string | null) => Promise<T>;
   get: (id: string) => Promise<T>;
   save: (id: string, patch: P) => Promise<T>;
   remove: (id: string) => Promise<unknown>;
@@ -28,7 +28,7 @@ export type WorkStore<T, P> = {
   opening: boolean;
   /** Why the current record could not be read, if it could not. */
   openError: string;
-  create: (title: string, source: string) => Promise<T>;
+  create: (title: string, source: string, seriesId?: string | null) => Promise<T>;
   open: (id: string) => Promise<T>;
   /** Changes the current record here at once and saves it shortly after. */
   patch: (p: P) => void;
@@ -126,9 +126,9 @@ function createWork<T extends { id: string; createdAt: string }, P extends objec
         current,
         opening,
         openError,
-        create: async (title, source) => {
+        create: async (title, source, seriesId) => {
           await send()?.catch(() => {});
-          const t = await a.create(title, source);
+          const t = await a.create(title, source, seriesId ?? null);
           put(t);
           return t;
         },

@@ -7,6 +7,11 @@
   gap: 8px;
   min-width: 0;
 }
+/* Two pickers side by side on one row, such as cooking's chef and style. It lives here, with the series picker
+   every start screen loads, so the row keeps its shape while one tool's styles give way to the next. */
+.pair {
+  flex-wrap: nowrap;
+}
 .series {
   display: flex;
   align-items: center;
@@ -62,6 +67,9 @@
     flex: 1 1 100%;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+  }
+  .pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .seriesLabel {
     flex: none;

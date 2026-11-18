@@ -194,16 +194,16 @@
   background: var(--surface-hover);
 }
 .rename {
-  align-self: center;
+  width: 100%;
   min-width: 0;
-  height: 48px;
+  height: 40px;
   padding: 0 12px;
   border: 1px solid var(--border-strong);
   border-radius: 10px;
   background: var(--surface-sunken);
   color: inherit;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
+  font: inherit;
+  font-size: 16px;
 }
 
 /* The Undo line, fixed at the bottom; on phones it sits above the docked action. */

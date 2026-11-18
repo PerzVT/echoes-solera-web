@@ -13,7 +13,7 @@
  */
 import { Bad } from "@/lib/labs/store/validate";
 import { getJobStore, type Job } from "@/lib/labs/store/jobs";
-import type { AiUsage, JobKind, JobView } from "./contract";
+import type { AiUsage, JobKind, JobRecord, JobView } from "./contract";
 import { MAX_ACTIVE_JOBS, aiReady, dailyLimit, monthlyLimit } from "./config";
 import { imageCost, textCost } from "./cost";
 import { fakeImage, fakeText } from "./fake";
@@ -47,6 +47,22 @@ export function view(job: Job): JobView {
     error: job.error,
     createdAt: job.createdAt,
     updatedAt: job.updatedAt,
+    finishedAt: job.finishedAt,
+  };
+}
+
+/** The prompt sent, the model and the cost: what the Library's record view shows for one picture or clip. */
+export function record(job: Job): JobRecord {
+  const input = (job.input ?? {}) as Partial<Stored> & { prompt?: unknown; input?: unknown; model?: unknown };
+  const prompt = typeof input.prompt === "string" ? input.prompt : typeof input.input === "string" ? input.input.slice(0, 4000) : null;
+  return {
+    id: job.id,
+    kind: job.kind as JobKind,
+    owner: job.owner,
+    prompt,
+    model: job.provider === "fake" ? null : typeof input.model === "string" ? input.model : null,
+    costUsd: job.costUsd,
+    createdAt: job.createdAt,
     finishedAt: job.finishedAt,
   };
 }
@@ -155,7 +171,8 @@ async function settle(job: Job, outcome: { result: unknown } | { error: string }
     },
     ["running"],
   );
-  if (!done) console.error(`ai job ${job.id} (${job.kind}) failed`);
+  // Both the run after the response and a poll can settle the same job; only the one whose update landed logs it.
+  if (!done && finished) console.error(`ai job ${job.id} (${job.kind}) failed`);
   return finished;
 }
 

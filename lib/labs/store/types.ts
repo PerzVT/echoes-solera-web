@@ -36,12 +36,20 @@ export type Choices = Meta & { episodeId: string; cast: CastChoice[] | null; sty
 
 /* ---------- Storyboards and mangas: one record each, saved whole ---------- */
 
+/**
+ * How a generated picture or clip was made, kept with it so the Library can show its record. `job` is the
+ * generation job that made it (GET /api/creator/jobs/[id] has the model, cost and times); `test` marks work made in
+ * test mode, which no job made. `at` is when it was made and `prompt` the prompt it was made from.
+ */
+export type Made = { job?: string; test?: boolean; at: string; prompt?: string; by?: string };
+
 /** One frame of a storyboard. Its number is its place in the list. `image` is a picture on this site. */
-export type Frame = { id: string; title: string; note: string; image: string };
+export type Frame = { id: string; title: string; note: string; image: string; made?: Made };
 export type StoryboardStep = "scene" | "style" | "board";
 export const STORYBOARD_STEPS: StoryboardStep[] = ["scene", "style", "board"];
 /** A storyboard: the scene it was made from, its style and its frames in order. */
-export type Storyboard = Meta & { title: string; source: string; style: string | null; frames: Frame[]; step: StoryboardStep };
+/** `seriesId` is the series the board belongs to (a saved series' id or a built-in slug), or null for one on its own. */
+export type Storyboard = Meta & { title: string; source: string; style: string | null; seriesId: string | null; frames: Frame[]; step: StoryboardStep };
 
 /** Lettering over a manga page: positions and width in percent of the page, as the public reader sets them. */
 export type MangaLetter = {
@@ -55,10 +63,10 @@ export type MangaLetter = {
   scale?: number;
 };
 /** One page: wordless art and the live lettering over it. */
-export type MangaPage = { id: string; image: string; alt: string; letters: MangaLetter[] };
+export type MangaPage = { id: string; image: string; alt: string; letters: MangaLetter[]; made?: Made };
 export type MangaStep = "story" | "style" | "pages" | "read";
 export const MANGA_STEPS: MangaStep[] = ["story", "style", "pages", "read"];
-export type Manga = Meta & { title: string; source: string; style: string | null; pageCount: number; pages: MangaPage[]; step: MangaStep };
+export type Manga = Meta & { title: string; source: string; style: string | null; seriesId: string | null; pageCount: number; pages: MangaPage[]; step: MangaStep };
 
 export type Tables = {
   series: Series;

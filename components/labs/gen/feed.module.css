@@ -425,3 +425,16 @@
     margin-top: 0;
   }
 }
+/* The player inside a record: it fills the record's 9:16 media box. */
+.recordScreen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #000;
+}
+.recordScreen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

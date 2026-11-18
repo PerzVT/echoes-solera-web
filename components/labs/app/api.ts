@@ -1,10 +1,10 @@
 /** The creator's calls to its own API (app/api/creator). Every failure becomes a SaveError with a plain message. */
-import type { NotionImportCastResult, NotionImportScriptResult, NotionSearchResult, NotionStatus } from "@/lib/labs/ai/contract";
+import type { JobRecord, NotionImportCastResult, NotionImportScriptResult, NotionImportTextResult, NotionSearchResult, NotionStatus } from "@/lib/labs/ai/contract";
 import type { CastChoice, CastSheet, Choices, Episode, Frame, Manga, MangaLetter, MangaPage, MangaStep, Note, Screenplay, Script, Series, Step, Storyboard, StoryboardStep, Tool } from "@/lib/labs/store/types";
 
 export type { CastChoice, CastSheet, Episode, Frame, Manga, MangaLetter, MangaPage, MangaStep, Series, Step, Storyboard, StoryboardStep };
-export type StoryboardPatch = Partial<Pick<Storyboard, "title" | "source" | "style" | "frames" | "step">>;
-export type MangaPatch = Partial<Pick<Manga, "title" | "source" | "style" | "pageCount" | "pages" | "step">>;
+export type StoryboardPatch = Partial<Pick<Storyboard, "title" | "source" | "style" | "seriesId" | "frames" | "step">>;
+export type MangaPatch = Partial<Pick<Manga, "title" | "source" | "style" | "seriesId" | "pageCount" | "pages" | "step">>;
 export type EpisodeDetail = { episode: Episode; script: Script | null; screenplay: Screenplay | null; choices: Choices | null };
 
 export class SaveError extends Error {}
@@ -93,13 +93,14 @@ export const api = {
   deleteCast: (id: string) => call(`/api/creator/cast/${id}`, { method: "DELETE" }),
 
   listStoryboards: () => call<{ storyboards: Storyboard[] }>("/api/creator/storyboards").then((d) => d.storyboards),
-  createStoryboard: (title: string, source: string) => call<{ storyboard: Storyboard }>("/api/creator/storyboards", json("POST", { title, source })).then((d) => d.storyboard),
+  createStoryboard: (title: string, source: string, seriesId: string | null = null) =>
+    call<{ storyboard: Storyboard }>("/api/creator/storyboards", json("POST", { title, source, seriesId })).then((d) => d.storyboard),
   getStoryboard: (id: string) => call<{ storyboard: Storyboard }>(`/api/creator/storyboards/${id}`).then((d) => d.storyboard),
   saveStoryboard: (id: string, patch: StoryboardPatch) => call<{ storyboard: Storyboard }>(`/api/creator/storyboards/${id}`, json("PUT", patch)).then((d) => d.storyboard),
   deleteStoryboard: (id: string, keepalive = false) => call(`/api/creator/storyboards/${id}`, { method: "DELETE", keepalive }),
 
   listMangas: () => call<{ mangas: Manga[] }>("/api/creator/mangas").then((d) => d.mangas),
-  createManga: (title: string, source: string) => call<{ manga: Manga }>("/api/creator/mangas", json("POST", { title, source })).then((d) => d.manga),
+  createManga: (title: string, source: string, seriesId: string | null = null) => call<{ manga: Manga }>("/api/creator/mangas", json("POST", { title, source, seriesId })).then((d) => d.manga),
   getManga: (id: string) => call<{ manga: Manga }>(`/api/creator/mangas/${id}`).then((d) => d.manga),
   saveManga: (id: string, patch: MangaPatch) => call<{ manga: Manga }>(`/api/creator/mangas/${id}`, json("PUT", patch)).then((d) => d.manga),
   deleteManga: (id: string, keepalive = false) => call(`/api/creator/mangas/${id}`, { method: "DELETE", keepalive }),
@@ -120,6 +121,10 @@ export const api = {
     return call<NotionSearchResult>(`/api/creator/notion/search?${p}`);
   },
   notionImportScript: (pageId: string, episodeId: string) => call<NotionImportScriptResult>("/api/creator/notion/import/script", json("POST", { pageId, episodeId })),
+  /** A Notion page's text, for a box to take in: nothing is saved. */
+  notionImportText: (pageId: string) => call<NotionImportTextResult>("/api/creator/notion/import/text", json("POST", { pageId })),
+  /** How a generated picture or clip was made: the prompt, model, cost and times of the job that made it. */
+  jobRecord: (id: string) => call<{ record: JobRecord }>(`/api/creator/jobs/${encodeURIComponent(id)}`).then((d) => d.record),
   notionImportCast: (seriesId: string, pageIds: string[]) => call<NotionImportCastResult>("/api/creator/notion/import/cast", json("POST", { seriesId, pageIds })),
 };
 

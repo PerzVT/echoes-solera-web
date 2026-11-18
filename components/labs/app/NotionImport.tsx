@@ -5,7 +5,7 @@ import { GestureIcon } from "@/components/labs/fx";
 import { Icon } from "@/components/labs/Icon";
 import { Btn, IconBtn } from "@/components/labs/chat/ui";
 import { ComposerTool } from "@/components/labs/chat/Composer";
-import type { NotionImportCastResult, NotionImportScriptResult, NotionItem, NotionStatus } from "@/lib/labs/ai/contract";
+import type { NotionImportCastResult, NotionImportScriptResult, NotionImportTextResult, NotionItem, NotionStatus } from "@/lib/labs/ai/contract";
 import { api } from "./api";
 import { Alert, Status } from "./parts";
 import n from "./NotionImport.module.css";
@@ -18,7 +18,9 @@ type ScriptProps = Common & {
   onScript: (r: NotionImportScriptResult) => void;
 };
 type CastProps = Common & { mode: "cast"; seriesId: string; onCast: (r: NotionImportCastResult) => void };
-type Props = ScriptProps | CastProps;
+/** A page's text for a box to take in, saved nowhere: the storyboard, manga and cooking starts. */
+type TextProps = Common & { mode: "text"; onText: (r: NotionImportTextResult) => void };
+type Props = ScriptProps | CastProps | TextProps;
 
 const message = (e: unknown) => (e instanceof Error && e.message ? e.message : "That did not work. Try again.");
 
@@ -109,7 +111,7 @@ function NotionDialog(props: Props & { onClose: () => void }) {
 
   const isPicked = (it: NotionItem) => picked.some((p) => p.id === it.id);
   const toggle = (it: NotionItem) => {
-    if (mode === "script") return setPicked(isPicked(it) ? [] : [it]);
+    if (mode !== "cast") return setPicked(isPicked(it) ? [] : [it]);
     setPicked((all) => (isPicked(it) ? all.filter((p) => p.id !== it.id) : all.length >= 20 ? all : [...all, it]));
   };
 
@@ -122,6 +124,10 @@ function NotionDialog(props: Props & { onClose: () => void }) {
         const episodeId = await props.episode();
         const r = await api.notionImportScript(picked[0].id, episodeId);
         props.onScript(r);
+        setPhase({ at: "done", text: r.truncated ? `Imported ${picked[0].title || "the page"}. Notion sent only the first part of it.` : `Imported ${picked[0].title || "the page"}.` });
+      } else if (props.mode === "text") {
+        const r = await api.notionImportText(picked[0].id);
+        props.onText(r);
         setPhase({ at: "done", text: r.truncated ? `Imported ${picked[0].title || "the page"}. Notion sent only the first part of it.` : `Imported ${picked[0].title || "the page"}.` });
       } else {
         const r = await api.notionImportCast(props.seriesId, picked.map((p) => p.id));
@@ -136,7 +142,7 @@ function NotionDialog(props: Props & { onClose: () => void }) {
     }
   };
 
-  const title = mode === "script" ? "Import a script from Notion" : "Import cast sheets from Notion";
+  const title = mode === "script" ? "Import a script from Notion" : mode === "text" ? "Import a page from Notion" : "Import cast sheets from Notion";
   const busy = phase.at === "importing";
 
   let body: ReactNode;
@@ -194,7 +200,7 @@ function NotionDialog(props: Props & { onClose: () => void }) {
               <li key={it.id}>
                 <button type="button" className={n.row} aria-pressed={on} onClick={() => toggle(it)} disabled={busy}>
                   <span className={n.mark} data-on={on || undefined} aria-hidden="true">
-                    {on ? <Icon name="check" size={16} /> : <Icon name={mode === "script" ? "script" : "cast"} size={18} />}
+                    {on ? <Icon name="check" size={16} /> : <Icon name={mode === "cast" ? "cast" : "script"} size={18} />}
                   </span>
                   <span className={n.rowText}>
                     <span className={n.rowTitle}>{it.title || "Untitled"}</span>
@@ -262,7 +268,7 @@ function NotionDialog(props: Props & { onClose: () => void }) {
             </Btn>
           ) : (
             <Btn kind="primary" icon={<Icon name="download" size={16} />} disabled={!count} loading={busy} onClick={() => void run()}>
-              {mode === "script" ? "Import script" : count > 1 ? `Import ${count} sheets` : "Import sheet"}
+              {mode === "script" ? "Import script" : mode === "text" ? "Import page" : count > 1 ? `Import ${count} sheets` : "Import sheet"}
             </Btn>
           )}
         </div>

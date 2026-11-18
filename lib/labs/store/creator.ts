@@ -219,13 +219,13 @@ export async function deleteCast(id: string) {
 /* ---------- Storyboards and mangas ---------- */
 
 /** Fields a storyboard save may change. Fields left out keep what was saved. */
-export type StoryboardPatch = Partial<Pick<Storyboard, "title" | "source" | "style" | "frames" | "step">>;
-export type MangaPatch = Partial<Pick<Manga, "title" | "source" | "style" | "pageCount" | "pages" | "step">>;
+export type StoryboardPatch = Partial<Pick<Storyboard, "title" | "source" | "style" | "seriesId" | "frames" | "step">>;
+export type MangaPatch = Partial<Pick<Manga, "title" | "source" | "style" | "seriesId" | "pageCount" | "pages" | "step">>;
 
 export const listStoryboards = () => getStore().list("storyboards");
 
-export async function createStoryboard(by: string, input: { title: string; source: string }) {
-  const board: Storyboard = { ...stamp(by, newId("b")), title: input.title, source: input.source, style: null, frames: [], step: "scene" };
+export async function createStoryboard(by: string, input: { title: string; source: string; seriesId?: string | null }) {
+  const board: Storyboard = { ...stamp(by, newId("b")), title: input.title, source: input.source, style: null, seriesId: input.seriesId ?? null, frames: [], step: "scene" };
   await getStore().put("storyboards", board);
   return board;
 }
@@ -250,8 +250,8 @@ export async function deleteStoryboard(id: string) {
 
 export const listMangas = () => getStore().list("mangas");
 
-export async function createManga(by: string, input: { title: string; source: string }) {
-  const manga: Manga = { ...stamp(by, newId("m")), title: input.title, source: input.source, style: null, pageCount: 4, pages: [], step: "story" };
+export async function createManga(by: string, input: { title: string; source: string; seriesId?: string | null }) {
+  const manga: Manga = { ...stamp(by, newId("m")), title: input.title, source: input.source, style: null, seriesId: input.seriesId ?? null, pageCount: 4, pages: [], step: "story" };
   await getStore().put("mangas", manga);
   return manga;
 }

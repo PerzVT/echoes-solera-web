@@ -48,9 +48,11 @@ async function call(path: string, init: RequestInit & { json?: unknown }, timeou
   } catch {
     throw new ProviderError("The generator could not be reached. Try again.", 502, "network");
   }
-  const data = (await res.json().catch(() => null)) as { error?: { code?: string; type?: string } } | null;
+  const data = (await res.json().catch(() => null)) as { error?: { code?: string; type?: string; param?: string } } | null;
   if (!res.ok) {
     const code = String(data?.error?.code ?? data?.error?.type ?? "error").slice(0, 60);
+    // Status, code and the name of the field at fault only: the message can quote the request.
+    console.error(`openai ${init.method ?? "GET"} ${path.split("/")[1]} ${res.status} ${code} ${String(data?.error?.param ?? "").slice(0, 60)}`);
     throw new ProviderError(plainFor(res.status, code), res.status, code);
   }
   return data;
@@ -58,7 +60,7 @@ async function call(path: string, init: RequestInit & { json?: unknown }, timeou
 
 function plainFor(status: number, code: string) {
   if (status === 401 || status === 403) return "API token not set up.";
-  if (code === "insufficient_quota") return "Generation is paused. The account needs more credit.";
+  if (code === "insufficient_quota" || code === "credit_balance_exhausted" || code === "billing_hard_limit_reached") return "Generation is paused. The account needs more credit.";
   if (status === 429) return "The generator is busy. Try again in a minute.";
   if (code === "moderation_blocked" || code === "content_policy_violation") return "The generator refused this request. Change the wording and try again.";
   if (status === 400) return "The generator could not use this request.";
@@ -134,6 +136,11 @@ export function readText(raw: RawResponse): TextOutcome {
     return { state: "failed", plain: long ? "That was too long to finish. Try a shorter part." : "The generator stopped early. Try again.", usage };
   }
   if (status === "cancelled" || status === "canceled") return { state: "failed", plain: "Stopped.", usage };
+  if (["insufficient_quota", "credit_balance_exhausted", "billing_hard_limit_reached"].includes(String(raw.error?.code))) {
+    console.error(`openai response ${status} ${raw.error?.code}`);
+    return { state: "failed", plain: "Generation is paused. The account needs more credit.", usage };
+  }
+  console.error(`openai response ${status || "no status"} ${String(raw.error?.code ?? "").slice(0, 60)}`);
   return { state: "failed", plain: "The generator had a problem. Try again.", usage };
 }
 

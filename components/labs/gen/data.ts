@@ -1,4 +1,5 @@
 import recipeRows from "@/lib/labs/recipes.json";
+import type { Made } from "@/lib/labs/store/types";
 import { allStyles, type Style } from "@/lib/labs/styles";
 import { releases, supper, type Release } from "@/lib/labs/supper";
 
@@ -22,6 +23,8 @@ export type Video = {
   recipeKey: string;
   style: string;
   status: "developing" | "ready";
+  /** How a video made here was made, for its record. The show's own videos have none. */
+  made?: Made;
 };
 
 export const chefs = supper.chefs;

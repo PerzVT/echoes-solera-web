@@ -97,3 +97,16 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* The series picker's place in a start box's foot: a select's size, full width on a phone as the select is. */
+.picker {
+  display: block;
+  width: 180px;
+  height: 40px;
+}
+@media (max-width: 767px) {
+  .picker {
+    width: 100%;
+    height: 44px;
+  }
+}

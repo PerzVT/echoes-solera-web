@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AnimatedMark } from "@/components/labs/fx";
 import { Icon } from "@/components/labs/Icon";
 import { Account } from "@/components/labs/app/Account";
+import { TestModeSwitch } from "@/components/labs/app/TestModeSwitch";
 import { ToolSwitch, cx, type ToolKey } from "./ui";
 import b from "./AppBar.module.css";
 
@@ -52,6 +53,7 @@ export function AppBar({ tool, view, steps, current, action, title }: Props) {
         </nav>
         {title && <span className={b.title}>{title}</span>}
         <span className={b.spacer} />
+        <TestModeSwitch />
         <Account />
       </div>
       {(steps || action) && (

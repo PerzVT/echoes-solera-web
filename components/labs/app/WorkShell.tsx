@@ -5,10 +5,10 @@ import { AppBar, type AppStep, type AppView } from "@/components/labs/chat/AppBa
 import { FileDrops } from "./FileDrops";
 import styles from "./AppShell.module.css";
 
-export type WorkStepDef = { key: string; label: string; href: string };
+export type WorkStepDef = { key: string; label: string; /** Left out for a step that cannot be opened yet. */ href?: string };
 
 type Props = {
-  tool: "storyboard" | "manga";
+  tool: "storyboard" | "manga" | "cooking";
   view: AppView;
   /** The tool's steps, in order. Without `step` the page is a Library page and shows no step bar. */
   steps: WorkStepDef[];
@@ -21,7 +21,7 @@ type Props = {
   children: ReactNode;
 };
 
-/** The storyboard and manga tools, edge to edge: the shared top bar with their own steps, then the work area. */
+/** The storyboard, manga and cooking tools, edge to edge: the shared top bar with their own steps, then the work area. */
 export function WorkShell({ tool, view, steps, step, reached, action, onFiles, fit, children }: Props) {
   const at = step ? steps.findIndex((s) => s.key === step) : -1;
   const far = Math.max(at, reached ? steps.findIndex((s) => s.key === reached) : -1);

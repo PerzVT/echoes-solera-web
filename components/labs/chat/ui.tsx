@@ -72,14 +72,14 @@ export const Pill = forwardRef<HTMLButtonElement, PillProps>(function Pill({ cla
 
 export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
 
-/** The three creator tools. Each is its own screen. */
+/** The creator tools. Each is its own screen. `short` is the name the phone's tool menu button has room for. */
 export const tools = [
-  { key: "mini-series", label: "Mini-series", href: "/app", icon: "series" },
-  { key: "anime", label: "Anime", href: "/app/anime", icon: "anime" },
-  { key: "cooking", label: "Cooking videos", href: "/app/cooking", icon: "cooking" },
-  { key: "storyboard", label: "Storyboard", href: "/app/storyboard", icon: "storyboard" },
-  { key: "manga", label: "Manga", href: "/app/manga", icon: "manga" },
-] as const satisfies readonly { key: string; label: string; href: string; icon: IconName }[];
+  { key: "mini-series", label: "Mini-series", short: "Mini-series", href: "/app", icon: "series" },
+  { key: "anime", label: "Anime", short: "Anime", href: "/app/anime", icon: "anime" },
+  { key: "cooking", label: "Cooking videos", short: "Cooking", href: "/app/cooking", icon: "cooking" },
+  { key: "storyboard", label: "Storyboard", short: "Storyboard", href: "/app/storyboard", icon: "storyboard" },
+  { key: "manga", label: "Manga", short: "Manga", href: "/app/manga", icon: "manga" },
+] as const satisfies readonly { key: string; label: string; short: string; href: string; icon: IconName }[];
 export type ToolKey = (typeof tools)[number]["key"];
 
 /** Switches between the creator tools: a compact segmented row on desktop, a menu on phones. */
@@ -104,7 +104,7 @@ export function ToolSwitch({ current }: { current: ToolKey }) {
       <span className={u.toolMenu}>
         <button ref={button} type="button" className={u.toolButton} aria-expanded={open} aria-label={`Tool, ${now.label}`} onClick={() => setOpen(!open)}>
           <Icon name={now.icon} size={18} />
-          <span className={u.toolButtonLabel}>{now.label}</span>
+          <span className={u.toolButtonLabel}>{now.short}</span>
           <ChevronIcon open={open} size={14} />
         </button>
         {open && (

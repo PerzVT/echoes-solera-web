@@ -1,7 +1,7 @@
 /** Shown by RouteSkeleton (components/labs/fx) while this route is on its way. */
-import { WorkLoading } from "@/components/labs/app/StoryboardApp";
+import { StartSkeleton } from "@/components/labs/app/fx/StartSkeleton";
 import { BOARD_STEPS } from "@/components/labs/app/StoryboardApp";
 
 export default function Loading() {
-  return <WorkLoading tool="storyboard" steps={BOARD_STEPS} step="scene" />;
+  return <StartSkeleton tool="storyboard" steps={BOARD_STEPS} label="Scene" placeholder="Paste a scene or a script passage" />;
 }

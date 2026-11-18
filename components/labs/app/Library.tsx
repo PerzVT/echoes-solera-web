@@ -11,6 +11,8 @@ import type { SeriesCard } from "@/lib/labs/maker";
 import { AppIcon } from "./AppIcon";
 import { AppShell } from "./AppShell";
 import { Alert } from "./parts";
+import { LibraryGrid } from "./LibraryGrid";
+import { api } from "./api";
 import type { EpisodeItem } from "./creator";
 import { episodeKey, useCast } from "./CastProvider";
 import l from "./Library.module.css";
@@ -97,13 +99,31 @@ function useUndo() {
   return { undo, setUndo, clear };
 }
 
-/** /app/library and /app/anime/library: the tool's series as cards. A card opens the series; its menu renames or deletes it. */
+/** /app/library and /app/anime/library: the tool's series as cards, newest first. A card opens the series; its menu renames or deletes it. */
 export function LibraryScreen() {
   const store = useCast();
   const [renaming, setRenaming] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const { undo, setUndo, clear } = useUndo();
   const [error, setError] = useState("");
+  // A series made from a storyboard or a manga has no episode to take a picture from: its first drawn frame or page
+  // stands in for it.
+  const [workArt, setWorkArt] = useState<Record<string, string>>({});
+  useEffect(() => {
+    let alive = true;
+    Promise.all([api.listStoryboards().catch(() => []), api.listMangas().catch(() => [])]).then(([boards, mangas]) => {
+      if (!alive) return;
+      const art: Record<string, string> = {};
+      for (const t of [...boards, ...mangas]) {
+        const src = "frames" in t ? t.frames.find((f) => f.image)?.image : t.pages.find((pg) => pg.image)?.image;
+        if (t.seriesId && src && !art[t.seriesId]) art[t.seriesId] = src;
+      }
+      setWorkArt(art);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const save = (slug: string) => {
     const t = draft.trim();
@@ -115,70 +135,50 @@ export function LibraryScreen() {
 
   return (
     <AppShell view="library" action={<NewButton />}>
-      <div className={l.page}>
-        <h1 className={l.title}>Library</h1>
-        {error && <Alert>{error}</Alert>}
-        <ul className={l.series}>
-          {store.series.map((c, i) => {
-            const art = (
-              <>
-                <span className={l.backdrop} aria-hidden="true">
-                  {backdropOf(c, store.profile.extra) && <Image src={backdropOf(c, store.profile.extra)} alt="" fill sizes="(max-width: 767px) 100vw, 50vw" loading={i < 3 ? "eager" : undefined} />}
-                </span>
-                <span className={l.cover}>{c.cover && <Image src={c.cover} alt="" fill sizes="(max-width: 767px) 72px, 104px" loading="eager" />}</span>
-              </>
-            );
-            return (
-              <li key={c.slug} className={l.cardItem}>
-                {renaming === c.slug ? (
-                  <div className={l.card}>
-                    {art}
-                    <input
-                      className={l.rename}
-                      aria-label="Series name"
-                      value={draft}
-                      autoFocus
-                      onFocus={(e) => e.currentTarget.select()}
-                      onChange={(e) => setDraft(e.target.value)}
-                      onBlur={() => save(c.slug)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") save(c.slug);
-                        if (e.key === "Escape") setRenaming(null);
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <Link href={store.profile.seriesHref(c.slug)} className={l.card}>
-                      {art}
-                      <span className={l.name}>{c.title}</span>
-                    </Link>
-                    <More
-                      label={`More for ${c.title}`}
-                      items={[
-                        {
-                          label: "Rename",
-                          run: () => {
-                            setDraft(c.title);
-                            setRenaming(c.slug);
-                          },
-                        },
-                        {
-                          label: "Delete",
-                          run: () => {
-                            store.deleteSeries(c.slug, false);
-                            setUndo({ text: `${c.title} deleted`, back: () => store.deleteSeries(c.slug, true) });
-                          },
-                        },
-                      ]}
-                    />
-                  </>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <LibraryGrid
+        shape="wide"
+        error={error}
+        items={store.series.map((c) => ({
+          id: c.slug,
+          title: c.title,
+          date: c.createdAt,
+          meta: store.episodesIn(c.slug).length ? `${store.episodesIn(c.slug).length} ${store.episodesIn(c.slug).length === 1 ? "episode" : "episodes"}` : null,
+          covers: [backdropOf(c, store.profile.extra), c.cover, workArt[c.slug]].filter((x): x is string => Boolean(x)),
+          href: store.profile.seriesHref(c.slug),
+          editing:
+            renaming === c.slug ? (
+              <input
+                className={l.rename}
+                aria-label="Series name"
+                value={draft}
+                autoFocus
+                onFocus={(e) => e.currentTarget.select()}
+                onChange={(e) => setDraft(e.target.value)}
+                onBlur={() => save(c.slug)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") save(c.slug);
+                  if (e.key === "Escape") setRenaming(null);
+                }}
+              />
+            ) : undefined,
+          menu: [
+            {
+              label: "Rename",
+              run: () => {
+                setDraft(c.title);
+                setRenaming(c.slug);
+              },
+            },
+            {
+              label: "Delete",
+              run: () => {
+                store.deleteSeries(c.slug, false);
+                setUndo({ text: `${c.title} deleted`, back: () => store.deleteSeries(c.slug, true) });
+              },
+            },
+          ],
+        }))}
+      />
       <UndoLine undo={undo} onDone={clear} />
     </AppShell>
   );
