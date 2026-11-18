@@ -3054,116 +3054,157 @@ export const afterHours: Story = {
       "focus": "62% 50%",
       "lines": [
         {
-          "text": "2:42 a.m. The others leave for their own shifts. Juri pulls the stool back towards the counter.",
-          "show": "juri",
-          "pose": "smirk"
+          "text": "2:42 a.m. The others head off to their own nights. Juri drags the stool back to the counter.",
+          "show": "juri"
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "laugh",
+          "text": "Ehhh? Hand straight on the counter earlier, no bargaining? You're too easy, Tuna Mayo. That's dangerous at two a.m.",
           "need": {
             "flag": "hand",
             "of": "juri"
-          },
-          "text": "Ehhh? Just like that? No bargaining? You're too easy, Tuna Mayo. That's dangerous at two a.m.",
-          "show": "juri"
+          }
+        },
+        {
+          "text": "\"You asked nicely.\"",
+          "need": {
+            "flag": "hand",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "I never ask nicely. You're just soft.",
+          "need": {
+            "flag": "hand",
+            "of": "juri"
+          }
+        },
+        {
+          "who": "juri",
+          "show": "juri",
           "pose": "laugh",
+          "text": "So. Your big negotiation. One hand for one free rice ball.",
           "need": {
             "flag": "haggle",
             "of": "juri"
-          },
-          "text": "Ohhh, negotiating. Look at you, big business.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
+          "text": "Fine. It's on me. One. But if you flinch when the polish is cold, I'm charging you double.",
           "need": {
             "flag": "haggle",
             "of": "juri"
-          },
-          "text": "Fine. The rice ball's on me. One. If you flinch when the polish is cold, I'm charging you double.",
-          "show": "juri"
+          }
+        },
+        {
+          "text": "\"Deal.\"",
+          "need": {
+            "flag": "haggle",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
+          "text": "You said you start at nine. Ew. A day person. So why are you still here?",
           "need": {
             "flag": "declined",
             "of": "juri"
-          },
-          "text": "Nine? Ew. A day person.",
-          "show": "juri"
+          }
+        },
+        {
+          "text": "\"I'm finishing my tea.\"",
+          "need": {
+            "flag": "declined",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
+          "text": "Sure you are. Fine, I'll use my plastic friend. He never complains. Eight out of ten conversationalist.",
           "need": {
             "flag": "declined",
             "of": "juri"
-          },
-          "text": "Fine, go sleep. I'll keep going on my plastic friend. He never complains. Eight out of ten conversationalist.",
-          "show": "juri"
+          }
         },
         {
+          "text": "You end up leaning on the magazine rack, watching her work. She pretends not to notice.",
           "need": {
             "flag": "declined",
             "of": "juri"
-          },
-          "text": "You say goodnight. Then you don't leave. You end up against the magazine rack with your milk tea, watching her work. She pretends not to notice."
+          }
         },
         {
+          "text": "She taps the counter twice. You lay your hand flat, and she turns it over like fruit at the market.",
           "need": {
             "not": "declined",
             "of": "juri"
           },
-          "pose": "smirk",
-          "text": "She hooks the spare stool over with her foot and taps the counter twice. You lay your hand flat. She turns it over like fruit at the market.",
           "show": "juri"
         },
         {
           "who": "juri",
+          "text": "Cuticles: tragic. Nail beds: actually kind of nice? Don't let it go to your head.",
           "need": {
             "not": "declined",
             "of": "juri"
-          },
-          "text": "Cuticles: tragic. Nail beds: actually kind of nice? Don't let it go to your head."
+          }
+        },
+        {
+          "text": "\"So what's the design?\""
         },
         {
           "who": "juri",
-          "text": "I'm doing the Mirabelle set. Soft pink, one thin gold line, a little star on the ring finger. The owner's whole thing is 'quiet luxury.' So, the opposite of me."
+          "text": "The Mirabelle set. Soft pink, one thin gold line, a little star on the ring finger. The owner's whole thing is \"quiet luxury\". So, the opposite of me."
         },
         {
+          "text": "Her strokes are short and sure. Up close she smells of polish and the peach gum she chews to stay awake.",
           "need": {
             "not": "declined",
             "of": "juri"
-          },
-          "text": "Her strokes are short and sure. Up close she smells of polish and the peach gum she chews to stay awake."
+          }
+        },
+        {
+          "text": "\"Why do you work nights, if this is what you want to do?\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
-          "text": "You know why I do nights? Nobody watches. You can practise for four hours and the only witness is the guy who buys cat food at three.",
-          "show": "juri"
+          "text": "Because nobody watches. I can practise for four hours and the only witness is the guy who buys cat food at three."
+        },
+        {
+          "text": "\"Have you done a trial before?\""
         },
         {
           "who": "juri",
-          "text": "I did one of these trials last year. Different salon. Shibuya."
+          "text": "Once. Last year, a different salon, in Shibuya."
+        },
+        {
+          "text": "\"How did it go?\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
-          "text": "My hand shook so bad I painted the client's cuticle. The whole cuticle. Pink. She was so nice about it. That was worse. I wanted her to yell.",
-          "show": "juri"
+          "text": "My hand shook so much I painted the client's cuticle. The whole cuticle. Pink. And she was so nice about it, which was worse. I wanted her to yell."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "Anyway! Sad story over. Three out of ten, not enough crying.",
-          "show": "juri"
+          "text": "Anyway! Sad story over. Three out of ten, not enough crying."
         }
       ],
       "choices": [
@@ -3201,104 +3242,130 @@ export const afterHours: Story = {
       "lines": [
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
+          "text": "...That's because it's you. You and plastic. You don't count.",
           "need": {
             "flag": "steady",
             "of": "juri"
-          },
-          "text": "...That's because it's you. You and plastic. You don't count.",
-          "show": "juri"
+          }
+        },
+        {
+          "text": "\"I don't count?\"",
+          "need": {
+            "flag": "steady",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "text": "Shut up. I mean you don't judge. You just sit there with your sad rice ball.",
           "need": {
             "flag": "steady",
             "of": "juri"
-          },
-          "text": "Shut up. I mean you don't judge. You just sit there with your sad rice ball."
+          }
         },
         {
+          "text": "For a second she looks at her hand on yours, longer than the job needs. Then she goes back to the gold line.",
           "need": {
             "flag": "steady",
             "not": "declined",
             "of": "juri"
-          },
-          "text": "For a second she just looks at her hand on yours, longer than the job needs. Then she goes back to the gold line."
+          }
         },
         {
+          "text": "She doesn't look up from the plastic stick, but the next stroke comes slower, as if someone were holding still for her.",
           "need": {
             "flag": [
               "steady",
               "declined"
             ],
             "of": "juri"
-          },
-          "text": "She does not look up from the plastic stick, but the next stroke comes slower, as if someone is holding still for her."
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "laugh",
-          "need": {
-            "flag": "tease",
-            "of": "juri"
-          },
           "text": "Ha! Rude. Seven out of ten. That was actually funny.",
-          "show": "juri"
-        },
-        {
-          "who": "juri",
-          "pose": "smirk",
           "need": {
             "flag": "tease",
             "of": "juri"
-          },
+          }
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
           "text": "Half a cuticle. I'm writing that on my mirror.",
-          "show": "juri"
+          "need": {
+            "flag": "tease",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
+          "text": "...Yeah. Maybe.",
           "need": {
             "flag": "doubt",
             "of": "juri"
-          },
-          "text": "...Yeah. Maybe.",
-          "show": "juri"
+          }
         },
         {
+          "text": "She keeps painting, but her shoulders drop. The gold line goes on too thick and she doesn't fix it.",
           "need": {
             "flag": "doubt",
             "of": "juri"
-          },
-          "text": "She keeps painting, but her shoulders drop. The gold line goes on too thick and she doesn't fix it."
+          }
+        },
+        {
+          "text": "\"I didn't mean you couldn't do it.\"",
+          "need": {
+            "flag": "doubt",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "text": "I know what you meant. My mom says it too. You two should get coffee.",
           "need": {
             "flag": "doubt",
             "of": "juri"
-          },
-          "text": "My mom says that too. Wow. You two should get coffee."
+          }
         },
         {
+          "text": "At 3:10 she seals the last coat and holds your hand up to the light.",
           "need": {
             "not": "declined",
             "of": "juri"
-          },
-          "text": "At 3:10 she seals the last coat and holds your hand up to the light."
+          }
         },
         {
+          "text": "At 3:10 she finishes the tenth plastic nail and holds the stick up to the light.",
           "need": {
             "flag": "declined",
             "of": "juri"
-          },
-          "text": "At 3:10 she finishes the tenth plastic nail and holds the stick up to the light."
+          }
+        },
+        {
+          "text": "\"Well? Out of ten?\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "Okay. That's... honestly? A nine.",
-          "show": "juri"
+          "text": "That's... honestly? A nine."
+        },
+        {
+          "text": "\"What does a ten look like?\""
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "pout",
+          "text": "I've never given one. Don't push it."
         }
       ],
       "next": "call",
@@ -3310,57 +3377,72 @@ export const afterHours: Story = {
       "focus": "62% 50%",
       "lines": [
         {
-          "cg": "none",
-          "text": "3:12 a.m. Her phone buzzes against the counter. OKADA, MANAGER."
+          "text": "3:12 a.m. Her phone buzzes against the counter. OKADA, MANAGER.",
+          "cg": "none"
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
-          "text": "At three a.m.? He never calls. He sends voice memos, like a grandpa.",
-          "show": "juri"
+          "text": "At three a.m.? He never calls. He sends voice memos, like a grandpa."
         },
         {
-          "text": "She answers. You hear her half."
+          "text": "She answers. You only hear her half."
         },
         {
           "who": "juri",
           "text": "Yes. ...Yes. Oh no, is he okay? ...Until noon? ...No, it's fine. Sure. No problem. Tell Takumi to feel better."
         },
         {
-          "text": "She hangs up and lays the phone face down, gently, as if it might go off."
+          "text": "She hangs up and puts the phone face down, gently, as if it might go off."
+        },
+        {
+          "text": "\"What was that?\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "So! Takumi has the flu. Someone has to do the morning. I'm here till noon.",
-          "show": "juri"
+          "text": "Takumi has the flu. Someone has to cover the morning. So I'm here till noon."
         },
         {
-          "text": "Ten a.m. in Ginza. Noon here. You both do the sum. She gets there first."
+          "text": "\"Juri. Your trial's at ten.\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "laugh",
-          "text": "It's fine! Honestly. Ginza salons are snobby. They'd hate the pink in my hair. They'd make me wear beige. I'd die in beige.",
-          "show": "juri"
+          "text": "It's fine! Honestly. Ginza salons are snobby. They'd hate the pink in my hair. They'd make me wear beige. I'd die in beige."
+        },
+        {
+          "text": "\"You've practised for this every night for months.\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "Tonight's a two out of ten. Going down to one if you keep looking at me like that.",
-          "show": "juri"
+          "text": "Tonight's a two out of ten, and it's going down to one if you keep looking at me like that."
         },
         {
-          "text": "She is smiling. The practice stick in her hand is trembling, very slightly."
+          "text": "She's smiling. The practice stick in her hand is shaking, very slightly."
         },
         {
-          "text": "You know one more thing. Mori-san, the retired man who does weekend mornings, lives two streets away and has told the whole building that Juri is his favourite."
+          "text": "\"What about Mori-san? He lives two streets away. He tells the whole building you're his favourite.\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
-          "text": "And before you say it: no. I'm not calling Mori-san. He's like seventy. I don't ask people for stuff. I just don't.",
-          "show": "juri"
+          "text": "No. I'm not calling Mori-san. He's, like, seventy. I don't ask people for stuff. I just don't."
+        },
+        {
+          "text": "\"Why not?\""
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "pout",
+          "text": "Because then they can say no."
         }
       ],
       "choices": [
@@ -3394,84 +3476,110 @@ export const afterHours: Story = {
       "focus": "62% 50%",
       "lines": [
         {
+          "text": "3:18 a.m. She turns the phone over, then back."
+        },
+        {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
+          "text": "Ugh. You're so annoying when you're right. Which is, like, twice a year.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "3:18 a.m. Ugh. You're so annoying when you're right. Which is, like, twice a year.",
-          "show": "juri"
+          }
         },
         {
+          "text": "She types the message three times. You watch her delete \"sorry to bother you\" twice.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "She types the message three times. You watch her delete \"sorry to bother you\" twice."
+          }
         },
         {
-          "who": "juri",
-          "pose": "serious",
+          "text": "\"Just say what you need.\"",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "Sent. He goes to bed at eight. He's asleep. This is pointless.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
+          "text": "Sent. He goes to bed at eight, though. He's asleep. This is pointless.",
+          "need": {
+            "flag": "ask",
+            "of": "juri"
+          }
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "serious",
+          "text": "Just walk out at nine? And if Mirabelle says no, I don't have this job either. Babe. Rent.",
           "need": {
             "flag": "skip",
             "of": "juri"
-          },
-          "text": "And if Mirabelle says no, I don't have this job either. Babe. Rent.",
-          "show": "juri"
+          }
         },
         {
-          "who": "juri",
-          "pose": "pout",
+          "text": "\"Okada isn't going to fire his only night clerk.\"",
           "need": {
             "flag": "skip",
             "of": "juri"
-          },
-          "text": "...But okay. I'm thinking about it. Don't watch me think, it's embarrassing.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
+          "pose": "pout",
+          "text": "...Okay. I'm thinking about it. Don't watch me think, it's embarrassing.",
+          "need": {
+            "flag": "skip",
+            "of": "juri"
+          }
+        },
+        {
+          "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "need": {
-            "flag": "giveup",
-            "of": "juri"
-          },
           "text": "Right? Exactly. Next year. Totally.",
-          "show": "juri"
-        },
-        {
           "need": {
             "flag": "giveup",
             "of": "juri"
-          },
-          "text": "She says it fast, like she was waiting for someone to hand her the line."
+          }
         },
         {
+          "text": "She says it fast, as if she'd been waiting for someone to hand her the line.",
           "need": {
             "flag": "giveup",
             "of": "juri"
-          },
-          "text": "She slides the practice stick into the drawer under the till, behind the receipt rolls."
+          }
         },
         {
-          "text": "At 4:30 she stands the little back-soon card on the counter and holds up a key."
+          "text": "She slides the practice stick into the drawer under the till, behind the receipt rolls.",
+          "need": {
+            "flag": "giveup",
+            "of": "juri"
+          }
+        },
+        {
+          "text": "At 4:30 she stands the back-soon card on the counter and holds up a key."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "Break. Come on. The landlord gave me the roof key for the recycling. I use it for this.",
-          "show": "juri"
+          "text": "Break. Come on. The landlord gave me the roof key for the recycling. I use it for this."
+        },
+        {
+          "text": "\"For what?\""
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "You'll see. Bring your tea."
         }
       ],
       "next": "stairs",
@@ -3483,14 +3591,22 @@ export const afterHours: Story = {
       "focus": "45% 50%",
       "lines": [
         {
-          "pose": "away",
-          "text": "4:33 a.m. Outside, the rain has thinned to a mist. The vending machines hum to nobody. She checks the street both ways, like someone might report her."
+          "text": "4:33 a.m. Outside, the rain has thinned to mist. She checks the street both ways, as if someone might report her."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "If Okada asks, you were stealing umbrellas and I chased you up to the roof. Heroically.",
-          "show": "juri"
+          "text": "If Okada asks, you were stealing umbrellas and I chased you up to the roof. Heroically."
+        },
+        {
+          "text": "\"Why am I the thief in this story?\""
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "Because I'm the one with the key."
         },
         {
           "text": "The outside stairs ring under her platform sneakers all the way up, five floors, past your own door."
@@ -3505,135 +3621,165 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "pose": "away",
-          "text": "4:40 a.m. The roof is wet. Over the city the sky has gone from black to deep blue. Somewhere a bird has decided it is morning."
+          "text": "4:40 a.m. The roof is wet. Over the city the sky has gone from black to deep blue. Somewhere a bird has decided it's morning."
         },
         {
-          "text": "She takes the folding chair someone left up here years ago. You lean on the rail. She steals your milk tea without asking."
+          "text": "She takes the folding chair someone left up here years ago. You lean on the rail. She takes your milk tea without asking."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
-          "text": "Best part of the shift. The sky does this and nobody sees it but me and, like, the crows.",
-          "show": "juri"
+          "text": "Best part of the shift. The sky does this and nobody sees it but me and, like, the crows."
+        },
+        {
+          "text": "\"Why nails? Really.\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
-          "need": {
-            "min": 4,
-            "of": "juri"
-          },
           "text": "My mom has a hair salon in Chiba. Twenty-two years. She's really good. Actually good.",
-          "show": "juri"
-        },
-        {
-          "who": "juri",
           "need": {
             "min": 4,
             "of": "juri"
-          },
-          "text": "When I said nails, she said nails are decoration, not a trade. Then she didn't say much of anything for a year."
+          }
         },
         {
           "who": "juri",
+          "text": "When I said I wanted to do nails, she said nails are decoration, not a trade. Then she didn't say much of anything for a year.",
+          "need": {
+            "min": 4,
+            "of": "juri"
+          }
+        },
+        {
+          "text": "\"So you left.\"",
+          "need": {
+            "min": 4,
+            "of": "juri"
+          }
+        },
+        {
+          "who": "juri",
+          "show": "juri",
           "pose": "soft",
+          "text": "At twenty-one. Started nights. Three years of tuna mayo people. Saved for the course, passed it, flunked Shibuya.",
           "need": {
             "min": 4,
             "of": "juri"
-          },
-          "text": "So I moved out at twenty-one and started nights. Three years of tuna mayo people. Saved for the course. Passed it. Flunked Shibuya.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
-          "need": {
-            "min": 4,
-            "of": "juri"
-          },
           "text": "If I get Mirabelle, I'm sending her a photo. No message. Just the nails. ...That's petty, right? It's petty.",
-          "show": "juri"
+          "need": {
+            "min": 4,
+            "of": "juri"
+          }
+        },
+        {
+          "text": "\"It's a little petty. Send it anyway.\"",
+          "need": {
+            "min": 4,
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "need": {
-            "max": 3,
-            "of": "juri"
-          },
           "text": "Don't get weird. I'm not telling you my life story. You haven't earned a life story. You've earned, like, a paragraph.",
-          "show": "juri"
-        },
-        {
           "need": {
             "max": 3,
             "of": "juri"
-          },
-          "text": "She doesn't give you the paragraph either. She talks about the crows instead, and which one she thinks is in charge."
+          }
         },
         {
+          "text": "She doesn't give you the paragraph either. She talks about the crows instead, and which one she thinks is in charge.",
+          "need": {
+            "max": 3,
+            "of": "juri"
+          }
+        },
+        {
+          "text": "Her phone buzzes. She reads it twice.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "Her phone buzzes. She reads it twice."
+          }
+        },
+        {
+          "text": "\"Is that him?\"",
+          "need": {
+            "flag": "ask",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "laugh",
+          "text": "He's awake. Why is he awake? \"Of course. I'll be there at 8:30. Go and be wonderful.\" And a cat sticker. A cat sticker, Tuna Mayo.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "He's awake. Why is he awake? 'Of course. I'll be there at 8:30. Go and be wonderful.' And a cat sticker. A cat sticker, Tuna Mayo.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
+          "text": "...I'm not crying. It's cold. My eyes are cold.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "...I'm not crying. It's cold. My eyes are cold.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "serious",
+          "text": "If I go at nine, Okada calls me forty times, and then I've got two jobs or zero. Cool. Love that for me.",
           "need": {
             "flag": "skip",
             "of": "juri"
-          },
-          "text": "If I go at nine, Okada calls me forty times, and then I've got two jobs or zero. Cool. Love that for me.",
-          "show": "juri"
+          }
+        },
+        {
+          "text": "\"Or one, and it's the one you want.\"",
+          "need": {
+            "flag": "skip",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
-          "need": {
-            "flag": "giveup",
-            "of": "juri"
-          },
           "text": "Next year. Yeah. I'll be twenty-five. That's a normal age to start.",
-          "show": "juri"
-        },
-        {
           "need": {
             "flag": "giveup",
             "of": "juri"
-          },
-          "text": "She says next year the way people say they'll call you."
+          }
         },
         {
-          "text": "The sun is not up yet, but the edge of the sky has gone pink, close to the pink under her hair."
+          "text": "She says \"next year\" the way people say they'll call you.",
+          "need": {
+            "flag": "giveup",
+            "of": "juri"
+          }
+        },
+        {
+          "text": "The sun isn't up yet, but the edge of the sky has gone pink, close to the pink under her hair."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "Okay. Last chance to say something cool before I go down and sell cigarettes to taxi drivers.",
-          "show": "juri"
+          "text": "Okay. Last chance to say something cool before I go down and sell cigarettes to taxi drivers."
         }
       ],
       "choices": [
@@ -3686,74 +3832,111 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
+          "text": "5:01 a.m. She looks at you for a second before she answers."
+        },
+        {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
+          "text": "Wow. Okay. Who said you could just say stuff like that?",
           "need": {
             "flag": "honest",
             "of": "juri"
-          },
-          "text": "5:01 a.m. Wow. Okay. Who said you could just say stuff like that?",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
+          "text": "...Yeah. I'm scared. Happy? That's the first time I've said it out loud.",
           "need": {
             "flag": "honest",
             "of": "juri"
-          },
-          "text": "...Yeah. I'm scared. Happy? My nails are shaking. That's the first time I've said that out loud.",
-          "show": "juri"
+          }
+        },
+        {
+          "text": "\"How does it feel?\"",
+          "need": {
+            "flag": "honest",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
+          "pose": "soft",
+          "text": "Bad. And kind of lighter. Shut up.",
+          "need": {
+            "flag": "honest",
+            "of": "juri"
+          }
+        },
+        {
+          "who": "juri",
+          "show": "juri",
           "pose": "laugh",
-          "need": {
-            "flag": "star",
-            "of": "juri"
-          },
           "text": "Ehhh? Who's flirting at five a.m. now?",
-          "show": "juri"
+          "need": {
+            "flag": "star",
+            "of": "juri"
+          }
         },
         {
+          "text": "The gold brush is in her vest pocket, because of course it is. She finds your ring finger and paints one tiny star.",
           "need": {
             "flag": "star",
             "of": "juri"
           },
-          "cg": "/labs/visual-novel/after-hours/cg/juri-rooftop.webp",
-          "text": "The gold brush is in her vest pocket, because of course it is. She finds your ring finger and paints one tiny star."
+          "cg": "/labs/visual-novel/after-hours/cg/juri-rooftop.webp"
         },
         {
           "who": "juri",
+          "text": "There. Keep it nice till I'm back. If it chips, that's on you.",
           "need": {
             "flag": "star",
             "of": "juri"
-          },
-          "text": "There. Keep it nice till I'm back. If it chips, that's on you."
+          }
+        },
+        {
+          "text": "\"And if it doesn't chip?\"",
+          "need": {
+            "flag": "star",
+            "of": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
+          "text": "Then I'm better than I thought.",
           "need": {
-            "flag": "counter",
+            "flag": "star",
             "of": "juri"
-          },
-          "text": "Ugh. That is such a Tuna Mayo thing to say.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
-          "pose": "soft",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "Ugh. That is such a Tuna Mayo thing to say.",
           "need": {
             "flag": "counter",
             "of": "juri"
-          },
-          "text": "...Okay. One fifty-two. Don't be late. If you're late, I'll assume you died.",
-          "show": "juri"
+          }
         },
         {
-          "cg": "/labs/visual-novel/after-hours/cg/juri-rooftop.webp",
-          "text": "The first light catches the wet roof and the ends of her hair. She hands back your milk tea. Empty."
+          "who": "juri",
+          "show": "juri",
+          "pose": "soft",
+          "text": "...Okay. One fifty-two. Don't be late. If you're late, I'll assume you died.",
+          "need": {
+            "flag": "counter",
+            "of": "juri"
+          }
+        },
+        {
+          "text": "The first light catches the wet roof and the ends of her hair. She hands back your milk tea. Empty.",
+          "cg": "/labs/visual-novel/after-hours/cg/juri-rooftop.webp"
         }
       ],
       "routes": [
@@ -3790,41 +3973,42 @@ export const afterHours: Story = {
       "focus": "40% 50%",
       "lines": [
         {
-          "pose": "away",
-          "cg": "/labs/visual-novel/after-hours/cg/juri-platform.webp",
-          "text": "9:04. The rain stopped an hour ago. The platform smells of wet concrete and somebody's coffee."
+          "text": "9:04. The rain stopped an hour ago. The platform smells of wet concrete and somebody's coffee.",
+          "cg": "/labs/visual-novel/after-hours/cg/juri-platform.webp"
         },
         {
+          "text": "Mori-san turned up at 8:20 with a thermos and shooed her out of the store with both hands.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "Mori-san arrived at 8:20 with a thermos and shooed her out of the store with both hands."
+          }
         },
         {
+          "text": "She walked out of the store at nine on the dot. Her phone has buzzed eleven times since. She hasn't looked once.",
           "need": {
             "flag": "skip",
             "of": "juri"
-          },
-          "text": "She walked out of the store at nine on the dot. Her phone has buzzed eleven times since. She hasn't looked once."
+          }
         },
         {
-          "text": "There was no time to change. She is still in the store vest, a black blouse folded in her bag for the train. The star clips stayed in."
+          "text": "There was no time to change. She's still in the store vest, with a black blouse folded in her bag. The star clips stayed in."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
-          "text": "Don't. Don't say anything about the vest. I'm changing in the train toilet like a spy.",
-          "show": "juri"
+          "text": "Don't. Don't say anything about the vest. I'm changing in the train toilet like a spy."
+        },
+        {
+          "text": "\"I wasn't going to. How are your hands?\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
-          "text": "Train in two minutes. I'm going to do a full set on a stranger while a rich lady watches. Totally normal Tuesday.",
-          "show": "juri"
+          "text": "Fine. Look. Steady. Train's in two minutes, and then I do a full set on a stranger while a rich lady watches. Totally normal Tuesday."
         },
         {
-          "pose": "soft",
           "text": "She takes your hand and checks the star on your ring finger. It hasn't chipped.",
           "show": "juri"
         },
@@ -3833,15 +4017,21 @@ export const afterHours: Story = {
           "text": "That's collateral. You don't get to take it off yourself. You come to me, and I do it properly."
         },
         {
-          "who": "juri",
-          "text": "With, like... dinner first. Somewhere with chairs. Not the counter."
+          "text": "\"When?\""
         },
         {
           "who": "juri",
-          "text": "And this, right now, is a ten. Don't tell anyone. I've never said ten."
+          "text": "After dinner. Somewhere with chairs. Not the counter."
         },
         {
-          "text": "The train pulls in. She gets on without looking back, which is how you know she is trying not to."
+          "text": "\"Are you asking me out, Juri?\""
+        },
+        {
+          "who": "juri",
+          "text": "I'm telling you that this, right now, is a ten. Don't tell anyone. I've never said ten."
+        },
+        {
+          "text": "The train pulls in. She gets on without looking back, which is how you know she's trying not to."
         },
         {
           "text": "At 11:48 your phone buzzes. A photo: ten soft pink nails, one thin gold line, a tiny star on the ring finger. No message."
@@ -3862,89 +4052,96 @@ export const afterHours: Story = {
       "focus": "62% 50%",
       "lines": [
         {
-          "pose": "away",
-          "cg": "none",
-          "text": "The next night the door chime plays its two tired notes at exactly 1:52."
+          "text": "The next night the door chime plays its two tired notes at exactly 1:52.",
+          "cg": "none"
         },
         {
-          "pose": "smirk",
           "text": "Juri is behind the counter. Her nails are soft pink with one thin gold line.",
           "show": "juri"
         },
         {
+          "text": "\"Well? How did it go?\""
+        },
+        {
           "who": "juri",
+          "text": "Mori-san brought me a thermos and pushed me out the door. Like, physically. He's stronger than he looks.",
           "need": {
             "flag": "ask",
             "of": "juri"
-          },
-          "text": "Mori-san brought me a thermos and pushed me out the door. Like, physically. He's stronger than he looks."
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
+          "text": "Okada left fourteen voicemails. I'm on final warning. Very dramatic. He used my full name.",
           "need": {
             "flag": "skip",
             "of": "juri"
-          },
-          "text": "Okada left fourteen voicemails. I'm on final warning. Very dramatic. He used my full name.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "So. Mirabelle. The owner looked at my hair for a really long time.",
-          "show": "juri"
+          "text": "So. Mirabelle. The owner looked at my hair for a really long time."
+        },
+        {
+          "text": "\"And?\""
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "laugh",
-          "text": "Then she said, 'Come back Thursday for the second round.' There's a second round! Nobody told me there's a second round!",
-          "show": "juri"
+          "text": "And she said, \"Come back Thursday for the second round.\" There's a second round! Nobody told me there's a second round!"
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
-          "text": "...I didn't shake. Not once.",
-          "show": "juri"
+          "text": "...I didn't shake. Not once."
+        },
+        {
+          "text": "\"I knew you wouldn't.\""
         },
         {
           "text": "Your rice ball and milk tea are on the counter. She hasn't rung them up."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "pout",
-          "text": "It's on me. Once. Don't get used to it, and don't make it a thing.",
-          "show": "juri"
+          "text": "It's on me. Once. Don't get used to it, and don't make it a thing."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
+          "text": "And the scared thing. That helped. Or whatever.",
           "need": {
             "flag": "honest",
             "of": "juri"
-          },
-          "text": "And the scared thing. That helped. Or whatever.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
+          "text": "You were on time, obviously. More reliable than the trains.",
           "need": {
             "flag": "counter",
             "of": "juri"
-          },
-          "text": "You were on time, obviously. More reliable than the trains.",
-          "show": "juri"
+          }
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
+          "text": "The star's still on. Ugh. Cute. Seven out of ten. Keep it till Thursday.",
           "need": {
             "flag": "star",
             "of": "juri"
-          },
-          "text": "The star's still on. Ugh. Cute. Seven out of ten. Keep it till Thursday.",
-          "show": "juri"
+          }
         },
         {
           "text": "She goes back to her kit. You stay a while by the magazine rack. Neither of you says anything about it."
@@ -3962,12 +4159,10 @@ export const afterHours: Story = {
       "focus": "62% 50%",
       "lines": [
         {
-          "pose": "away",
-          "cg": "none",
-          "text": "The next night the door chime plays its two tired notes at 1:52."
+          "text": "The next night the door chime plays its two tired notes at 1:52.",
+          "cg": "none"
         },
         {
-          "pose": "smirk",
           "text": "Juri is behind the counter. Her nails are the same plain pink as last night. No gold line, no star.",
           "show": "juri"
         },
@@ -3976,32 +4171,38 @@ export const afterHours: Story = {
           "text": "Tuna Mayo! One fifty-two. Reliable as always."
         },
         {
+          "text": "\"How was the morning shift?\""
+        },
+        {
           "who": "juri",
+          "show": "juri",
           "pose": "laugh",
-          "text": "Morning shift was fine. Takumi's fine. Everything's fine. A solid five out of ten fine.",
-          "show": "juri"
+          "text": "Fine. Takumi's fine. Everything's fine. A solid five out of ten fine."
         },
         {
-          "text": "Your rice ball is not waiting on the counter. She rings it up while you watch, the way she did in your first week."
+          "text": "Your rice ball isn't waiting on the counter. She rings it up while you watch, the way she did in your first week."
         },
         {
           "who": "juri",
+          "show": "juri",
           "pose": "soft",
+          "text": "Oh, and you can take the star off. Remover's in aisle three. It was just practice.",
           "need": {
             "flag": "star",
             "of": "juri"
-          },
-          "text": "Oh, and you can take the star off. Remover's in aisle three. It was just practice.",
-          "show": "juri"
+          }
         },
         {
           "text": "When she turns for your milk tea you see the practice stick in the bin under the counter, ten little nails facing up."
         },
         {
+          "text": "\"Juri.\""
+        },
+        {
           "who": "juri",
+          "show": "juri",
           "pose": "smirk",
-          "text": "Next year, though. Totally. Ginza won't know what hit it.",
-          "show": "juri"
+          "text": "Next year, though. Totally. Ginza won't know what hit it."
         },
         {
           "text": "She says it to the till, not to you."
