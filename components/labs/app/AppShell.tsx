@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from "react";
 import { AppBar, type AppStep, type AppView } from "@/components/labs/chat/AppBar";
 import { STEPS, type StepKey } from "@/lib/labs/maker";
-import { useCast } from "./CastProvider";
+import { REACHED, useCast } from "./CastProvider";
 import { FileDrops } from "./FileDrops";
 import styles from "./AppShell.module.css";
 
@@ -20,8 +20,6 @@ type Props = {
   children: ReactNode;
 };
 
-const REACHED = "flow:reached";
-
 /** The mini-series creator, edge to edge: the shared top bar, then the work area. */
 export function AppShell({ step, view: asked, action, onFiles, fit, children }: Props) {
   const store = useCast();
@@ -31,7 +29,9 @@ export function AppShell({ step, view: asked, action, onFiles, fit, children }: 
   const reached = Math.max(store.kept<number>(REACHED) ?? 0, at);
   useEffect(() => {
     if (at >= 0) store.keep(REACHED, Math.max(store.kept<number>(REACHED) ?? 0, at));
-  }, [store, at]);
+    // A saved episode records the furthest step it has reached, so the Library reopens it there.
+    if (step) store.reach(store.current, step);
+  }, [store, at, step]);
 
   const steps: AppStep[] | undefined = step
     ? STEPS.map((s, i) => ({ key: s.key, label: s.label, href: s.href, state: i === at ? "current" : i <= reached ? "done" : "todo" }))

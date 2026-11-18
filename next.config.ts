@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
   env: { NL_SERIES_BACKDROPS: backdrops.join(",") },
   images: { formats: ["image/avif", "image/webp"], minimumCacheTTL: 86400, qualities: [75, 90] },
   // app/walk/route.ts serves the Tidebell Cove HTML; the game loads garments from /assets/wardrobe/.
-  outputFileTracingIncludes: { "/walk": ["./lib/labs/cove/tidebell-cove.html"] },
+  // The creator's postgres adapter reads its schema from lib/labs/store/schema.sql when it first connects.
+  outputFileTracingIncludes: { "/walk": ["./lib/labs/cove/tidebell-cove.html"], "/api/creator/**": ["./lib/labs/store/schema.sql"] },
   async rewrites() {
     return [{ source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" }];
   },

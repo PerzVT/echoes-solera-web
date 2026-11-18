@@ -7,15 +7,18 @@ import { Icon } from "@/components/labs/Icon";
 import { Btn, IconBtn, cx } from "@/components/labs/chat/ui";
 import { useDialog } from "@/components/labs/chat/hooks";
 import type { CastSheet } from "@/lib/labs/maker";
+import { api, fileUrl, type CastSheet as Upload } from "./api";
 import { AppShell } from "./AppShell";
 import { useCast, useEpisode } from "./CastProvider";
 import { libraryPlaces, startingElements, type Element } from "./creator";
-import { SheetImage, useFilePicker } from "./parts";
+import { SaveAction, SaveError, SheetImage, useFilePicker, useSaveThen } from "./parts";
 import c from "./CastStep.module.css";
 
 /** What the open picker chooses from: the sheets of one character, or the whole library for one element. */
 type Picking = { id: string; mode: "sheet" | "library" };
-type Choice = { key: string; src: string; tag: string; name: string; label?: string; group?: string };
+type Choice = { key: string; src: string; tag: string; name: string; label?: string; group?: string; sheet?: string };
+/** What a card is doing on the server, and what went wrong last. */
+type Busy = { work?: "upload" | "rename" | "remove"; done?: boolean; error?: string };
 
 
 /** Cast: the characters and places the script needs, as cards. Each can take another sheet of the same character, a picture from the library, or an upload. */
@@ -28,6 +31,24 @@ export function CastStep() {
   const [elements, setElements] = useState<Element[]>(() => ep.elements ?? startingElements);
   const [picking, setPicking] = useState<Picking | null>(null);
   const uploadFor = useRef<string | null>(null);
+  /** Sheets uploaded to this series, saved on the server. Only a saved episode reads and adds them. */
+  const [uploads, setUploads] = useState<Upload[]>([]);
+  const [busy, setBusy] = useState<Record<string, Busy>>({});
+  const saving = useSaveThen(store.flush);
+  const saved = Boolean(ep.id);
+  useEffect(() => {
+    if (!saved) return;
+    let alive = true;
+    api
+      .listCast(ep.series)
+      .then((list) => alive && setUploads(list))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [saved, ep.series]);
+  const mark = (id: string, b: Busy) => setBusy((all) => ({ ...all, [id]: b }));
+  const failed = (id: string, e: unknown) => mark(id, { error: e instanceof Error && e.message ? e.message : "That did not save. Try again." });
   useEffect(() => {
     patch({ elements });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,11 +58,57 @@ export function CastStep() {
   const sheetsOf = (who?: string) => series.sheets.filter((s) => s.character === who);
   const nameOf = (who: string) => series.characters.find((x) => x.id === who)?.name ?? who;
 
+  /** A saved episode keeps the upload as a cast sheet of its series; the demo draft only shows it for this visit. */
+  const take = async (id: string, f: File) => {
+    const el = elements.find((x) => x.id === id);
+    if (!el) return;
+    if (!saved) return set(id, { src: URL.createObjectURL(f), variant: undefined });
+    mark(id, { work: "upload" });
+    try {
+      const sheet = await api.addCast(ep.series, el.name, el.tag, f);
+      setUploads((all) => [...all, sheet]);
+      set(id, { src: fileUrl(sheet.image), variant: undefined, sheet: sheet.id });
+      mark(id, { done: true });
+      window.setTimeout(() => mark(id, {}), 1200);
+    } catch (e) {
+      failed(id, e);
+    }
+  };
   const picker = useFilePicker("image/*", (files) => {
     const f = files.find((x) => x.type.startsWith("image/"));
     if (!f || !uploadFor.current) return;
-    set(uploadFor.current, { src: URL.createObjectURL(f), variant: undefined });
+    void take(uploadFor.current, f);
   }, false);
+
+  const rename = async (id: string, name: string) => {
+    const el = elements.find((x) => x.id === id);
+    if (!el?.sheet || !name || name === el.name) return;
+    const before = el.name;
+    set(id, { name });
+    mark(id, { work: "rename" });
+    try {
+      const sheet = await api.patchCast(el.sheet, { character: name });
+      setUploads((all) => all.map((s) => (s.id === sheet.id ? sheet : s)));
+      mark(id, {});
+    } catch (e) {
+      set(id, { name: before });
+      failed(id, e);
+    }
+  };
+  const remove = async (id: string) => {
+    const sheet = elements.find((x) => x.id === id)?.sheet;
+    if (!sheet) return;
+    mark(id, { work: "remove" });
+    try {
+      await api.deleteCast(sheet);
+      setUploads((all) => all.filter((s) => s.id !== sheet));
+      // Every card that showed the removed sheet goes back to needing a picture.
+      setElements((all) => all.map((x) => (x.sheet === sheet ? { ...x, src: undefined, sheet: undefined, variant: undefined } : x)));
+      mark(id, {});
+    } catch (e) {
+      failed(id, e);
+    }
+  };
   const upload = (id: string) => {
     uploadFor.current = id;
     picker.open();
@@ -49,14 +116,15 @@ export function CastStep() {
 
   const pickingEl = picking ? elements.find((x) => x.id === picking.id) : undefined;
   let choices: Choice[] = [];
+  const fromUpload = (s: Upload): Choice => ({ key: s.id, src: fileUrl(s.image), tag: s.tag, name: s.character, label: s.variant ?? undefined, group: s.character, sheet: s.id });
   if (pickingEl && picking?.mode === "sheet") choices = sheetsOf(pickingEl.who).map((s) => fromSheet(s));
   else if (pickingEl && pickingEl.kind === "character")
-    choices = series.characters.flatMap((ch) => sheetsOf(ch.id).map((s) => ({ ...fromSheet(s), group: ch.name })));
-  else if (pickingEl) choices = libraryPlaces.map((p) => ({ key: p.tag, src: p.src, tag: p.tag, name: p.name }));
+    choices = [...series.characters.flatMap((ch) => sheetsOf(ch.id).map((s) => ({ ...fromSheet(s), group: ch.name }))), ...uploads.map(fromUpload)];
+  else if (pickingEl) choices = [...libraryPlaces.map((p) => ({ key: p.tag, src: p.src, tag: p.tag, name: p.name })), ...uploads.map(fromUpload)];
 
   const choose = (x: Choice) => {
     if (!pickingEl) return;
-    set(pickingEl.id, { src: x.src, tag: x.tag, variant: x.label });
+    set(pickingEl.id, { src: x.src, tag: x.tag, variant: x.label, sheet: x.sheet });
     setPicking(null);
   };
 
@@ -71,12 +139,14 @@ export function CastStep() {
       onFiles={(files) => {
         const missing = elements.find((x) => !x.src);
         const f = files.find((x) => x.type.startsWith("image/"));
-        if (missing && f) set(missing.id, { src: URL.createObjectURL(f) });
+        if (missing && f) void take(missing.id, f);
       }}
       action={
-        <Btn kind="primary" onClick={() => router.push("/app/episode/style")}>
-          Next
-        </Btn>
+        <SaveAction error={saving.error}>
+          <Btn kind="primary" loading={saving.busy} onClick={() => saving.go(() => router.push("/app/episode/style"))}>
+            Next
+          </Btn>
+        </SaveAction>
       }
     >
       {picker.node}
@@ -98,6 +168,9 @@ export function CastStep() {
                       onSheet={() => setPicking({ id: x.id, mode: "sheet" })}
                       onLibrary={() => setPicking({ id: x.id, mode: "library" })}
                       onUpload={() => upload(x.id)}
+                      busy={busy[x.id] ?? {}}
+                      onRename={(name) => void rename(x.id, name)}
+                      onRemove={() => void remove(x.id)}
                     />
                   </li>
                 ))}
@@ -120,19 +193,72 @@ export function CastStep() {
 
 const fromSheet = (s: CastSheet): Choice => ({ key: s.id, src: s.src, tag: s.tag, name: s.tag, label: s.variant });
 
-type CardProps = { el: Element; sheets: number; onSheet: () => void; onLibrary: () => void; onUpload: () => void };
+type CardProps = {
+  el: Element;
+  sheets: number;
+  onSheet: () => void;
+  onLibrary: () => void;
+  onUpload: () => void;
+  busy: Busy;
+  onRename: (name: string) => void;
+  onRemove: () => void;
+};
 
-function Card({ el, sheets, onSheet, onLibrary, onUpload }: CardProps) {
+function Card({ el, sheets, onSheet, onLibrary, onUpload, busy, onRename, onRemove }: CardProps) {
   const id = useId();
+  const [naming, setNaming] = useState(false);
+  const [draft, setDraft] = useState(el.name);
+  const name = () => {
+    setNaming(false);
+    onRename(draft.trim());
+  };
   const tools = (
     <div className={c.tools}>
       <Btn kind="secondary" small onClick={onLibrary}>
         Choose from library
       </Btn>
-      <Btn kind="secondary" small icon={<GestureIcon name="upload" size={16} />} onClick={onUpload}>
+      <Btn kind="secondary" small icon={<GestureIcon name="upload" size={16} />} loading={busy.work === "upload"} success={busy.done} onClick={onUpload}>
         Upload
       </Btn>
+      {el.sheet && (
+        <>
+          <Btn
+            kind="ghost"
+            small
+            loading={busy.work === "rename"}
+            onClick={() => {
+              setDraft(el.name);
+              setNaming(true);
+            }}
+          >
+            Rename
+          </Btn>
+          <Btn kind="ghost" small loading={busy.work === "remove"} onClick={onRemove}>
+            Remove
+          </Btn>
+        </>
+      )}
+      <SaveError>{busy.error}</SaveError>
     </div>
+  );
+  const title = naming ? (
+    <input
+      className={c.rename}
+      aria-label="Name"
+      value={draft}
+      autoFocus
+      onFocus={(e) => e.currentTarget.select()}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={name}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") name();
+        if (e.key === "Escape") setNaming(false);
+      }}
+    />
+  ) : (
+    <h3 id={id} className={c.name}>
+      {el.name}
+    </h3>
   );
   if (!el.src)
     return (
@@ -141,9 +267,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload }: CardProps) {
           <GestureIcon name="plus" size={24} />
         </div>
         <div className={c.text}>
-          <h3 id={id} className={c.name}>
-            {el.name}
-          </h3>
+          {title}
           <p className={c.tag}>{el.tag}</p>
         </div>
         {tools}
@@ -155,9 +279,7 @@ function Card({ el, sheets, onSheet, onLibrary, onUpload }: CardProps) {
         <SheetImage src={el.src} sizes="(max-width: 767px) 50vw, 280px" />
       </div>
       <div className={c.text}>
-        <h3 id={id} className={c.name}>
-          {el.name}
-        </h3>
+        {title}
         <p className={c.tag}>{el.tag}</p>
       </div>
       {el.kind === "character" && sheets > 1 && (

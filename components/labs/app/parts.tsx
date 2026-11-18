@@ -1,7 +1,7 @@
 "use client";
 
 import { Picture } from "@/components/labs/fx/Picture";
-import { useEffect, useId, useRef, type ReactNode, type Ref } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import { Icon } from "@/components/labs/Icon";
 import { AnimatedMark, CheckIcon } from "@/components/labs/fx";
 import { AppIcon } from "./AppIcon";
@@ -16,6 +16,39 @@ export function Alert({ children, id, className }: { children: ReactNode; id?: s
       <span>{children}</span>
     </p>
   );
+}
+
+/** A save failure beside the control it belongs to. What the person typed is left as it was. */
+export function SaveError({ children }: { children: ReactNode }) {
+  return children ? <Alert className={s.saveError}>{children}</Alert> : null;
+}
+
+/** A step's primary action that saves first: the message on failure sits right before the button. */
+export function SaveAction({ error, children }: { error?: string; children: ReactNode }) {
+  return (
+    <span className={s.saveAction}>
+      <SaveError>{error}</SaveError>
+      {children}
+    </span>
+  );
+}
+
+/** Saves what is waiting, then moves on. While saving the button shows its loading state; a failure stays on screen. */
+export function useSaveThen(flush: () => Promise<void>) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const go = async (then: () => void) => {
+    setBusy(true);
+    setError("");
+    try {
+      await flush();
+      then();
+    } catch (e) {
+      setError(e instanceof Error && e.message ? e.message : "That did not save. Try again.");
+      setBusy(false);
+    }
+  };
+  return { busy, error, go };
 }
 
 /** On a phone the side panel sits under the list, so a choice in the list brings it into view. */
@@ -120,7 +153,7 @@ export function useFilePicker(accept: string, onFiles: (files: File[]) => void, 
   return { open: () => input.current?.click(), node };
 }
 
-/** Sheet art from the library or from an upload in this session (an object URL). It shows the skeleton surface until the picture has loaded. Pass eager for an image that is the first thing seen on the screen. */
+/** Sheet art from the library, a saved upload (served by /api/creator/files, which the image optimiser cannot reach without the session) or an upload in this session (an object URL). It shows the skeleton surface until the picture has loaded. Pass eager for an image that is the first thing seen on the screen. */
 export function SheetImage({ src, sizes, className, alt = "", eager }: { src: string; sizes: string; className?: string; alt?: string; eager?: boolean }) {
-  return <Picture src={src} alt={alt} fill sizes={sizes} className={className} loading={eager ? "eager" : undefined} unoptimized={src.startsWith("blob:")} />;
+  return <Picture src={src} alt={alt} fill sizes={sizes} className={className} loading={eager ? "eager" : undefined} unoptimized={src.startsWith("blob:") || src.startsWith("/api/")} />;
 }

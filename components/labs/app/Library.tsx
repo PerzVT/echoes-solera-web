@@ -10,6 +10,8 @@ import { useDismiss } from "@/components/labs/chat/hooks";
 import type { SeriesCard } from "@/lib/labs/maker";
 import { AppIcon } from "./AppIcon";
 import { AppShell } from "./AppShell";
+import { Alert } from "./parts";
+import type { EpisodeItem } from "./creator";
 import { episodeKey, useCast } from "./CastProvider";
 import { seriesExtra } from "./creator";
 import l from "./Library.module.css";
@@ -86,6 +88,7 @@ function UndoLine({ undo, onDone }: { undo: Undo; onDone: () => void }) {
   );
 }
 
+/** A saved series has no backdrop of its own; until its first episode is finished it has no cover either. */
 const backdropOf = (c: SeriesCard) => seriesExtra[c.slug]?.backdrop ?? c.cover;
 
 function useUndo() {
@@ -100,27 +103,29 @@ export function LibraryScreen() {
   const [renaming, setRenaming] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const { undo, setUndo, clear } = useUndo();
+  const [error, setError] = useState("");
 
   const save = (slug: string) => {
     const t = draft.trim();
-    if (t) store.renameSeries(slug, t);
     setRenaming(null);
+    if (!t) return;
+    setError("");
+    store.renameSeries(slug, t).catch((e: unknown) => setError(e instanceof Error && e.message ? e.message : "The new name did not save. Try again."));
   };
 
   return (
     <AppShell view="library" action={<NewButton />}>
       <div className={l.page}>
         <h1 className={l.title}>Library</h1>
+        {error && <Alert>{error}</Alert>}
         <ul className={l.series}>
           {store.series.map((c, i) => {
             const art = (
               <>
                 <span className={l.backdrop} aria-hidden="true">
-                  <Image src={backdropOf(c)} alt="" fill sizes="(max-width: 767px) 100vw, 50vw" loading={i < 3 ? "eager" : undefined} />
+                  {backdropOf(c) && <Image src={backdropOf(c)} alt="" fill sizes="(max-width: 767px) 100vw, 50vw" loading={i < 3 ? "eager" : undefined} />}
                 </span>
-                <span className={l.cover}>
-                  <Image src={c.cover} alt="" fill sizes="(max-width: 767px) 72px, 104px" loading="eager" />
-                </span>
+                <span className={l.cover}>{c.cover && <Image src={c.cover} alt="" fill sizes="(max-width: 767px) 72px, 104px" loading="eager" />}</span>
               </>
             );
             return (
@@ -182,7 +187,22 @@ export function LibraryScreen() {
 /** One series: its episodes. An episode opens its Results; its menu deletes it. */
 export function SeriesEpisodes({ slug }: { slug: string }) {
   const store = useCast();
+  const router = useRouter();
   const { undo, setUndo, clear } = useUndo();
+  const [opening, setOpening] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  /** A saved episode is loaded from the server first, then opens on the step it reached. */
+  const openSaved = async (e: EpisodeItem) => {
+    if (!e.id || opening) return;
+    setOpening(e.id);
+    setError("");
+    try {
+      router.push(await store.openSaved(e.id));
+    } catch (err) {
+      setError(err instanceof Error && err.message ? err.message : "That episode did not open. Try again.");
+      setOpening(null);
+    }
+  };
   const card = store.series.find((x) => x.slug === slug);
   if (!card)
     return (
@@ -200,14 +220,27 @@ export function SeriesEpisodes({ slug }: { slug: string }) {
       <div className={l.page}>
         <header className={l.head}>
           <span className={l.headCover}>
-            <Image src={card.cover} alt="" fill sizes="72px" loading="eager" />
+            {card.cover && <Image src={card.cover} alt="" fill sizes="72px" loading="eager" />}
           </span>
           <h1 className={l.title}>{card.title}</h1>
         </header>
+        {error && <Alert>{error}</Alert>}
         <ul className={l.episodes}>
           {store.episodesIn(slug).map((e) => (
             <li key={e.name} className={l.cardItem}>
-              <Link href={`/app/episode/results?series=${encodeURIComponent(slug)}&episode=${encodeURIComponent(e.name)}`} className={l.episode}>
+              <Link
+                href={e.id ? "/app/episode/results" : `/app/episode/results?series=${encodeURIComponent(slug)}&episode=${encodeURIComponent(e.name)}`}
+                className={l.episode}
+                aria-busy={opening === e.id || undefined}
+                onClick={
+                  e.id
+                    ? (ev) => {
+                        ev.preventDefault();
+                        void openSaved(e);
+                      }
+                    : undefined
+                }
+              >
                 <span className={l.poster}>{e.poster && <Image src={e.poster} alt="" fill sizes="(max-width: 767px) 45vw, 240px" />}</span>
                 <span className={l.episodeName}>{e.name}</span>
               </Link>

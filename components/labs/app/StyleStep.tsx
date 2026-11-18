@@ -8,8 +8,8 @@ import { Icon } from "@/components/labs/Icon";
 import { Btn } from "@/components/labs/chat/ui";
 import { allStyles, type Style } from "@/lib/labs/styles";
 import { AppShell } from "./AppShell";
-import { useEpisode } from "./CastProvider";
-import { revealOnPhone } from "./parts";
+import { useCast, useEpisode } from "./CastProvider";
+import { SaveAction, revealOnPhone, useSaveThen } from "./parts";
 import { generationsFor } from "./script";
 import st from "./StyleStep.module.css";
 
@@ -26,7 +26,9 @@ const clipOf = (s: Style) => s.review?.clip ?? s.chart.example?.video;
 /** Style: every style as a large tile, the chosen one previewed at the right. */
 export function StyleStep() {
   const router = useRouter();
+  const store = useCast();
   const { ep, patch } = useEpisode();
+  const saving = useSaveThen(store.flush);
   const [chosen, setChosen] = useState(() => ep.style ?? styles[0].slug);
   useEffect(() => {
     patch({ style: chosen });
@@ -44,16 +46,21 @@ export function StyleStep() {
       step="style"
       fit
       action={
-        <Btn
-          kind="primary"
-          onClick={() => {
-            // Generating starts the clips over: every one is made again and waits for a decision.
-            patch({ gens: generationsFor(ep.blocks, false) });
-            router.push("/app/episode/results?state=new");
-          }}
-        >
-          Generate
-        </Btn>
+        <SaveAction error={saving.error}>
+          <Btn
+            kind="primary"
+            loading={saving.busy}
+            onClick={() =>
+              saving.go(() => {
+                // Generating starts the clips over: every one is made again and waits for a decision.
+                patch({ gens: generationsFor(ep.blocks, false) });
+                router.push("/app/episode/results?state=new");
+              })
+            }
+          >
+            Generate
+          </Btn>
+        </SaveAction>
       }
     >
       <div className={st.layout}>

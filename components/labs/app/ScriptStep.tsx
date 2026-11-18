@@ -8,19 +8,12 @@ import { scriptTypes, screenplay } from "@/lib/labs/maker";
 import { AppIcon } from "./AppIcon";
 import { AppShell } from "./AppShell";
 import { DRAFT, episodeKey, useCast } from "./CastProvider";
-import { nextEpisodeName } from "./creator";
-import { Alert, focusSoon, useFilePicker } from "./parts";
+import type { Episode } from "./api";
+import { Alert, SaveError, focusSoon, useFilePicker } from "./parts";
 import { fdxToText, parseScript } from "./script";
 import st from "./ScriptStep.module.css";
 
 const NEW = "__new";
-const slugOf = (name: string) =>
-  name
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "") || "series";
 
 /** /app: the start of a mini-series episode. One box that takes a typed or pasted script, or a script file, and the series it belongs to. */
 export function ScriptStep() {
@@ -30,6 +23,8 @@ export function ScriptStep() {
   const open = store.current !== DRAFT ? store.episodeOf(store.current) : undefined;
   const resume = open?.isNew ? open : undefined;
   const [file, setFile] = useState(resume?.file ?? "");
+  /** The file chosen on this visit. A file saved earlier is only a name here and stays on the server. */
+  const [fileObj, setFileObj] = useState<File | null>(null);
   /** The file's text, or null for a file that cannot be read here (.docx, .pdf). */
   const [fileText, setFileText] = useState<string | null>(null);
   const [text, setText] = useState(resume && !resume.file ? resume.source : "");
@@ -38,6 +33,9 @@ export function ScriptStep() {
   const [rejected, setRejected] = useState("");
   const [over, setOver] = useState(false);
   const [going, setGoing] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  /** What a failed submit already saved, so trying again does not make a second series or episode. */
+  const made = useRef<{ series?: string; title?: string; episode?: Episode }>({});
   const upload = useRef<HTMLButtonElement>(null);
   const nameField = useRef<HTMLInputElement>(null);
 
@@ -52,6 +50,7 @@ export function ScriptStep() {
     }
     setRejected("");
     setFile(f.name);
+    setFileObj(f);
     setFileText(null);
     if (ext === ".txt" || ext === ".fdx")
       f.text()
@@ -77,23 +76,47 @@ export function ScriptStep() {
 
   const isNew = series === NEW;
   const ready = Boolean(file || text.trim()) && (!isNew || Boolean(newName.trim()));
-  const submit = () => {
-    if (!ready) return;
+  /**
+   * Saves the series (when new), the episode and its script, then opens processing. Going back to Script on an
+   * episode already saved saves its script again rather than making another episode.
+   */
+  const submit = async () => {
+    if (!ready || going) return;
     const name = newName.trim();
-    let slug = series;
-    if (isNew) {
-      const base = slugOf(name);
-      slug = base;
-      // Any series the Library knows, deleted ones too, keeps its address.
-      for (let n = 2; store.seriesTitle(slug) !== slug; n++) slug = `${base}-${n}`;
-    }
-    const episode = isNew ? "Episode 1" : resume && resume.series === slug ? resume.episode : nextEpisodeName(store.episodesIn(slug));
-    // A file that cannot be read here keeps its name as the title and opens on the demo script.
-    const source = file ? (fileText ?? "") : text;
-    const blocks = source.trim() ? parseScript(source) : screenplay;
-    store.start(episodeKey(slug, episode), { series: slug, episode, isNew: true, newSeries: isNew ? name : undefined, source, file: file || undefined, blocks });
+    // A file that cannot be read here keeps its name and opens on the demo script.
+    const source = file ? (fileText ?? (!fileObj && resume?.file === file ? resume.source : "")) : text;
     setGoing(true);
-    router.push("/app/episode/screenplay?state=processing");
+    setSaveError("");
+    try {
+      let ep: Episode;
+      const same = resume?.id && resume.step && (isNew ? false : resume.series === series);
+      if (same && resume?.id) {
+        ep = { id: resume.id, seriesId: resume.series, title: resume.episode, step: resume.step } as Episode;
+      } else if (made.current.episode && made.current.series === (isNew ? undefined : series) && made.current.title === (isNew ? name : undefined)) {
+        ep = made.current.episode;
+      } else {
+        ep = await store.createEpisode(isNew ? { title: name } : { series });
+        made.current = { series: isNew ? undefined : series, title: isNew ? name : undefined, episode: ep };
+      }
+      // A file saved earlier and still shown stays as it is; one removed on this visit is dropped.
+      const cleared = !file && Boolean(resume?.file);
+      await store.saveScript(ep.id, source, fileObj, cleared);
+      const blocks = source.trim() ? parseScript(source) : screenplay;
+      store.start(episodeKey(ep.seriesId, ep.title), {
+        id: ep.id,
+        step: ep.step,
+        series: ep.seriesId,
+        episode: ep.title,
+        isNew: true,
+        source,
+        file: file || undefined,
+        blocks,
+      });
+      router.push("/app/episode/screenplay?state=processing");
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "That did not save. Try again.");
+      setGoing(false);
+    }
   };
 
   return (
@@ -132,6 +155,7 @@ export function ScriptStep() {
                   label={`Remove ${file}`}
                   onClick={() => {
                     setFile("");
+                    setFileObj(null);
                     setFileText(null);
                     focusSoon(() => upload.current);
                   }}
@@ -179,7 +203,8 @@ export function ScriptStep() {
                   }}
                 />
               )}
-              <Btn kind="primary" className={st.submit} disabled={!ready || going} onClick={submit}>
+              <SaveError>{saveError}</SaveError>
+              <Btn kind="primary" className={st.submit} disabled={!ready} loading={going} onClick={submit}>
                 Submit
               </Btn>
             </div>

@@ -1,0 +1,141 @@
+/**
+ * Hand-written checks for what the creator's API accepts. Each returns the clean value or throws a Bad with a safe
+ * code and a plain message; nothing from the request reaches the store unchecked.
+ */
+import { STEPS, TOOLS, type CastChoice, type Note, type Step, type Tool } from "./types";
+
+export class Bad extends Error {
+  constructor(
+    public code: string,
+    message: string,
+    public status = 400,
+  ) {
+    super(message);
+  }
+}
+
+export const LIMITS = {
+  scriptText: 500 * 1024,
+  upload: 15 * 1024 * 1024,
+  json: 1024 * 1024,
+};
+
+const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
+
+/** Control characters other than tab and newline are dropped from short text. */
+const clean = (s: string) => s.replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, "");
+
+export function text(v: unknown, field: string, max: number, { min = 0, multiline = false } = {}): string {
+  if (typeof v !== "string") throw new Bad("invalid", `${field} is missing.`);
+  const t = multiline ? v.replace(/\u0000/g, "") : clean(v).trim();
+  if (t.length < min) throw new Bad("invalid", `${field} is empty.`);
+  if (t.length > max) throw new Bad("too_large", `${field} is too long.`);
+  return t;
+}
+
+export const optionalText = (v: unknown, field: string, max: number) => (v === undefined || v === null || v === "" ? null : text(v, field, max));
+
+export const slug = (v: unknown, field: string) => {
+  const t = text(v, field, 80, { min: 1 });
+  if (!/^[a-z0-9-]+$/.test(t)) throw new Bad("invalid", `${field} is not valid.`);
+  return t;
+};
+
+/** A picture on this site: a path on the same origin, never another scheme or host. */
+export const sitePath = (v: unknown, field: string) => {
+  const t = text(v, field, 400, { min: 1 });
+  if (!/^\/[^/\\]/.test(t) || /[\s"'<>]/.test(t)) throw new Bad("invalid", `${field} is not valid.`);
+  return t;
+};
+
+/** A record id from the address or the body. Ids are made by the server; built-in series use their slug. */
+export const id = (v: unknown, field = "The id") => {
+  if (typeof v !== "string" || !/^[a-z0-9-]{1,80}$/.test(v)) throw new Bad("not_found", `${field} is not valid.`, 404);
+  return v;
+};
+
+export const tool = (v: unknown): Tool => {
+  if (!TOOLS.includes(v as Tool)) throw new Bad("invalid", "Tool is not valid.");
+  return v as Tool;
+};
+
+export const step = (v: unknown): Step => {
+  if (!STEPS.includes(v as Step)) throw new Bad("invalid", "Step is not valid.");
+  return v as Step;
+};
+
+export function list<T>(v: unknown, field: string, max: number, each: (x: unknown) => T): T[] {
+  if (!Array.isArray(v)) throw new Bad("invalid", `${field} is not a list.`);
+  if (v.length > max) throw new Bad("too_large", `${field} has too many items.`);
+  return v.map(each);
+}
+
+export function texts(v: unknown): Record<string, string> {
+  if (!isObj(v)) throw new Bad("invalid", "The screenplay text is not valid.");
+  const entries = Object.entries(v);
+  if (entries.length > 5000) throw new Bad("too_large", "The screenplay is too long.");
+  const out: Record<string, string> = {};
+  for (const [k, val] of entries) out[text(k, "A passage id", 40, { min: 1 })] = text(val, "A passage", 20000, { multiline: true });
+  return out;
+}
+
+export function note(v: unknown): Note {
+  if (!isObj(v)) throw new Bad("invalid", "A comment is not valid.");
+  if (v.type !== "comment" && v.type !== "suggestion") throw new Bad("invalid", "A comment is not valid.");
+  return {
+    id: text(v.id, "A comment id", 40, { min: 1 }),
+    block: text(v.block, "A passage id", 40, { min: 1 }),
+    type: v.type,
+    quote: text(v.quote, "A quote", 20000, { multiline: true }),
+    body: text(v.body, "A comment", 20000, { multiline: true, min: 1 }),
+  };
+}
+
+export function castChoice(v: unknown): CastChoice {
+  if (!isObj(v)) throw new Bad("invalid", "A cast choice is not valid.");
+  if (v.kind !== "character" && v.kind !== "location") throw new Bad("invalid", "A cast choice is not valid.");
+  const opt = (x: unknown, f: string) => optionalText(x, f, 120) ?? undefined;
+  return {
+    id: text(v.id, "A cast id", 80, { min: 1 }),
+    kind: v.kind,
+    name: text(v.name, "A name", 120, { min: 1 }),
+    tag: text(v.tag, "A tag", 120),
+    src: v.src === undefined || v.src === null || v.src === "" ? undefined : sitePath(v.src, "A picture"),
+    who: opt(v.who, "A character"),
+    variant: opt(v.variant, "A variant"),
+    sheet: opt(v.sheet, "A sheet"),
+  };
+}
+
+/* ---------- Files ---------- */
+
+/** The first bytes of the image types a cast sheet may be. SVG is left out: it can carry script. */
+export function imageType(bytes: Uint8Array): string | null {
+  const at = (i: number, ...b: number[]) => b.every((x, j) => bytes[i + j] === x);
+  if (at(0, 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) return "image/png";
+  if (at(0, 0xff, 0xd8, 0xff)) return "image/jpeg";
+  if (at(0, 0x47, 0x49, 0x46, 0x38) && (bytes[4] === 0x37 || bytes[4] === 0x39) && bytes[5] === 0x61) return "image/gif";
+  if (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x57, 0x45, 0x42, 0x50)) return "image/webp";
+  return null;
+}
+
+/** Script files are stored as they are; the type is set from the extension, never from the request. */
+export const SCRIPT_TYPES: Record<string, string> = {
+  ".txt": "text/plain; charset=utf-8",
+  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".fdx": "application/xml",
+  ".pdf": "application/pdf",
+};
+
+export function scriptType(name: string) {
+  const ext = name.slice(name.lastIndexOf(".")).toLowerCase();
+  const type = SCRIPT_TYPES[ext];
+  if (!type) throw new Bad("file_type", "Use a .txt, .docx, .fdx or .pdf file.");
+  return type;
+}
+
+/** A file's own name, without any folder, kept short and printable. */
+export function fileName(name: string) {
+  const base = clean(name.split(/[\\/]/).pop() ?? "").trim();
+  return (base || "file").slice(0, 200);
+}

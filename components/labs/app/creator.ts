@@ -1,8 +1,9 @@
 /** Fixed data for the Library and the Cast step. The cast sheets come from lib/labs/maker.ts. */
 import { sheets } from "@/lib/labs/maker";
+import type { Step } from "@/lib/labs/store/types";
 
-/** One episode in the Library. Every episode opens its Results. */
-export type EpisodeItem = { name: string; poster?: string };
+/** One episode in the Library. A finished episode opens its Results; a saved one still in progress opens its step. */
+export type EpisodeItem = { name: string; poster?: string; /** A saved episode's id. */ id?: string; step?: Step };
 
 const SC = "/labs/mini-series/second-chance";
 const MF = "/labs/mini-series/moonflower";
@@ -50,7 +51,7 @@ export function episodesOf(slug: string, added: EpisodeItem[] = []): EpisodeItem
 type ElementKind = "character" | "location";
 
 /** One character or place the script needs. `tag` is the element ID the prompts use; `src` is its picture, if it has one. `who` is the character id in the series cast. */
-export type Element = { id: string; kind: ElementKind; name: string; tag: string; src?: string; who?: string; variant?: string };
+export type Element = { id: string; kind: ElementKind; name: string; tag: string; src?: string; who?: string; variant?: string; /** The uploaded cast sheet the picture is, if it is one. */ sheet?: string };
 
 type PoolImage = { tag: string; name: string; src: string };
 

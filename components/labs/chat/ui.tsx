@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { forwardRef, useRef, useState, type ComponentProps, type ReactNode } from "react";
-import { ChevronIcon } from "@/components/labs/fx";
+import { AnimatedMark, CheckIcon, ChevronIcon } from "@/components/labs/fx";
 import { Icon } from "@/components/labs/Icon";
 import { useDismiss } from "./hooks";
 import u from "./ui.module.css";
@@ -13,12 +13,32 @@ import u from "./ui.module.css";
  */
 type Kind = "primary" | "secondary" | "ghost";
 
-type BtnProps = Omit<ComponentProps<"button">, "className"> & { kind?: Kind; icon?: ReactNode; wide?: boolean; small?: boolean; className?: string };
+type BtnProps = Omit<ComponentProps<"button">, "className"> & {
+  kind?: Kind;
+  icon?: ReactNode;
+  wide?: boolean;
+  small?: boolean;
+  className?: string;
+  /** Work has started and not finished: the mark at work takes the icon's place and presses are ignored, as on the site's Button. */
+  loading?: boolean;
+  /** The work is done: a tick draws itself. Set it back to false after a moment. */
+  success?: boolean;
+};
 
-export const Btn = forwardRef<HTMLButtonElement, BtnProps>(function Btn({ kind = "secondary", icon, wide, small, className, children, ...rest }, ref) {
+export const Btn = forwardRef<HTMLButtonElement, BtnProps>(function Btn({ kind = "secondary", icon, wide, small, className, loading, success, onClick, children, ...rest }, ref) {
+  const state = success ? "success" : loading ? "loading" : undefined;
   return (
-    <button ref={ref} type="button" {...rest} className={[u.btn, u[kind], wide && u.wide, small && u.small, className].filter(Boolean).join(" ")}>
-      {icon}
+    <button
+      ref={ref}
+      type="button"
+      {...rest}
+      data-state={state}
+      aria-busy={loading || undefined}
+      // Stays focusable while busy, so focus is not thrown away; presses do nothing.
+      onClick={state ? (e) => e.preventDefault() : onClick}
+      className={[u.btn, u[kind], wide && u.wide, small && u.small, className].filter(Boolean).join(" ")}
+    >
+      {state === "loading" ? <AnimatedMark variant="busy" size={16} /> : state === "success" ? <CheckIcon size={16} /> : icon}
       {children && <span className={u.label}>{children}</span>}
     </button>
   );

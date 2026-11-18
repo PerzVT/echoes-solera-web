@@ -8,7 +8,7 @@ import { ChevronIcon, GestureIcon } from "@/components/labs/fx";
 import { useCast, useEpisode } from "./CastProvider";
 import { crossfade } from "./fx/crossfade";
 import m from "./fx/motion.module.css";
-import { Panel, Status, focusSoon, revealOnPhone } from "./parts";
+import { Panel, SaveAction, Status, focusSoon, revealOnPhone, useSaveThen } from "./parts";
 import { EPISODE, processingStages, type Block, type Note } from "@/lib/labs/maker";
 import s from "./maker.module.css";
 import p from "./ScreenplayStep.module.css";
@@ -303,6 +303,7 @@ function Screenplay({ arrived }: { arrived: boolean }) {
   const commentsHeading = useRef<HTMLHeadingElement>(null);
   /** The comments panel. What it shows dissolves when it changes as a whole: a comment removed, the comments sent, the rewrite back. */
   const comments = useRef<HTMLElement>(null);
+  const saving = useSaveThen(store.flush);
 
   // The episode keeps its edits and comments, so leaving, reloading or coming back finds them.
   useEffect(() => {
@@ -444,9 +445,11 @@ function Screenplay({ arrived }: { arrived: boolean }) {
       step="screenplay"
       fit
       action={
-        <Btn kind="primary" disabled={rewriting} onClick={() => router.push("/app/episode/cast")}>
-          Next
-        </Btn>
+        <SaveAction error={saving.error}>
+          <Btn kind="primary" disabled={rewriting} loading={saving.busy} onClick={() => saving.go(() => router.push("/app/episode/cast"))}>
+            Next
+          </Btn>
+        </SaveAction>
       }
     >
       <p className="sr-only" aria-live="polite">

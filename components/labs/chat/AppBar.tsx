@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AnimatedMark } from "@/components/labs/fx";
+import { Account } from "@/components/labs/app/Account";
 import { ToolSwitch, cx, type ToolKey } from "./ui";
 import b from "./AppBar.module.css";
 
@@ -45,6 +46,7 @@ export function AppBar({ tool, view, steps, current, action, title }: Props) {
           </Link>
         </nav>
         {title && <span className={b.title}>{title}</span>}
+        <Account />
       </div>
       {steps && <Steps steps={steps} current={current} />}
       {action && (

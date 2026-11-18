@@ -9,7 +9,7 @@ import { Btn, cx } from "@/components/labs/chat/ui";
 import { clock, retakes, type Take } from "@/lib/labs/maker";
 import { AppShell } from "./AppShell";
 import { useCast } from "./CastProvider";
-import { revealOnPhone } from "./parts";
+import { SaveAction, revealOnPhone } from "./parts";
 import { generationsFor, type Gen as Saved } from "./script";
 import r from "./ResultsStep.module.css";
 
@@ -90,11 +90,19 @@ export function ResultsStep({ initial, open }: { initial: ResultsState; open?: s
   };
 
   // A new episode is added to its series on Finish. An episode already in the Library is saved as it goes, so Done only goes back.
-  const finish = () => {
-    if (ep.isNew) {
-      store.finish(key, gens[0].takes[0].poster);
+  const [finishing, setFinishing] = useState(false);
+  const [finishError, setFinishError] = useState("");
+  const finish = async () => {
+    if (!ep.isNew) return router.push(`/app/series/${ep.series}`);
+    setFinishing(true);
+    setFinishError("");
+    try {
+      await store.finish(key, gens[0].takes[0].poster);
       router.push("/app/library");
-    } else router.push(`/app/series/${ep.series}`);
+    } catch (e) {
+      setFinishError(e instanceof Error && e.message ? e.message : "That did not save. Try again.");
+      setFinishing(false);
+    }
   };
 
   return (
@@ -103,9 +111,11 @@ export function ResultsStep({ initial, open }: { initial: ResultsState; open?: s
       view={ep.isNew ? "create" : "library"}
       fit
       action={
-        <Btn kind="primary" disabled={ep.isNew ? !decided : gens.some((x) => x.developing)} onClick={finish}>
-          {ep.isNew ? "Finish" : "Done"}
-        </Btn>
+        <SaveAction error={finishError}>
+          <Btn kind="primary" disabled={ep.isNew ? !decided : gens.some((x) => x.developing)} loading={finishing} onClick={finish}>
+            {ep.isNew ? "Finish" : "Done"}
+          </Btn>
+        </SaveAction>
       }
     >
       <p className="sr-only" aria-live="polite">
