@@ -80,26 +80,26 @@ export const projects: Project[] = [
   {
     slug: "cards",
     name: "Cards",
-    line: "Open a pack and turn over its concept cards.",
+    line: "Open a pack. Find every duck in Flock 01.",
     primary: { label: "Open a pack", href: "/cards/packs" },
     secondary: { label: "See the collection", href: "/cards" },
     tone: "dark",
     backdrop: "radial-gradient(120% 90% at 78% 40%, #1f4a4f 0%, #12303a 46%, #0e1d27 100%)",
     stage: "cards",
-    // Codex's cards concept (homepage-v2 cards-final): the whole stage is a wall of the set, the fan on top.
+    // The whole stage is a wall of Flock 01, the fan on top. Hidden cards and secrets stay off the home page.
     wall: {
       kind: "cards",
-      items: ["ya-garden", "fomo-dinosaur", "hisui-tea", "akane-tartlets", "fomo-shark", "yukiha-shaved-ice", "fomo-star-wizard", "fomo-heart-knit"].map(
-        (id) => `${L}/cards/art/${id}.webp`,
+      items: ["f001-yellow-hoodie", "f022-icy-blue-fireman", "f012-penguin-hypebeast", "f042-icy-blue-santa", "f031-mallard-farmer", "f007-yellow-cap-hypebeast", "f055-purple-party-sweater", "f027-yellow-fireman"].map(
+        (id) => `${L}/cards/flock/art/${id}.webp`,
       ),
     },
     fan: {
       kind: "cards",
       items: [
-        { src: `${L}/cards/art/ya-garden.webp`, alt: "YA in the garden" },
-        { src: `${L}/cards/art/nine-moonlight.webp`, alt: "Nine under the moon" },
-        { src: `${L}/cards/art/nova-sunset.webp`, alt: "Nova at sunset" },
-        { src: `${L}/cards/art/kohaku-bakery.webp`, alt: "Kohaku in the bakery" },
+        { src: `${L}/cards/flock/art/f018-tiger-hoodie.webp`, alt: "Tiger Hoodie" },
+        { src: `${L}/cards/flock/art/f037-steel-fireman.webp`, alt: "Steel Fireman" },
+        { src: `${L}/cards/flock/art/f058-tiger-pirate.webp`, alt: "Tiger Pirate" },
+        { src: `${L}/cards/flock/art/f038-zebra-nerd.webp`, alt: "Zebra Nerd" },
       ],
     },
   },
@@ -116,7 +116,7 @@ export const projects: Project[] = [
     // over a wall of Golden Ticket pages that runs the width of the stage.
     wall: {
       kind: "pages",
-      items: [1, 2, 3].map((n) => `${L}/manga/golden-ticket/page-${n}.webp`),
+      items: ["ch-01/page-07", "ch-01/page-11", "ch-03/page-04"].map((p) => `${L}/manga/golden-ticket/${p}.webp`),
     },
     art: `${L}/home/manga-hero.webp`,
   },

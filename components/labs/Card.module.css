@@ -309,3 +309,110 @@
     animation: none;
   }
 }
+
+/* ---------- Flock 01 ----------
+   The package's layers on the 750 x 1050 frame: art under the frame SVG, the nameplate from y 843 to 1026
+   (80.3% to 97.7%) with the rarity mark at its lower left and the set mark at its lower right, both baked in.
+   The live name sits in the plate's upper half, the number centred between the two marks. */
+.flock {
+  --ink: #3f3026;
+  --ink-soft: #7a6450;
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 750 / 1050;
+  /* The frame's outer corner: rx 26 plus half its 24 px stroke, 38 of 750. */
+  border-radius: 5.07% / 3.62%;
+  overflow: hidden;
+  isolation: isolate;
+  background: #f5ebd6;
+}
+.flock[data-rarity="S"],
+.flock[data-rarity="G"] {
+  --ink: #f3e2b0;
+  --ink-soft: #d3ad58;
+  background: #263b3d;
+}
+.fArt {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.fArt img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Foil is the frame's own: a band of light cut to the frame's shape, on Rare and above. --gx moves it
+   (the card dialog follows the pointer; elsewhere it rests). */
+.fFoil {
+  position: absolute;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+  -webkit-mask: var(--frame) 0 0 / 100% 100% no-repeat;
+  mask: var(--frame) 0 0 / 100% 100% no-repeat;
+  background: linear-gradient(
+    115deg,
+    transparent calc(var(--gx, 30%) - 26%),
+    rgb(255 255 255 / 0.55) calc(var(--gx, 30%) - 6%),
+    rgb(255 236 190 / 0.35) var(--gx, 30%),
+    transparent calc(var(--gx, 30%) + 22%)
+  );
+  mix-blend-mode: soft-light;
+}
+.flock:is([data-rarity="R"], [data-rarity="SR"], [data-rarity="G"]) .fFoil {
+  display: block;
+}
+.fPlate {
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  top: 80.3%;
+  bottom: 2.3%;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  color: var(--ink);
+  text-align: center;
+}
+.fName {
+  max-width: 100%;
+  font-family: var(--font-display);
+  font-size: max(11px, 6cqw);
+  line-height: 1.05;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fNo {
+  font-size: max(11px, 4cqw);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+/* A small card keeps only the number, centred on the plate, so no text falls under 11 px. */
+@container (max-width: 199px) {
+  .fPlate {
+    grid-template-rows: 1fr;
+  }
+  .fName {
+    display: none;
+  }
+  .fNo {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+}
+.fBack {
+  background: transparent;
+}
+.fPlate[hidden] {
+  display: none;
+}

@@ -1,37 +1,103 @@
+/* The opening, on the teal desk (app/(labs)/cards/cards.module.css .packs). */
 .wrap {
   display: grid;
   justify-items: center;
-  gap: clamp(20px, 3.4vh, 32px);
+  gap: clamp(14px, 2.4vh, 24px);
+  width: 100%;
   text-align: center;
 }
-
-/* Choose: the three sets' packs side by side. */
-.choices {
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+}
+.barRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.packName {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.1;
+}
+.packName span {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.slotCount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.iconBtn {
   display: grid;
-  /* Sized by the window's height as well as its width, so the title, packs and names fit on the desk
-     above the site foot (100dvh less the header, the foot and its gap, about 490 px). */
-  grid-template-columns: repeat(3, minmax(0, min(230px, max(130px, calc((100dvh - 490px) * 0.617)))));
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-control);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .iconBtn:hover {
+    background: var(--surface-hover);
+  }
+}
+.iconBtn:active {
+  scale: 0.94;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ---------- 1. The shelf ---------- */
+.shelf {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, min(230px, max(104px, calc((100dvh - 520px) * 0.617)))));
   gap: clamp(12px, 4vw, 48px);
   list-style: none;
 }
-.choices li {
+.shelf li {
   animation: arrive 420ms var(--ease-out) backwards;
   animation-delay: calc(var(--i) * 80ms);
 }
+@keyframes arrive {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
 .choice {
+  position: relative;
   display: grid;
   justify-items: center;
-  gap: 14px;
+  gap: 4px;
   width: 100%;
-  border-radius: 12px;
+  border-radius: var(--r-control);
   transition:
     translate var(--dur-move) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
-.choiceName {
-  font-weight: 500;
-  font-size: 0.9375rem;
-  line-height: 1.3;
+.choice:focus-visible {
+  outline-offset: 8px;
 }
 @media (hover: hover) and (pointer: fine) {
   .choice:hover {
@@ -41,43 +107,97 @@
 .choice:active {
   scale: 0.98;
 }
-
-.sealed {
-  position: relative;
+/* The packs sway two degrees on the shelf, each out of step with the next. */
+.sway {
   display: block;
-  width: min(300px, 60vw, max(140px, calc((100dvh - 480px) * 0.617)));
-  border-radius: 12px;
-  transition:
-    translate var(--dur-move) var(--ease-out),
-    rotate var(--dur-move) var(--ease-out),
-    scale var(--dur-press) var(--ease-out);
-  animation: arrive 420ms var(--ease-out);
+  width: 100%;
+  margin-bottom: 10px;
+  transform-origin: 50% 90%;
+  animation: sway 3.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -1.2s);
 }
-@media (hover: hover) and (pointer: fine) {
-  .sealed:not([data-tearing="true"]):hover {
-    translate: 0 -8px;
-    rotate: -1.5deg;
-  }
-}
-.sealed:active {
-  scale: 0.98;
-}
-.sealed[data-tearing="true"] {
-  pointer-events: none;
-}
-@keyframes arrive {
+@keyframes sway {
   from {
-    opacity: 0;
-    translate: 0 16px;
+    rotate: -2deg;
   }
+  to {
+    rotate: 2deg;
+  }
+}
+.choiceName {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.choiceMeta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.pullBadge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 2;
+  padding: 5px 9px;
+  border-radius: var(--r-thumb);
+  font-weight: 600;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: #263b3d;
+  background: #e7cf94;
+  box-shadow: var(--elev-2);
+}
+.odds {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 16px 20px;
+  border-radius: var(--r-card);
+  background: rgb(8 24 30 / 0.35);
+  box-shadow: var(--edge-light);
+}
+.oddsTitle {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+.odds table {
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.odds th,
+.odds td {
+  padding: 4px 12px;
+  text-align: center;
+}
+.odds thead th {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.odds tbody th {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.odds td[data-zero] {
+  color: var(--text-disabled);
+}
+.oddsLine {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 18px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }
 
-/* The sealed pack: 444 x 720 art, the seam at 7.5% from the top. */
+/* ---------- The sealed pack: 888 x 1440, the seam at 7.5% (108 px), from the package ---------- */
 .pack {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 444 / 720;
+  aspect-ratio: 888 / 1440;
   filter: drop-shadow(0 18px 22px rgb(4 14 18 / 0.5));
 }
 .packBody,
@@ -86,213 +206,609 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 .packBody {
   clip-path: inset(7.5% 0 0 0);
 }
+/* The strip follows the drag (--pull 0 to 1): it lifts and swings away from the seam. */
 .packStrip {
   clip-path: inset(0 0 92.5% 0);
   transform-origin: 0 7.5%;
+  transform: translate(calc(var(--pull) * 6%), calc(var(--pull) * -3%)) rotate(calc(var(--pull) * -7deg));
+  transition: transform 160ms var(--ease-out);
 }
-/* The line of light that runs along the seam as the pack tears. */
 .seam {
   position: absolute;
-  left: 3%;
-  right: 3%;
+  left: 2%;
+  right: 2%;
   top: 7.5%;
   height: 2px;
   margin-top: -1px;
   background: linear-gradient(90deg, transparent, #fff8e6 20%, #ffffff 50%, #fff8e6 80%, transparent);
   box-shadow: 0 0 8px 2px rgb(255 240 200 / 0.8);
-  transform: scaleX(0);
+  transform: scaleX(var(--pull));
   transform-origin: left center;
+  opacity: min(1, calc(var(--pull) * 4));
+  pointer-events: none;
+}
+/* 3. The tell: light leaks from the seam when the pack holds R or better. */
+.seamGlow {
+  --glow: transparent;
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 7.5%;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: var(--r-pill);
+  background: var(--glow);
+  filter: blur(6px);
   opacity: 0;
   pointer-events: none;
 }
-/* The tear, 760 ms (TEAR_MS): light runs along the seam (0 to 300), the strip peels off up and to the
-   right (240 to 620), the opened pack sinks and fades (500 to 760). */
-.pack[data-tearing] .seam {
-  animation: seam 300ms cubic-bezier(0.3, 0, 0.2, 1) forwards;
+.pack[data-tell="R"] .seamGlow {
+  --glow: #e3edf5;
 }
-.pack[data-tearing] .packStrip {
-  animation: peel 380ms cubic-bezier(0.5, 0, 0.7, 0.4) 240ms forwards;
+.pack[data-tell="SR"] .seamGlow {
+  --glow: #ffd27a;
 }
-.pack[data-tearing] .packBody {
-  animation: sink 260ms cubic-bezier(0.55, 0, 1, 0.45) 500ms forwards;
+.pack[data-tell="S"] .seamGlow {
+  --glow: #fff6dc;
 }
-@keyframes seam {
-  0% {
-    opacity: 1;
-    transform: scaleX(0);
+.pack:is([data-tell="R"], [data-tell="SR"], [data-tell="S"]) .seamGlow {
+  animation:
+    tell 400ms var(--ease-out) forwards,
+    leak 1.6s 400ms ease-in-out infinite alternate;
+}
+.pack[data-tell="S"] {
+  animation: shake 300ms linear;
+}
+@keyframes tell {
+  from {
+    opacity: 0;
+    scale: 0.4 1;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+@keyframes leak {
+  from {
+    opacity: 0.95;
+  }
+  to {
+    opacity: 0.55;
+  }
+}
+@keyframes shake {
+  20% {
+    translate: -3px 0;
+  }
+  40% {
+    translate: 3px 0;
+  }
+  60% {
+    translate: -2px 0;
   }
   80% {
-    opacity: 1;
-    transform: scaleX(1);
+    translate: 2px 0;
   }
-  100% {
-    opacity: 0;
-    transform: scaleX(1);
-  }
+}
+/* 4. The tear, 500 ms: the strip flies off up and right, light flares, the pack falls away. */
+.pack[data-tearing] .packStrip {
+  animation: peel 320ms cubic-bezier(0.5, 0, 0.7, 0.4) forwards;
+}
+.pack[data-tearing] .seam {
+  animation: flare 300ms var(--ease-out) forwards;
+}
+.pack[data-tearing] .packBody {
+  animation: sink 300ms cubic-bezier(0.55, 0, 1, 0.45) 200ms forwards;
+}
+.pack[data-tearing] .seamGlow {
+  animation: none;
+  opacity: 0;
 }
 @keyframes peel {
   to {
-    transform: translate(18%, -16%) rotate(-14deg);
+    transform: translate(22%, -20%) rotate(-16deg);
+    opacity: 0;
+  }
+}
+@keyframes flare {
+  0% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1) scaleY(6);
     opacity: 0;
   }
 }
 @keyframes sink {
   to {
-    transform: translateY(14%) scale(0.85);
+    transform: translateY(26%);
     opacity: 0;
   }
 }
 
-.actions {
+/* ---------- The table: stage and row in one positioned box ---------- */
+.table {
+  position: relative;
+  width: 100%;
+  height: clamp(440px, calc(100dvh - 300px), 760px);
+  isolation: isolate;
+  touch-action: manipulation;
+  transition: height 400ms var(--ease-out);
+}
+/* The fan needs less height than the stack and row, so the summary's counters and buttons stay in view. */
+.table[data-stage="summary"] {
+  height: clamp(320px, calc(100dvh - 400px), 600px);
+}
+/* 7. The stage dims 20% while the last card charges. */
+.table::before {
+  content: "";
+  position: absolute;
+  inset: -160px -240px;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.22) 55%, transparent);
+  opacity: 0;
+  transition: opacity 300ms linear;
+  pointer-events: none;
+}
+.table[data-dim]::before {
+  opacity: 1;
+}
+/* 8. SR: the ground shifts to gold for the reveal. */
+.table::after {
+  content: "";
+  position: absolute;
+  inset: -40px -60px;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgb(255 210 120 / 0.42), rgb(185 138 61 / 0.18) 60%, transparent);
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+  pointer-events: none;
+}
+.table:is([data-reveal="SR"], [data-reveal="S"])::after {
+  opacity: 1;
+}
+.table[data-reveal="S"]::after {
+  background: radial-gradient(closest-side, rgb(255 246 220 / 0.4), rgb(211 173 88 / 0.2) 60%, transparent);
+}
+/* A burst of light behind the card, sized by rarity. */
+.burst {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 40%;
+  width: 70vmin;
+  height: 70vmin;
+  margin: -35vmin 0 0 -35vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--burst, #fff) 0%, transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+}
+.table[data-reveal="R"] .burst {
+  --burst: rgb(227 237 245 / 0.75);
+  animation: burst 700ms var(--ease-out) 200ms;
+}
+.table[data-reveal="SR"] .burst {
+  --burst: rgb(255 214 130 / 0.85);
+  animation: burst 900ms var(--ease-out) 250ms;
+}
+.table[data-reveal="S"] .burst {
+  --burst: rgb(255 248 228 / 0.9);
+  animation: burst 1300ms var(--ease-out) 450ms;
+}
+@keyframes burst {
+  0% {
+    opacity: 0;
+    scale: 0.3;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.25;
+  }
+}
+/* S: a soft rise in luminance over the whole stage, never a hard white flash. */
+.luma {
+  position: absolute;
+  inset: -40px -60px;
+  z-index: 50;
+  background: radial-gradient(closest-side, rgb(255 250 236 / 0.55), rgb(255 250 236 / 0.18) 60%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.table[data-reveal="S"] .luma {
+  animation: luma 900ms ease-in-out;
+}
+@keyframes luma {
+  45% {
+    opacity: 1;
+  }
+}
+
+/* 2. The pack drops to the centre and settles (350 ms). */
+.packBtn {
+  position: absolute;
+  z-index: 40;
+  translate: -50% 0;
+  border-radius: var(--r-control);
+  cursor: grab;
+  touch-action: none;
+  animation: drop 350ms cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+.packBtn:active {
+  cursor: grabbing;
+}
+.packBtn:focus-visible {
+  outline-offset: 6px;
+}
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.92);
+  }
+}
+
+/* A card on the table. Its place is a transform from the measured box (PackOpening.tsx Table). */
+.slot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  perspective: 1600px;
+  border-radius: 5.07% / 3.62%;
+  transition: transform 320ms var(--ease-out);
+}
+.table[data-stage="stack"] .slot:not([data-cur]) {
+  transition-duration: 450ms;
+}
+button.slot {
+  cursor: pointer;
+}
+button.slot:focus-visible {
+  outline-offset: 6px;
+}
+.table[data-stage="summary"] .slot {
+  transition-duration: 600ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .table[data-stage="summary"] button.slot:hover .flipper {
+    translate: 0 -4%;
+  }
+}
+/* Face down by default; turned, the flipper rotates back to the front over --flip. */
+.flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition:
+    transform var(--flip, 280ms) cubic-bezier(0.45, 0, 0.2, 1),
+    translate var(--dur-move) var(--ease-out);
+}
+.flipper[data-up] {
+  transform: rotateY(0deg);
+}
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  border-radius: 5.07% / 3.62%;
+  backface-visibility: hidden;
+  box-shadow: 0 24px 40px rgb(0 0 0 / 0.45);
+}
+.back {
+  transform: rotateY(180deg);
+}
+/* 7. The last card's back glows its rarity colour: two pulses, then it holds. */
+.back[data-glow] {
+  --g: 227 237 245;
+  animation: charge 300ms ease-in-out 2, held 1.2s 600ms ease-in-out infinite alternate;
+  box-shadow:
+    0 0 0 3px rgb(var(--g) / 0.9),
+    0 0 34px 10px rgb(var(--g) / 0.55),
+    0 24px 40px rgb(0 0 0 / 0.45);
+}
+.back[data-glow="SR"] {
+  --g: 255 210 120;
+}
+.back[data-glow="S"] {
+  --g: 255 246 220;
+}
+@keyframes charge {
+  50% {
+    box-shadow:
+      0 0 0 5px rgb(var(--g) / 1),
+      0 0 60px 22px rgb(var(--g) / 0.8),
+      0 24px 40px rgb(0 0 0 / 0.45);
+    scale: 1.02;
+  }
+}
+@keyframes held {
+  to {
+    box-shadow:
+      0 0 0 3px rgb(var(--g) / 0.7),
+      0 0 46px 14px rgb(var(--g) / 0.4),
+      0 24px 40px rgb(0 0 0 / 0.45);
+  }
+}
+
+/* 8. SR and S: the art gives way to the rarity's backdrop and the duck lifts off it, over the top of the
+   frame and clear of the nameplate. The box runs from 12% above the card to the plate's top edge. */
+.lift {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12%;
+  bottom: 19.7%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.lift::before {
+  content: "";
+  position: absolute;
+  left: 3.2%;
+  right: 3.2%;
+  top: calc(13% + 2.4%);
+  bottom: 0;
+  background: radial-gradient(80% 70% at 50% 40%, #ffe6a2, #d9a849 60%, #8c6026);
+  opacity: 0;
+  animation: in 320ms var(--ease-out) 300ms forwards;
+}
+.lift[data-rarity="S"]::before {
+  left: 0;
+  right: 0;
+  top: 13%;
+  border-radius: 5.07% 5.07% 0 0 / 3.62% 3.62% 0 0;
+  background: radial-gradient(80% 70% at 50% 38%, #f6dc94, #4a6a62 55%, #263b3d);
+}
+.lift img {
+  position: absolute;
+  left: 0;
+  top: 13%;
+  width: 100%;
+  height: 108.34%;
+  opacity: 0;
+  animation:
+    in 320ms var(--ease-out) 300ms forwards,
+    rise 900ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms forwards;
+}
+.lift[data-rarity="S"] img {
+  animation-delay: 650ms, 700ms;
+}
+.lift[data-rarity="S"]::before {
+  animation-delay: 650ms;
+}
+@keyframes in {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rise {
+  to {
+    transform: translateY(-6%) scale(1.05);
+  }
+}
+
+/* 9. New ribbon, or the feathers a duplicate paid. */
+.ribbon,
+.feathers {
+  position: absolute;
+  z-index: 3;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: var(--elev-2);
+}
+.ribbon {
+  top: 4%;
+  --size: clamp(11px, 4.6cqw, 18px);
+  left: -3%;
+  padding: 0.55em 0.9em;
+  border-radius: var(--r-inner);
+  font-size: calc(var(--size) * var(--inv, 1));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  animation: ribbon 300ms var(--ease-out);
+}
+.feathers {
+  top: 4%;
+  left: 50%;
+  translate: -50% 0;
+  padding: 0.5em 0.8em;
+  border-radius: var(--r-thumb);
+  font-size: calc(clamp(11px, 4cqw, 16px) * var(--inv, 1));
+  color: #263b3d;
+  background: #fff6dc;
+  animation: feather 300ms var(--ease-out);
+}
+.slot {
+  container-type: inline-size;
+}
+@keyframes ribbon {
+  from {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+}
+@keyframes feather {
+  from {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+}
+
+/* The press target over the stack; the cards under it are drawn, this is what is pressed. */
+.press {
+  position: absolute;
+  z-index: 45;
+  border-radius: 5.07% / 3.62%;
+  cursor: pointer;
+}
+.press:focus-visible {
+  outline-offset: 6px;
+}
+/* The row's empty slots, numbered, under where the cards land. */
+.row {
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  list-style: none;
+}
+.row li {
+  display: grid;
+  place-items: center;
+  border-radius: 5.07% / 3.62%;
+  border: 1px dashed rgb(246 243 236 / 0.22);
+}
+.rowNo {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: rgb(246 243 236 / 0.4);
+}
+
+/* ---------- 10. Summary ---------- */
+.summary {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+}
+.tallies {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  align-items: baseline;
+  gap: 6px 26px;
+  color: var(--text-muted);
 }
-
-/* The cards, the largest thing on the stage, sized so the buttons stay above the fold. */
-.spread {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, min(280px, max(120px, calc((100dvh - 560px) * 0.714)))));
-  gap: clamp(10px, 3vw, 40px);
-  list-style: none;
+.tallies strong {
+  margin-right: 4px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
-.spread li {
-  container-type: inline-size;
-  perspective: 1400px;
-  animation: deal 560ms var(--ease-out) backwards;
-  animation-delay: calc(var(--i) * 110ms);
+.stamp {
+  padding: 4px 10px;
+  border: 2px solid #e7cf94;
+  border-radius: var(--r-thumb);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e7cf94;
+  rotate: -4deg;
+  animation: stamp 400ms cubic-bezier(0.2, 0.9, 0.3, 1.3) 700ms backwards;
 }
-@keyframes deal {
+@keyframes stamp {
   from {
     opacity: 0;
-    translate: 0 70px;
-    rotate: 5deg;
-    scale: 0.9;
+    scale: 1.6;
   }
 }
-.flip {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 750 / 1050;
-  border-radius: 4.5% / 3.2%;
-  cursor: pointer;
-  transition:
-    translate var(--dur-move) var(--ease-out),
-    scale var(--dur-press) var(--ease-out);
+.resume {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  padding: 10vh 0;
 }
-@media (hover: hover) and (pointer: fine) {
-  .flip:not([data-turned="true"]):hover {
-    translate: 0 -8px;
+
+@media (max-width: 560px) {
+  .table {
+    height: clamp(360px, calc(100dvh - 400px), 600px);
   }
-}
-.flip:not([data-turned="true"]):active {
-  scale: 0.98;
-}
-.flip[data-turned="true"] {
-  cursor: default;
-  animation: turn 520ms linear;
-}
-.faceBack,
-.faceFront {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: 0 24px 40px rgb(0 0 0 / 0.45);
-}
-.faceFront {
-  visibility: hidden;
-}
-.flip[data-turned="true"] .faceBack {
-  animation: leave 520ms steps(1) forwards;
-}
-.flip[data-turned="true"] .faceFront {
-  animation: enter 520ms steps(1) forwards;
-}
-/* Each half eases on its own: into the edge fast, out of it slowing, so edge-on lasts a moment only. */
-@keyframes turn {
-  0% {
-    transform: rotateY(0deg);
-    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  .table[data-stage="summary"] {
+    height: clamp(260px, calc(100dvh - 520px), 420px);
   }
-  50% {
-    transform: rotateY(90deg);
+  .bar {
+    flex-wrap: nowrap;
   }
-  50.01% {
-    transform: rotateY(-90deg);
-    animation-timing-function: cubic-bezier(0, 0.55, 0.45, 1);
+  .packName span {
+    display: none;
   }
-  100% {
-    transform: rotateY(0deg);
-  }
-}
-@keyframes leave {
-  0% {
-    visibility: visible;
-  }
-  50%,
-  100% {
-    visibility: hidden;
-  }
-}
-@keyframes enter {
-  0% {
-    visibility: hidden;
-  }
-  50%,
-  100% {
-    visibility: visible;
-  }
-}
-/* The name under the card, only when the card is too narrow to print it (Card.module.css: 204 px). */
-.under {
-  display: none;
-  min-height: 2.6em;
-  margin-top: 10px;
-  font-weight: 500;
-  font-size: 0.8125rem;
-  line-height: 1.3;
-}
-@container (max-width: 203px) {
-  .under {
-    display: block;
+  .odds th,
+  .odds td {
+    padding: 3px 8px;
   }
 }
 
+/* Reduced motion: no drop, shake, sway, tilt, flight or flash. Turns are cross-fades; cards change place
+   at once. */
 @media (prefers-reduced-motion: reduce) {
-  .choice,
-  .sealed,
-  .flip {
+  .sway,
+  .pack[data-tell="S"],
+  .packBtn,
+  .shelf li,
+  .stamp {
+    animation: none;
+  }
+  .slot {
+    transition: none !important;
+  }
+  .flipper,
+  .flipper[data-up] {
+    transform: none;
     transition: none;
   }
-  /* Arrivals and the deal become plain fades; the turn becomes a swap. */
-  .choices li,
-  .sealed,
-  .spread li {
-    animation: fade 240ms linear backwards;
+  .front,
+  .back {
+    backface-visibility: visible;
+    transition: opacity 200ms linear;
   }
-  .flip[data-turned="true"],
-  .pack[data-tearing] .seam,
+  .back {
+    transform: none;
+    opacity: 1;
+  }
+  .front {
+    opacity: 0;
+  }
+  .flipper[data-up] .front {
+    opacity: 1;
+  }
+  .flipper[data-up] .back {
+    opacity: 0;
+  }
+  .back[data-glow] {
+    animation: none;
+  }
+  .burst,
+  .luma {
+    display: none;
+  }
+  .lift img {
+    animation: in 200ms linear forwards;
+  }
+  .lift::before {
+    animation: in 200ms linear forwards;
+  }
   .pack[data-tearing] .packStrip,
   .pack[data-tearing] .packBody {
+    animation: fadeout 200ms linear forwards;
+  }
+  .pack[data-tearing] .seam {
     animation: none;
   }
-  .flip[data-turned="true"] .faceBack {
-    animation: none;
-    visibility: hidden;
+  .packStrip {
+    transform: none;
   }
-  .flip[data-turned="true"] .faceFront {
-    animation: none;
-    visibility: visible;
+  .ribbon,
+  .feathers {
+    animation: in 200ms linear backwards;
   }
 }
-@keyframes fade {
-  from {
+@keyframes fadeout {
+  to {
     opacity: 0;
   }
 }

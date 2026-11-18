@@ -3,6 +3,8 @@
   max-width: 1344px;
   margin: 16px auto 0;
   display: grid;
+  /* One column that may shrink below its content, so a sideways-scrolling row cannot widen the desk. */
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(16px, 3vh, 28px);
   padding: clamp(20px, 3.4vw, 48px);
   position: relative;

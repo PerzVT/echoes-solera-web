@@ -1,15 +1,19 @@
 import { Picture as Image } from "@/components/labs/fx/Picture";
-import { cardNo, setBySlug, type CardFace, type CardSet } from "@/lib/labs/cards";
+import { cardNo, setBySlug, type AnyCard, type CardFace, type CardSet } from "@/lib/labs/cards";
+import type { FlockCard } from "@/lib/labs/cards/flock";
 import styles from "./Card.module.css";
 
+const F = "/labs/cards/flock";
+const isFlock = (c: AnyCard): c is FlockCard => "rarity" in c;
+
 /**
- * A card face in the design of Codex's card study (`cards/illustration-study.png`): the art fills the
- * card inside a thin cream border, and a cream nameplate along the foot reads the name, the set and the
- * card's position in its set. Proportion is the kit's 750 x 1050.
+ * A card face. Flock 01 cards are drawn from the package's layers: the full art, the rarity's frame SVG
+ * (750 x 1050, its marks baked in) and live text on the nameplate: the name and "017/060". Foil is part of
+ * the frame on Rare and above, a sheen cut to the frame's own shape. The concept cards keep their cream
+ * study frame.
  *
- * Text is never drawn below 11 px: the name hides on cards narrower than 204 px and the set line on
- * cards narrower than 367 px (Card.module.css). With `caption`, a card too narrow for its name shows
- * the name under the card instead.
+ * Text is never drawn below 11 px: on a card narrower than 200 px only the number stays on the plate.
+ * `thumb` draws the 320 px thumbnail with a plain img (grid tiles, where the optimiser would only add work).
  */
 export function Card({
   card,
@@ -17,13 +21,65 @@ export function Card({
   priority,
   foil,
   caption,
+  thumb,
+  plain,
+  bare,
 }: {
-  card: CardFace;
+  card: AnyCard;
   sizes?: string;
   priority?: boolean;
   foil?: boolean;
   caption?: boolean;
+  thumb?: boolean;
+  /** The full 1060 px art as a plain img, for the pack opening, which preloads it before the flip. */
+  plain?: boolean;
+  /** No live text: for a card drawn too small to read it, such as one scaled into the opening's row. */
+  bare?: boolean;
 }) {
+  if (isFlock(card)) return <FlockFace card={card} sizes={sizes} priority={priority} thumb={thumb} plain={plain} bare={bare} />;
+  return <ConceptFace card={card} sizes={sizes} priority={priority} foil={foil} caption={caption} />;
+}
+
+export const frameOf = (r: FlockCard["rarity"]) => `${F}/frames/frame-${r.toLowerCase()}.svg`;
+
+function FlockFace({ card, sizes, priority, thumb, plain, bare }: { card: FlockCard; sizes: string; priority?: boolean; thumb?: boolean; plain?: boolean; bare?: boolean }) {
+  const frame = frameOf(card.rarity);
+  return (
+    <span className={styles.wrap}>
+      <span className={styles.flock} data-rarity={card.rarity}>
+        <span className={styles.fArt}>
+          {thumb || plain ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={plain ? card.art : card.thumb} alt="" width={plain ? 1060 : 320} height={plain ? 1484 : 448} loading={plain ? "eager" : "lazy"} decoding="async" />
+          ) : (
+            <Image src={card.art} alt="" fill sizes={sizes} priority={priority} />
+          )}
+        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.layer} src={frame} alt="" />
+        <span className={styles.fFoil} style={{ "--frame": `url(${frame})` } as React.CSSProperties} aria-hidden="true" />
+        <span className={styles.fPlate} hidden={bare}>
+          <span className={styles.fName}>{card.name}</span>
+          <span className={styles.fNo}>{`${String(card.no).padStart(3, "0")}/060`}</span>
+        </span>
+      </span>
+    </span>
+  );
+}
+
+/** The Flock 01 back from the package: one back for the set, so a face-down card gives nothing away. */
+export function FlockBack() {
+  return (
+    <span className={styles.wrap}>
+      <span className={`${styles.flock} ${styles.fBack}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.layer} src={`${F}/back/card-back.webp`} alt="" decoding="async" />
+      </span>
+    </span>
+  );
+}
+
+function ConceptFace({ card, sizes, priority, foil, caption }: { card: CardFace; sizes: string; priority?: boolean; foil?: boolean; caption?: boolean }) {
   return (
     <span className={styles.wrap}>
       <span className={styles.card}>
@@ -63,7 +119,7 @@ const waves = (() => {
   return rows.join(" ");
 })();
 
-/** The card back from the study: teal, a fine wave lattice and one small diamond, in a thin cream border. */
+/** The concept sets' back: teal, a fine wave lattice and one small diamond, in a thin cream border. */
 export function CardBack() {
   return (
     <span className={styles.wrap}>
@@ -81,9 +137,8 @@ export function CardBack() {
 }
 
 /**
- * A set's foil pack after the study (`cards/card-set-and-packs.png`): cream foil, crimped ends, the
- * set's lead card art in a window and the set's name under it. The top strip is its own element so the
- * pack opening can tear it off; `torn` leaves it off.
+ * A concept set's foil pack (`cards/card-set-and-packs.png`). The top strip is its own element so it can be
+ * torn off; `torn` leaves it off.
  */
 export function Pack({
   set,
@@ -96,7 +151,6 @@ export function Pack({
   sizes?: string;
   priority?: boolean;
   torn?: boolean;
-  /** Plays the tear: light runs along the seam, the strip lifts off, the pack sinks (760 ms). */
   tearing?: boolean;
 }) {
   return (

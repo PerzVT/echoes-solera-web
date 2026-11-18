@@ -13,11 +13,13 @@ export default function PageSkeleton() {
       <div className={`${styles.desk} ${styles.packs} ${p.desk}`}>
         <div className={pack.wrap} aria-hidden="true">
           <Skeleton width={260} height="clamp(2rem, 3.4vw, 3rem)" radius={10} />
-          <div className={pack.choices}>
+          <ul className={pack.shelf}>
             {[0, 1, 2].map((i) => (
-              <Skeleton key={i} ratio="444 / 720" width="100%" radius={10} index={i + 1} />
+              <li key={i}>
+                <Skeleton ratio="888 / 1440" width="100%" radius={10} index={i + 1} />
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </SkeletonGroup>
