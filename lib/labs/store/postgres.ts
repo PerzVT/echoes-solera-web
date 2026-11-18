@@ -38,8 +38,11 @@ function ensureSchema() {
   return ready;
 }
 
-/** Runs one parameterised query ($1, $2, ...) and returns its rows. This is the only place the driver is called. */
-async function sql(query: string, params: unknown[] = []): Promise<Row[]> {
+/**
+ * Runs one parameterised query ($1, $2, ...) and returns its rows. This is the only place the driver is called;
+ * lib/labs/store/jobs.ts uses it for the jobs table.
+ */
+export async function sql(query: string, params: unknown[] = []): Promise<Row[]> {
   await ensureSchema();
   return (await db().query(query, params)) as Row[];
 }
@@ -52,10 +55,12 @@ const FIELDS: { [T in Table]: (keyof Tables[T] & string)[] } = {
   screenplays: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "episodeId", "texts", "notes", "changed"],
   cast_sheets: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "seriesId", "character", "variant", "tag", "image"],
   choices: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "episodeId", "cast", "style", "references"],
+  storyboards: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "title", "source", "style", "frames", "step"],
+  mangas: ["id", "owner", "updatedBy", "createdAt", "updatedAt", "title", "source", "style", "pageCount", "pages", "step"],
 };
 const FILE_FIELDS: (keyof StoredFile)[] = ["key", "name", "type", "size", "location", "owner", "createdAt"];
 /** Fields kept as jsonb. */
-const JSON_FIELDS = new Set(["texts", "notes", "changed", "cast", "references"]);
+const JSON_FIELDS = new Set(["texts", "notes", "changed", "cast", "references", "frames", "pages"]);
 
 const name = (table: Table | "files") => `nl_${table}`;
 const snake = (field: string) => field.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);

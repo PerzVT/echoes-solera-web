@@ -90,6 +90,37 @@ create table if not exists nl_choices (
 create index if not exists nl_choices_episode on nl_choices (episode_id);
 create index if not exists nl_choices_owner on nl_choices (owner);
 
+-- A storyboard is one record: its scene, style and frames in order (frames as jsonb).
+create table if not exists nl_storyboards (
+  id          text primary key,
+  owner       text not null,
+  updated_by  text not null,
+  created_at  timestamptz not null,
+  updated_at  timestamptz not null,
+  title       text not null check (char_length(title) between 1 and 120),
+  source      text not null,
+  style       text,
+  frames      jsonb not null default '[]',
+  step        text not null check (step in ('scene', 'style', 'board'))
+);
+create index if not exists nl_storyboards_owner on nl_storyboards (owner);
+
+-- A manga is one record: its story, style, page count and pages with their lettering (pages as jsonb).
+create table if not exists nl_mangas (
+  id          text primary key,
+  owner       text not null,
+  updated_by  text not null,
+  created_at  timestamptz not null,
+  updated_at  timestamptz not null,
+  title       text not null check (char_length(title) between 1 and 120),
+  source      text not null,
+  style       text,
+  page_count  integer not null check (page_count between 1 and 24),
+  pages       jsonb not null default '[]',
+  step        text not null check (step in ('story', 'style', 'pages', 'read'))
+);
+create index if not exists nl_mangas_owner on nl_mangas (owner);
+
 -- Uploaded scripts and cast images. The bytes live in Blob storage (or on disk in development); location says where.
 create table if not exists nl_files (
   key         text primary key,
@@ -101,3 +132,29 @@ create table if not exists nl_files (
   created_at  timestamptz not null
 );
 create index if not exists nl_files_owner on nl_files (owner);
+
+-- Generation jobs (lib/labs/ai, lib/labs/store/jobs.ts). input and result are jsonb shaped by kind.
+-- provider_id is the provider's own id for work that runs on their side, so a later request can resume it.
+-- estimate_usd is held against the spending limits while a job runs; cost_usd is what its reported usage came to.
+create table if not exists nl_jobs (
+  id            text primary key,
+  owner         text not null,
+  kind          text not null,
+  status        text not null check (status in ('queued', 'running', 'done', 'failed')),
+  episode_id    text,
+  input         jsonb not null,
+  result        jsonb,
+  error         text,
+  provider      text not null,
+  provider_id   text,
+  estimate_usd  double precision not null default 0,
+  cost_usd      double precision,
+  attempts      integer not null default 0,
+  created_at    timestamptz not null,
+  updated_at    timestamptz not null,
+  started_at    timestamptz,
+  finished_at   timestamptz
+);
+create index if not exists nl_jobs_owner on nl_jobs (owner, created_at desc);
+create index if not exists nl_jobs_episode on nl_jobs (episode_id, created_at desc);
+create index if not exists nl_jobs_created on nl_jobs (created_at);

@@ -3,13 +3,13 @@
  * series or episode is deleted. Route handlers under app/api/creator call these after checking the session and
  * the input.
  */
-import { seriesCards } from "@/lib/labs/maker";
+import { animeSeriesCards, seriesCards } from "@/lib/labs/maker";
 import { dropBytes, loadBytes, saveBytes } from "./bytes";
 import { getStore } from "./index";
 import { Bad } from "./validate";
-import type { CastChoice, CastSheet, Choices, Episode, Meta, Note, Screenplay, Script, Series, Step, StoredFile, Tool } from "./types";
+import type { CastChoice, CastSheet, Choices, Episode, Manga, Meta, Note, Screenplay, Script, Series, Step, StoredFile, Storyboard, Tool } from "./types";
 
-const BUILT_IN = new Set(seriesCards.map((c) => c.slug));
+const BUILT_IN = new Set([...seriesCards, ...animeSeriesCards].map((c) => c.slug));
 
 const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, "0")).join("");
 const newId = (prefix: string) => `${prefix}-${hex(6)}`;
@@ -213,4 +213,62 @@ export async function deleteCast(id: string) {
   if (!before) throw notFound("cast sheet");
   await removeFiles([before.image]);
   await store.remove("cast_sheets", [id]);
+}
+
+/* ---------- Storyboards and mangas ---------- */
+
+/** Fields a storyboard save may change. Fields left out keep what was saved. */
+export type StoryboardPatch = Partial<Pick<Storyboard, "title" | "source" | "style" | "frames" | "step">>;
+export type MangaPatch = Partial<Pick<Manga, "title" | "source" | "style" | "pageCount" | "pages" | "step">>;
+
+export const listStoryboards = () => getStore().list("storyboards");
+
+export async function createStoryboard(by: string, input: { title: string; source: string }) {
+  const board: Storyboard = { ...stamp(by, newId("b")), title: input.title, source: input.source, style: null, frames: [], step: "scene" };
+  await getStore().put("storyboards", board);
+  return board;
+}
+
+export async function getStoryboard(id: string) {
+  const board = await getStore().get("storyboards", id);
+  if (!board) throw notFound("storyboard");
+  return board;
+}
+
+export async function updateStoryboard(by: string, id: string, patch: StoryboardPatch) {
+  const before = await getStoryboard(id);
+  const board: Storyboard = { ...before, ...patch, ...stamp(by, id, before) };
+  await getStore().put("storyboards", board);
+  return board;
+}
+
+export async function deleteStoryboard(id: string) {
+  await getStoryboard(id);
+  await getStore().remove("storyboards", [id]);
+}
+
+export const listMangas = () => getStore().list("mangas");
+
+export async function createManga(by: string, input: { title: string; source: string }) {
+  const manga: Manga = { ...stamp(by, newId("m")), title: input.title, source: input.source, style: null, pageCount: 4, pages: [], step: "story" };
+  await getStore().put("mangas", manga);
+  return manga;
+}
+
+export async function getManga(id: string) {
+  const manga = await getStore().get("mangas", id);
+  if (!manga) throw notFound("manga");
+  return manga;
+}
+
+export async function updateManga(by: string, id: string, patch: MangaPatch) {
+  const before = await getManga(id);
+  const manga: Manga = { ...before, ...patch, ...stamp(by, id, before) };
+  await getStore().put("mangas", manga);
+  return manga;
+}
+
+export async function deleteManga(id: string) {
+  await getManga(id);
+  await getStore().remove("mangas", [id]);
 }

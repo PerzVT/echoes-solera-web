@@ -34,6 +34,32 @@ export type CastChoice = { id: string; kind: "character" | "location"; name: str
 /** What a person chose on the cast, style and references steps. One per episode; its id is the episode's id. */
 export type Choices = Meta & { episodeId: string; cast: CastChoice[] | null; style: string | null; references: string[] };
 
+/* ---------- Storyboards and mangas: one record each, saved whole ---------- */
+
+/** One frame of a storyboard. Its number is its place in the list. `image` is a picture on this site. */
+export type Frame = { id: string; title: string; note: string; image: string };
+export type StoryboardStep = "scene" | "style" | "board";
+export const STORYBOARD_STEPS: StoryboardStep[] = ["scene", "style", "board"];
+/** A storyboard: the scene it was made from, its style and its frames in order. */
+export type Storyboard = Meta & { title: string; source: string; style: string | null; frames: Frame[]; step: StoryboardStep };
+
+/** Lettering over a manga page: positions and width in percent of the page, as the public reader sets them. */
+export type MangaLetter = {
+  kind: "speech" | "narration" | "sfx" | "inset";
+  text: string;
+  x: number;
+  y: number;
+  w?: number;
+  tail?: { at: number; up?: boolean; flip?: boolean };
+  rotate?: number;
+  scale?: number;
+};
+/** One page: wordless art and the live lettering over it. */
+export type MangaPage = { id: string; image: string; alt: string; letters: MangaLetter[] };
+export type MangaStep = "story" | "style" | "pages" | "read";
+export const MANGA_STEPS: MangaStep[] = ["story", "style", "pages", "read"];
+export type Manga = Meta & { title: string; source: string; style: string | null; pageCount: number; pages: MangaPage[]; step: MangaStep };
+
 export type Tables = {
   series: Series;
   episodes: Episode;
@@ -41,6 +67,8 @@ export type Tables = {
   screenplays: Screenplay;
   cast_sheets: CastSheet;
   choices: Choices;
+  storyboards: Storyboard;
+  mangas: Manga;
 };
 export type Table = keyof Tables;
 
@@ -52,6 +80,8 @@ export const PARENT: { [T in Table]: keyof Tables[T] | null } = {
   screenplays: "episodeId",
   cast_sheets: "seriesId",
   choices: "episodeId",
+  storyboards: null,
+  mangas: null,
 };
 
 /** An uploaded file's record. The bytes are elsewhere (lib/labs/store/bytes.ts); `location` says where. */

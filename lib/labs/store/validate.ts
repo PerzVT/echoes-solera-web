@@ -2,7 +2,7 @@
  * Hand-written checks for what the creator's API accepts. Each returns the clean value or throws a Bad with a safe
  * code and a plain message; nothing from the request reaches the store unchecked.
  */
-import { STEPS, TOOLS, type CastChoice, type Note, type Step, type Tool } from "./types";
+import { MANGA_STEPS, STEPS, STORYBOARD_STEPS, TOOLS, type CastChoice, type Frame, type MangaLetter, type MangaPage, type MangaStep, type Note, type Step, type StoryboardStep, type Tool } from "./types";
 
 export class Bad extends Error {
   constructor(
@@ -138,4 +138,63 @@ export function scriptType(name: string) {
 export function fileName(name: string) {
   const base = clean(name.split(/[\\/]/).pop() ?? "").trim();
   return (base || "file").slice(0, 200);
+}
+
+/* ---------- Storyboards and mangas ---------- */
+
+const num = (v: unknown, field: string, min: number, max: number) => {
+  if (typeof v !== "number" || !Number.isFinite(v) || v < min || v > max) throw new Bad("invalid", `${field} is not valid.`);
+  return v;
+};
+const optNum = (v: unknown, field: string, min: number, max: number) => (v === undefined || v === null ? undefined : num(v, field, min, max));
+
+export const storyboardStep = (v: unknown): StoryboardStep => {
+  if (!STORYBOARD_STEPS.includes(v as StoryboardStep)) throw new Bad("invalid", "Step is not valid.");
+  return v as StoryboardStep;
+};
+
+export const mangaStep = (v: unknown): MangaStep => {
+  if (!MANGA_STEPS.includes(v as MangaStep)) throw new Bad("invalid", "Step is not valid.");
+  return v as MangaStep;
+};
+
+export function frame(v: unknown): Frame {
+  if (!isObj(v)) throw new Bad("invalid", "A frame is not valid.");
+  return {
+    id: text(v.id, "A frame id", 80, { min: 1 }),
+    title: text(v.title, "A frame title", 120),
+    note: text(v.note, "A shot note", 4000, { multiline: true }),
+    image: sitePath(v.image, "A frame picture"),
+  };
+}
+
+const LETTER_KINDS = ["speech", "narration", "sfx", "inset"] as const;
+
+function letter(v: unknown): MangaLetter {
+  if (!isObj(v) || !LETTER_KINDS.includes(v.kind as MangaLetter["kind"])) throw new Bad("invalid", "A balloon is not valid.");
+  let tail: MangaLetter["tail"];
+  if (v.tail !== undefined && v.tail !== null) {
+    if (!isObj(v.tail)) throw new Bad("invalid", "A balloon is not valid.");
+    tail = { at: num(v.tail.at, "A tail", 0, 100), up: v.tail.up === true || undefined, flip: v.tail.flip === true || undefined };
+  }
+  return {
+    kind: v.kind as MangaLetter["kind"],
+    text: text(v.text, "Lettering", 600, { multiline: true }),
+    x: num(v.x, "A balloon position", -10, 110),
+    y: num(v.y, "A balloon position", -10, 110),
+    w: optNum(v.w, "A balloon width", 1, 100),
+    tail,
+    rotate: optNum(v.rotate, "A rotation", -90, 90),
+    scale: optNum(v.scale, "A size", 0.2, 4),
+  };
+}
+
+export function mangaPage(v: unknown): MangaPage {
+  if (!isObj(v)) throw new Bad("invalid", "A page is not valid.");
+  return {
+    id: text(v.id, "A page id", 80, { min: 1 }),
+    image: sitePath(v.image, "A page picture"),
+    alt: text(v.alt, "A page description", 2000, { multiline: true }),
+    letters: list(v.letters, "The lettering", 60, letter),
+  };
 }
