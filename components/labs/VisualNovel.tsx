@@ -112,7 +112,14 @@ export function VisualNovel({ story, exitHref }: { story: Story; exitHref: strin
   const galleryOpener = useRef<HTMLButtonElement | null>(null);
 
   const scene = byId.get(sceneId)!;
-  const lines = useMemo(() => linesFor(scene, run), [scene, run]);
+  // A narration line that is one whole quote is the reader speaking: it gets the "You" name plate.
+  const lines = useMemo(
+    () =>
+      linesFor(scene, run).map((l) =>
+        !l.who && /^"[^"]*"$/.test(l.text) ? { ...l, text: l.text.slice(1, -1), you: true } : l,
+      ),
+    [scene, run],
+  );
   const line = lines[Math.min(index, lines.length - 1)];
   const typing = phase === "play" && shown < line.text.length;
   const lastLine = index >= lines.length - 1;
@@ -120,7 +127,8 @@ export function VisualNovel({ story, exitHref }: { story: Story; exitHref: strin
   const choosing = phase === "play" && !typing && lastLine && choices.length > 0;
   const { sprite, cg } = stateAt(story, lines, index, entry, entryCg);
   const member = line.who ? story.cast[line.who] : null;
-  const speaker = member ? firstName(member.name) : null;
+  const you = "you" in line;
+  const speaker = member ? firstName(member.name) : you ? "You" : null;
   const readKey = `${sceneId}:${line.at}`;
   const { speed, large } = prefs;
 
@@ -604,7 +612,7 @@ export function VisualNovel({ story, exitHref }: { story: Story; exitHref: strin
               ref={lineRef}
               type="button"
               className={styles.line}
-              data-who={line.who ?? "narration"}
+              data-who={line.who ?? (you ? "you" : "narration")}
               onClick={advance}
               aria-label={choosing ? "Choose below" : "Next line"}
               aria-describedby="vn-live"

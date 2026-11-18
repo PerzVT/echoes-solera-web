@@ -3,11 +3,11 @@ import type { Story } from "../novel";
 /**
  * "After Hours": one rainy night on one block, a shared opening and four routes (Juri, Ren, Mio,
  * Sota), 38 scenes and 12 endings. Imported from the Nine Lives dating v001 package; paths point at
- * public/labs/visual-novel/after-hours. Regenerate from the package rather than editing by hand.
+ * public/labs/visual-novel/after-hours.
  */
 export const afterHours: Story = {
   "title": "After Hours",
-  "blurb": "One rainy block. Four invitations. Choose whose night becomes yours. All four adult romances are open from the start.",
+  "blurb": "One rainy block. Four invitations. Choose whose night becomes yours.",
   "start": "p1-store",
   "cover": "/labs/visual-novel/after-hours/ui/title.webp",
   "cast": {
@@ -140,76 +140,91 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "1:52 a.m. Rain follows you into the convenience store under your building. The chime plays two tired notes. Your usual rice ball is already beside the till."
+          "text": "1:52 a.m. Rain follows you into the convenience store under your building. The door chime plays its two tired notes."
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "Tuna Mayo. One fifty-two. You know you're, like, more reliable than the trains?"
+          "text": "Tuna Mayo. One fifty-two on the dot. You know you're more reliable than the trains?"
         },
         {
-          "text": "Juri turns a tiny brush between two pink nails. Bleached waves fall over her striped teal vest, hot pink showing underneath. A star clip keeps one side out of her eyes. It is losing."
+          "text": "\"The trains stop at midnight.\""
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "laugh",
-          "text": "Don't look so impressed. Nobody else buys that at this hour. Statistically tragic rice ball."
+          "text": "Exactly. Low bar, and you clear it every night. Your rice ball's by the till already."
         },
         {
-          "text": "You set your dripping umbrella in the stand. Hers is there too, transparent plastic repaired with a strip of gold tape."
-        },
-        {
-          "who": "juri",
-          "show": "juri",
-          "pose": "smirk",
-          "text": "And the hair. Pillow, wind, surrender. Three out of ten. Come closer. I need better lighting to insult you properly."
-        },
-        {
-          "text": "She leans across the counter. The brush stops just short of your fringe. Then she puts it down, suddenly careful about where it lands."
-        },
-        {
-          "text": "Beside her kit, ten practice nails are painted soft pink. Each has one thin gold line. The last is blank."
-        },
-        {
-          "who": "juri",
-          "show": "juri",
-          "pose": "serious",
-          "text": "Ten a.m. Ginza. Salon trial. Real client, ninety minutes, one terrifying woman in expensive shoes."
+          "text": "\"You put it out before I got here?\""
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "If she likes it, I get a chair with my name on it. Imagine. A name tag that isn't imaginary."
+          "text": "Nobody else buys it at this hour. Don't make it romantic. Also, your hair. Three out of ten. What happened?"
         },
         {
-          "text": "You glance at the blank badge on her vest."
+          "text": "\"It's raining.\""
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "pout",
-          "text": "Head office is busy. Naming a person takes four months, apparently."
+          "text": "It's been raining for a week and you still don't own a hood."
         },
         {
-          "text": "She pulls a spare stool out with her foot and rests one elbow where you normally put your milk tea."
+          "text": "You drop your umbrella in the stand next to hers: clear plastic, mended with a strip of gold tape. Beside her kit on the counter sit ten practice nails, soft pink, one thin gold line each. The last one is blank."
+        },
+        {
+          "text": "\"What are those for?\""
         },
         {
           "who": "juri",
           "show": "juri",
-          "pose": "soft",
-          "text": "Plastic hands don't move. Real hands do. I need to practise with someone who won't make a whole thing of it."
+          "pose": "serious",
+          "text": "Salon trial. Ten a.m. in Ginza. A real client for ninety minutes while the owner watches."
+        },
+        {
+          "text": "\"Today? As in eight hours from now?\""
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "So. Tuna Mayo. I need a hand. Literally. Yours."
+          "text": "Don't count it out loud. If she likes me, I get a chair with my name on it. An actual name tag."
         },
         {
-          "text": "Her palm waits face up on the counter. You have watched those fingers count change for months. Tonight, for once, she lets you decide what happens next."
+          "text": "You look at the blank badge on her vest."
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "pout",
+          "text": "Head office has been printing that for four months. Don't."
+        },
+        {
+          "text": "\"So why is the last nail blank?\""
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "soft",
+          "text": "Because plastic doesn't move. Real hands twitch and sweat and ask how long it'll take. I need to practise on a person."
+        },
+        {
+          "text": "\"And I'm the only person here.\""
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "You're the only person who won't make it weird. So, Tuna Mayo. Lend me a hand? Literally?"
+        },
+        {
+          "text": "She puts her palm face up on the counter and waits."
         }
       ],
       "choices": [
@@ -246,91 +261,106 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "2:06 a.m. Before the brush can touch a nail, the door flies open. A young woman backs through it with a guitar case held over her head."
+          "text": "2:06 a.m. Before the brush touches anything, the door bangs open. A young woman backs in out of the rain with a guitar case held over her head."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "surprised",
-          "text": "Nobody panic! The guitar is dry. I'm basically soup, but the guitar has a promising future."
+          "text": "Sorry! Sorry. Is it okay if I drip in here for a bit? The guitar's dry. I'm not."
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "pout",
-          "text": "The floor had one too."
+          "text": "The floor was dry too, until just now."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Sorry, sorry. I'll buy something. Cheapest thing that earns me the right to stand here without being furniture?"
-        },
-        {
-          "text": "Juri points at a bowl of wrapped sweets. The newcomer counts coins on the counter, takes one, then carefully sets a second coin beside the wet footprint she has left."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "neutral",
-          "text": "Floor compensation. Financially symbolic."
-        },
-        {
-          "text": "Her yellow hoodie slips off one shoulder as she lowers the case. Beneath it is a black stage top; the torn tights and heavy boots have survived the rain better than her orange hair buns."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "smile",
-          "text": "Mio Arata. Twenty-one. Local nuisance. You may have heard me under the railway shouting three chords at a concrete pillar."
+          "text": "I'll buy something. What's the cheapest thing that makes me a customer?"
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "Four last week. We were proud."
+          "text": "Sweets in the bowl. Thirty yen."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "Sold. And here's another thirty for the floor."
+        },
+        {
+          "text": "She counts out coins, takes one sweet, and lowers the case as if it might bruise. Orange hair buns, yellow hoodie, both soaked through."
+        },
+        {
+          "text": "\"You carried it over your head the whole way?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "From the railway arch. It's worth more than I am. I'm Mio. I play under the tracks most nights."
+        },
+        {
+          "text": "\"The three chords. I can hear you from my window.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "upset",
-          "text": "The fourth was an accident. Please respect my artistic limits."
-        },
-        {
-          "text": "She opens the case a finger's width and checks the guitar. A folded flyer falls out. Tomorrow night's date. A band's name crossed through in orange pen."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "neutral",
-          "text": "It's a solo show now. Surprise promotion. Nobody mention the part where I didn't apply."
-        },
-        {
-          "text": "You reach for the flyer before it touches the wet floor. Her fingers brush yours as she takes it back, and her patter misses half a beat."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "soft",
-          "text": "Thanks, Umbrella. That's your name until I think of something better. No pressure. My standards are extremely inconsistent."
-        },
-        {
-          "text": "Juri puts a clean towel beside her without comment. Mio squeezes the end of a hair bun into it, then looks between you and the stool."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "smile",
-          "text": "Oh. Am I interrupting a date, or a very glamorous interrogation?"
+          "text": "It's four chords now, thank you."
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "Depends how much they flinch."
+          "text": "The fourth turned up last week. The whole block noticed. We were proud."
         },
         {
-          "text": "Mio hooks one boot around the case handle. Rain ticks against the glass like a drummer counting in, but nobody starts."
+          "who": "busker",
+          "show": "busker",
+          "pose": "upset",
+          "text": "The fourth was an accident and I'm keeping it."
+        },
+        {
+          "text": "She opens the case a crack to check inside, and a flyer slides out. You catch it before it lands in the puddle: tomorrow's date, a venue, and a band name crossed out in orange pen."
+        },
+        {
+          "text": "\"You've got a show tomorrow?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "I've got a slot tomorrow. The band quit on Monday. So it's a solo show now, which nobody asked me about, including me."
+        },
+        {
+          "text": "\"Are you going to do it?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "Ask me when I'm dry. Thanks for the catch, though. I'm calling you Umbrella until I learn your name."
+        },
+        {
+          "text": "Juri slides a clean towel across the counter without a word. Mio wrings out one hair bun, then looks from you to the stool to Juri's brush."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "Wait. Did I walk in on something? Is this a date?"
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "It's a manicure. Whether it's a date depends on how much they flinch."
         }
       ],
       "choices": [
@@ -364,92 +394,119 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "2:21 a.m. The chime rings again. A tall man in navy scrubs ducks beneath the door frame, folding a black umbrella with almost unreasonable precision.",
+          "text": "2:21 a.m. The chime again. A tall man in navy scrubs ducks in and folds a black umbrella until it is perfectly flat.",
           "cg": "/labs/visual-novel/after-hours/cg/prologue-counter.webp"
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Black coffee. Large. Seven minutes before I have to be useful again."
+          "text": "Evening, Juri. Large black coffee, please. I have seven minutes."
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "Ren. Your usual tragic little cup of authority."
+          "text": "Ren. You say seven minutes every night and then stand there for ten."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Ren Kurose. Twenty-eight. The authority is sold separately."
+          "text": "Tonight I mean it. We're two people short."
         },
         {
-          "text": "His camel coat hangs open over a fitted scrub top. A silver watch sits above one rolled sleeve. He notices water on your shoulder, takes a napkin, and offers it instead of reaching for you."
+          "text": "He notices the water running off your shoulder, pulls a napkin from the dispenser and holds it out."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "You're dripping. That was an observation. Not a diagnosis."
+          "text": "You're dripping on the magazines. Here."
         },
         {
-          "text": "Mio presses the flyer flat with both palms. Ren reads the crossed-out names, then looks away before she has to explain."
+          "text": "\"Thanks. Are you from the clinic across the road?\""
         },
         {
-          "text": "The next arrival stays halfway through the door, balancing an empty egg tray under one arm. Flour dusts his dark braid and the edge of his white jacket."
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "Night nurse. Ren Kurose. And you're the one from the fourth floor who buys the same rice ball every night. Juri talks."
+        },
+        {
+          "who": "juri",
+          "show": "juri",
+          "pose": "pout",
+          "text": "I do not talk. I report."
+        },
+        {
+          "text": "The door opens once more, only halfway. A broad man in a floury white jacket stands in the gap with an empty egg tray under his arm."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "Excuse me. Milk, please. And eggs. If you have enough to spare."
+          "text": "Excuse me. I'm sorry to bother everyone. Juri, do you have any milk left? And eggs?"
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "serious",
-          "text": "Sota, that's my entire dairy shelf you're looking at."
+          "text": "Sota, it's half two. How many do you need?"
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "upset",
-          "text": "The delivery van broke down. I promised the first trays for four. I'm sorry. I thought perhaps..."
+          "text": "All of them, if that's all right. My delivery van broke down on the highway and I've promised the first trays for four o'clock."
         },
         {
-          "text": "Sota Mizuno is twenty-six, broad through the shoulders, and somehow attempting to take up less space than the egg tray. A brown apron is tied neatly over his jacket. One loop has come loose."
-        },
-        {
-          "text": "Ren checks the remaining cartons while Juri rings up his coffee. Mio offers three sweets and immediately admits they are not a useful substitute for eggs."
+          "text": "\"You're the baker? From the place with the green shutter?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "It's kind of you to offer."
+          "text": "Yes. Sota. I've seen you go past in the mornings. You always look as if you've only just woken up."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "They have. Sota, I've got three sweets, if that helps."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "That's very kind. I don't think I can bake with them."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "You need a smaller first batch. What can you make without either?"
+          "text": "Juri has two cartons of milk and one box of eggs. That isn't four trays. What can you make without them?"
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "My grandmother's salt rolls. But I was hoping to try something else this morning."
+          "text": "My grandmother's salt rolls. They only need flour and water. But I was hoping to try something new this morning."
         },
         {
-          "text": "He stops there. From across the street comes a dull burst of train noise; the glass trembles in its frame."
+          "text": "\"New like what?\""
         },
         {
-          "text": "Juri writes a price on a scrap of receipt paper. Mio steadies the egg tray. Ren's phone lights up with a message he turns face down without reading."
+          "who": "baker",
+          "show": "baker",
+          "pose": "upset",
+          "text": "It's nothing. It isn't ready. I shouldn't have mentioned it."
         },
         {
-          "text": "Four people, one counter, and every one of them pretending morning is further away than it is."
+          "text": "Ren's phone lights up on the counter. He reads the name, turns it face down and says nothing. Juri rings up the eggs. Mio flattens her flyer against her knee."
+        },
+        {
+          "text": "Four people at one counter, and every one of them is due somewhere by morning."
         }
       ],
       "choices": [
@@ -494,77 +551,77 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "2:40 a.m. The rain softens enough to show the opposite pavement. For a moment the clinic sign, railway arch and bakery shutter all fit in the same reflection.",
+          "text": "2:40 a.m. The rain eases. Through the glass you can see the clinic sign, the railway arch and the bakery shutter, all on the one block.",
           "cg": "none"
-        },
-        {
-          "text": "Juri stands behind the counter with her brush. Mio has the guitar on her back. Sota tucks two cartons into a paper bag. Ren fastens one button of his coat."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Right. Back to the pillar. It never requests covers. Excellent audience."
+          "text": "Right. I should get back under the arch before someone steals my spot. Not that anyone wants it."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "My shift ends at five. Until then, the staff entrance has an awning. And a vending machine with unacceptable coffee."
+          "text": "And I'm four minutes late. Thank you for the coffee, Juri."
         },
         {
-          "text": "He looks at you when he says it. Juri raises one eyebrow over the till."
+          "text": "He buttons his coat, then stops and turns to you."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "That was an invitation. I prefer to state these things clearly."
+          "text": "My shift ends at five. There's a bench under the awning at the staff entrance, and I get a few minutes every half hour. If you're not going to sleep anyway, I'd like the company."
+        },
+        {
+          "text": "\"Is that an invitation?\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "Yes. I'd rather say so than have you guess."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "surprised",
-          "text": "I could use another pair of hands. If you don't mind flour. Or early mornings. Or me explaining things badly."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "There would be breakfast. I can promise that part."
-        },
-        {
-          "text": "Mio steps into the space between his offer and your answer. Not quite in front of you. Close enough that the cold wet sleeve of her hoodie brushes your arm."
+          "text": "I, um. I could use a second pair of hands, if you don't mind flour. I'm not good at explaining things. But there'd be breakfast. I can promise the breakfast."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Mine comes with a private concert. Also terrible coffee, if we're comparing benefits. But I can learn your favourite song."
+          "text": "Hang on, if we're bidding, mine comes with a private concert. You asked about the show. Come and hear it, and tell me honestly whether I should cancel."
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "smirk",
-          "text": "Cute. A queue. Should I print tickets?"
+          "text": "Wow. A queue. Should I hand out numbers?"
         },
         {
-          "text": "She taps the empty stool with the handle of her brush."
+          "text": "She taps the empty stool with the end of her brush."
         },
         {
           "who": "juri",
           "show": "juri",
           "pose": "soft",
-          "text": "You can stay, you know. We haven't done the star yet."
+          "text": "Or you could stay. I've still got one blank nail, and you've still got ten."
         },
         {
-          "text": "Nobody asks you to save their life. There are smaller things available tonight: hold still, listen, carry a bag, stand beside somebody while they make a call."
+          "text": "\"You all want me to pick?\""
         },
         {
-          "text": "Outside, a taxi parts the puddle along the kerb. Its red tail lights stretch all the way to the bakery door."
+          "who": "juri",
+          "show": "juri",
+          "pose": "smirk",
+          "text": "Nobody's forcing you, Tuna Mayo. You can also go upstairs and sleep like a normal person."
         },
         {
-          "text": "You finish your milk tea. There is enough night left to go somewhere with one of them."
+          "text": "You finish your milk tea. You were never going to sleep."
         }
       ],
       "choices": [
@@ -597,82 +654,91 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "2:44 a.m. Ren walks on the road side of the pavement. When a bicycle passes, his hand hovers behind your shoulder without touching it."
+          "text": "2:44 a.m. Ren walks on the road side of the pavement and matches his pace to yours."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Three steps to the left. The drain floods there."
+          "text": "Step left here. That drain floods."
         },
         {
-          "text": "You obey just before your shoe finds the water. He gives one satisfied nod, as if you have passed a very small examination."
+          "text": "You step left. Your shoe misses the water by a hand's width."
         },
         {
-          "text": "The clinic's staff entrance sits between two vending machines. Warm light falls across the awning. Ren leaves his coffee unopened on the sill."
+          "text": "\"How did you know that?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "I have four minutes. Then a handover, two checks, and paperwork that breeds when unobserved."
+          "text": "I've walked this road at five every morning for three years. I know every drain on it."
         },
         {
-          "text": "His phone lights again. ISLAND COMMUNITY CLINIC. Under it, a ferry timetable saved as an image."
+          "text": "The staff entrance sits between two vending machines, under a striped awning. He puts his coffee on the sill without opening it."
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "I have four minutes before handover. Sit, if you like. The bench is dry at that end."
+        },
+        {
+          "text": "His phone lights up in his hand. You can read the top line: ISLAND COMMUNITY CLINIC."
+        },
+        {
+          "text": "\"That's the second time tonight. Do you need to get it?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "upset",
-          "text": "A job offer. Head nurse. They want an answer by eight."
+          "text": "No. It's a job offer. Head nurse, at the clinic on the island where I grew up. They want an answer by eight this morning."
         },
         {
-          "text": "He folds the phone into his palm before you can read anything else."
-        },
-        {
-          "who": "nurse",
-          "show": "nurse",
-          "pose": "neutral",
-          "text": "Better title. Lower rent. My family nearby. A very persuasive column of advantages."
-        },
-        {
-          "text": "You ask what is in the other column."
+          "text": "\"That sounds like good news.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Nothing measurable."
+          "text": "It is. Better title, lower rent, my family ten minutes away. I've written it all down, and the list is very convincing."
         },
         {
-          "text": "For someone who has four minutes, he takes a long time twisting the lid off his coffee. A silver ring hangs on a chain beside his staff badge. He catches you looking."
+          "text": "\"What's on the other side of the list?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "My father's. He's alive. He gave it to me when I moved here. Apparently pockets aren't secure enough for sentiment."
+          "text": "Nothing I can put a number on. That's the problem. I'm good with numbers."
         },
         {
-          "text": "He lets the ring fall beneath his scrub top. The chain catches against his collarbone, and he straightens it with an impatient finger."
+          "text": "A ring hangs on a chain beside his staff badge. He sees you looking."
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "My father's. He gave it to me the day I moved here. He's alive and well. He just doesn't trust pockets."
+        },
+        {
+          "text": "\"Sorry. I didn't mean to stare.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "You can ask a question without apologising first. I do notice when people are about to apologise."
+          "text": "You don't have to apologise before you ask me things. People do that with nurses. I'd rather you just asked."
         },
         {
-          "text": "A window opens overhead. Someone calls his surname. He answers at once, all clean edges and certainty, then turns back to you."
+          "text": "A window opens overhead and someone calls his surname. He calls back, \"One minute,\" and looks at you again."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "One question. Make it worth being late by twenty seconds."
-        },
-        {
-          "text": "His gaze stays on yours. The vending machine compressor stops, leaving the space between you unexpectedly quiet."
+          "text": "I can be twenty seconds late. Ask me one thing."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/nurse.mp3",
@@ -709,13 +775,13 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "3:18 a.m. Ren comes out with his sleeves rolled one turn higher. He has brought two paper cups and an exact account of the vending machine's failures."
+          "text": "3:18 a.m. Ren comes back out with his sleeves rolled and a paper cup in each hand."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "You asked what I want. An unusually difficult question. Thank you.",
+          "text": "I've been thinking about your question since I went in. What I want from the city. Nobody asks me that. They ask what the island is offering.",
           "need": {
             "flag": "nurse-want"
           }
@@ -724,7 +790,7 @@ export const afterHours: Story = {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "The salary comparison is complete. Unfortunately, the decision is not.",
+          "text": "I did what you said and started with the salary. The island pays more. It took two minutes, and I still don't have an answer.",
           "need": {
             "flag": "nurse-salary"
           }
@@ -733,7 +799,7 @@ export const afterHours: Story = {
           "who": "nurse",
           "show": "nurse",
           "pose": "upset",
-          "text": "My family gets an opinion. I would like to keep mine too.",
+          "text": "About my family deciding. They'd like to, believe me. I'd like a vote as well.",
           "need": {
             "flag": "nurse-family"
           }
@@ -742,76 +808,82 @@ export const afterHours: Story = {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Too sweet. Too hot. Nevertheless, it's yours if you want it."
+          "text": "This is from the machine. It's too sweet and too hot, but it's yours if you want it."
         },
         {
-          "text": "You make room on the dry end of the bench. He sits close enough that his knee touches yours, then shifts half an inch away."
+          "text": "\"Thanks. Sit down. You've been on your feet all night.\""
+        },
+        {
+          "text": "He sits. His knee touches yours, and he shifts half an inch away."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Crowded bench."
+          "text": "Sorry. Crowded bench."
         },
         {
-          "text": "There is room for three more people. You look at the empty space. He looks at his cup."
+          "text": "\"Ren, there's room for three more people.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "No need to document it."
+          "text": "Then please don't tell them."
         },
         {
-          "text": "You ask about the island. He describes the last ferry, a bakery that closes before noon, and a harbour wall where the paint never dries properly."
-        },
-        {
-          "who": "nurse",
-          "show": "nurse",
-          "pose": "neutral",
-          "text": "My mother sends photographs of the sea. No captions. Very subtle recruitment campaign."
-        },
-        {
-          "text": "You ask whether she needs him home."
+          "text": "\"Tell me about the island instead.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "She wants me home. Those are different sentences. I keep correcting everyone except myself."
+          "text": "The last ferry leaves at six. The bakery shuts before noon. There's a harbour wall my father repaints every spring, and it has never once dried properly."
         },
         {
-          "text": "His watch vibrates. He silences it, then turns your cup so the lid opening faces away from the rain. It is a small, unnecessary act, performed with complete concentration."
-        },
-        {
-          "text": "You notice a narrow blue elastic around his wrist. He takes it off and loops it around your loose umbrella strap."
+          "text": "\"Do you miss it?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "There. It won't slap your leg when you walk."
+          "text": "Yes. My mother sends me photographs of the sea. No message, just the sea. It works on me every time."
         },
         {
-          "text": "You tug it once. The umbrella stays shut. Ren watches your fingers instead of answering your thanks."
+          "text": "\"Does she need you back, or does she want you back?\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "She wants me back. I keep telling everyone those are different things. I haven't managed to tell myself."
+        },
+        {
+          "text": "The strap on your umbrella has come loose and slaps against the bench leg. He pulls a blue elastic band off his wrist and loops it round."
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "There. It was going to hit your leg all the way home."
+        },
+        {
+          "text": "\"Don't you need that?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "Keep it. It's an elastic band. We can survive the expense."
+          "text": "It's an elastic band. The clinic has a drawer of them. Keep it."
         },
         {
-          "text": "A colleague knocks on the window and points at the clock. Ren rises, but leaves his untouched coffee beside yours."
+          "text": "A colleague knocks on the window and points at the clock. Ren stands, and leaves his coffee next to yours."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "I finish at five. If you're still here, I will stop pretending the bench is crowded."
-        },
-        {
-          "text": "He disappears through the staff door before you can see whether he is smiling. The blue band holds the umbrella neatly shut against your knee."
+          "text": "I finish at five. If you're still here then, I'll stop pretending the bench is crowded."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/nurse.mp3",
@@ -823,76 +895,85 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "4:07 a.m. The staff door opens harder this time. Ren steps out, reads one message, and presses the phone against his forehead."
+          "text": "4:07 a.m. The staff door opens harder this time. Ren is already reading his phone."
+        },
+        {
+          "text": "\"What happened?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "upset",
-          "text": "My brother told the neighbours I accepted. He thought it would encourage me."
+          "text": "My brother has told the neighbours I accepted. He says he thought it would encourage me."
         },
         {
-          "text": "He says encourage as if it belongs in quotation marks. A second message arrives before he can put the phone away."
+          "text": "\"But you haven't answered yet.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "They have planned a welcome dinner. Friday. Six people. Someone has already bought fish."
+          "text": "I know. It gets worse. There's a welcome dinner on Friday, six people, and my aunt has already bought the fish."
         },
         {
-          "text": "You cannot help laughing at the fish. Ren's mouth moves a fraction at one corner."
+          "text": "You laugh before you can stop yourself. \"Sorry. The fish.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "Yes. A formidable opponent. I should have considered the fish earlier."
+          "text": "No, laugh. I can argue with my brother. I don't know how to argue with a fish."
         },
         {
-          "text": "He sits beside you. This time he leaves his knee against yours. His coat falls open, and the night air carries a clean soap scent from his collar."
+          "text": "He sits down next to you, and this time he leaves his knee where it lands."
         },
         {
-          "who": "nurse",
-          "show": "nurse",
-          "pose": "neutral",
-          "text": "I came here because I wanted work where nobody knew my family. Not because they were cruel. That would make a tidier story."
+          "text": "\"Why did you leave in the first place? Was it bad there?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "At home, every person I helped told me I was my father's son. Here, they had to learn my name."
+          "text": "No. That would be easier to explain. Everyone on the island knows my father. Every patient I had told me I was just like him."
         },
         {
-          "text": "You ask whether the work still matters to him."
+          "text": "\"And here?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Yes. The people too. My ridiculous apartment. The noodle shop that remembers I hate coriander. The person who waited outside in the rain tonight."
+          "text": "Here nobody knew him. They had to learn my name. It took a year, and I liked every day of it."
         },
         {
-          "text": "He looks down at your umbrella. The blue band is still there."
+          "text": "\"So the work still matters to you.\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "The work, yes. And my ridiculous flat. And the noodle shop that remembers I hate coriander. And, apparently, someone who'll sit outside a clinic in the rain at four in the morning."
+        },
+        {
+          "text": "\"That last one's only a few hours old.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "That last item is new. It does complicate the list."
+          "text": "I know. It's still on the list."
         },
         {
-          "text": "His phone lights with his mother's name. He does not answer, but he does not turn it over either."
+          "text": "His phone lights up again with his mother's name. He lets it ring, but he doesn't turn it over."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "upset",
-          "text": "If I say I want to stay, it will sound like I don't miss them. If I go, everybody gets what they wanted. Convenient."
+          "text": "If I tell her I want to stay, she'll hear that I don't miss them. If I go, everyone's happy and nobody has to hear anything."
         },
         {
-          "text": "The call stops. Your knees remain together. Ren waits, with no spare task available to fill his hands."
+          "text": "The ringing stops. He looks at you and waits."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/nurse.mp3",
@@ -929,14 +1010,14 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "4:32 a.m. Ren calls his mother from beneath the awning. You stand far enough away to give him privacy, close enough that he can find you without turning.",
+          "text": "4:32 a.m. Ren stands under the awning with the phone in his hand. You wait at the far end of the bench.",
           "cg": "/labs/visual-novel/after-hours/cg/nurse-climax.webp"
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "Two true things. I can miss them and still stay.",
+          "text": "I'm going to tell her both. That I miss them, and that I haven't decided. You were right that I can say them together.",
           "need": {
             "flag": "nurse-both"
           }
@@ -945,7 +1026,7 @@ export const afterHours: Story = {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "I will ask for time. First, I owe her an honest call.",
+          "text": "I'll ask the clinic for another day. But I owe my mother a straight call first.",
           "need": {
             "flag": "nurse-time"
           }
@@ -954,88 +1035,97 @@ export const afterHours: Story = {
           "who": "nurse",
           "show": "nurse",
           "pose": "upset",
-          "text": "The dinner cannot answer for me. I need to say that myself.",
+          "text": "I can't let a dinner answer for me. If I go, I want to be the one who said yes.",
           "need": {
             "flag": "nurse-duty"
           }
         },
         {
+          "text": "She picks up on the first ring. You only hear his half."
+        },
+        {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "I'm safe. Yes, I've eaten. Coffee is not what I said."
-        },
-        {
-          "text": "He listens. Water runs from the corner of the awning and lands between two cracked paving stones."
+          "text": "Hello, Mum. Yes, I'm fine. Yes, I've eaten. No, I said coffee, I didn't say only coffee."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "upset",
-          "text": "I know they need somebody. I haven't said yes."
+          "text": "I know they need someone. I know. But I haven't said yes, whatever Daichi told the neighbours."
         },
         {
-          "text": "His free hand closes on the edge of his coat. Then opens."
-        },
-        {
-          "who": "nurse",
-          "show": "nurse",
-          "pose": "neutral",
-          "text": "I miss you. I still haven't said yes."
-        },
-        {
-          "text": "The two sentences sit next to each other without cancelling out. Ren looks at you once, then moves the phone to his other ear."
-        },
-        {
-          "who": "nurse",
-          "show": "nurse",
-          "pose": "soft",
-          "text": "No. Please don't cancel the dinner. Have it without me. Send a photograph of the fish."
-        },
-        {
-          "text": "He ends the call after promising another on Sunday. For several seconds he just stands under the awning, phone loose in his hand."
-        },
-        {
-          "who": "nurse",
-          "show": "nurse",
-          "pose": "soft",
-          "text": "She asked why I was whispering. Then she asked whether I was with someone interesting."
-        },
-        {
-          "text": "You ask what he told her."
+          "text": "He listens for a long time. His free hand opens and closes on the edge of his coat."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "That she should go back to sleep."
-        },
-        {
-          "text": "He finally laughs. It is quiet and unexpectedly rough. When he steps closer, the chain at his throat catches the vending machine light."
+          "text": "I miss you too. I mean that. And I still haven't said yes."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "I am afraid of being wanted only when I'm useful. There. That is the inconvenient thing. No measurements available."
+          "text": "No, don't cancel the dinner. Have it without me. Send me a photo of the fish."
         },
         {
-          "text": "You stay where you are. Ren rests his fingertips against your umbrella handle, beside yours, without taking it away."
+          "text": "He hangs up, stands there for a moment, then walks back to the bench."
+        },
+        {
+          "text": "\"How did she take it?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "You haven't asked me to fix anything all night. I keep waiting for it."
+          "text": "She asked why I was whispering. Then she asked if I was with someone interesting."
         },
         {
-          "text": "The staff door opens behind him. His last round is ready. He removes his hand, then puts it back for one brief, deliberate second."
+          "text": "\"What did you say?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Twenty-eight minutes. Please consider staying for the part where I have no professional excuse to stand this close."
+          "text": "I told her to go back to sleep."
+        },
+        {
+          "text": "He laughs, quietly, for the first time all night. Then it fades."
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "soft",
+          "text": "Can I tell you why this is hard? I'm afraid people only want me when I'm useful. At home I'd be useful every day. I don't know who I'd be on a day off."
+        },
+        {
+          "text": "\"You haven't been useful to me once tonight. I'm still here.\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "soft",
+          "text": "I fixed your umbrella."
+        },
+        {
+          "text": "\"I didn't ask you to.\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "soft",
+          "text": "No. You haven't asked me for anything. I keep waiting for it."
+        },
+        {
+          "text": "The staff door opens behind him. Last round. He stands up."
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "Twenty-eight minutes. Will you wait? After that I'm off the clock, and I won't have a professional reason to stand near you."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/nurse.mp3",
@@ -1047,59 +1137,74 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:12 a.m. Ren comes out without the badge. His coat is buttoned badly: the middle button sits one hole too high.",
+          "text": "5:12 a.m. Ren comes out without his badge. His coat is buttoned one hole wrong.",
           "cg": "none"
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Don't say anything. I can feel it."
+          "text": "Don't say anything. I did it in the dark."
         },
         {
-          "text": "You straighten the coat when he tilts his chin in permission. His hands stay at his sides. This close, you can see the small crease the badge cord has left at his neck."
+          "text": "\"Hold still.\" You redo the buttons. He lifts his chin and lets you."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "You are taking a suspiciously long time with one button."
+          "text": "You're taking a long time over one button."
         },
         {
-          "text": "The sky beyond the railway has begun to pale. Ren has written two emails. One accepts the island post. One declines it. Neither has been sent."
+          "text": "\"It's a difficult button.\""
+        },
+        {
+          "text": "Behind the railway the sky has started to go pale. He takes out his phone and shows you two drafts."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "I can choose. I know that. I would like to stop making the choice as if I'm presenting evidence in court."
+          "text": "I wrote both. One says yes to the island. One says no, thank you, and offers to help them find someone else."
         },
         {
-          "text": "He shows you the draft addressed to the clinic. It thanks them, names the city work he wants to continue, and offers to help find another candidate. There are no apologies."
+          "text": "\"Which one did you write first?\""
         },
         {
-          "text": "You hand the phone back. His thumb stays above the screen."
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "The no. Then I wrote the yes so I'd feel I'd been fair."
+        },
+        {
+          "text": "\"You don't have to be fair. It's your life.\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "I know. I keep making the decision as if I'll have to defend it in court."
+        },
+        {
+          "text": "He puts the phone in his pocket without sending either."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "And after this, I would like breakfast. Somewhere with proper cups. With you."
+          "text": "Whichever I send, I'd like breakfast afterwards. Somewhere with real cups. With you, if you're not sick of me."
         },
         {
-          "text": "The invitation lands more plainly than his hand ever did. You have spent the night watching him make space for every possible answer except his own."
+          "text": "\"I've sat on a wet bench for two hours. I'm not sick of you.\""
         },
         {
-          "text": "He takes the blue band off your umbrella and loops it around his wrist again. Then he offers you that hand, palm open."
+          "text": "He takes the blue band off your umbrella, loops it back on his own wrist, and holds that hand out to you, palm up."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "You can say no. To breakfast. To the hand. I would rather hear an answer than guess."
-        },
-        {
-          "text": "Across the street, the bakery shutter rattles upward. Ren looks at the first warm line of light beneath it, then back at you. The phone in his other hand has gone dark."
+          "text": "You can say no. To breakfast or to the hand. I'd just rather hear it than guess."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/nurse.mp3",
@@ -1187,29 +1292,50 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:28 a.m. Ren sends the refusal before either of you crosses the street. Then he puts his phone away for the whole walk.",
+          "text": "5:28 a.m. Ren sends the no before you've crossed the street. Then he switches his phone off.",
           "cg": "/labs/visual-novel/after-hours/cg/nurse-good.webp"
+        },
+        {
+          "text": "\"How do you feel?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "I stayed because I want this life. You are a very welcome complication in it."
+          "text": "As if I've wanted to do that for a month. I'm staying because I like my life here. I want you to know I'd decided that before tonight."
         },
         {
-          "text": "At the crossing, he reaches for your hand. The blue band brushes your wrist as his fingers settle between yours."
+          "text": "\"And tonight?\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "soft",
+          "text": "Tonight is the part I didn't plan for. I'm glad of it."
+        },
+        {
+          "text": "At the crossing he takes your hand. The blue band presses against your wrist."
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "smile",
-          "text": "No clinical justification. I checked."
+          "text": "There's no medical reason for this. I checked."
         },
         {
-          "text": "Breakfast is not open yet. You stand under the bakery awning, closer than the width of the shelter requires. Ren asks if he may kiss you, so quietly that the question belongs only to the two of you."
+          "text": "The bakery isn't open yet. You stand under its awning, closer than the rain requires."
         },
         {
-          "text": "You answer by stepping nearer. His other hand settles at your waist. The first kiss is careful; the second begins when he smiles against your mouth."
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "soft",
+          "text": "May I kiss you?"
+        },
+        {
+          "text": "\"Yes.\""
+        },
+        {
+          "text": "The first one is careful. The second starts when he smiles halfway through it."
         },
         {
           "who": "nurse",
@@ -1218,16 +1344,16 @@ export const afterHours: Story = {
           "text": "That was worth thirty-eight minutes of overtime."
         },
         {
-          "text": "You point out that he finished on time."
+          "text": "\"You finished on time.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "smile",
-          "text": "Then I have no excuse at all."
+          "text": "Then I've got no excuse at all."
         },
         {
-          "text": "The shutter lifts. Neither of you immediately lets go. When he finally opens the door, he holds your hand through it, blue elastic and all."
+          "text": "The shutter rattles up. He holds the door for you and doesn't let go of your hand."
         }
       ],
       "ending": {
@@ -1242,47 +1368,59 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:28 a.m. Ren saves the drafts and sets a reminder for seven. He is going to sleep for an hour, then read them somewhere without a vending machine humming at him.",
+          "text": "5:28 a.m. Ren saves both drafts and sets an alarm for seven.",
           "cg": "none"
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "A delay. Not an answer. I can distinguish them now."
+          "text": "I'm going to sleep for an hour and read them again somewhere without a vending machine. That isn't an answer. But I've stopped pretending it is."
         },
         {
-          "text": "He walks you as far as your building. The pavement has begun to dry in uneven patches beneath the awnings."
+          "text": "\"That's fair. You've been up all night.\""
         },
         {
-          "text": "You offer back the blue band. He shakes his head."
+          "text": "He walks you to your building. The pavement is drying in patches."
+        },
+        {
+          "text": "\"Here. Your elastic band.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "Your umbrella still needs it. Besides, returning borrowed things is a respectable reason to see somebody again."
+          "text": "Keep it. Your umbrella still needs it. And I'll have to come and get it back, which is a respectable reason to see you again."
         },
         {
-          "text": "He takes out his phone, opens a new contact, and hands it to you. For once there is no deadline attached."
+          "text": "\"You could just ask to see me again.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Tomorrow evening. I'll know which city my breakfast is in by then."
+          "text": "I could. Give me your number and I will."
         },
         {
-          "text": "You enter your number. When you give the phone back, his thumb brushes yours and stays there for a moment."
+          "text": "He hands you his phone, open on a new contact. You type it in."
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "Tomorrow evening. By then I'll know which city I'm having breakfast in."
+        },
+        {
+          "text": "\"Either way, tell me.\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "Thank you for waiting. I did notice."
+          "text": "I will. Thank you for waiting tonight. I did notice."
         },
         {
-          "text": "He leaves with the collar of his coat turned up. Before he reaches the clinic corner, your phone lights: Proper coffee next time. That is a promise."
+          "text": "He has barely reached the corner when your phone buzzes: \"Proper coffee next time. That's a promise.\""
         }
       ],
       "ending": {
@@ -1297,41 +1435,56 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:28 a.m. Ren accepts the island post. He reads the confirmation once, then twice, and folds the phone into his coat.",
+          "text": "5:28 a.m. Ren sends the yes. He reads the confirmation twice and puts the phone away.",
           "cg": "none"
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "neutral",
-          "text": "Friday's ferry. The dinner will go ahead."
+          "text": "Friday's ferry. The dinner can go ahead."
         },
         {
-          "text": "You say his family will be pleased. He nods. That part, at least, is easy to predict."
+          "text": "\"Your family will be pleased.\""
         },
         {
-          "text": "He walks you back across the road. At the building entrance, you give him the blue band. He takes it with a small, professional thank-you and puts it in his pocket."
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "They will. That part was always easy to predict."
+        },
+        {
+          "text": "He walks you back across the road. At your door you hold out the blue band."
+        },
+        {
+          "text": "\"You'll want this back.\""
+        },
+        {
+          "who": "nurse",
+          "show": "nurse",
+          "pose": "neutral",
+          "text": "Thank you. You should get some sleep. I've kept you up long enough."
+        },
+        {
+          "text": "\"Ren. Are you sure?\""
         },
         {
           "who": "nurse",
           "show": "nurse",
           "pose": "soft",
-          "text": "You should get some sleep. You've been awake too long on my account."
+          "text": "It's the sensible choice. Everyone says so."
         },
         {
-          "text": "For a moment he looks as if he might add something. A delivery bicycle rattles past, and he steps back to make room."
+          "text": "A delivery bike rattles past and he steps back to let it through. Whatever he was going to add, he doesn't."
         },
         {
-          "text": "By Friday, the clinic window has a new rota. You see his name crossed out beneath the morning reflection."
+          "text": "On Friday the rota in the clinic window has a line through his name."
         },
         {
-          "text": "That night a photograph arrives from an unfamiliar number: a harbour wall, wet blue paint, the edge of a ferry."
+          "text": "That night a photo arrives from a number you don't know: a harbour wall, wet blue paint, the bow of a ferry. Under it: \"Arrived safely.\""
         },
         {
-          "text": "Under it, two words: Arrived safely."
-        },
-        {
-          "text": "You type a reply. Delete it. Then wish him well. The message is read before the screen goes dark."
+          "text": "You type a reply, delete it, and wish him well instead. He reads it straight away. He doesn't write back."
         }
       ],
       "ending": {
@@ -1346,73 +1499,82 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "2:47 a.m. Mio takes you to the railway arch as if it is a famous venue with a difficult door policy."
+          "text": "2:47 a.m. Mio leads you under the railway arch and sweeps an arm at it like a doorman."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Mind the puddle. VIP entrance. No refunds, because nobody has paid me anything."
+          "text": "Welcome to the venue. Mind the puddle, that's the VIP entrance."
         },
         {
-          "text": "She sets her case on a dry rectangle beneath the streetlight. Someone has drawn a small heart on the concrete pillar. She turns the case so its open lid faces it."
+          "text": "\"How much is a ticket?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "Nobody's ever paid, so I've never had to decide."
+        },
+        {
+          "text": "She sets her case down on the one dry patch, under the streetlight. Someone has drawn a small heart on the concrete pillar in orange marker."
+        },
+        {
+          "text": "\"Is the heart yours?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "That was me. Needed an audience with taste."
+          "text": "Yeah. I wanted one fan who'd definitely show up."
         },
         {
-          "text": "The guitar has a dent near the bridge and a strip of orange tape around one strap buckle. Mio tunes by ear, frowning at a string that refuses to agree with the others."
+          "text": "She tunes by ear, frowning at one string. Her phone is propped in the case lid with the screen lit: \"Need your final lineup by 6. Solo is fine. Cancel if you need to.\""
         },
         {
-          "who": "busker",
-          "show": "busker",
-          "pose": "smile",
-          "text": "Okay. Set list. One song I know, one I almost know, and the terrifying original nobody requested."
-        },
-        {
-          "text": "Her phone, propped inside the case, shows a message from the venue: Need your final lineup by 6. Solo is fine. Cancel if you need to."
-        },
-        {
-          "text": "She turns it face down with the heel of her hand."
+          "text": "\"Is that the venue?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "My drummer got an office job. Bass player is moving. Guitarist said the band's dead, which was rude, because I'm the guitarist."
+          "text": "Don't read my mail, Umbrella. Yes. That's the venue."
         },
         {
-          "text": "You ask why she is still here in the rain."
+          "text": "\"What happened to the band?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "The drummer got an office job. The bassist is moving to Osaka. And the guitarist says the band's dead, which is rude, because I'm the guitarist."
+        },
+        {
+          "text": "\"So why are you still out here at three in the morning?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "The pillar hasn't quit yet."
+          "text": "Because the pillar hasn't quit yet. And if I stop for one night, I think I'll stop."
         },
         {
-          "text": "She starts a bright chord progression, gets as far as the first line, then stops to adjust a tuning peg that does not need adjusting."
+          "text": "She starts something bright, gets one line in, and breaks off to fiddle with a tuning peg that was fine."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Audience participation section! Very exclusive. You can request absolutely anything, and I will explain why I can't play it."
+          "text": "Okay! Requests. Ask for anything, and I'll explain why I can't play it."
         },
         {
-          "text": "A train passes overhead. Its wheels drown out the last word. Mio mouths something exaggeratedly rude at the ceiling and makes you laugh."
-        },
-        {
-          "text": "When the noise fades, she has not restarted. Her fingers rest against the strings, muting every note."
+          "text": "A train goes over and drowns her out. She shouts something rude at the ceiling, and you laugh. When it's quiet again she hasn't started. Her hand lies flat on the strings."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Or I could play you the new one. It's not clever yet. You have to promise not to expect clever."
+          "text": "Or I could play you the new one. The one for tomorrow. It isn't clever yet, so you'd have to promise not to expect clever."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/busker.mp3",
@@ -1449,13 +1611,13 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "3:09 a.m. The first verse is about a laundrette closing. The second is about leaving a chair empty so somebody has a reason to come back."
+          "text": "3:09 a.m. The first verse is about a laundrette closing down. The second is about leaving a chair empty so that someone has a reason to come back."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "You asked for the new one. No take-backs now, Umbrella.",
+          "text": "You asked for it, Umbrella. You can't un-hear it now.",
           "need": {
             "flag": "busker-listen"
           }
@@ -1464,7 +1626,7 @@ export const afterHours: Story = {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "One familiar chorus first. Then mine. Otherwise I’ll hide forever.",
+          "text": "I did the famous one first, like you said. That one after it was mine. I snuck it in.",
           "need": {
             "flag": "busker-cover"
           }
@@ -1473,79 +1635,79 @@ export const afterHours: Story = {
           "who": "busker",
           "show": "busker",
           "pose": "upset",
-          "text": "It might be embarrassing. I still want to try it once.",
+          "text": "I know you said to skip it. I played it anyway. I needed to hear it out loud once.",
           "need": {
             "flag": "busker-hide"
           }
         },
         {
-          "text": "Mio sings the chorus once, very softly. No joke fits over the last line, so she lets it end."
+          "text": "She sings the chorus a second time, very quietly, and lets the last line end without a joke on top."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "There. Three minutes of my actual personality. Horrifying. We can never speak of it again."
+          "text": "So. That's three minutes of my actual personality. Awful, right? We never speak of it again."
         },
         {
-          "text": "You ask about the empty chair. She picks at a rough edge of tape on the guitar case."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "soft",
-          "text": "My old flat. Four of us used to sit around this little table after practice. Everybody kept moving out, and I kept buying extra chairs."
-        },
-        {
-          "text": "She holds up two fingers, then changes her mind and spreads all five."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "smile",
-          "text": "My coping strategy had a furniture budget. Very grown-up."
-        },
-        {
-          "text": "A taxi slows at the kerb. Its driver raises a thumb, drops a coin into the case, and drives on. Mio bows after it with absurd ceremony."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "smile",
-          "text": "The industry has spoken. We can afford half a sweet."
-        },
-        {
-          "text": "She looks at the coin, then at you."
+          "text": "\"Who's the empty chair for?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Was the chorus too small? I always want to make it bigger before anybody notices what it says."
+          "text": "My old flat. There were four of us round this tiny table after practice. They moved out one at a time, and every time one left, I bought another chair."
         },
         {
-          "text": "Instead of answering at once, you hum the last few notes. Mio's fingers find the chord beneath them. For one verse, you let the song occupy the whole arch."
-        },
-        {
-          "text": "When you finish, she unclips an orange guitar pick from the case strap and presses it into your palm."
+          "text": "\"You bought more chairs when people left?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Temporary membership. Don't panic. There are no rehearsals. The uniform is whatever you got rained on in."
+          "text": "I know. I thought it would look like I was expecting company. It looked like a furniture shop."
         },
         {
-          "text": "She closes your fingers around it with both hands, suddenly less fluent than before."
+          "text": "A taxi slows at the kerb. The driver gives her a thumbs up, tosses a coin into the case and drives on."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "A hundred yen! That's the most that song has ever made."
+        },
+        {
+          "text": "\"It's a good song, Mio.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Keep it till the show. Otherwise I'll decide you were invented by sleep deprivation."
+          "text": "Is the chorus too small, though? I always want to make it louder before anyone hears what it says."
         },
         {
-          "text": "The train signal changes overhead. This time she begins the song again before the next train arrives."
+          "text": "\"Play it again and I'll tell you.\""
+        },
+        {
+          "text": "She does. This time you hum the last few notes with her, and she doesn't make it louder."
+        },
+        {
+          "text": "When it ends she unclips an orange pick from her strap and presses it into your palm."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "Band membership. Don't panic, there are no rehearsals, and the uniform is whatever you got rained on in."
+        },
+        {
+          "text": "\"I can't play anything.\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "Neither could my drummer. Just keep it until the show. Otherwise tomorrow I'll decide I made you up."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/busker.mp3",
@@ -1557,64 +1719,82 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "3:43 a.m. Mio's phone vibrates against the guitar case. A former bandmate has sent a clip of their last show, followed by a laughing face and: Remember when we thought we'd make it?"
+          "text": "3:43 a.m. Her phone buzzes in the case. She picks it up, and her face changes."
         },
         {
-          "text": "She watches the first ten seconds. Turns the volume down. Watches them again."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "neutral",
-          "text": "We were dreadful. Listen to that drum fill. That's a suitcase falling downstairs."
-        },
-        {
-          "text": "She smiles at the screen until the clip ends. Then she scrolls to the venue's message and starts typing a cancellation."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "upset",
-          "text": "It's a forty-minute slot. I have three songs. Three honest ones, anyway. Everything else is me talking until nobody notices the gap."
-        },
-        {
-          "text": "You mention the chorus she just played. She shakes her head hard enough to loosen one of her buns."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "upset",
-          "text": "You like me. That makes you unreliable. Extremely attractive in an audience, but scientifically useless."
-        },
-        {
-          "text": "The compliment seems to surprise her as much as it surprises you. She hides behind the guitar neck for half a second."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "soft",
-          "text": "I said that out loud. Cool. Fantastic. Wonderful night for language."
-        },
-        {
-          "text": "She puts the guitar across her knees and counts the songs with her fingertips. Three. Then a cover. Then another. Five, if she slows down long enough to let anybody clap."
+          "text": "\"The venue again?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "What if nobody comes? Worse, what if they come and wish they hadn't?"
+          "text": "No. My old bassist. He's sent a clip of our last gig. \"Remember when we thought we'd make it?\" With a laughing face."
         },
         {
-          "text": "You can hear rain running inside the drainpipe. Mio is waiting for you to fill the silence, but you have heard what she does when every silence gets filled."
+          "text": "She plays it. Ten seconds of noise and a drum fill that falls over."
         },
         {
-          "text": "The cancellation draft glows in the case. Beside it, the little coin catches a circle of streetlight."
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "We were terrible. Listen to that. That's a suitcase going down a staircase."
+        },
+        {
+          "text": "\"You're smiling.\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "upset",
+          "text": "Because it was fun. It was terrible, and there were four of us being terrible. Now it's forty minutes and just me."
+        },
+        {
+          "text": "She opens the venue's message and starts typing. You can see the first word: \"Sorry\"."
+        },
+        {
+          "text": "\"Mio. What are you writing?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "upset",
+          "text": "A cancellation. I've got three songs. Three real ones. The rest of the set is me talking until nobody notices there's no song."
+        },
+        {
+          "text": "\"The one you just played is better than anything in that clip.\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "upset",
+          "text": "You like me, so you don't count. You're a lovely audience and useless as evidence."
+        },
+        {
+          "text": "\"You think I like you?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Tell me what you'd actually want to hear. Not what would make me stop freaking out. I can tell the difference sometimes."
+          "text": "I said that out loud, didn't I. Great. Good night for my mouth."
+        },
+        {
+          "text": "She counts on her fingers: three songs, a cover, another cover. Five, if she slows down enough to let people clap."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "What if nobody comes? No, worse. What if they come, and halfway through they wish they hadn't?"
+        },
+        {
+          "text": "The draft is still open in the case, next to the taxi driver's coin."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "Tell me what you'd actually want to hear tomorrow. Not the thing that calms me down. I can usually tell the difference."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/busker.mp3",
@@ -1651,14 +1831,14 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "4:19 a.m. You hold her phone while Mio records a rehearsal for the venue. The first take lasts nine seconds before she apologises to the lens.",
+          "text": "4:19 a.m. You hold her phone and film while Mio records a rehearsal for the venue. The first take lasts nine seconds before she says sorry to the camera.",
           "cg": "/labs/visual-novel/after-hours/cg/busker-climax.webp"
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Let it finish. Right. You can confiscate my next joke.",
+          "text": "Let it finish. Okay. If I start a joke in the middle, you're allowed to take the phone away.",
           "need": {
             "flag": "busker-room"
           }
@@ -1667,7 +1847,7 @@ export const afterHours: Story = {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "A shorter set. I can pitch that with a rehearsal.",
+          "text": "A shorter set, fine. But they'll want to hear me first, so I have to get through one whole song.",
           "need": {
             "flag": "busker-short"
           }
@@ -1676,67 +1856,79 @@ export const afterHours: Story = {
           "who": "busker",
           "show": "busker",
           "pose": "upset",
-          "text": "Maybe I’m not ready. Let me record it before I decide.",
+          "text": "Maybe you're right and I'm not ready. Let me get one take down before I send anything.",
           "need": {
             "flag": "busker-cancel"
           }
         },
         {
-          "text": "The second lasts twelve. She stops it with her sleeve over her face."
+          "text": "The second take lasts twelve seconds. She stops it with her sleeve over her face."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "upset",
-          "text": "I do this for strangers under a train. Why is a tiny rectangle winning?"
+          "text": "I play for strangers under a train every night! Why is a phone scarier than that?"
         },
         {
-          "text": "You lower the phone. Mio watches the reflection of the streetlight in its dark screen."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "soft",
-          "text": "When the band was here, I could blame everybody else if it went badly. The sound. The drummer. The train. Somebody always had a louder mistake."
-        },
-        {
-          "text": "She sits on the edge of the case, guitar balanced against her shoulder."
+          "text": "\"Because they can play it back.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "I'm scared they'll hear me properly and still leave. That's the part I keep trying to drown out."
+          "text": "Yeah. When the band was here, if it went badly there was always someone louder to blame. The drums, the sound, the train."
         },
         {
-          "text": "You sit beside her. Not close enough to crowd the instrument. Close enough that she can rest her head against your shoulder when she finally stops talking."
-        },
-        {
-          "text": "For a minute, she does. The orange hair tickles your cheek. Her hand finds yours beside the case, then turns it over to check that the pick is still there."
+          "text": "\"And now?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "You kept it."
+          "text": "Now if they don't like it, it's just me they didn't like. I'm scared they'll hear me properly and leave anyway."
         },
         {
-          "text": "She says nothing else until the next train has gone. Then she stands, ties her hair back with an elastic from her wrist, and asks you to record again."
+          "text": "You sit down beside her on the edge of the case. After a moment she leans her head on your shoulder."
         },
         {
-          "text": "This time she begins with her name. No band name. No apology. The small chorus reaches the far end of the arch without getting bigger."
+          "text": "\"I heard you properly an hour ago. I'm still here.\""
         },
         {
-          "text": "When she finishes, you keep the phone steady for the whole silence after the last chord. Mio looks at the lens, then past it to you."
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "Have you still got the pick?"
+        },
+        {
+          "text": "\"It's in my hand.\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "Okay. Okay. One more."
+        },
+        {
+          "text": "She stands, ties her hair back and nods at the phone. This time she starts with her name. No band name, no sorry. The small chorus reaches the far end of the arch at the size she wrote it."
+        },
+        {
+          "text": "You keep filming through the quiet after the last chord. She looks at the lens, then past it at you."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Okay. That one sounded like somebody I know."
+          "text": "That one sounded like someone I know."
         },
         {
-          "text": "She saves the take. For once she does not immediately watch it back looking for something to hate."
+          "text": "\"Do you want to watch it back?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "No. For once, no. Save it."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/busker.mp3",
@@ -1748,59 +1940,74 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:06 a.m. The sky beyond the arch is pale enough to show the rain hanging in the wires. Mio sits beside you with her phone between both knees.",
+          "text": "5:06 a.m. The sky past the arch has gone pale. Mio sits next to you with her phone held in both hands.",
           "cg": "none"
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "Six-song set. A short one. I can ask for thirty minutes instead of pretending I have forty."
+          "text": "I've written to them. It says I'll play solo, under my own name, six songs. The rehearsal's attached."
         },
         {
-          "text": "She has written the message. It says she will perform solo. It gives her own name and attaches the rehearsal. The send arrow waits beneath her thumb."
+          "text": "\"Six? You said you had three.\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "Three of mine and three covers. And I've asked for thirty minutes instead of pretending I can fill forty."
+        },
+        {
+          "text": "\"So send it.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "This is the bit where I want to become extremely funny and change the subject. You may have noticed my subtle methods."
+          "text": "This is where I'd normally get very funny and change the subject. You might have noticed I do that."
         },
         {
-          "text": "You turn the orange pick over in your fingers. There is a little groove worn into one edge where her thumb rests."
+          "text": "\"Once or twice.\""
+        },
+        {
+          "text": "You turn the orange pick over in your fingers. One edge is worn smooth where her thumb goes."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Oh, excellent. The membership card. I forgot to explain the terms. Members get one song request and unlimited arguments about the best convenience-store snack."
+          "text": "Oh, the membership card. I never told you what you get. One song request, and unlimited arguments about convenience-store snacks."
         },
         {
-          "text": "She reaches for the pick, then leaves it in your hand. Her fingertips stay against your palm."
-        },
-        {
-          "who": "busker",
-          "show": "busker",
-          "pose": "soft",
-          "text": "I'd like you in the front row. Not hiding behind the pillar. Somewhere I can look when I forget what my knees do."
-        },
-        {
-          "text": "The phone dims. She wakes it again, still holding your hand with the other."
+          "text": "\"Is that all?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "And after the show, if I haven't talked you out of it by then, I'd like to take you somewhere without a railway over our heads."
+          "text": "And a seat in the front row. Not behind the pillar. Somewhere I can look when I forget what my hands are doing."
         },
         {
-          "text": "You ask whether that is another membership benefit. Mio laughs once, then meets your eyes instead of looking for the next joke."
+          "text": "\"I can do the front row.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "No. That's me asking you on a date. I thought I should try saying the actual thing, since the night is already wildly out of character."
+          "text": "And after the show, I'd like to take you somewhere that doesn't have a railway on top of it."
+        },
+        {
+          "text": "\"Is that part of the membership too?\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "No. That's me asking you on a date. I'm trying out saying the real thing. How's it going?"
+        },
+        {
+          "text": "Her thumb is still over the send arrow."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/busker.mp3",
@@ -1888,47 +2095,50 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:19 a.m. Mio sends the message, then drops the phone into the case as if it has become dangerously hot.",
+          "text": "5:19 a.m. Mio presses send and drops the phone into the case as if it's hot.",
           "cg": "/labs/visual-novel/after-hours/cg/busker-good.webp"
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "surprised",
-          "text": "Done. Oh, that's awful. That's brilliant. Give me a second to choose."
+          "text": "It's gone. Oh, that's horrible. Oh, that's amazing. Hang on, I don't know which yet."
         },
         {
-          "text": "She catches your sleeve before you can move and pulls you into a quick, fierce hug. The guitar sits safely in its case. For once there is nothing between you."
+          "text": "\"It's amazing.\""
+        },
+        {
+          "text": "She grabs your sleeve and pulls you into a hug, quick and hard. For once the guitar isn't between you."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Can I kiss my first fan, or is that an appalling abuse of fame?"
+          "text": "Am I allowed to kiss my first fan, or is that abusing my fame?"
         },
         {
-          "text": "You tell her her first fan was a concrete pillar."
+          "text": "\"Your first fan is a concrete pillar.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "You're right. I'll apologise to it later."
+          "text": "You're right. I'll say sorry to it later."
         },
         {
-          "text": "Her kiss arrives with a laugh that fades halfway through. When she draws back, she is quieter than you have heard her all night."
+          "text": "She kisses you laughing, and the laugh stops halfway through. When she pulls back she's the quietest she has been all night."
         },
         {
-          "text": "The next evening, the orange pick gets you into a front-row seat. Mio steps up alone, finds you, and adjusts the microphone once."
+          "text": "The next evening the orange pick gets you a seat in the front row. Mio walks on alone, finds you, and fixes the microphone once."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "This first one's for somebody who let the last note finish."
+          "text": "Hi. I'm Mio Arata. This first one's for someone who let the last note finish."
         },
         {
-          "text": "She plays the small chorus. Nobody leaves. When the applause comes, she lets that finish too."
+          "text": "She plays the small chorus. Nobody leaves. When they clap, she lets that finish too."
         }
       ],
       "ending": {
@@ -1943,38 +2153,53 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:19 a.m. Mio sends the rehearsal and asks for a shorter set. The message takes a full minute to leave the arch's unreliable signal.",
+          "text": "5:19 a.m. Mio sends the rehearsal and asks for a shorter slot. Under the arch the message takes a full minute to go.",
           "cg": "none"
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "There. A sensible adult business proposal. I feel like I should buy a filing cabinet."
+          "text": "Done. A sensible grown-up business email. I feel like I should own a filing cabinet."
         },
         {
-          "text": "She walks you home with the guitar on her back, humming the chorus under her breath. At your door, she takes out a flyer and crosses out the old band's name."
-        },
-        {
-          "text": "MIO ARATA goes above it in thick orange pen. She adds a tiny umbrella beside the time."
+          "text": "\"Shorter is still a show.\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "No pressure to come. But if you do, there'll be a chair with a good view of me making a brave fool of myself."
+          "text": "Yeah. It is, isn't it."
         },
         {
-          "text": "You give back the pick. She clips it to her case, then changes her mind and hands it to you again."
+          "text": "She walks you home with the guitar on her back. At your door she takes out the flyer, crosses through the old band's name and writes MIO ARATA above it in orange. She draws a tiny umbrella next to the time."
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "soft",
+          "text": "No pressure. But if you come, there'll be a chair with a good view of me being brave and stupid."
+        },
+        {
+          "text": "\"Do you want your pick back for it?\""
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "smile",
-          "text": "Actually, keep it. I need an excuse to ask how your day went."
+          "text": "I did. Now I think you should keep it. Then I've got an excuse to text and ask how your day was."
         },
         {
-          "text": "That evening, your phone receives six seconds of guitar and a message: Still playing. Still terrified. Snack argument postponed till after the show."
+          "text": "\"You don't need an excuse.\""
+        },
+        {
+          "who": "busker",
+          "show": "busker",
+          "pose": "smile",
+          "text": "I know. I like having one."
+        },
+        {
+          "text": "That evening your phone gets six seconds of guitar and a message: \"Still playing. Still terrified. Snack argument after the show.\""
         }
       ],
       "ending": {
@@ -1989,38 +2214,44 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:19 a.m. Mio sends the cancellation. She types a careful apology, deletes a joke from the end, and closes the case.",
+          "text": "5:19 a.m. Mio sends the cancellation. She writes a careful sorry, deletes the joke at the end, and shuts the case.",
           "cg": "none"
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "neutral",
-          "text": "They'll find somebody. It's a good slot. Better not to waste it."
+          "text": "They'll find someone. It's a good slot. Better it goes to someone who'll use it."
         },
         {
-          "text": "She makes her voice bright again while she coils the cable. The brightness does not last beyond the next sentence."
+          "text": "\"You'd have used it.\""
         },
         {
-          "text": "You offer the pick back. She takes it and turns it between two fingers, then clips it to the strap without looking up."
+          "who": "busker",
+          "show": "busker",
+          "pose": "neutral",
+          "text": "Maybe next time. When there's a band again."
+        },
+        {
+          "text": "You hold out the pick. She takes it and clips it back on the strap without looking up."
         },
         {
           "who": "busker",
           "show": "busker",
           "pose": "soft",
-          "text": "Thanks for listening tonight. Really. That part was good."
+          "text": "Thanks for listening tonight. I mean it. That bit was good."
         },
         {
-          "text": "You walk to the corner together. She goes towards the station, where the first commuters are beginning to gather under the signs."
+          "text": "You walk as far as the corner together. She turns towards the station, where the first commuters are gathering."
         },
         {
-          "text": "The following night, there is a different name on the venue's board. Under the railway, Mio plays a song everybody knows. A few people stop. A few drop coins."
+          "text": "The next night there's a different name on the venue's board. Under the railway, Mio plays a song everybody knows. A few people stop. A few drop coins."
         },
         {
-          "text": "She sees you and waves with the pick before beginning the next verse."
+          "text": "She sees you and waves with the pick, then starts the next verse."
         },
         {
-          "text": "The little song about the empty chair does not come back into the set. You can still remember its last line, but you do not sing it over her."
+          "text": "The song about the empty chair isn't in the set. You still remember how it ends."
         }
       ],
       "ending": {
@@ -2035,67 +2266,85 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "2:46 a.m. Sota holds the bakery door with one shoulder while you carry the milk. Warm air touches your face before you see the ovens."
+          "text": "2:46 a.m. Sota holds the bakery door open with his shoulder while you carry the milk in. The air inside is warm and smells of yeast."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "Thank you. Please mind the step. And the tray. Actually, let me move the tray. I'm making a very poor first impression."
+          "text": "Thank you. Mind the step. And the tray. No, wait, let me move the tray."
         },
         {
-          "text": "He moves three things that were nowhere near your feet. Then he takes the milk and stands looking at it as though he has forgotten what milk does."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "Sorry. I don't usually have company this early."
-        },
-        {
-          "text": "The kitchen is narrow, clean, and full of small repairs: a drawer with a different handle, a patched stool, a recipe book held together with cloth tape."
-        },
-        {
-          "text": "He washes his hands, offers you a clean apron, and waits while you find the straps. When they twist behind your back, he asks before stepping close to untangle them."
+          "text": "\"It's fine, I can get round it.\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "There. Is that too tight?"
+          "text": "Sorry. I don't usually have anyone in here this early. I've forgotten how to host."
         },
         {
-          "text": "His fingers are warm from the room. You say it is fine. He makes a second knot more slowly than the first."
+          "text": "The kitchen is narrow and very clean: a drawer with a mismatched handle, a recipe book held together with cloth tape. He washes his hands and passes you an apron."
         },
         {
-          "text": "On the bench sit two bowls. One holds ordinary dough. The other smells faintly of orange peel and toasted sesame."
+          "text": "\"I think I've twisted the straps.\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "You have. May I?"
+        },
+        {
+          "text": "He steps behind you and reties them, slowly."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "Is that too tight?"
+        },
+        {
+          "text": "\"No. It's good.\""
+        },
+        {
+          "text": "There are two bowls on the bench. One is plain dough. The other smells of orange peel and toasted sesame."
+        },
+        {
+          "text": "\"Which one's the new thing you wouldn't tell us about?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "The salt rolls are my grandmother's. The other batch is... an idea. It may not deserve a whole shelf."
+          "text": "You remembered that. The plain one is my grandmother's salt rolls. The other is an idea of mine. I don't think it deserves a whole shelf."
         },
         {
-          "text": "You ask how many shelves an idea normally needs. He glances at you, surprised, then smiles into the bowl."
+          "text": "\"How many shelves does an idea usually get?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "smile",
-          "text": "One would be ambitious. Half, perhaps. A quiet corner."
+          "text": "Half of one, maybe. A corner at the back."
         },
         {
-          "text": "He gives you a small piece of the scented dough to smell. The sweetness is there, but restrained, waiting behind the sesame."
+          "text": "\"Has anyone tried it?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "I made it three times last week. I kept eating it at home instead of bringing it out front."
+          "text": "Only me. I've made it three times this week and eaten every batch at home, so that nobody would see."
         },
         {
-          "text": "The oven timer clicks behind him. Sota sets both hands on the bench and looks at the two bowls, still deciding which one you are allowed to see."
+          "text": "The oven timer clicks. He rests both hands on the bench and looks from one bowl to the other."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "neutral",
+          "text": "There's only time to shape one batch before four. Which would you like to learn?"
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/baker.mp3",
@@ -2132,13 +2381,13 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "3:12 a.m. Sota shows you how to fold the dough. His hands make the movement look simple until you try it yourself."
+          "text": "3:12 a.m. Sota shows you the fold. In his hands it takes two seconds."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "My version. I like how that sounds when you say it.",
+          "text": "\"Your version.\" I like how that sounds. Nobody has called it mine before, including me.",
           "need": {
             "flag": "baker-version"
           }
@@ -2147,7 +2396,7 @@ export const afterHours: Story = {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "The salt rolls first, then. We can try mine afterwards.",
+          "text": "Salt rolls first, then. That's sensible. We can try mine after, if there's time.",
           "need": {
             "flag": "baker-familiar"
           }
@@ -2156,73 +2405,85 @@ export const afterHours: Story = {
           "who": "baker",
           "show": "baker",
           "pose": "upset",
-          "text": "It is a risk. Perhaps we can taste it privately.",
+          "text": "You're right, it is a risk. Perhaps we just taste mine in here, between us, and nobody else has to know.",
           "need": {
             "flag": "baker-risk"
           }
         },
         {
+          "text": "\"Like this?\""
+        },
+        {
           "who": "baker",
           "show": "baker",
           "pose": "smile",
-          "text": "That's all right. It is meant to stick a little. Bread has opinions about strangers."
+          "text": "Nearly. It's meant to stick to you a little. Dough doesn't trust strangers."
         },
         {
-          "text": "Your first roll looks like a folded sock. He sets it beside his perfectly shaped one without comment."
+          "text": "Your first roll looks like a folded sock. He sets it beside his own perfect one and says nothing."
         },
         {
-          "text": "When you stare at the comparison, he gives his own roll a deliberate crooked pinch. Now they look like relatives."
+          "text": "\"You can laugh. It's terrible.\""
+        },
+        {
+          "text": "He gives his own roll a deliberate pinch, so that it leans the same way as yours."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "There. A family resemblance."
+          "text": "There. Now they look related."
         },
         {
-          "text": "He reaches behind you for a tray, stops close enough that you feel the warmth through his jacket, and asks whether he may pass. You move half a step. He moves half a step. Neither is quite enough."
+          "text": "He reaches past you for a tray and stops. You step left. So does he."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "surprised",
-          "text": "Sorry. I have worked in this room for years. Apparently I have forgotten its dimensions."
+          "text": "Sorry. I've worked in this room for six years, and tonight I can't remember how wide it is."
         },
         {
-          "text": "The neck of his jacket has come open at the top. Flour rests along the tendon above his collarbone. He notices your glance and wipes the wrong side."
+          "text": "\"You've got flour on your neck.\""
         },
         {
-          "text": "You point. He laughs softly and offers you a clean cloth."
+          "text": "He wipes the wrong side."
+        },
+        {
+          "text": "\"Other side. Here, give me the cloth.\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "Would you? Since my geometry has failed."
+          "text": "Would you? Thank you."
         },
         {
-          "text": "You brush the flour away. He holds very still, then takes the cloth with both hands."
+          "text": "He holds very still while you brush it off. Above the bench, a photograph shows a small old woman holding a tray wider than she is."
         },
         {
-          "text": "On the shelf above the bench, a photograph shows an older woman holding a tray larger than she is. Sota follows your look."
+          "text": "\"Is that her? Your grandmother?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "She taught me the knot for these rolls. Two turns, tuck the end. When I was little, she said they kept promises from coming undone."
+          "text": "Yes. She taught me the knot on these rolls: two turns and tuck the end. She said it stops promises coming undone."
         },
         {
-          "text": "He loops a spare strip of clean apron ribbon twice around your wrist to demonstrate, leaving it loose enough to slip off."
+          "text": "He loops a strip of apron ribbon twice round your wrist to show you, loose enough to slip off."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "Not a real knot. Just the shape. I wouldn't tie you to a bakery on our first evening."
+          "text": "That's not a real knot, only the shape. I wouldn't tie you to a bakery on the first night."
         },
         {
-          "text": "His face changes as the sentence catches up with him. The timer saves him before he can apologise for it."
+          "text": "\"The first night?\""
+        },
+        {
+          "text": "He goes red to the ears. The timer rings before he can say sorry."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/baker.mp3",
@@ -2234,67 +2495,82 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "3:41 a.m. The first rolls cool on the rack. The orange-sesame batch still waits beneath its cloth."
+          "text": "3:41 a.m. The first rolls are cooling on the rack. The orange dough is still under its cloth."
         },
         {
-          "text": "Sota opens his grandmother's recipe book. A handwritten note falls out: Don't rush the second rise. You always do."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "She knew exactly where to leave instructions."
-        },
-        {
-          "text": "He smooths the paper with his thumb. There is a clean rectangle on the wall where the funeral notice hung earlier in the year."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "neutral",
-          "text": "People come in and ask whether the bread tastes the same. I say yes before they've tried it. I want them to feel they can still find her here."
-        },
-        {
-          "text": "He turns to a page crowded with measurements. In the margin, a different hand has written orange? beside three crossed-out amounts."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "upset",
-          "text": "Those are mine. I shouldn't have written in her book."
-        },
-        {
-          "text": "You ask why. He looks at the page, but answers the photograph."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "neutral",
-          "text": "Because it was hers."
-        },
-        {
-          "text": "A delivery van passes without stopping. He watches its lights through the small window, then brings the second bowl back to the bench."
+          "text": "Sota opens the recipe book and a slip of paper falls out. You pick it up: \"Don't rush the second rise. You always do.\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "She used to put orange peel in her tea. She hated wasting any part of a fruit. I thought the smell might work in a roll. Something warm, with a little edge to it."
+          "text": "That's her handwriting. She left those all over the kitchen. I'm still finding them."
         },
         {
-          "text": "He has said more about this dough than about every established recipe combined. When he notices, he closes the book halfway."
+          "text": "\"When did she die?\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "neutral",
+          "text": "In March. People come in and ask if the bread still tastes the same. I say yes before they've even tried it."
+        },
+        {
+          "text": "\"Why before?\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "neutral",
+          "text": "Because I want them to feel she's still here. If the bread's the same, she is."
+        },
+        {
+          "text": "He turns to a page thick with measurements. In the margin, in different handwriting, someone has written \"orange?\" next to three crossed-out numbers."
+        },
+        {
+          "text": "\"That's your writing.\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "upset",
-          "text": "If I put it out front, somebody will say it isn't hers. They'll be right. I don't know how to stand behind the counter and agree."
+          "text": "Yes. I shouldn't have written in her book."
         },
         {
-          "text": "The cloth rises gently over the bowl. Whatever Sota calls it, the dough has been doing its part all night."
+          "text": "\"Why not? You're the one baking from it.\""
         },
         {
-          "text": "He takes a blank price card from a drawer and puts it between you. There is room for a name, a price, and nothing that explains him away."
+          "who": "baker",
+          "show": "baker",
+          "pose": "neutral",
+          "text": "Because it's hers."
+        },
+        {
+          "text": "\"Then tell me about the orange. Why orange?\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "She put the peel in her tea. She couldn't stand wasting any part of a fruit. I thought it might work in a roll. Something warm with a little bite."
+        },
+        {
+          "text": "\"So the idea came from her.\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "upset",
+          "text": "But the roll didn't. If I put it out front, someone will say, \"This isn't hers.\" They'll be right, and I'll have to stand there and agree with them."
+        },
+        {
+          "text": "He takes a blank price card from the drawer and sets it on the bench between you."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "I don't even know what I'd write on it."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/baker.mp3",
@@ -2331,14 +2607,14 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "4:16 a.m. Sota opens the oven. The first experimental tray has browned too quickly on one side.",
+          "text": "4:16 a.m. Sota opens the oven. The first tray of orange rolls has browned too fast on one side.",
           "cg": "/labs/visual-novel/after-hours/cg/baker-climax.webp"
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "Mine, and still here. I would like to believe that.",
+          "text": "You said it could be mine and still belong here. I've been turning that over. I'd like it to be true.",
           "need": {
             "flag": "baker-room"
           }
@@ -2347,7 +2623,7 @@ export const afterHours: Story = {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "Samples might help. We should taste the first batch ourselves.",
+          "text": "Samples are a good idea. But we should taste them ourselves before anyone else does.",
           "need": {
             "flag": "baker-samples"
           }
@@ -2356,70 +2632,85 @@ export const afterHours: Story = {
           "who": "baker",
           "show": "baker",
           "pose": "upset",
-          "text": "I understand. But I need somewhere to write the changes.",
+          "text": "I'll keep her book as it was, as you said. But then I need somewhere else to write this down.",
           "need": {
             "flag": "baker-book"
           }
         },
         {
-          "text": "He stands with the oven gloves held apart, looking at the uneven row. Then he starts to move it towards the back counter where nobody will see it."
+          "who": "baker",
+          "show": "baker",
+          "pose": "upset",
+          "text": "Oh, no. I should have turned the tray. I know that corner runs hot. I'm sorry, you stayed up for this."
+        },
+        {
+          "text": "He starts to carry it to the back counter, out of sight."
+        },
+        {
+          "text": "\"Wait. Put it down. Which one do I cut?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "upset",
-          "text": "I should have rotated it sooner. I knew that corner ran hot. I'm sorry you stayed for this."
+          "text": "You don't have to eat a burnt one to be polite."
         },
         {
-          "text": "You pick up the cooling knife and ask which one to cut. He sets the tray down, reluctantly, and chooses the least perfect roll."
+          "text": "\"I'm hungry. I'm not being polite. Which one?\""
         },
         {
-          "text": "The crust cracks. Inside, the bread is soft and threaded with orange. Sota tastes a small piece, then takes another before he remembers to look disappointed."
+          "text": "He picks out the most crooked roll. The crust cracks under the knife. Inside it is soft, with threads of orange."
+        },
+        {
+          "text": "\"Sota. This is really good.\""
+        },
+        {
+          "text": "He tries a piece himself, then a second before he remembers to look disappointed."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "The sesame needs a little more salt."
+          "text": "The sesame needs more salt."
         },
         {
-          "text": "You wait. He tries a third piece."
+          "text": "\"And?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "smile",
-          "text": "But the orange works."
+          "text": "And the orange works. It does, doesn't it?"
         },
         {
-          "text": "He writes the salt adjustment in the margin of the recipe book. This time he does not erase it."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "I keep thinking that if I change anything, the shop will stop being proof she was here. That sounds foolish when I say it in a room full of her handwriting."
-        },
-        {
-          "text": "You shake your head. Sota leans back against the bench, shoulders finally dropping."
+          "text": "He writes the salt down in the margin of the book, and this time he doesn't rub it out."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "I'm frightened of wanting something she can't tell me is good. I miss asking her. Even when I knew she'd disagree."
+          "text": "I keep thinking that if I change anything, the shop stops being proof she was here. It sounds foolish, said out loud in a room covered in her notes."
         },
         {
-          "text": "He looks at the loose ribbon around your wrist. Gently, he turns the little knot so its two loops face upward again."
+          "text": "\"It doesn't sound foolish.\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "She would have liked that you ate the crooked one first."
+          "text": "I'm frightened of making something she can't tell me is good. I miss asking her. Even when I knew she'd say no."
         },
         {
-          "text": "The second tray is ready to go in. Sota rotates it before closing the door. Then he leaves the first batch in the centre of the bench, where it can be tasted, rather than hidden."
+          "text": "\"What would she say about this one?\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "That I rushed the second rise. And then she'd have eaten three. She'd have liked that you chose the crooked one."
+        },
+        {
+          "text": "He turns the second tray before he shuts the oven door. The first he leaves in the middle of the bench, where anyone could see it."
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/baker.mp3",
@@ -2431,65 +2722,71 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:03 a.m. The shutter is halfway up. Dawn puts a pale stripe across the counter, just wide enough for one tray.",
+          "text": "5:03 a.m. The shutter is half up. A stripe of early light lies across the counter, about one tray wide.",
           "cg": "none"
         },
         {
-          "text": "Sota sets down the orange-sesame rolls. He has brushed the flour from his jacket and retied his braid. The blank price card is still in his hand."
+          "text": "Sota puts the orange rolls down in it. He has brushed off his jacket and retied his braid. The price card is still blank."
+        },
+        {
+          "text": "\"Where do the salt rolls go?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "The salt rolls can go beside them. Nobody has to choose only one."
+          "text": "Next to them. Nobody has to pick only one."
         },
         {
-          "text": "He seems surprised to hear himself say it. You slide the old wooden tray a little to the left, making room without removing anything."
-        },
-        {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "Yes. Like that."
-        },
-        {
-          "text": "The first customer will be here in twenty minutes. Sota has time to write the card, hide the tray, or find a new task that lasts until the decision has made itself."
-        },
-        {
-          "text": "He reaches for the cloth. Stops. Puts it down."
+          "text": "\"Did you hear what you just said?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "I was going to polish the glass again. It has probably suffered enough attention."
+          "text": "I did. I surprised myself."
         },
         {
-          "text": "You stand beside him behind the counter. From here, the room looks different: the door you came through, the little bell, the place where somebody will ask who made these."
+          "text": "You slide the old wooden tray to the left to make room. Nothing has to come off the counter."
         },
         {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "Will you stay for breakfast? After I open. We can sit by the window. I would rather not have a counter between us the whole time."
+          "text": "\"The first customer's in twenty minutes. What goes on the card?\""
         },
         {
-          "text": "He touches the loose ribbon at your wrist, then leaves it alone. His hand rests palm down beside yours on the wood."
+          "text": "He reaches for the glass cloth, stops, and puts it down again."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "And another day, when I'm not covered in flour, perhaps dinner. I can manage a restaurant. I know that sounds unlikely after tonight."
+          "text": "I was about to polish the case for the third time. I do that when I don't want to decide."
         },
         {
-          "text": "You look at the price card. He laughs under his breath and picks up the pen."
+          "text": "\"I noticed. It's very clean.\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "One brave thing first. Then I can attempt the second without dropping the first on the floor."
+          "text": "Will you stay for breakfast, after I open? By the window. I'd rather not have a counter between us."
+        },
+        {
+          "text": "\"I was promised breakfast four hours ago.\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "You were. And some other day, when I'm not covered in flour, I'd like to take you to dinner. I can manage a restaurant. I know tonight doesn't prove it."
+        },
+        {
+          "text": "He touches the ribbon on your wrist, then picks up the pen."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "One brave thing at a time. The card first. What do you think?"
         }
       ],
       "music": "/labs/visual-novel/after-hours/music/baker.mp3",
@@ -2577,35 +2874,53 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:27 a.m. Sota writes ORANGE AND SESAME in large, steady letters. Beneath it, smaller: Sota's morning rolls.",
+          "text": "5:27 a.m. Sota writes ORANGE AND SESAME in big steady letters. Underneath, smaller: \"Sota's morning rolls.\"",
           "cg": "/labs/visual-novel/after-hours/cg/baker-good.webp"
         },
         {
-          "text": "The first customer asks whether they are new. He says yes. No apology follows it."
-        },
-        {
-          "text": "When the bell stops ringing, he looks at the space where two rolls used to be, then at you."
+          "text": "The first customer is a woman with a pram. \"Are these new?\""
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "smile",
-          "text": "She said she'd come back for another. I should probably make more before that happens."
+          "text": "Yes. They're mine."
         },
         {
-          "text": "Instead, for one minute, he stays exactly where he is. He takes your ribbon-wrapped wrist and brings your hand to his mouth, asking with his eyes before pressing a kiss to your knuckles."
+          "text": "She buys two. When the bell stops ringing he stares at the gap in the tray, then at you."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "smile",
+          "text": "She said she'd be back for more. I should start another batch."
+        },
+        {
+          "text": "\"In a minute.\""
+        },
+        {
+          "text": "He takes your hand, ribbon and all, and kisses your knuckles."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "I would like to kiss you properly too. If that's welcome."
+          "text": "I'd like to kiss you properly as well. If you'd like that."
         },
         {
-          "text": "It is. He leans down, one hand settling gently at your back. The kiss is shy until you touch his collar; then he forgets to leave room for another apology."
+          "text": "\"I've been waiting since the flour.\""
         },
         {
-          "text": "You eat breakfast by the window. Your two crooked rolls are on the same plate. Sota unties the ribbon and sets it beside the recipe book, ready to be used again."
+          "text": "He bends down, one hand careful at your back. He's shy about it until you take hold of his collar. After that he forgets to say sorry for anything."
+        },
+        {
+          "text": "You eat breakfast by the window, your two crooked rolls on one plate. He unties the ribbon and lays it beside the recipe book."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "For next time. You still can't do the knot."
         }
       ],
       "ending": {
@@ -2620,41 +2935,53 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:27 a.m. Sota sets out a small tasting plate. He writes TRIAL BATCH on the card and places it beside his grandmother's rolls.",
+          "text": "5:27 a.m. Sota cuts three rolls into pieces on a small plate, writes TRIAL BATCH on the card, and sets it beside his grandmother's tray.",
           "cg": "none"
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "I can ask what people think. That would be a start."
+          "text": "I'll ask people what they think. That's a start, isn't it?"
         },
         {
-          "text": "The first customer takes a piece. Says the orange is lovely. Sota writes that down as carefully as he wrote the salt adjustment."
+          "text": "\"It's a start.\""
         },
         {
-          "text": "You help carry the empty trays back to the kitchen. He makes you breakfast and insists on sitting down for at least half of it."
+          "text": "The first customer takes a piece and says the orange is lovely. He writes that in the book too."
         },
         {
-          "who": "baker",
-          "show": "baker",
-          "pose": "soft",
-          "text": "Otherwise you'll remember me as a pair of hands disappearing into an oven."
-        },
-        {
-          "text": "At the door, you give him the ribbon. He folds it twice and slips it into the recipe book beside the new page."
+          "text": "You help carry the empty trays back. He makes you breakfast, and you make him sit down for half of it."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "Thank you. For staying long enough to taste it. Could you come back when I've tried the salt again?"
+          "text": "Thank you. Otherwise you'd only remember me as a back bent over an oven."
         },
         {
-          "text": "You say you would like that. He writes the next baking day on the back of a receipt, then adds his number beneath it."
+          "text": "At the door you slip the ribbon off. \"This is yours.\""
         },
         {
-          "text": "This time, when his fingers touch yours, he does not immediately step away."
+          "text": "He folds it twice and tucks it into the recipe book, at the new page."
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "Thank you for staying long enough to taste it. Would you come back when I've fixed the salt?"
+        },
+        {
+          "text": "\"When's that?\""
+        },
+        {
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "Thursday. I'll write it down for you."
+        },
+        {
+          "text": "He writes it on the back of a receipt and, after a moment, adds his number underneath. When he hands it over, he doesn't let go straight away."
         }
       ],
       "ending": {
@@ -2669,35 +2996,50 @@ export const afterHours: Story = {
       "focus": "50% 50%",
       "lines": [
         {
-          "text": "5:27 a.m. Sota takes the orange-sesame tray into the kitchen. The price card goes back in the drawer without a word on it.",
+          "text": "5:27 a.m. Sota carries the orange tray back into the kitchen. The card goes in the drawer, still blank.",
           "cg": "none"
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "neutral",
-          "text": "Perhaps another morning. I should get the ordinary batch right first."
+          "text": "Another morning, perhaps. I should get the ordinary batch right first."
         },
         {
-          "text": "The ordinary batch is already perfect. You can see it cooling beside the oven, every knot turned the same way."
+          "text": "\"The ordinary batch is already right.\""
         },
         {
-          "text": "He wraps two experimental rolls for you to take home. The paper is warm in your hands, and a little oil darkens one corner."
+          "who": "baker",
+          "show": "baker",
+          "pose": "neutral",
+          "text": "Then I should keep it that way."
+        },
+        {
+          "text": "He wraps two of the orange rolls in paper for you. They're still warm."
         },
         {
           "who": "baker",
           "show": "baker",
           "pose": "soft",
-          "text": "It shouldn't go to waste. I hope they're still pleasant when you get upstairs."
+          "text": "Take these, please. I don't want them wasted. I hope they're still nice by the time you're upstairs."
         },
         {
-          "text": "You slip off the ribbon and leave it on the bench. Sota folds it neatly, then goes to open the shutter the rest of the way."
+          "text": "\"Sota, you could put them out tomorrow.\""
         },
         {
-          "text": "From the street, the bakery looks exactly as it did yesterday. The familiar names are written on the cards. His grandmother's photograph watches the first customers come in."
+          "who": "baker",
+          "show": "baker",
+          "pose": "soft",
+          "text": "Tomorrow, yes. Maybe."
         },
         {
-          "text": "At home, you cut one roll in half. The orange smell fills your small kitchen. You eat slowly, trying to decide whether returning for breakfast would help, and wishing you had answered differently while the card was still blank."
+          "text": "You leave the ribbon on the bench. He folds it neatly and goes to raise the shutter the rest of the way."
+        },
+        {
+          "text": "From the street the bakery looks the way it did yesterday. The same names on the same cards. The photograph above the bench."
+        },
+        {
+          "text": "Upstairs you cut one roll in half, and the kitchen fills with orange. You eat it slowly. You wish you'd said something else while the card was blank."
         }
       ],
       "ending": {
