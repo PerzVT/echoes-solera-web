@@ -35,7 +35,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "I only came in to get out of the rain.",
+              "text": "I only went in to get out of the rain.",
               "x": 7,
               "y": 6,
               "w": 37
@@ -52,7 +52,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "That was the plan.",
+              "text": "The bargain bin had other ideas.",
               "x": 7,
               "y": 70,
               "w": 35
@@ -66,14 +66,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Someone had sold a whole childhood by the kilogram.",
+              "text": "Old consoles and games, sold by the kilo.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "speech",
-              "text": "And somehow kept every cable.",
+              "text": "What's this one? It's heavy.",
               "x": 7,
               "y": 40,
               "w": 34,
@@ -97,7 +97,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "VR? In this thing?",
+              "text": "A VR case. Is anything in it?",
               "x": 7,
               "y": 6,
               "w": 35,
@@ -116,7 +116,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Oh. Not empty.",
+              "text": "No headset. Just this.",
               "x": 7,
               "y": 71,
               "w": 33,
@@ -133,14 +133,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Too heavy for a coupon.",
+              "text": "A ticket. Too heavy to be a coupon.",
               "x": 7,
               "y": 6,
               "w": 26
             },
             {
               "kind": "speech",
-              "text": "Is this actual metal?",
+              "text": "Is this real metal?",
               "x": 5,
               "y": 40,
               "w": 20,
@@ -164,14 +164,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Nine Lives. The place you needed someone to get into.",
+              "text": "Nine Lives. The game you could only join by invitation.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "speech",
-              "text": "Who leaves an invitation in a bargain bin?",
+              "text": "Who leaves one of these in a bargain bin?",
               "x": 7,
               "y": 22,
               "w": 35,
@@ -181,7 +181,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "Probably someone who had better places to be.",
+              "text": "For a second I could almost see the city.",
               "x": 7,
               "y": 70,
               "w": 37
@@ -195,7 +195,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "It is probably a promotion that expired years ago.",
+              "text": "It's probably expired. These always are.",
               "x": 5,
               "y": 5,
               "w": 29,
@@ -205,14 +205,14 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "I could leave it there.",
+              "text": "I put it back.",
               "x": 5,
               "y": 38,
               "w": 30
             },
             {
               "kind": "speech",
-              "text": "...How much for this?",
+              "text": "...Excuse me. How much for this?",
               "x": 5,
               "y": 71,
               "w": 29,
@@ -229,7 +229,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Five dollars. Everything in that bin.",
+              "text": "Five dollars for anything in that bin.",
               "x": 5,
               "y": 5,
               "w": 26,
@@ -249,7 +249,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Especially that. Saves me dusting it.",
+              "text": "Especially that. One less thing to dust.",
               "x": 7,
               "y": 70,
               "w": 35,
@@ -266,7 +266,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Does it work?",
+              "text": "Does it still work?",
               "x": 5,
               "y": 5,
               "w": 24,
@@ -276,7 +276,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "For five dollars, you get the mystery.",
+              "text": "For five dollars, you get to find out.",
               "x": 50,
               "y": 6,
               "w": 19,
@@ -286,7 +286,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "Fair enough.",
+              "text": "Fair enough. I took it.",
               "x": 7,
               "y": 70,
               "w": 32
@@ -307,7 +307,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "One scan. Then I am leaving.",
+              "text": "One scan. Then I go home.",
               "x": 5,
               "y": 39,
               "w": 19,
@@ -317,7 +317,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "I wanted it to be nothing.",
+              "text": "I was hoping it would do nothing.",
               "x": 7,
               "y": 71,
               "w": 31
@@ -340,7 +340,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Come on. I charged you.",
+              "text": "Black screen. Great.",
               "x": 5,
               "y": 40,
               "w": 19,
@@ -350,7 +350,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Hello?",
+              "text": "Hello? Anyone?",
               "x": 5,
               "y": 70,
               "w": 25,
@@ -367,14 +367,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "inset",
-              "text": "Delivery Confirmed. Prepare for the Dive.",
+              "text": "Delivery confirmed. Prepare for the dive.",
               "x": 51,
               "y": 9,
               "w": 32
             },
             {
               "kind": "speech",
-              "text": "Delivery to where?",
+              "text": "Delivery? To who?",
               "x": 4,
               "y": 40,
               "w": 18,
@@ -400,14 +400,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "The rain stopped.",
+              "text": "The light went out. So did the rain.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "speech",
-              "text": "I already left.",
+              "text": "I'm... inside again?",
               "x": 43,
               "y": 33,
               "w": 22,
@@ -417,7 +417,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "So why was I back at the bin?",
+              "text": "I'd walked out of here. I was sure of it.",
               "x": 7,
               "y": 70,
               "w": 30
@@ -441,7 +441,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Less than a day later.",
+              "text": "The next morning, it was at my door.",
               "x": 7,
               "y": 6,
               "w": 35
@@ -458,7 +458,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "No answer.",
+              "text": "No courier. No label. Just the crest.",
               "x": 7,
               "y": 70,
               "w": 34
@@ -472,7 +472,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Mom?",
+              "text": "Mom? Pick up.",
               "x": 5,
               "y": 5,
               "w": 20,
@@ -482,14 +482,14 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "The apartment gave me the same answer as the phone.",
+              "text": "Voicemail. She was on shift until tonight.",
               "x": 5,
               "y": 19,
               "w": 30
             },
             {
               "kind": "speech",
-              "text": "Fine. You and me, suspicious box.",
+              "text": "Fine. It's you and me, box.",
               "x": 5,
               "y": 70,
               "w": 36,
@@ -515,7 +515,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Not even a little?",
+              "text": "Locked. Of course.",
               "x": 4,
               "y": 35,
               "w": 21,
@@ -525,7 +525,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Wait.",
+              "text": "Wait. What's this slot?",
               "x": 7,
               "y": 70,
               "w": 28,
@@ -542,14 +542,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "I had seen that shape before.",
+              "text": "A slot. Thin, and about as wide as a card.",
               "x": 7,
               "y": 6,
               "w": 32
             },
             {
               "kind": "speech",
-              "text": "No. That cannot be right.",
+              "text": "No. No way.",
               "x": 4,
               "y": 36,
               "w": 22,
@@ -559,7 +559,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "I went to get it anyway.",
+              "text": "The ticket was still in my hoodie.",
               "x": 7,
               "y": 70,
               "w": 34
@@ -573,7 +573,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Five dollars.",
+              "text": "Okay, five-dollar ticket.",
               "x": 7,
               "y": 6,
               "w": 30,
@@ -583,7 +583,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Please do not be the expensive part.",
+              "text": "Please don't break anything.",
               "x": 4,
               "y": 35,
               "w": 23,
@@ -609,14 +609,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "No confetti. No letter.",
+              "text": "No letter. No invoice.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "speech",
-              "text": "This cannot all be for me.",
+              "text": "This can't all be for me.",
               "x": 4,
               "y": 35,
               "w": 23,
@@ -626,7 +626,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "A suit. A headset. And a game.",
+              "text": "A suit. A headset. And one game.",
               "x": 7,
               "y": 70,
               "w": 34
@@ -640,7 +640,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Nine Lives.",
+              "text": "A Nine Lives headset.",
               "x": 7,
               "y": 6,
               "w": 35,
@@ -650,7 +650,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "I had never seen one outside a screen.",
+              "text": "I'd only ever seen one in videos.",
               "x": 7,
               "y": 18,
               "w": 35
@@ -674,21 +674,21 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Solera Prime",
+              "text": "The box said Solera Prime.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "narration",
-              "text": "A whole city in a box.",
+              "text": "A whole city, and no invite code on the back.",
               "x": 5,
               "y": 35,
               "w": 34
             },
             {
               "kind": "speech",
-              "text": "No invite code. No waiting list.",
+              "text": "So the ticket was the invite.",
               "x": 7,
               "y": 70,
               "w": 34,
@@ -705,21 +705,21 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "I used to stay up for release nights.",
+              "text": "I used to stay up all night for a new game.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "narration",
-              "text": "Somewhere along the way, games had become another thing to finish.",
+              "text": "Then games turned into one more thing to finish.",
               "x": 5,
               "y": 37,
               "w": 34
             },
             {
               "kind": "speech",
-              "text": "When did that happen?",
+              "text": "When did I stop having fun?",
               "x": 7,
               "y": 70,
               "w": 34,
@@ -736,21 +736,21 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Nothing had started yet.",
+              "text": "Nothing had even started.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "narration",
-              "text": "Still, I was smiling.",
+              "text": "I was already smiling.",
               "x": 5,
               "y": 37,
               "w": 32
             },
             {
               "kind": "speech",
-              "text": "Am I excited for a game again?",
+              "text": "Okay. One try.",
               "x": 7,
               "y": 70,
               "w": 36,
@@ -777,7 +777,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Okay. New game.",
+              "text": "It fits. How does it fit?",
               "x": 7,
               "y": 6,
               "w": 35,
@@ -787,14 +787,14 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "No one to impress. No score to catch up to.",
+              "text": "No scores to chase. Nobody watching.",
               "x": 7,
               "y": 18,
               "w": 37
             },
             {
               "kind": "speech",
-              "text": "Just look around.",
+              "text": "Just a look around.",
               "x": 7,
               "y": 70,
               "w": 34,
@@ -820,7 +820,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "That is surprisingly...",
+              "text": "Huh. It's actually comfy...",
               "x": 7,
               "y": 18,
               "w": 36,
@@ -830,7 +830,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "The bed vanished before I found the word.",
+              "text": "The room was gone before I finished.",
               "x": 7,
               "y": 70,
               "w": 37
@@ -844,14 +844,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "Not a loading screen.",
+              "text": "This wasn't a loading screen.",
               "x": 7,
               "y": 6,
               "w": 35
             },
             {
               "kind": "speech",
-              "text": "Definitely not a loading screen.",
+              "text": "Loading screens don't have wind!",
               "x": 5,
               "y": 35,
               "w": 36,
@@ -886,7 +886,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Ow.",
+              "text": "Ow. That actually hurt.",
               "x": 7,
               "y": 40,
               "w": 22,
@@ -896,7 +896,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "I had not expected the ground to have an opinion.",
+              "text": "Games weren't supposed to hurt. Or come with a coat.",
               "x": 7,
               "y": 73,
               "w": 37
@@ -917,7 +917,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "You are not a skybox.",
+              "text": "This isn't a backdrop.",
               "x": 4,
               "y": 39,
               "w": 22,
@@ -927,7 +927,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "The wind kept going after I stopped moving.",
+              "text": "Nobody here was waiting for me to press start.",
               "x": 7,
               "y": 73,
               "w": 34
@@ -941,7 +941,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "Same face. Better coat.",
+              "text": "Same face. Much better coat.",
               "x": 7,
               "y": 6,
               "w": 35,
@@ -951,7 +951,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "speech",
-              "text": "Slightly ambitious boots.",
+              "text": "Boots I can't walk in yet.",
               "x": 52,
               "y": 37,
               "w": 25,
@@ -961,7 +961,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "For once, I did not want to skip the beginning.",
+              "text": "For once, I didn't want to skip the intro.",
               "x": 7,
               "y": 73,
               "w": 34
@@ -975,7 +975,7 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "speech",
-              "text": "There has to be a tutorial around here.",
+              "text": "There has to be a tutorial somewhere.",
               "x": 7,
               "y": 6,
               "w": 35,
@@ -994,7 +994,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "Someone noticed the cart before I did.",
+              "text": "Someone above saw the cart before I did.",
               "x": 7,
               "y": 76,
               "w": 34
@@ -1028,7 +1028,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "Above the market, a hand slowly unclenched.",
+              "text": "On the balcony above, someone lowered his hand.",
               "x": 7,
               "y": 76,
               "w": 32
@@ -1042,14 +1042,14 @@ export const goldenTicket: MangaSeries = {
           "letters": [
             {
               "kind": "narration",
-              "text": "The gate enforcer was supposed to stay at his post.",
+              "text": "The gate enforcer isn't meant to leave his post.",
               "x": 7,
               "y": 6,
               "w": 37
             },
             {
               "kind": "speech",
-              "text": "Careless newcomer.",
+              "text": "Careless. Watch the road.",
               "x": 3,
               "y": 43,
               "w": 25,
@@ -1059,7 +1059,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "He had moved before the thought was finished.",
+              "text": "He had stepped in before he decided to.",
               "x": 7,
               "y": 78,
               "w": 39
@@ -1093,7 +1093,7 @@ export const goldenTicket: MangaSeries = {
             },
             {
               "kind": "narration",
-              "text": "The city had an answer. He did not look ready to give it.",
+              "text": "He knew. He didn't look ready to say how.",
               "x": 7,
               "y": 72,
               "w": 35
