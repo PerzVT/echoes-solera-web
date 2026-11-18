@@ -164,32 +164,88 @@ create index if not exists nl_jobs_owner on nl_jobs (owner, created_at desc);
 create index if not exists nl_jobs_episode on nl_jobs (episode_id, created_at desc);
 create index if not exists nl_jobs_created on nl_jobs (created_at);
 
--- Tidebell Cove multiplayer (app/api/cove, lib/labs/store/cove.ts). One row per visitor in the cove, found by
--- the sha-256 of the token the server handed it. state is the validated duck {x,z,yaw,band,wave,fish,catchId,fishSeq}.
--- addr is the hashed client address. Times are epoch milliseconds from the function's clock. tokens and at are
--- the visitor's request bucket.
-create table if not exists nl_cove_players (
+-- Tidebell Cove multiplayer (app/api/cove, lib/labs/store/cove.ts). The game's room server keeps its rooms in memory;
+-- here they live in these tables so any function instance can answer. Times are epoch milliseconds from the
+-- function's clock. Every timer (seat lease, music boundary, print, cooldowns, the six-second drop) is worked
+-- out from these stored times on each request.
+-- The first, single-room version's tables.
+drop table if exists nl_cove_players;
+drop table if exists nl_cove_porch;
+
+-- One row per visitor, found by the sha-256 of the token the server handed it; addr is the hashed client address.
+-- room and inst are null until the game joins a room. duck is the validated {x,z,yaw,wave,fish,catchId,fishSeq}.
+-- name0 and name1 index the two public word lists. vote counts only while vote_period equals the room's started_at.
+-- queued_at orders the Tide Hall queue. tokens and at are the request bucket.
+create table if not exists nl_cove_visitors (
   id            text primary key,
-  room          text not null,
   token_hash    text not null,
   addr          text not null,
-  state         jsonb,
+  room          text,
+  inst          integer,
+  joined        bigint,
+  name0         integer,
+  name1         integer,
+  outfit        jsonb,
+  duck          jsonb,
   fish_started  bigint not null default 0,
+  last_say      bigint not null default 0,
+  last_emote    bigint not null default 0,
+  last_report   bigint not null default 0,
+  vote          integer,
+  vote_period   bigint,
+  queued_at     bigint,
   tokens        double precision not null,
   at            bigint not null,
   seen          bigint not null
 );
-create unique index if not exists nl_cove_players_token on nl_cove_players (token_hash);
-create index if not exists nl_cove_players_room on nl_cove_players (room, seen);
+create unique index if not exists nl_cove_visitors_token on nl_cove_visitors (token_hash);
+create index if not exists nl_cove_visitors_room on nl_cove_visitors (room, inst, seen);
+create index if not exists nl_cove_visitors_seen on nl_cove_visitors (seen);
 
--- The print press shared by everyone in a room: the order running or last run.
-create table if not exists nl_cove_porch (
-  room     text primary key,
-  id       text not null,
-  design   text not null,
-  started  bigint not null,
-  owner    text not null
+-- One row per room instance: the music clock (track, started_at), the Tide Hall seat lease, the event counter,
+-- the print press order and a version for compare-and-set updates. touched is the last write.
+create table if not exists nl_cove_rooms (
+  room        text not null,
+  inst        integer not null,
+  track       integer not null default 0,
+  started_at  bigint not null,
+  seat_id     text,
+  seat_since  bigint,
+  seq         integer not null default 0,
+  porch       jsonb,
+  version     integer not null default 0,
+  touched     bigint not null,
+  primary key (room, inst)
 );
+
+-- The last twenty events of each room instance (say, emote, emote-stop). arg is a phrase or emote id.
+create table if not exists nl_cove_events (
+  room    text not null,
+  inst    integer not null,
+  seq     integer not null,
+  type    text not null,
+  player  text not null,
+  arg     text,
+  at      bigint not null,
+  primary key (room, inst, seq),
+  foreign key (room, inst) references nl_cove_rooms (room, inst) on delete cascade
+);
+
+-- Reports, written before the game is told the report was saved. Names are built from the word lists and the
+-- reason is one of four ids, so nothing here was typed by a visitor. events is the room log at that moment.
+create table if not exists nl_cove_reports (
+  id             bigserial primary key,
+  at             bigint not null,
+  room           text not null,
+  inst           integer not null,
+  reporter_hash  text not null,
+  target_id      text not null,
+  target_hash    text not null,
+  target_name    text not null,
+  reason         text not null,
+  events         jsonb not null
+);
+create index if not exists nl_cove_reports_at on nl_cove_reports (at);
 
 -- Request buckets per hashed client address, so one address cannot flood the cove with tokens or requests.
 create table if not exists nl_cove_limits (
