@@ -124,9 +124,10 @@ export const projects: Project[] = [
     slug: "visual-novel",
     name: "Visual novel",
     line: "Turn a story into a visual novel with branches.",
-    primary: { label: "Play the demo", href: "/visual-novel/after-hours" },
+    primary: { label: "Play After Hours", href: "/visual-novel/after-hours" },
     tone: "dark",
-    bg: `${L}/visual-novel/cg/juri-rooftop.webp`,
+    // The title art: the four leads outside the store in the rain.
+    bg: `${L}/visual-novel/after-hours/ui/title.webp`,
   },
   {
     slug: "game-ads",
