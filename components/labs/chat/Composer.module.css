@@ -5,9 +5,11 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-strong);
-  border-radius: var(--r-card);
-  background: var(--surface);
-  box-shadow: 0 1px 0 rgb(246 243 236 / 0.04) inset, 0 24px 48px -24px rgb(0 0 0 / 0.55);
+  /* Concentric with the send button: its control radius plus the foot's 16px inset. The inset also keeps
+     the shouldered send button clear of the corner's curve. */
+  border-radius: var(--r-panel);
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-3);
   transition:
     border-color var(--dur-feedback) var(--ease-out),
     background-color var(--dur-feedback) var(--ease-out),
@@ -15,7 +17,8 @@
 }
 .compact {
   --text-h: 132px;
-  border-radius: 16px;
+  /* 12px control + 8px foot inset. */
+  border-radius: var(--r-card);
 }
 @media (hover: hover) and (pointer: fine) {
   .box:hover:not([data-state="disabled"], [data-state="error"]) {
@@ -25,17 +28,18 @@
 /* Focused: the edge lifts to the text colour and a soft ring of the focus colour sits outside it. */
 .box:focus-within {
   border-color: var(--text);
-  box-shadow: 0 0 0 3px rgb(159 165 232 / 0.28), 0 24px 48px -24px rgb(0 0 0 / 0.55);
+  box-shadow: var(--edge-light), 0 0 0 3px rgb(159 165 232 / 0.28), var(--elev-3);
 }
 .box[data-state="error"] {
   border-color: var(--danger);
 }
 .box[data-state="error"]:focus-within {
-  box-shadow: 0 0 0 3px rgb(255 143 133 / 0.22), 0 24px 48px -24px rgb(0 0 0 / 0.55);
+  box-shadow: 0 0 0 3px rgb(255 143 133 / 0.22), var(--elev-3);
 }
 .box[data-state="disabled"] {
   border-color: var(--border);
   background: var(--surface-sunken);
+  box-shadow: none;
 }
 .box[data-over] {
   border-color: var(--text);
@@ -167,7 +171,7 @@
   gap: 8px;
   height: 40px;
   padding: 0 14px 0 12px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-control);
   color: var(--text-muted);
   font-weight: 500;
   font-size: 0.875rem;
@@ -178,7 +182,7 @@
     scale var(--dur-press) var(--ease-out);
 }
 .attach:active:not(:disabled) {
-  scale: 0.97;
+  scale: 0.96;
 }
 .attach:disabled {
   opacity: 0.45;

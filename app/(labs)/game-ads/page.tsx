@@ -38,7 +38,7 @@ export default function GameAds() {
           <div className={styles.heroCopy}>
             <h1 className="display">Video ads for your game</h1>
             <p className={styles.lede}>We make short vertical ads from your build, in your game&apos;s art style, for game studios.</p>
-            <ButtonLink href="#request">Request an ad</ButtonLink>
+            <ButtonLink href="#request" variant="solid">Request an ad</ButtonLink>
           </div>
         </section>
 

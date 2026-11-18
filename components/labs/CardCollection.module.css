@@ -29,12 +29,14 @@
   gap: 4px;
   padding: 4px;
   border: 1px solid var(--border);
-  border-radius: var(--r-pill);
+  /* Concentric with the tabs: their control radius plus the 4px padding. */
+  border-radius: calc(var(--r-control) + 4px);
+  background: rgb(255 255 255 / 0.35);
 }
 .tabs button {
   min-height: 40px;
   padding: 0 16px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-control);
   font-weight: 500;
   font-size: 0.9375rem;
   color: var(--text-muted);
@@ -54,6 +56,7 @@
 .tabs button[aria-selected="true"] {
   color: var(--on-action);
   background: var(--action);
+  box-shadow: var(--elev-1);
 }
 
 /* The binder, drawn: a teal cloth cover (the colour of the kit's binder) open on two cream pocket
@@ -123,12 +126,30 @@
     translate var(--dur-move) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
+/* The card rests on its sleeve with a contact shadow; lifted (hover or keyboard focus) it leaves the sleeve
+   and the shadow spreads and softens, so the card under the pointer or the focus is the one that moves. */
 .slot > span > span:first-child {
-  box-shadow: 0 8px 18px rgb(23 32 42 / 0.22);
+  box-shadow:
+    0 1px 2px rgb(23 32 42 / 0.18),
+    0 8px 18px -4px rgb(23 32 42 / 0.22);
+  transition: box-shadow var(--dur-move) var(--ease-out);
+}
+.slot:focus-visible {
+  translate: 0 -6px;
+}
+.slot:focus-visible > span > span:first-child {
+  box-shadow:
+    0 2px 4px rgb(23 32 42 / 0.14),
+    0 22px 36px -10px rgb(23 32 42 / 0.4);
 }
 @media (hover: hover) and (pointer: fine) {
   .slot:hover {
     translate: 0 -6px;
+  }
+  .slot:hover > span > span:first-child {
+    box-shadow:
+      0 2px 4px rgb(23 32 42 / 0.14),
+      0 22px 36px -10px rgb(23 32 42 / 0.4);
   }
 }
 .slot:active {
@@ -151,15 +172,24 @@
   height: 44px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: var(--r-control);
   border: 1px solid var(--border-strong);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
   transition:
     background-color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
+.pager button:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: default;
+}
 @media (hover: hover) and (pointer: fine) {
-  .pager button:hover {
+  .pager button:hover:not(:disabled) {
     background: var(--surface-hover);
+    box-shadow: var(--elev-2);
   }
 }
 .pager button:active {
@@ -173,9 +203,10 @@
   max-height: calc(100dvh - 32px);
   padding: 0;
   border: 0;
-  border-radius: var(--r-stage);
+  border-radius: var(--r-panel);
   background: #f7f3e8;
   color: #17202a;
+  box-shadow: var(--elev-4);
   overflow: auto;
 }
 .dialog[open] {
@@ -277,12 +308,12 @@
   margin: 20px 0 8px;
   padding: 4px;
   border: 1px solid #8f8a7c;
-  border-radius: var(--r-pill);
+  border-radius: calc(var(--r-control) + 4px);
 }
 .finish button {
   min-width: 92px;
   min-height: 40px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-control);
   font-weight: 500;
   color: #55605f;
   transition:
@@ -296,6 +327,7 @@
 .finish button[aria-pressed="true"] {
   color: #f7f3e8;
   background: #143a44;
+  box-shadow: 0 1px 2px rgb(20 58 68 / 0.3), 0 4px 10px -4px rgb(20 58 68 / 0.4);
 }
 .actions {
   display: flex;
@@ -311,10 +343,6 @@
   }
 }
 @media (max-width: 720px) {
-  /* The tabs wrap to two rows on phones; a pill outline would pinch them. */
-  .tabs {
-    border-radius: 24px;
-  }
   .head h1 {
     flex-basis: 100%;
   }
@@ -339,7 +367,8 @@
   .dialog[open] {
     animation-name: fade-in;
   }
-  .slot:hover {
+  .slot:hover,
+  .slot:focus-visible {
     translate: none;
   }
   .pocket {

@@ -34,17 +34,27 @@
   width: 100%;
   min-height: 72px;
   padding: 6px 12px 6px 6px;
-  border-radius: 12px;
+  /* Concentric with the thumbnail: its 6px radius plus the 6px padding. */
+  border-radius: var(--r-control);
   text-align: left;
-  transition: background-color var(--dur-feedback) var(--ease-out);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
 }
+.row:active {
+  scale: 0.98;
+}
+/* The generation on the stage: a raised, lit row with an edge in the action colour, so the list says at a
+   glance which one is large beside it. */
 .row[aria-pressed="true"] {
-  background: var(--surface-hover);
-  box-shadow: inset 0 0 0 1px var(--border-strong);
+  background: var(--tint-raised), var(--surface-hover);
+  box-shadow: inset 0 0 0 1.5px var(--action), var(--elev-2);
 }
 @media (hover: hover) and (pointer: fine) {
-  .row:hover {
+  .row:not([aria-pressed="true"]):hover {
     background: var(--surface);
+    box-shadow: var(--elev-1);
   }
 }
 .thumb {
@@ -55,6 +65,15 @@
   overflow: hidden;
   border-radius: 6px;
   background: var(--surface-sunken);
+}
+.thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
 }
 .thumb img {
   object-fit: cover;
@@ -118,8 +137,18 @@
   max-width: calc(100cqw - 372px);
   aspect-ratio: 9 / 16;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: var(--r-card);
   background: #000;
+  box-shadow: var(--elev-3);
+}
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
 }
 .screen img,
 .screen video {
@@ -142,10 +171,16 @@
   min-width: 44px;
   height: 44px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: var(--r-control);
   background: rgb(0 0 0 / 0.55);
+  backdrop-filter: blur(8px);
   color: var(--on-media, #fff);
-  transition: background-color var(--dur-feedback) var(--ease-out);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.over:active {
+  scale: 0.96;
 }
 @media (hover: hover) and (pointer: fine) {
   .over:hover {
@@ -194,7 +229,7 @@
   min-height: 112px;
   padding: 12px;
   border: 1px solid var(--border-strong);
-  border-radius: 12px;
+  border-radius: var(--r-control);
   background: var(--surface-sunken);
   color: var(--text);
   font-size: 0.9375rem;

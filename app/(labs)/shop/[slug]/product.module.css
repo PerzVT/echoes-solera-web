@@ -7,11 +7,21 @@
 .media {
   justify-self: center;
   width: 100%;
+  position: relative;
   overflow: hidden;
   border-radius: var(--r-stage);
-  outline: 1px solid rgb(255 255 255 / 0.08);
-  outline-offset: -1px;
   background: var(--surface);
+  box-shadow: var(--elev-3);
+}
+/* Light on the picture's edge, drawn over it. */
+.media::after,
+.sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
 }
 .media img {
   width: 100%;
@@ -47,9 +57,11 @@
 }
 
 .sheet {
+  position: relative;
   overflow: hidden;
   border-radius: var(--r-stage);
   background: var(--surface);
+  box-shadow: var(--elev-2);
 }
 .sheet img {
   width: 100%;

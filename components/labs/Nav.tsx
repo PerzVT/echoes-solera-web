@@ -20,7 +20,7 @@ const MIN_PILL_PAD = 15;
 
 /**
  * The site header: the mark, the nine projects in a dock centred between the mark and Open app, and Open
- * app. The current project wears the cream shouldered pill (the Button shape); the others are plain text.
+ * app. The current project wears a cream rounded pill on the control radius; the others are plain text.
  * On home the parent passes the current section and a chooser, so a project link switches the section in
  * place and the pill slides to it; elsewhere the links go to the project pages and the current one comes
  * from the address. `current` is kept for older callers and no longer used.
@@ -49,7 +49,7 @@ export function Nav({
     const link = row.current?.querySelector<HTMLElement>('a[aria-current="page"]');
     if (!link) return setPill(null);
     // Where the padding is at its least (narrow windows), the pill reaches a little past the link so the
-    // word still clears the shoulders.
+    // word keeps clear of the corners.
     const spread = Math.max(0, MIN_PILL_PAD - parseFloat(getComputedStyle(link).paddingLeft));
     setPill({ x: link.offsetLeft - spread, w: link.offsetWidth + 2 * spread, h: link.offsetHeight, animate });
   }, []);
@@ -66,8 +66,9 @@ export function Nav({
     return () => ro.disconnect();
   }, [measure]);
 
-  // Three parts, so the slide is all transforms: two end caps that move and a middle that stretches.
-  const cap = pill ? pill.h * 0.4444 : 0;
+  // Three parts, so the slide is all transforms: two rounded end caps that move and a middle that stretches.
+  // A cap is as wide as the control radius (12px, labs.css), so the stretch never bends a corner.
+  const cap = pill ? 12 : 0;
   const pillVars = pill
     ? ({
         "--px": `${pill.x}px`,

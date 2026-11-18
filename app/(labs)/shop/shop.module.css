@@ -10,6 +10,7 @@
   /* Matches the art's own backdrop so no seam shows while it loads. */
   background: #fadccc;
   color: var(--text);
+  box-shadow: var(--elev-3);
 }
 .heroArt {
   position: absolute;
@@ -44,6 +45,9 @@
   gap: 4px;
   border-radius: var(--r-card);
 }
+/* The picture is a raised tile: a resting shadow, light on its edge, and on hover or keyboard focus it lifts
+   and its shadow spreads. The card's own focus ring is replaced by a ring on the tile, which is the thing
+   that moves. */
 .thumb {
   position: relative;
   display: block;
@@ -51,9 +55,19 @@
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: var(--r-card);
-  outline: 1px solid rgb(255 255 255 / 0.08);
-  outline-offset: -1px;
   background: var(--surface);
+  box-shadow: var(--elev-1);
+  transition:
+    translate var(--dur-move) var(--ease-out),
+    box-shadow var(--dur-move) var(--ease-out);
+}
+.thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
 }
 .thumb img {
   width: 100%;
@@ -61,11 +75,25 @@
   object-fit: cover;
   transition: scale 300ms var(--ease-out);
 }
+.card:focus-visible {
+  outline: none;
+}
+.card:focus-visible .thumb {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  translate: 0 -4px;
+  box-shadow: var(--elev-2);
+}
 @media (hover: hover) and (pointer: fine) {
+  .card:hover .thumb {
+    translate: 0 -4px;
+    box-shadow: var(--elev-2);
+  }
   .card:hover .thumb img {
     scale: 1.04;
   }
 }
+
 .tag {
   position: absolute;
   left: 12px;
@@ -126,6 +154,10 @@
   }
   .card:hover .thumb img {
     scale: 1;
+  }
+  .card:hover .thumb,
+  .card:focus-visible .thumb {
+    translate: none;
   }
 }
 

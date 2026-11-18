@@ -10,6 +10,25 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 12vh 0 48px;
+  position: relative;
+  isolation: isolate;
+}
+/* A low glow of the brand's colour-field material behind the prompt box: the box is the one place to act, so
+   it is the one place the ground is lit. Blurred far past recognition, so it reads as light, not as a picture. */
+.page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* Inside the column's own width, so it can never widen the page on a phone. */
+  inset-inline: 0;
+  top: calc(12vh + 120px);
+  height: 520px;
+  background: url("/labs/brand/materials/06-colour-field.webp") center / cover;
+  opacity: 0.14;
+  filter: blur(72px) saturate(1.1);
+  -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent);
+  mask-image: radial-gradient(closest-side, #000 30%, transparent);
+  pointer-events: none;
 }
 .title {
   font-family: var(--font-display);
@@ -38,8 +57,8 @@
   align-items: center;
   height: 40px;
   padding: 0 18px;
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
   font-weight: 500;
   font-size: 0.9375rem;
   white-space: nowrap;
@@ -47,21 +66,29 @@
   transition:
     background-color var(--dur-feedback) var(--ease-out),
     border-color var(--dur-feedback) var(--ease-out),
-    color var(--dur-feedback) var(--ease-out);
+    color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
 }
+.tool:active {
+  scale: 0.96;
+}
+/* The chosen tool is filled with the action colour, so it reads at a glance and not only by its edge. */
 .tool[aria-current="page"] {
-  border-color: var(--text);
-  background: var(--surface-hover);
-  color: var(--text);
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--on-action);
+  box-shadow: var(--elev-1);
 }
 .tool:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 @media (hover: hover) and (pointer: fine) {
-  .tool:hover {
+  .tool:not([aria-current="page"]):hover {
     color: var(--text);
-    border-color: var(--text-muted);
+    border-color: var(--border-strong);
+    background: var(--surface);
   }
 }
 
@@ -70,6 +97,10 @@
     justify-content: flex-start;
     gap: 16px;
     padding: 8px 0 0;
+  }
+  .page::before {
+    top: 160px;
+    height: 360px;
   }
   .title {
     font-size: 1.75rem;

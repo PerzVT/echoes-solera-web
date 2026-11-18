@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { forwardRef, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { AnimatedMark, CheckIcon, ChevronIcon } from "@/components/labs/fx";
+import { ButtonInner, buttonClass } from "@/components/labs/Button";
 import { Icon, type IconName } from "@/components/labs/Icon";
 import { useDismiss } from "./hooks";
 import u from "./ui.module.css";
 
 /**
- * The chat screen's own controls: a plain rounded rectangle in three kinds, a square icon button and a pill.
- * Primary is the one strong action on screen; secondary is an outline; ghost is text that fills on hover.
+ * The creator's controls, on the site's one button system (components/labs/Button).
+ * primary is the shouldered shape and marks the one main action on a screen or dialog: Submit, Next,
+ * Generate, Save. Never two on one screen.
+ * solid (filled), secondary (outline) and ghost (text that fills on hover) are rounded rectangles on the
+ * control radius, as are the square icon button and the chip.
  */
-type Kind = "primary" | "secondary" | "ghost";
+type Kind = "primary" | "solid" | "secondary" | "ghost";
 
 type BtnProps = Omit<ComponentProps<"button">, "className"> & {
   kind?: Kind;
@@ -32,6 +36,22 @@ export const Btn = forwardRef<HTMLButtonElement, BtnProps>(function Btn({ kind =
   const mark = state === "loading" ? <AnimatedMark variant="busy" size={16} /> : state === "success" ? <CheckIcon size={16} /> : null;
   // The mark at work takes the icon's place: before the label, or after it on a button whose only icon trails.
   const trails = !icon && Boolean(iconAfter);
+  if (kind === "primary")
+    return (
+      <button
+        ref={ref}
+        type="button"
+        {...rest}
+        data-state={state}
+        aria-busy={loading || undefined}
+        onClick={state ? (e) => e.preventDefault() : onClick}
+        className={buttonClass("primary", "small", cx(wide && u.wide, u.shoulder, className))}
+      >
+        <ButtonInner shoulder icon={trails ? undefined : (mark ?? icon)} iconAfter={trails ? (mark ?? iconAfter) : iconAfter}>
+          {children}
+        </ButtonInner>
+      </button>
+    );
   return (
     <button
       ref={ref}

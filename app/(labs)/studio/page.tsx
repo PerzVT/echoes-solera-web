@@ -91,7 +91,7 @@ export default function Studio() {
               editing.
             </p>
             <div className={styles.actions}>
-              <ButtonLink href="#discuss">Discuss a project</ButtonLink>
+              <ButtonLink href="#discuss" variant="solid">Discuss a project</ButtonLink>
               <ButtonLink href="/" variant="secondary">
                 Explore projects
               </ButtonLink>

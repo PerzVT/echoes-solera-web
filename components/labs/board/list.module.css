@@ -46,11 +46,31 @@
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--r-card);
   background: var(--surface-sunken);
-  outline: 2px solid transparent;
+  box-shadow: var(--elev-1);
+  transition:
+    translate var(--dur-move) var(--ease-out),
+    box-shadow var(--dur-move) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+/* Light on the cover's edge, drawn over the picture. */
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
+}
+.open:focus-visible {
+  outline: none;
+}
+.open:focus-visible .cover {
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
-  transition: outline-color var(--dur-feedback) var(--ease-out);
+  translate: 0 -4px;
+  box-shadow: var(--elev-2);
 }
 .cover img {
   object-fit: cover;
@@ -64,14 +84,21 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .open:hover .cover {
-    outline-color: var(--border-strong);
+    translate: 0 -4px;
+    box-shadow: var(--elev-2);
   }
   .open:hover .cover img {
     scale: 1.03;
   }
 }
 .open:active .cover {
-  scale: 0.99;
+  scale: 0.98;
+}
+@media (prefers-reduced-motion: reduce) {
+  .open:hover .cover,
+  .open:focus-visible .cover {
+    translate: none;
+  }
 }
 .nameRow {
   display: flex;
@@ -92,7 +119,7 @@
   height: 40px;
   padding: 0 10px;
   border: 1px solid var(--text);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface-sunken);
   color: var(--text);
   font-family: var(--font-display);
@@ -115,9 +142,9 @@
   gap: 12px;
   padding: 6px 6px 6px 16px;
   border: 1px solid var(--border-strong);
-  border-radius: 12px;
-  background: var(--surface);
-  box-shadow: 0 16px 48px rgb(0 0 0 / 0.5);
+  border-radius: calc(var(--r-control) + 6px);
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-4);
   font-size: 0.875rem;
   translate: -50% 0;
 }

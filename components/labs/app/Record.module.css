@@ -7,7 +7,10 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgb(8 10 14 / 0.96);
+  /* A spot of light behind the work, so the stage has depth instead of a flat black field. */
+  background:
+    radial-gradient(60% 60% at 40% 50%, rgb(146 155 210 / 0.07), transparent 70%),
+    rgb(8 10 14 / 0.96);
   color: var(--text);
 }
 .dialog::backdrop {
@@ -52,8 +55,9 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  border-radius: 12px;
+  border-radius: var(--r-control);
   background: #000;
+  box-shadow: 0 0 0 1px rgb(246 243 236 / 0.08), var(--elev-4);
 }
 
 .side {
@@ -64,7 +68,9 @@
   overflow-y: auto;
   padding: 64px 24px 32px;
   border-left: 1px solid var(--border);
-  background: var(--bg);
+  /* The details column is a raised sheet beside the dark stage: lit at the top, casting onto the stage. */
+  background: var(--tint-raised), var(--bg);
+  box-shadow: -24px 0 48px -24px rgb(0 0 0 / 0.6);
 }
 .head {
   display: flex;
@@ -126,15 +132,22 @@
   gap: 0;
   margin: 0;
 }
+/* The facts sit in one sunken well with hairline rows, so they read as one block of data. */
+.rows {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+}
 .row {
   display: grid;
   grid-template-columns: 112px minmax(0, 1fr);
   gap: 12px;
-  padding: 10px 0;
+  padding: 10px 14px;
   border-top: 1px solid var(--border);
 }
-.row:last-child {
-  border-bottom: 1px solid var(--border);
+.row:first-child {
+  border-top: 0;
 }
 .value {
   margin: 0;
@@ -151,10 +164,19 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--r-control);
   background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(8px);
   color: #fff;
-  transition: background-color var(--dur-feedback) var(--ease-out);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.close:active,
+.prev:active,
+.next:active {
+  scale: 0.96;
 }
 .close {
   top: 10px;

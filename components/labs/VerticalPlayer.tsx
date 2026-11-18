@@ -397,7 +397,7 @@ export function VerticalPlayer({
           />
           <div className={styles.controls}>
             <div className={styles.group}>
-              <Button className={styles.pause} onClick={toggle} aria-keyshortcuts="K Space">
+              <Button variant="solid" className={styles.pause} onClick={toggle} aria-keyshortcuts="K Space">
                 {playing ? "Pause" : "Play"}
               </Button>
               <button type="button" className={styles.iconButton} onClick={() => setMuted((m) => !m)} aria-label={muted ? "Turn sound on" : "Turn sound off"} aria-keyshortcuts="M">

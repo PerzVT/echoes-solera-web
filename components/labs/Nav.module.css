@@ -39,7 +39,8 @@
   min-width: 0;
   padding: 6px;
   border: 1px solid var(--border);
-  border-radius: 18px;
+  /* Concentric with the links: their control radius plus the 6px padding. */
+  border-radius: calc(var(--r-control) + 6px);
   overflow-x: auto;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
@@ -53,7 +54,7 @@
   place-items: center;
   min-height: var(--link-h);
   padding: 0 var(--link-pad);
-  border-radius: 12px;
+  border-radius: var(--r-control);
   font-weight: 500;
   font-size: 0.875rem;
   white-space: nowrap;
@@ -72,20 +73,11 @@
 .links > a:active {
   scale: 0.96;
 }
-/* Before script: the current link fills itself with the shouldered shape. */
+/* Before script: the current link fills itself. Rounded on the control radius, concentric with the dock. */
 .links > a[aria-current="page"] {
-  --c: calc(var(--link-h) * 0.4444);
   color: var(--on-action);
   background: var(--action);
-  border-radius: 0;
-  -webkit-mask:
-    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
-    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
-    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
-  mask:
-    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
-    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
-    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+  border-radius: var(--r-control);
 }
 /* With script, one pill slides under the links instead. */
 .links[data-pill="on"] > a {
@@ -94,8 +86,6 @@
 }
 .links[data-pill="on"] > a[aria-current="page"] {
   background: none;
-  -webkit-mask: none;
-  mask: none;
   transition: color 320ms var(--ease-out);
 }
 .pill {
@@ -121,8 +111,7 @@
 .pill span:nth-child(1) {
   width: var(--cap);
   translate: var(--px) 0;
-  -webkit-mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
-  mask: var(--cap-l) 0 0 / 100% 100% no-repeat;
+  border-radius: var(--r-control) 0 0 var(--r-control);
 }
 .pill span:nth-child(2) {
   width: 100px;
@@ -133,8 +122,7 @@
 .pill span:nth-child(3) {
   width: var(--cap);
   translate: calc(var(--px) + var(--pw) - var(--cap)) 0;
-  -webkit-mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
-  mask: var(--cap-r) 0 0 / 100% 100% no-repeat;
+  border-radius: 0 var(--r-control) var(--r-control) 0;
 }
 
 .app {

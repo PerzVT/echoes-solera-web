@@ -85,7 +85,7 @@ export default async function SeriesPage({ params, searchParams }: Props) {
             {s.genre && <p className={styles.genre}>{s.genre}</p>}
             {s.hook && <p className={styles.hook}>{s.hook}</p>}
             <div className={styles.actions}>
-              <ButtonLink href="/app">Create a mini-series</ButtonLink>
+              <ButtonLink href="/app" variant="solid">Create a mini-series</ButtonLink>
             </div>
           </div>
           {!s.art && (

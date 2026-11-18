@@ -29,7 +29,9 @@
   min-width: 0;
   border: 1px solid var(--border);
   border-radius: var(--r-card);
-  background: var(--surface);
+  /* Lit at the top and resting on the ground, so the panel reads as a sheet over the navy, not a flat block. */
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-1);
 }
 /* One header height on every panel, with or without a subtitle, so the dividers of neighbouring panels line up.
    72px holds the page heading (36px line) and a subtitle (20px). */

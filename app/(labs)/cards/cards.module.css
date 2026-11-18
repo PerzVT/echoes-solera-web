@@ -10,6 +10,7 @@
   border-radius: var(--r-stage);
   background: #fcedde;
   color: var(--text);
+  box-shadow: var(--elev-3);
 }
 /* The pack opening happens on the teal stage the card detail uses, as in tcg-pack-reveal. */
 .packs {

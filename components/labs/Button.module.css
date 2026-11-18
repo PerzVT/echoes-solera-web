@@ -1,4 +1,8 @@
-/* The shouldered button from the design system: two shaped caps and a straight middle. */
+/* Two shapes, one system.
+   primary: the shouldered shape from the design system (two shaped caps and a straight middle). It marks the
+   one main action on a screen or dialog, so a screen never shows two.
+   secondary, solid, quiet: a plain rounded rectangle on the container radius scale (labs.css), so it sits
+   inside a rounded panel the way the panel's own corners do. */
 .btn {
   --h: 48px;
   --fill: var(--action);
@@ -10,7 +14,6 @@
   justify-content: center;
   gap: 8px;
   height: var(--h);
-  padding-inline: calc(var(--h) * 0.4444 + 10px);
   font-weight: 500;
   font-size: 0.9375rem;
   line-height: 1.33;
@@ -21,11 +24,66 @@
 a.btn {
   color: var(--ink);
 }
-.btn::before,
-.btn::after {
-  content: "";
-  position: absolute;
-  z-index: -2;
+.btn:active:not(:disabled):not([aria-disabled="true"]) {
+  scale: 0.96;
+}
+
+/* ---------- Rounded ---------- */
+.rounded {
+  padding-inline: 20px;
+  border: 1px solid var(--edge, transparent);
+  border-radius: var(--r-control);
+  background: var(--fill);
+  overflow: hidden;
+  transition:
+    scale var(--dur-press) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    border-color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out);
+}
+.rounded.small {
+  padding-inline: 16px;
+}
+.secondary {
+  --fill: var(--surface);
+  --edge: var(--border-strong);
+  --ink: var(--text);
+  --wash-a: rgb(246 243 236 / 0.1);
+  --wash-b: rgb(255 131 183 / 0.14);
+  box-shadow: var(--elev-1);
+}
+.solid {
+  --fill: var(--action);
+  --edge: var(--action);
+  --ink: var(--on-action);
+  --wash-a: rgb(255 131 183 / 0.22);
+  --wash-b: rgb(146 155 210 / 0.2);
+  box-shadow: var(--elev-1);
+}
+.quiet {
+  --fill: transparent;
+  --edge: transparent;
+  --ink: var(--text);
+  --wash-a: rgb(246 243 236 / 0.08);
+  --wash-b: rgb(246 243 236 / 0.08);
+}
+
+/* ---------- Shouldered ---------- */
+.primary {
+  padding-inline: calc(var(--h) * 0.4444 + 10px);
+  --wash-a: rgb(255 131 183 / 0.28);
+  --wash-b: rgb(146 155 210 / 0.24);
+  /* A soft shadow cut to the same silhouette, so the button sits on its panel. drop-shadow follows the
+     mask's alpha, where box-shadow would draw a rectangle. */
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.2)) drop-shadow(0 6px 10px rgb(0 0 0 / 0.16));
+}
+/* Every shouldered layer is the same mask at a different inset; --c is the cap width for that layer's height,
+   so a layer drawn k px outside the button is the button's own silhouette scaled out, not a rectangle. */
+.primary::before,
+.primary::after,
+.primary .wash,
+.ring,
+.ring::before {
   -webkit-mask:
     var(--cap-l) 0 0 / var(--c) 100% no-repeat,
     var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
@@ -34,22 +92,76 @@ a.btn {
     var(--cap-l) 0 0 / var(--c) 100% no-repeat,
     var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
     linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
+}
+.primary::before,
+.primary::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
   transition: background-color var(--dur-feedback) var(--ease-out);
 }
-.btn::before {
+/* The edge, then the fill 1px inside it. */
+.primary::before {
   inset: 0;
   --c: calc(var(--h) * 0.4444);
   background: var(--edge, var(--fill));
 }
-.btn::after {
+.primary::after {
   inset: 1px;
   --c: calc((var(--h) - 2px) * 0.4444);
   background: var(--fill);
 }
-.btn:active:not(:disabled):not([aria-disabled="true"]) {
-  scale: 0.96;
+
+/* The focus ring: two layers of the silhouette scaled out. The outer one (4px outside) is the focus colour;
+   the inner one (2px outside) is the ground colour, so a 2px gap parts ring and button on any backdrop,
+   video included. Both are masks with the button's own geometry, so their edge is as crisp as the button's. */
+.ring {
+  --c: calc((var(--h) + 8px) * 0.4444);
+  position: absolute;
+  inset: -4px;
+  z-index: -3;
+  display: none;
+  pointer-events: none;
+  background: var(--focus);
+}
+.ring::before {
+  --c: calc((var(--h) + 4px) * 0.4444);
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: var(--ring-gap, var(--bg));
+}
+.btn.primary:focus-visible {
+  outline: none;
+}
+.primary:focus-visible .ring {
+  display: block;
 }
 
+/* ---------- The wash ----------
+   A layer cut to the button's shape with one band of pigment waiting off its left edge. Hover sends the band
+   across once; while a button is loading the band keeps crossing. */
+.wash {
+  position: absolute;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.primary .wash {
+  --c: calc((var(--h) - 2px) * 0.4444);
+  inset: 1px;
+}
+.rounded .wash {
+  inset: 0;
+  border-radius: inherit;
+}
+.wash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -101% 0;
+  background: linear-gradient(100deg, transparent 18%, var(--wash-a) 44%, var(--wash-b) 58%, transparent 84%);
+}
 
 /* The label and its icons. The label is its own box so it can give way to the tick on success. */
 .label {
@@ -68,36 +180,6 @@ a.btn {
   flex: none;
 }
 
-/* The wash: a layer cut to the same shoulders as the fill, with one band of pigment waiting off its
-   left edge. Hover sends the band across once; it does not come back, it resets unseen. */
-.wash {
-  --c: calc((var(--h) - 2px) * 0.4444);
-  position: absolute;
-  inset: 1px;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-  -webkit-mask:
-    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
-    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
-    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
-  mask:
-    var(--cap-l) 0 0 / var(--c) 100% no-repeat,
-    var(--cap-r) 100% 0 / var(--c) 100% no-repeat,
-    linear-gradient(#000 0 0) 50% 0 / calc(100% - 2 * var(--c) + 2px) 100% no-repeat;
-}
-.wash::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  translate: -101% 0;
-  background: linear-gradient(100deg, transparent 18%, var(--wash-a) 44%, var(--wash-b) 58%, transparent 84%);
-}
-.primary {
-  --wash-a: rgb(255 131 183 / 0.28);
-  --wash-b: rgb(146 155 210 / 0.24);
-}
-
 @media (hover: hover) and (pointer: fine) {
   /* Only the full-size primary answers a hover with the band; elsewhere hover changes the fill at once. */
   .primary:not(.small):hover .wash::before {
@@ -110,26 +192,18 @@ a.btn {
   .primary:hover {
     --fill: var(--action-hover);
   }
+  .solid:hover {
+    --fill: var(--action-hover);
+    --edge: var(--action-hover);
+  }
   .secondary:hover {
     --fill: var(--surface-hover);
+    --edge: var(--text-muted);
+    box-shadow: var(--elev-2);
   }
   .quiet:hover {
     --fill: var(--surface-hover);
   }
-}
-.secondary {
-  --fill: var(--surface);
-  --edge: var(--border-strong);
-  --ink: var(--text);
-  --wash-a: rgb(246 243 236 / 0.1);
-  --wash-b: rgb(255 131 183 / 0.14);
-}
-.quiet {
-  --fill: transparent;
-  --edge: transparent;
-  --ink: var(--text);
-  --wash-a: rgb(246 243 236 / 0.08);
-  --wash-b: rgb(246 243 236 / 0.08);
 }
 
 /* Loading: the label stays and dims a little, the band keeps crossing, presses are ignored. */
@@ -146,7 +220,8 @@ a.btn {
 .btn[data-state="loading"] .wash::before {
   animation: btn-run 1300ms var(--ease-in-out) infinite;
 }
-.primary[data-state="loading"] {
+.primary[data-state="loading"],
+.solid[data-state="loading"] {
   --fill: var(--action-hover);
 }
 .secondary[data-state="loading"],
@@ -175,17 +250,43 @@ a.btn {
   --h: 40px;
   font-size: 0.875rem;
 }
-/* Touch screens get the full 44px target. */
-@media (pointer: coarse) {
+/* Touch screens and phones get the full 44px target. */
+@media (pointer: coarse), (max-width: 767px) {
   .small {
     --h: 44px;
   }
 }
+.btn:disabled:not([data-state]),
 .btn[aria-disabled="true"] {
-  --fill: var(--surface-sunken);
+  --fill: var(--surface-hover);
   --edge: var(--border);
-  --ink: var(--text-disabled);
+  --ink: var(--text-muted);
+  cursor: default;
+  box-shadow: none;
+  filter: none;
+}
+.btn[aria-disabled="true"] {
   pointer-events: none;
+}
+
+/* Forced colours drop backgrounds, which would leave the shouldered shape invisible. The button falls back
+   to a system-coloured rounded border and the system focus outline. */
+@media (forced-colors: active) {
+  .btn {
+    border: 1px solid ButtonText;
+    border-radius: var(--r-control);
+    filter: none;
+  }
+  .primary::before,
+  .primary::after,
+  .wash,
+  .ring {
+    display: none !important;
+  }
+  .btn.primary:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 3px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

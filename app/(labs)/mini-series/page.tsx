@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
 import { ButtonLink } from "@/components/labs/Button";
 import { Icon } from "@/components/labs/Icon";
-import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { Library, type Title } from "@/components/labs/Library";
@@ -33,9 +32,6 @@ export default async function LibraryPage({ searchParams }: Props) {
   return (
     <div className={t.page}>
       <Nav />
-      <BackLink row href="/?p=mini-series">
-        Mini-series
-      </BackLink>
       <main id="main" className={t.main}>
         <section className={styles.feature}>
           {feature.art && (

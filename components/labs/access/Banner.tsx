@@ -67,7 +67,7 @@ export function EarlyAccessBanner({ layout, onOpen }: Props) {
         <section className={styles.banner} data-layout={layout} aria-label="Early access">
           <p className={styles.bannerText}>Early access lets subscribers watch new episodes a week before they are free for everyone.</p>
           <div className={styles.bannerActions}>
-            <Button size="small" onClick={() => open("subscribe")} data-access-control>
+            <Button size="small" variant="solid" onClick={() => open("subscribe")} data-access-control>
               Subscribe
             </Button>
             <Button size="small" variant="quiet" onClick={() => open("how")}>

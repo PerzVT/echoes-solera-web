@@ -17,7 +17,7 @@ export default function PageSkeleton() {
             <SkeletonText lines={2} widths={["100%", "74%"]} />
             <div className={styles.actions}>
               <SkeletonButton index={2} width={170} />
-              <SkeletonButton index={3} width={160} />
+              <SkeletonButton index={3} width={160} rounded />
             </div>
           </div>
         </section>

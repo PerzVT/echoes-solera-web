@@ -1,4 +1,5 @@
-/* The chat screen's controls. Rounded rectangles, 40px tall (44px on touch), one radius. */
+/* The creator's rounded controls: 40px tall (44px on touch and phones), on the control radius. The primary
+   kind is the site's shouldered Button (Button.module.css); .shoulder only adds what the creator needs. */
 .btn {
   --h: 40px;
   display: inline-flex;
@@ -8,7 +9,7 @@
   height: var(--h);
   padding-inline: 16px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--r-control);
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1;
@@ -17,10 +18,11 @@
     background-color var(--dur-feedback) var(--ease-out),
     border-color var(--dur-feedback) var(--ease-out),
     color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
 .btn:active:not(:disabled) {
-  scale: 0.97;
+  scale: 0.96;
 }
 .btn:disabled {
   cursor: default;
@@ -41,20 +43,30 @@
 .wide {
   width: 100%;
 }
-.primary {
+.shoulder {
+  flex: none;
+}
+/* Filled and rounded: a strong action that is not the screen's main one, or a chosen toggle. */
+.solid {
   background: var(--action);
   color: var(--on-action);
+  box-shadow: var(--elev-1);
 }
 .secondary {
   border-color: var(--border-strong);
+  background: var(--surface);
   color: var(--text);
+  box-shadow: var(--elev-1);
 }
 .ghost {
   color: var(--text-muted);
 }
 @media (hover: hover) and (pointer: fine) {
-  .primary:hover:not(:disabled) {
+  .solid:hover:not(:disabled) {
     background: var(--action-hover);
+  }
+  .secondary:hover:not(:disabled) {
+    border-color: var(--text-muted);
   }
   .secondary:hover:not(:disabled),
   .ghost:hover:not(:disabled) {
@@ -69,7 +81,7 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--r-control);
   color: var(--text-muted);
   transition:
     background-color var(--dur-feedback) var(--ease-out),
@@ -77,7 +89,7 @@
     scale var(--dur-press) var(--ease-out);
 }
 .iconBtn:active:not(:disabled) {
-  scale: 0.97;
+  scale: 0.96;
 }
 .iconBtn:disabled {
   opacity: 0.4;
@@ -97,7 +109,7 @@
   min-height: 32px;
   padding: 4px 12px;
   border: 1px solid var(--border);
-  border-radius: var(--r-pill);
+  border-radius: var(--r-control);
   font-size: 0.8125rem;
   line-height: 1.2;
   color: var(--text);
@@ -108,14 +120,16 @@
     scale var(--dur-press) var(--ease-out);
 }
 .pill:active {
-  scale: 0.97;
+  scale: 0.96;
 }
+/* Chosen: filled with the action colour, so it reads at a glance and not only by its edge. */
 .pill[data-on] {
-  border-color: var(--text);
-  background: var(--surface-hover);
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--on-action);
 }
 @media (hover: hover) and (pointer: fine) {
-  .pill:hover {
+  .pill:not([data-on]):hover {
     background: var(--surface-hover);
     border-color: var(--border-strong);
   }
@@ -144,8 +158,9 @@
   gap: 2px;
   margin: 0;
   padding: 3px;
-  border-radius: 12px;
+  border-radius: var(--r-control);
   background: var(--surface);
+  box-shadow: inset 0 0 0 1px rgb(246 243 236 / 0.04);
   list-style: none;
 }
 .tool {
@@ -156,18 +171,24 @@
   height: 32px;
   min-width: 32px;
   padding: 0 10px 0 8px;
-  border-radius: 9px;
+  /* Concentric with the row: its radius less the 3px padding. */
+  border-radius: calc(var(--r-control) - 3px);
   font-weight: 500;
   font-size: 0.8125rem;
   white-space: nowrap;
   color: var(--text-muted);
   transition:
     background-color var(--dur-feedback) var(--ease-out),
-    color var(--dur-feedback) var(--ease-out);
+    color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.tool:active {
+  scale: 0.96;
 }
 .tool[aria-current="page"] {
   background: var(--surface-hover);
   color: var(--text);
+  box-shadow: var(--elev-1), var(--edge-light);
 }
 @media (hover: hover) and (pointer: fine) {
   .tool:hover {
@@ -206,7 +227,7 @@
   gap: 6px;
   height: 44px;
   padding: 0 10px;
-  border-radius: 10px;
+  border-radius: var(--r-control);
   font-weight: 500;
   font-size: 0.875rem;
 }
@@ -219,9 +240,10 @@
   margin: 0;
   padding: 8px;
   border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
-  box-shadow: 0 24px 64px rgb(0 0 0 / 0.5);
+  /* Concentric with the items: their radius plus the 8px padding. */
+  border-radius: var(--r-card);
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-4);
   list-style: none;
 }
 .toolItem {
@@ -230,7 +252,7 @@
   gap: 12px;
   min-height: 44px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   font-size: 0.9375rem;
 }
 .toolItem[aria-current="page"] {

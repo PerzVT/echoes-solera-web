@@ -217,7 +217,7 @@ export function ResultsStep({ initial, open }: { initial: ResultsState; open?: s
               <p className={r.rowSub}>{g.summary}</p>
             </div>
             <div className={r.actions}>
-              <Btn kind={g.decision === "approved" ? "primary" : "secondary"} icon={<Icon name="check" size={16} />} aria-pressed={g.decision === "approved"} disabled={g.developing || empty} onClick={() => decide("approved")}>
+              <Btn kind={g.decision === "approved" ? "solid" : "secondary"} icon={<Icon name="check" size={16} />} aria-pressed={g.decision === "approved"} disabled={g.developing || empty} onClick={() => decide("approved")}>
                 {g.decision === "approved" ? "Approved" : "Approve"}
               </Btn>
               <Btn kind="secondary" className={cx(g.decision === "denied" && r.denied)} icon={<Icon name="close" size={16} />} aria-pressed={g.decision === "denied"} disabled={g.developing || empty} onClick={() => decide("denied")}>

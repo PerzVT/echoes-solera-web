@@ -73,9 +73,9 @@ export function SkeletonCard(p: Base & { index?: number }) {
   return <Skeleton ratio="5 / 7" width="100%" radius="6.4% / 4.57%" {...p} />;
 }
 
-/** A button in the shouldered shape. */
-export function SkeletonButton({ width = 148, small, ...p }: Base & { width?: number | string; small?: boolean; index?: number }) {
-  return <Skeleton shape="shoulder" width={width} height={small ? 40 : 48} {...p} />;
+/** A button: the shouldered shape for the main action, or `rounded` on the control radius for any other. */
+export function SkeletonButton({ width = 148, small, rounded, ...p }: Base & { width?: number | string; small?: boolean; rounded?: boolean; index?: number }) {
+  return rounded ? <Skeleton width={width} height={small ? 40 : 48} radius="var(--r-control)" {...p} /> : <Skeleton shape="shoulder" width={width} height={small ? 40 : 48} {...p} />;
 }
 
 /** The home stage: the rounded stage with its title, line and two actions bottom left. Fills its parent. */
@@ -87,7 +87,7 @@ export function SkeletonStage({ className, style }: Base) {
         <SkeletonText lines={2} widths={["min(340px, 86%)", "min(220px, 60%)"]} />
         <span className={styles.row}>
           <SkeletonButton index={3} />
-          <SkeletonButton index={4} width={132} />
+          <SkeletonButton index={4} width={132} rounded />
         </span>
       </span>
     </span>

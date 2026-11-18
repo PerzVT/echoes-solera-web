@@ -36,22 +36,27 @@
   gap: 8px;
   width: 100%;
   padding: 6px;
-  border-radius: 14px;
+  /* Concentric with the art: its thumb radius plus the 6px padding. */
+  border-radius: calc(var(--r-thumb) + 6px);
   text-align: left;
   transition:
     background-color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out),
     scale var(--dur-press) var(--ease-out);
 }
 .tile:active {
-  scale: 0.98;
+  scale: 0.96;
 }
+/* Chosen: a raised, lit tile with a 2px edge in the action colour and the tick, so it reads from across the
+   grid and not only by a hairline. */
 .tile[aria-pressed="true"] {
-  background: var(--surface-hover);
-  box-shadow: inset 0 0 0 1.5px var(--text);
+  background: var(--tint-raised), var(--surface-hover);
+  box-shadow: inset 0 0 0 2px var(--action), var(--elev-2);
 }
 @media (hover: hover) and (pointer: fine) {
-  .tile:hover {
+  .tile:not([aria-pressed="true"]):hover {
     background: var(--surface);
+    box-shadow: var(--elev-1);
   }
 }
 .art {
@@ -59,8 +64,16 @@
   display: block;
   aspect-ratio: 9 / 16;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: var(--r-thumb);
   background: var(--surface-sunken);
+}
+.art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
 }
 .art img {
   object-fit: cover;
@@ -76,6 +89,7 @@
   border-radius: 50%;
   background: var(--action);
   color: var(--on-action);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
 }
 .name {
   padding: 0 4px 2px;
@@ -91,8 +105,10 @@
   min-height: 0;
   padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--surface);
+  /* Concentric with the screen: its control radius plus the 16px padding. */
+  border-radius: calc(var(--r-control) + 16px);
+  background: var(--tint-raised), var(--surface);
+  box-shadow: var(--edge-light), var(--elev-3);
 }
 .screen {
   position: relative;
@@ -102,8 +118,18 @@
   max-width: 100%;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: var(--r-control);
   background: var(--surface-sunken);
+  box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.5);
+}
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  box-shadow: var(--img-outline);
+  pointer-events: none;
 }
 .screen img,
 .screen video {
