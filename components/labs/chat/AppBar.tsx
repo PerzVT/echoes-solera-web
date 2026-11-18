@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AnimatedMark } from "@/components/labs/fx";
+import { Icon } from "@/components/labs/Icon";
 import { Account } from "@/components/labs/app/Account";
 import { ToolSwitch, cx, type ToolKey } from "./ui";
 import b from "./AppBar.module.css";
@@ -11,8 +12,10 @@ export type AppStep = { key: string; label: string; href?: string; state: StepSt
 
 const views: Record<ToolKey, Record<AppView, string>> = {
   "mini-series": { create: "/app", library: "/app/library" },
-  anime: { create: "/app/anime/new", library: "/app/anime" },
+  anime: { create: "/app/anime", library: "/app/anime/library" },
   cooking: { create: "/app/cooking", library: "/app/cooking/library" },
+  storyboard: { create: "/app/storyboard", library: "/app/storyboard/library" },
+  manga: { create: "/app/manga", library: "/app/manga/library" },
 };
 
 type Props = {
@@ -39,19 +42,26 @@ export function AppBar({ tool, view, steps, current, action, title }: Props) {
         <ToolSwitch current={tool} />
         <nav className={b.views} aria-label="View">
           <Link href={routes.create} className={b.view} aria-current={view === "create" ? "page" : undefined}>
-            Create
+            <Icon name="create" size={18} />
+            <span className={b.viewLabel}>Create</span>
           </Link>
           <Link href={routes.library} className={b.view} aria-current={view === "library" ? "page" : undefined}>
-            Library
+            <Icon name="library" size={18} />
+            <span className={b.viewLabel}>Library</span>
           </Link>
         </nav>
         {title && <span className={b.title}>{title}</span>}
+        <span className={b.spacer} />
         <Account />
       </div>
-      {steps && <Steps steps={steps} current={current} />}
-      {action && (
-        <div className={b.action} data-app-dock="">
-          {action}
+      {(steps || action) && (
+        <div className={b.flow}>
+          {steps && <Steps steps={steps} current={current} />}
+          {action && (
+            <div className={b.action} data-app-dock="">
+              {action}
+            </div>
+          )}
         </div>
       )}
     </header>
@@ -74,7 +84,7 @@ function Steps({ steps, current }: { steps: AppStep[]; current?: string }) {
           );
           return (
             <li key={s.key} className={b.stepItem}>
-              {s.href && state !== "todo" ? (
+              {s.href ? (
                 <Link href={s.href} className={b.step} data-state={state} aria-current={state === "current" ? "step" : undefined}>
                   {body}
                 </Link>

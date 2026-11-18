@@ -2,45 +2,194 @@
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100dvh;
-  padding: 16px 24px 48px;
+  padding: 16px 24px 32px;
   /* No fill of its own: the pigment field behind the site shows through, at the strength the page asks for. */
 }
+
+/* The studio's front door: the way in on the left, what is inside on the right. */
 .main {
   display: grid;
-  place-items: center;
-  padding: 32px 0;
-}
-.panel {
-  display: grid;
-  justify-items: start;
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  align-items: stretch;
   gap: 16px;
-  width: min(460px, 100%);
-  padding: clamp(28px, 5vw, 48px);
+  width: min(1280px, 100%);
+  height: min(760px, calc(100dvh - 120px));
+  min-height: 520px;
+  margin: 0 auto;
+  padding: 24px 0 0;
+}
+.main:focus {
+  outline: none;
+}
+
+/* ---------- The door ---------- */
+.door {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: clamp(28px, 4vw, 48px);
   border: 1px solid var(--border);
   border-radius: var(--r-stage);
   background: var(--surface);
   box-shadow: 0 30px 60px rgb(0 0 0 / 0.4);
-  animation: panel-in 520ms var(--ease-out) both;
+  animation: rise 520ms var(--ease-out) both;
 }
-/* The lines follow the panel in, a stagger apart. Opacity and a short rise only: every line holds its place from the first frame. */
-.panel > :not(svg) {
+.door > :not(svg) {
   animation: line-in 420ms var(--ease-out) both;
-  animation-delay: 260ms;
+  animation-delay: 220ms;
 }
-.panel > :not(svg):nth-child(3) {
-  animation-delay: calc(260ms + var(--stagger));
+.door > :nth-child(3) {
+  animation-delay: calc(220ms + var(--stagger));
 }
-.panel > :not(svg):nth-child(4) {
-  animation-delay: calc(260ms + var(--stagger) * 2);
+.door > :nth-child(n + 4) {
+  animation-delay: calc(220ms + var(--stagger) * 2);
 }
-.panel > :not(svg):nth-child(n + 5) {
-  animation-delay: calc(260ms + var(--stagger) * 3);
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 1.5rem + 1.4vw, 2.625rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
-@keyframes panel-in {
+
+.problem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--r-control);
+  color: var(--danger);
+  background: var(--danger-soft);
+  line-height: 1.45;
+}
+.problem > svg {
+  flex: none;
+  margin-top: 2px;
+}
+/* Not set up is the site's state, not the person's mistake: it reads in the neutral colours. */
+.problem[data-kind="setup"] {
+  color: var(--text);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+}
+
+.actions {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+.actions > a {
+  width: 100%;
+}
+
+/* Google's button, light treatment from its sign-in branding: white fill, #747775 edge, #1F1F1F text, the G on the left. */
+.google {
+  --fill: #ffffff;
+  --edge: #747775;
+  --ink: #1f1f1f;
+  gap: 10px;
+}
+.google[data-state="loading"] {
+  cursor: progress;
+}
+.google[data-state="loading"] .googleLabel {
+  opacity: 0.6;
+}
+@media (hover: hover) and (pointer: fine) {
+  .google:hover {
+    --fill: #f2f2f2;
+  }
+}
+.googleMark {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+}
+.googleLabel {
+  font-weight: 500;
+}
+
+/* ---------- What is inside ---------- */
+.inside {
+  min-width: 0;
+  animation: rise 640ms var(--ease-out) both;
+  animation-delay: 120ms;
+}
+.tools {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tool {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface-sunken);
+}
+.tool[data-tall] {
+  grid-row: span 2;
+}
+.art {
+  position: absolute;
+  inset: 0;
+}
+.art img {
+  object-fit: cover;
+}
+/* Four frames in a grid: a storyboard. */
+.art[data-count="4"] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+}
+.art[data-count="4"] img {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+.tool::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(to bottom, transparent, rgb(10 14 20 / 0.85));
+  pointer-events: none;
+}
+.toolName {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border-radius: var(--r-pill);
+  background: rgb(14 20 28 / 0.72);
+  backdrop-filter: blur(8px);
+  color: var(--on-media);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+@keyframes rise {
   from {
     opacity: 0;
     translate: 0 16px;
-    scale: 0.985;
   }
 }
 @keyframes line-in {
@@ -49,30 +198,72 @@
     translate: 0 6px;
   }
 }
-/* Reduced motion: the page is simply there, with the finished mark. */
 @media (prefers-reduced-motion: reduce) {
-  .panel,
-  .panel > :not(svg) {
+  .door,
+  .door > :not(svg),
+  .inside {
     animation: none;
   }
 }
-.panel h1 {
-  margin-top: 8px;
-}
-.problem {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: var(--r-control);
-  color: var(--danger);
-  background: var(--danger-soft);
-}
-@media (max-width: 720px) {
-  .page {
-    padding: 12px 16px 32px;
+
+/* Medium widths: the door on top, the tools in one row under it. */
+@media (max-width: 1023px) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    height: auto;
+    min-height: 0;
+    max-width: 640px;
+  }
+  .tools {
+    min-height: 0;
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
+    grid-template-rows: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .tool {
+    aspect-ratio: 3 / 4;
+    scroll-snap-align: start;
+  }
+  .tool[data-tall] {
+    grid-row: auto;
   }
 }
 
-/* On sign-in, the nav's "Open app" leads straight back here, so it is hidden. The panel's own button is the way in. */
+/* Phones: the door fills the first screen, the tools run in a strip beneath it. */
+@media (max-width: 767px) {
+  .page {
+    padding: 12px 16px 24px;
+  }
+  .main {
+    padding-top: 12px;
+    gap: 12px;
+  }
+  .door {
+    gap: 16px;
+    padding: 24px 20px;
+    border-radius: var(--r-card);
+  }
+  .modes {
+    align-self: stretch;
+  }
+  .mode {
+    flex: 1;
+    justify-content: center;
+    height: 44px;
+  }
+  .tools {
+    grid-template-columns: repeat(5, 56%);
+    gap: 8px;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    scroll-padding-inline: 16px;
+  }
+}
+
+/* On sign-in, the nav's "Open app" leads straight back here, so it is hidden. The door's own button is the way in. */
 .page > header a[href="/app"] {
   display: none;
 }

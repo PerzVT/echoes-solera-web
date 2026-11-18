@@ -1,0 +1,298 @@
+/* The prompt box. One surface; the writing area has a fixed height and scrolls inside, so typing never moves the page. */
+.box {
+  --text-h: 232px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: 0 1px 0 rgb(246 243 236 / 0.04) inset, 0 24px 48px -24px rgb(0 0 0 / 0.55);
+  transition:
+    border-color var(--dur-feedback) var(--ease-out),
+    background-color var(--dur-feedback) var(--ease-out),
+    box-shadow var(--dur-feedback) var(--ease-out);
+}
+.compact {
+  --text-h: 132px;
+  border-radius: 16px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .box:hover:not([data-state="disabled"], [data-state="error"]) {
+    border-color: var(--text-muted);
+  }
+}
+/* Focused: the edge lifts to the text colour and a soft ring of the focus colour sits outside it. */
+.box:focus-within {
+  border-color: var(--text);
+  box-shadow: 0 0 0 3px rgb(159 165 232 / 0.28), 0 24px 48px -24px rgb(0 0 0 / 0.55);
+}
+.box[data-state="error"] {
+  border-color: var(--danger);
+}
+.box[data-state="error"]:focus-within {
+  box-shadow: 0 0 0 3px rgb(255 143 133 / 0.22), 0 24px 48px -24px rgb(0 0 0 / 0.55);
+}
+.box[data-state="disabled"] {
+  border-color: var(--border);
+  background: var(--surface-sunken);
+}
+.box[data-over] {
+  border-color: var(--text);
+  background: var(--surface-hover);
+}
+
+/* ---------- Attached file ---------- */
+.files {
+  display: flex;
+  padding: 16px 16px 0;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(100%, 360px);
+  min-width: 0;
+  padding: 6px 6px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+  font-size: 0.875rem;
+  animation: chip-in var(--dur-enter) var(--ease-out) both;
+}
+.chipIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-thumb);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.chipName {
+  overflow: hidden;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chipRemove {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-thumb);
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .chipRemove:hover:not(:disabled) {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+}
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+
+/* ---------- Text ---------- */
+.text {
+  display: block;
+  width: 100%;
+  height: var(--text-h);
+  padding: 20px 24px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  resize: none;
+  overflow-y: auto;
+  /* Lines scrolled past fade at the edges instead of being cut against the frame. */
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 6px), transparent 100%);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.compact .text {
+  padding: 14px 16px 6px;
+  font-size: 1rem;
+}
+.text::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+.text:focus {
+  outline: none;
+}
+.text:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+.text:read-only {
+  color: var(--text-muted);
+}
+
+.error {
+  margin: 0 24px 4px;
+  color: var(--danger);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.compact .error {
+  margin-inline: 16px;
+}
+
+/* ---------- Foot ---------- */
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  padding: 8px 16px 16px 12px;
+}
+.compact .foot {
+  min-height: 56px;
+  padding: 6px 8px 8px;
+}
+.attach {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px 0 12px;
+  border-radius: var(--r-pill);
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-feedback) var(--ease-out),
+    color var(--dur-feedback) var(--ease-out),
+    scale var(--dur-press) var(--ease-out);
+}
+.attach:active:not(:disabled) {
+  scale: 0.97;
+}
+.attach:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .attach:hover:not(:disabled) {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+}
+.leading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.send {
+  flex: none;
+  margin-left: auto;
+}
+
+/* ---------- Drop, sending ---------- */
+.dropping {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background: rgb(14 20 28 / 0.6);
+  pointer-events: none;
+}
+/* Sending: a band of the progress colour runs along the bottom edge, clipped to the corners. */
+.band {
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 0 0 var(--r-card) var(--r-card);
+  pointer-events: none;
+}
+.band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, var(--progress), var(--pigment-rose), transparent);
+  animation: band 1.4s var(--ease-in-out) infinite;
+}
+@keyframes band {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 250% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    animation: none;
+  }
+  .band::after {
+    width: 100%;
+    animation: none;
+    background: var(--progress);
+    opacity: 0.7;
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 767px) {
+  .box {
+    --text-h: 180px;
+  }
+  .compact {
+    --text-h: 120px;
+  }
+  /* 16px text stops iOS from zooming the page when the field takes focus. */
+  .text {
+    padding: 16px 16px 6px;
+    font-size: 1rem;
+  }
+  .files {
+    padding: 12px 12px 0;
+  }
+  .error {
+    margin-inline: 16px;
+  }
+  .foot {
+    flex-wrap: wrap;
+    padding: 8px 14px 14px 8px;
+  }
+  .attach {
+    height: 44px;
+    padding-inline: 10px;
+  }
+  .chipRemove {
+    width: 32px;
+    height: 32px;
+  }
+  /* The caller's controls take their own line so the send button keeps its full width within thumb reach. */
+  .leading {
+    order: 3;
+    flex: 1 1 100%;
+  }
+  .leading:empty {
+    display: none;
+  }
+}
+/* Short screens (a phone with the on-screen keyboard up): the writing area gives back height. */
+@media (max-width: 767px) and (max-height: 560px) {
+  .box,
+  .compact {
+    --text-h: 96px;
+  }
+}

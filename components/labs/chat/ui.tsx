@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { forwardRef, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { AnimatedMark, CheckIcon, ChevronIcon } from "@/components/labs/fx";
-import { Icon } from "@/components/labs/Icon";
+import { Icon, type IconName } from "@/components/labs/Icon";
 import { useDismiss } from "./hooks";
 import u from "./ui.module.css";
 
@@ -16,6 +16,8 @@ type Kind = "primary" | "secondary" | "ghost";
 type BtnProps = Omit<ComponentProps<"button">, "className"> & {
   kind?: Kind;
   icon?: ReactNode;
+  /** An icon after the label, for an action that moves on (Next). */
+  iconAfter?: ReactNode;
   wide?: boolean;
   small?: boolean;
   className?: string;
@@ -25,8 +27,11 @@ type BtnProps = Omit<ComponentProps<"button">, "className"> & {
   success?: boolean;
 };
 
-export const Btn = forwardRef<HTMLButtonElement, BtnProps>(function Btn({ kind = "secondary", icon, wide, small, className, loading, success, onClick, children, ...rest }, ref) {
+export const Btn = forwardRef<HTMLButtonElement, BtnProps>(function Btn({ kind = "secondary", icon, iconAfter, wide, small, className, loading, success, onClick, children, ...rest }, ref) {
   const state = success ? "success" : loading ? "loading" : undefined;
+  const mark = state === "loading" ? <AnimatedMark variant="busy" size={16} /> : state === "success" ? <CheckIcon size={16} /> : null;
+  // The mark at work takes the icon's place: before the label, or after it on a button whose only icon trails.
+  const trails = !icon && Boolean(iconAfter);
   return (
     <button
       ref={ref}
@@ -38,8 +43,9 @@ export const Btn = forwardRef<HTMLButtonElement, BtnProps>(function Btn({ kind =
       onClick={state ? (e) => e.preventDefault() : onClick}
       className={[u.btn, u[kind], wide && u.wide, small && u.small, className].filter(Boolean).join(" ")}
     >
-      {state === "loading" ? <AnimatedMark variant="busy" size={16} /> : state === "success" ? <CheckIcon size={16} /> : icon}
+      {trails ? null : (mark ?? icon)}
       {children && <span className={u.label}>{children}</span>}
+      {trails ? (mark ?? iconAfter) : iconAfter}
     </button>
   );
 });
@@ -68,10 +74,12 @@ export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Bool
 
 /** The three creator tools. Each is its own screen. */
 export const tools = [
-  { key: "mini-series", label: "Mini-series", href: "/app" },
-  { key: "anime", label: "Anime", href: "/app/anime" },
-  { key: "cooking", label: "Cooking videos", href: "/app/cooking" },
-] as const;
+  { key: "mini-series", label: "Mini-series", href: "/app", icon: "series" },
+  { key: "anime", label: "Anime", href: "/app/anime", icon: "anime" },
+  { key: "cooking", label: "Cooking videos", href: "/app/cooking", icon: "cooking" },
+  { key: "storyboard", label: "Storyboard", href: "/app/storyboard", icon: "storyboard" },
+  { key: "manga", label: "Manga", href: "/app/manga", icon: "manga" },
+] as const satisfies readonly { key: string; label: string; href: string; icon: IconName }[];
 export type ToolKey = (typeof tools)[number]["key"];
 
 /** Switches between the creator tools: a compact segmented row on desktop, a menu on phones. */
@@ -86,15 +94,17 @@ export function ToolSwitch({ current }: { current: ToolKey }) {
       <ul className={u.toolRow}>
         {tools.map((t) => (
           <li key={t.key}>
-            <Link href={t.href} className={u.tool} aria-current={t.key === current ? "page" : undefined}>
-              {t.label}
+            <Link href={t.href} className={u.tool} aria-current={t.key === current ? "page" : undefined} title={t.label}>
+              <Icon name={t.icon} size={18} />
+              <span className={u.toolLabel}>{t.label}</span>
             </Link>
           </li>
         ))}
       </ul>
       <span className={u.toolMenu}>
         <button ref={button} type="button" className={u.toolButton} aria-expanded={open} aria-label={`Tool, ${now.label}`} onClick={() => setOpen(!open)}>
-          {now.label}
+          <Icon name={now.icon} size={18} />
+          <span className={u.toolButtonLabel}>{now.label}</span>
           <ChevronIcon open={open} size={14} />
         </button>
         {open && (
@@ -102,7 +112,8 @@ export function ToolSwitch({ current }: { current: ToolKey }) {
             {tools.map((t) => (
               <li key={t.key}>
                 <Link href={t.href} className={u.toolItem} aria-current={t.key === current ? "page" : undefined} onClick={() => setOpen(false)}>
-                  {t.label}
+                  <Icon name={t.icon} size={20} />
+                  <span className={u.toolItemLabel}>{t.label}</span>
                   {t.key === current && <Icon name="check" size={16} />}
                 </Link>
               </li>

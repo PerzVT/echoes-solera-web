@@ -149,10 +149,13 @@
   list-style: none;
 }
 .tool {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  height: 30px;
-  padding: 0 12px;
+  gap: 6px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 10px 0 8px;
   border-radius: 9px;
   font-weight: 500;
   font-size: 0.8125rem;
@@ -171,8 +174,31 @@
     color: var(--text);
   }
 }
+/* Narrow desktops: the tools other than the current one keep their icon and their name for assistive tech. */
+@media (max-width: 1279px) {
+  .tool:not([aria-current="page"]) {
+    padding: 0 7px;
+  }
+  .tool:not([aria-current="page"]) .toolLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
 .toolMenu {
   display: none;
+}
+.toolButtonLabel {
+  max-width: 40vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toolItemLabel {
+  flex: 1;
 }
 .toolButton {
   display: inline-flex;
@@ -201,7 +227,7 @@
 .toolItem {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   min-height: 44px;
   padding: 0 12px;
   border-radius: 8px;
