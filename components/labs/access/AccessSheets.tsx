@@ -40,11 +40,11 @@ export function AccessSheets({ sheet, onChange, onClose, onSubscribed, onCancell
           <ul className={styles.perks}>
             <li>
               <Icon name="check" size={18} />
-              <span>Every early-access episode on every series</span>
+              <span>Every early-access episode and chapter on every series</span>
             </li>
             <li>
               <Icon name="check" size={18} />
-              <span>New episodes a week before their release</span>
+              <span>New episodes and chapters a week before their release</span>
             </li>
             <li>
               <Icon name="check" size={18} />
@@ -99,10 +99,10 @@ export function AccessSheets({ sheet, onChange, onClose, onSubscribed, onCancell
       {shown === "how" && (
         <div className={styles.stack}>
           <div className={styles.how}>
-            <p>Every episode has a public release date. Before that date it is early access.</p>
-            <p>Subscribers watch early-access episodes as soon as they are out, usually a week before release.</p>
-            <p>On its release date an episode is free for everyone.</p>
-            <p>One subscription covers every series. If you cancel, early episodes lock again until their release dates.</p>
+            <p>Every episode and chapter has a public release date. Before that date it is early access.</p>
+            <p>Subscribers watch or read early-access episodes and chapters as soon as they are out, usually a week before release.</p>
+            <p>On its release date it is free for everyone.</p>
+            <p>One subscription covers every series. If you cancel, early episodes and chapters lock again until their release dates.</p>
           </div>
           {!subscribed && (
             <div className={styles.actions}>

@@ -1,4 +1,8 @@
 import type { Metadata, Viewport } from "next";
+// The shared foundation (tokens, base rules, the old portal's font faces) ships in the CSS bundle, not as a
+// separate render-blocking request. Its faces only download where a page uses them; the old portal's
+// layouts preload Cinzel for themselves.
+import "../public/shared/solera-foundation.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -43,10 +47,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="stylesheet" href="/shared/solera-foundation.css?v=1" />
-        <link rel="preload" href="/shared/fonts/cinzel-latin-cc014fcb.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-      </head>
       <body>{children}</body>
     </html>
   );

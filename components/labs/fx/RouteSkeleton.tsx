@@ -56,6 +56,7 @@ const routes: Route[] = [
   route(/^\/cards$/, () => import("@/app/(labs)/cards/skeleton")),
   route(/^\/cards\/packs$/, () => import("@/app/(labs)/cards/packs/skeleton")),
   route(/^\/manga\/golden-ticket$/, () => import("@/app/(labs)/manga/golden-ticket/skeleton")),
+  route(/^\/manga\/golden-ticket\/\d+$/, () => import("@/app/(labs)/manga/golden-ticket/[chapter]/skeleton")),
   route(/^\/visual-novel\/after-hours$/, () => import("@/app/(labs)/visual-novel/after-hours/skeleton")),
   route(/^\/game-ads$/, () => import("@/app/(labs)/game-ads/skeleton")),
   route(/^\/shop$/, () => import("@/app/(labs)/shop/skeleton")),

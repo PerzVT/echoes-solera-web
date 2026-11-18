@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getImageProps } from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { series } from "@/lib/labs/series";
 import { supper, releases } from "@/lib/labs/supper";
@@ -273,34 +274,78 @@ function MontageHero({ active }: { active: boolean }) {
 const backdropOf = (slug: string) => `/labs/mini-series/backdrops/${slug}.webp`;
 
 /**
+ * A plain `<img>`'s source through the image optimiser, so the browser takes a file sized for the box
+ * (and AVIF or WebP) instead of the full original. Only the source attributes: the element stays as it was.
+ */
+const sizedCache = new Map<string, { src: string; srcSet?: string; sizes?: string }>();
+const sized = (src: string, width: number, height: number, sizes: string) => {
+  // Kept per source: the home page re-renders every stage on a switch, and the mini-series row alone has 114.
+  const key = `${src} ${width} ${height} ${sizes}`;
+  let hit = sizedCache.get(key);
+  if (!hit) {
+    const { props } = getImageProps({ src, width, height, sizes: sizes || undefined, alt: "" });
+    hit = { src: props.src, srcSet: props.srcSet, sizes: props.sizes };
+    sizedCache.set(key, hit);
+  }
+  return hit;
+};
+/** A 16:9 picture covering the stage: as wide as the stage, or wider where the stage is taller than 16:9. */
+const STAGE_COVER = "(max-aspect-ratio: 16/9) 178vh, 100vw";
+const backdropImg = (src: string) => sized(src, 2560, 1440, STAGE_COVER);
+/**
+ * A marquee cover is at most 150 px wide (HomeStages.module.css): a 1x and 2x source rather than the full
+ * width list, so 114 covers do not add their srcset lists to the page's HTML.
+ */
+const coverImg = (src: string) => sized(src, 150, 225, "");
+
+/** Loads a picture the way the given `<img>` attributes would, and calls back once it is in the cache. */
+function warmImg(attrs: { src: string; srcSet?: string; sizes?: string }) {
+  return new Promise<void>((done) => {
+    const img = new window.Image();
+    img.onload = img.onerror = () => done();
+    if (attrs.sizes) img.sizes = attrs.sizes;
+    if (attrs.srcSet) img.srcset = attrs.srcSet;
+    img.src = attrs.src;
+  });
+}
+
+/**
  * Every series cover on a row that keeps moving. Pointing at or focusing a cover stops the row and,
  * where the series has a backdrop, crossfades to it. A file in public/labs/mini-series/backdrops wins over
  * the layered key art; a series with neither leaves the backdrop as it is. Still under reduced motion.
+ * Only the first backdrop loads with the stage; the others load when their cover is pointed at or focused,
+ * and the crossfade starts once the picture is in, so it never fades to an empty frame.
  */
 function SeriesHero({ active, backdrops }: { active: boolean; backdrops: readonly string[] }) {
   const files = new Set(backdrops);
   const shown = series.filter((s) => files.has(s.slug) || s.art);
   const first = shown.find((s) => s.slug === "moonflower")?.slug ?? shown[0]?.slug;
   const [art, setArt] = useState(first);
-  const eager = active ? "eager" : "lazy";
+  const [seen, setSeen] = useState<ReadonlySet<string | undefined>>(() => new Set([first]));
+  const wanted = useRef(first);
+  // Fixed at mount: a stage mounted in the background loads its pictures lazily, and they are in view once it
+  // is shown anyway. Flipping 114 covers from lazy to eager on a switch made the browser re-pick every source.
+  const [eager] = useState<"eager" | "lazy">(() => (active ? "eager" : "lazy"));
+  const layers = (s: (typeof shown)[number]) => (files.has(s.slug) ? [backdropImg(backdropOf(s.slug))] : [backdropImg(s.art!.bg), backdropImg(s.art!.cast)]);
   const pick = (slug: string) => {
-    if (shown.some((s) => s.slug === slug)) setArt(slug);
+    const s = shown.find((x) => x.slug === slug);
+    if (!s) return;
+    wanted.current = slug;
+    if (seen.has(slug)) return setArt(slug);
+    Promise.all(layers(s).map(warmImg)).then(() => {
+      setSeen((prev) => (prev.has(slug) ? prev : new Set(prev).add(slug)));
+      if (wanted.current === slug) setArt(slug);
+    });
   };
   return (
     <>
       {shown.map((s) => (
         <div key={s.slug} className={styles.seriesArt} data-on={s.slug === art} aria-hidden="true">
-          {files.has(s.slug) ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={backdropOf(s.slug)} alt="" loading={eager} decoding="async" />
-          ) : (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.art!.bg} alt="" loading={eager} decoding="async" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.art!.cast} alt="" loading={eager} decoding="async" />
-            </>
-          )}
+          {seen.has(s.slug) &&
+            layers(s).map((attrs) => (
+              // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+              <img key={attrs.src} {...attrs} alt="" loading={eager} decoding="async" />
+            ))}
         </div>
       ))}
       <div className={styles.marquee} role="region" aria-label="Series">
@@ -314,8 +359,8 @@ function SeriesHero({ active, backdrops }: { active: boolean; backdrops: readonl
                   onPointerEnter={() => pick(s.slug)}
                   onFocus={() => pick(s.slug)}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={s.cover} alt={copy === 1 ? "" : s.title} loading={eager} decoding="async" />
+                  {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+                  <img {...coverImg(s.cover)} alt={copy === 1 ? "" : s.title} loading={eager} decoding="async" />
                 </Link>
               </li>
             )),
@@ -362,8 +407,8 @@ function KitchenHero({ active }: { active: boolean }) {
         return (
           <div key={k} className={styles.scene} data-on={k === i} data-kind={scene.kind}>
             {scene.kind === "art" ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className={styles.sceneArt} src={scene.src} alt="" loading={loading} decoding="async" />
+              // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+              <img className={styles.sceneArt} {...sized(scene.src, 1672, 941, STAGE_COVER)} alt="" loading={loading} decoding="async" />
             ) : (
               <div className={styles.sceneGrid} data-kind={scene.kind}>
                 {scene.items.map((src, n) => (
@@ -393,8 +438,8 @@ function WorldsHero({ active }: { active: boolean }) {
   return (
     <div className={styles.cove} aria-hidden="true">
       {COVE.map((src, k) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={src} src={src} alt="" data-on={k === i} loading={active && k < 2 ? "eager" : "lazy"} decoding="async" />
+        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+        <img key={src} {...sized(src, 1672, 941, STAGE_COVER)} alt="" data-on={k === i} loading={active && k < 2 ? "eager" : "lazy"} decoding="async" />
       ))}
     </div>
   );
@@ -451,8 +496,9 @@ function ShopHero({ active }: { active: boolean }) {
   return (
     <div className={styles.shelf} aria-hidden="true">
       {SHELF.map((p) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={p.slug} src={p.image.src} alt="" style={{ objectPosition: p.focus }} loading={active ? "eager" : "lazy"} decoding="async" />
+        // A shelf cell is about a quarter of the stage's height square (HomeStages.module.css).
+        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+        <img key={p.slug} {...sized(p.image.src, p.image.width, p.image.height, "26vh")} alt="" style={{ objectPosition: p.focus }} loading={active ? "eager" : "lazy"} decoding="async" />
       ))}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Picture as Image } from "@/components/labs/fx/Picture";
+import { getImageProps } from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ButtonLink } from "./Button";
@@ -9,6 +10,8 @@ import { CoverCarousel } from "./CoverCarousel";
 import { HeroVideo } from "./HeroVideo";
 import { Nav } from "./Nav";
 import { HeroStage } from "./stages/HeroStages";
+import { MangaContinue } from "./manga/MangaContinue";
+import { goldenTicketOutline } from "@/lib/labs/manga/outline";
 import { cards } from "@/lib/labs/cards";
 import { projectBySlug, projects, type Project } from "@/lib/labs/projects";
 import styles from "./Home.module.css";
@@ -72,7 +75,11 @@ function Stage({ project, active, media, backdrops }: { project: Project; active
         <h1 className="display">{project.name}</h1>
         <p className={`body-lg ${styles.line}`}>{project.line}</p>
         <div className={styles.actions}>
-          <ButtonLink href={project.primary.href}>{project.primary.label}</ButtonLink>
+          {project.slug === "manga" ? (
+            <MangaContinue series={goldenTicketOutline} />
+          ) : (
+            <ButtonLink href={project.primary.href}>{project.primary.label}</ButtonLink>
+          )}
           {project.secondary && (
             <ButtonLink href={project.secondary.href} variant="secondary">
               {project.secondary.label}
@@ -85,6 +92,21 @@ function Stage({ project, active, media, backdrops }: { project: Project; active
     </section>
   );
 }
+
+/**
+ * A wall page through the image optimiser: a tile is a ninth of max(150vw, 1500px) wide (Home.module.css),
+ * about 245 px at 1440. A 1x and 2x source keeps the 27 tiles' markup short.
+ */
+const tiles = new Map<string, { src: string; srcSet?: string; sizes?: string }>();
+const pageTile = (src: string) => {
+  let hit = tiles.get(src);
+  if (!hit) {
+    const { props } = getImageProps({ src, width: 245, height: 368, alt: "" });
+    hit = { src: props.src, srcSet: props.srcSet, sizes: props.sizes };
+    tiles.set(src, hit);
+  }
+  return hit;
+};
 
 /** Rows and columns of the wall: enough tiles to run past every edge of the tilted grid at any width. */
 const WALL = { cards: { cols: 9, rows: 3 }, pages: { cols: 9, rows: 3 } } as const;
@@ -107,8 +129,8 @@ function Wall({ wall, eager }: { wall: NonNullable<Project["wall"]>; eager: bool
               <Card card={card} sizes="(max-width: 900px) 30vw, 12vw" />
             </span>
           ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={k} className={styles.wallTile} src={src} alt="" loading={eager ? "eager" : "lazy"} decoding="async" />
+            // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+            <img key={k} className={styles.wallTile} {...pageTile(src)} alt="" loading={eager ? "eager" : "lazy"} decoding="async" />
           );
         })}
       </div>
@@ -143,19 +165,33 @@ export function HomeStages({ initial, backdrops = [] }: { initial: string; backd
       offIdle(id);
     };
   }, [loaded]);
+  // After the page has loaded and the browser is idle: the stages either side of the shown one, so a wheel,
+  // arrow or swipe step is instant. On a wide screen with a mouse the rest follow; on a phone or with
+  // Save-Data on, the rest wait for their header link to be touched, so a visit does not pull every stage.
   useEffect(() => {
-    const all = () => setLoaded(new Set(projects.map((p) => p.slug)));
     let idle = 0;
-    const start = () => {
-      idle = onIdle(all, 8000);
+    const roomy = () =>
+      window.matchMedia("(hover: hover) and (min-width: 901px)").matches &&
+      !(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    const run = () => {
+      const i = projects.findIndex((p) => p.slug === active);
+      const near = [projects[i - 1], projects[i + 1]].filter(Boolean).map((p) => p.slug);
+      setLoaded((s) => {
+        const next = new Set(s);
+        (roomy() ? projects.map((p) => p.slug) : near).forEach((slug) => next.add(slug));
+        return next.size === s.size ? s : next;
+      });
     };
-    // Wait for the first screen to finish loading before asking for idle time.
-    const after = window.setTimeout(start, 2500);
+    const start = () => {
+      idle = onIdle(run, 8000);
+    };
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
     return () => {
-      clearTimeout(after);
+      window.removeEventListener("load", start);
       offIdle(idle);
     };
-  }, []);
+  }, [active]);
   const param = params.get("p") ?? undefined;
   useEffect(() => {
     setActive(projectBySlug(param).slug);
@@ -284,7 +320,7 @@ export function HomeStages({ initial, backdrops = [] }: { initial: string; backd
 
   return (
     <>
-      <Nav project={active} onProject={choose} />
+      <Nav project={active} onProject={choose} onProjectIntent={warm} />
       <main id="main" className={styles.stages}>
         {projects.map((p) => (
           <Stage key={p.slug} project={p} active={p.slug === active} media={loaded.has(p.slug)} backdrops={backdrops} />

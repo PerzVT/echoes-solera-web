@@ -1,5 +1,6 @@
 "use client";
 
+import { getImageProps } from "next/image";
 import { useEffect, useRef, type CSSProperties } from "react";
 import styles from "./PigmentField.module.css";
 
@@ -109,7 +110,7 @@ onmessage = function (e) {
   gl.uniform3f(gl.getUniformLocation(prog, "ink"), m.ink[0], m.ink[1], m.ink[2]);
   uRes = gl.getUniformLocation(prog, "res");
   uT = gl.getUniformLocation(prog, "t");
-  fetch(m.src).then(function (r) { return r.blob(); }).then(function (blob) {
+  fetch(m.src, { headers: { Accept: "image/avif,image/webp,*/*" } }).then(function (r) { return r.blob(); }).then(function (blob) {
     return createImageBitmap(blob).then(function (full) {
       gl.uniform2f(gl.getUniformLocation(prog, "texRes"), full.width, full.height);
       full.close();
@@ -158,7 +159,14 @@ type Props = {
  * seconds after the page has loaded, runs in a worker at half resolution and 30 frames a second, and stops
  * while the tab is hidden or the field is off screen. Anything less capable keeps the picture.
  */
-export function PigmentField({ intensity = "low", speed = 1, position = "fixed", still = false, src = "/labs/brand/pigment-dark.webp", className, style }: Props) {
+/**
+ * The picture through the image optimiser: AVIF where the browser takes it, at the file's own size
+ * (pigment-dark is 1672 x 941, 287 KB as WebP, about 55 KB as AVIF). Under the veil the two look the same.
+ */
+const texture = (src: string) => (/^\/[^/].*\.(webp|png|jpe?g)$/.test(src) ? getImageProps({ src, width: 1672, height: 941, alt: "" }).props.src : src);
+
+export function PigmentField({ intensity = "low", speed = 1, position = "fixed", still = false, src: file = "/labs/brand/pigment-dark.webp", className, style }: Props) {
+  const src = texture(file);
   const host = useRef<HTMLDivElement>(null);
   const live = useRef<Worker | null>(null);
   const wanted = useRef(intensity);

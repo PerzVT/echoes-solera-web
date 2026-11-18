@@ -504,3 +504,15 @@
     translate: none;
   }
 }
+
+/* Before hydration: a browser that dismissed the banner or subscribed has data-nl-banner="off" on the labs
+   root (introScript.ts). The banner and its fallback row swap in CSS, so neither shows and then moves. */
+:global(.nl[data-nl-banner="off"]) .banner {
+  display: none;
+}
+.purse[data-fallback] {
+  display: none;
+}
+:global(.nl[data-nl-banner="off"]) .purse[data-fallback] {
+  display: flex;
+}

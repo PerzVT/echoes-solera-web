@@ -28,10 +28,13 @@ const MIN_PILL_PAD = 15;
 export function Nav({
   project,
   onProject,
+  onProjectIntent,
 }: {
   current?: string;
   project?: string;
   onProject?: (slug: string) => void;
+  /** Called when a project link is pointed at, focused or pressed, before the click: the home page loads that stage. */
+  onProjectIntent?: (slug: string) => void;
 }) {
   const path = usePathname() ?? "";
   const here = project ?? projects.find((p) => under(path, `/${p.slug}`))?.slug;
@@ -101,6 +104,9 @@ export function Nav({
               scroll={onProject ? false : undefined}
               replace={onProject ? true : undefined}
               onClick={(e) => choose(e, p.slug)}
+              onPointerEnter={onProjectIntent && (() => onProjectIntent(p.slug))}
+              onPointerDown={onProjectIntent && (() => onProjectIntent(p.slug))}
+              onFocus={onProjectIntent && (() => onProjectIntent(p.slug))}
               aria-current={here === p.slug ? "page" : undefined}
             >
               {p.name}

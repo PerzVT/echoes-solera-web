@@ -8,7 +8,7 @@ import { Icon } from "../Icon";
 import { VerticalPlayer } from "../VerticalPlayer";
 import { isEarly, type Episode } from "@/lib/labs/series";
 import { AccessSheets } from "./AccessSheets";
-import { EarlyAccessBanner, useBannerShown } from "./Banner";
+import { EarlyAccessBanner, useBannerSettled, useBannerShown } from "./Banner";
 import { episodeKey, resumeAt, saveProgress, useAccess, watched, type AccessState } from "./store";
 import type { SheetName } from "./sheets";
 import { releaseDay, unlocksIn, unlocksShort, useNow } from "./timer";
@@ -56,6 +56,7 @@ export function SeriesWatch({ slug, title, genre, cover, episodes, wanted, sheet
   const access = useAccess();
   const now = useNow(serverNow);
   const banner = useBannerShown();
+  const settled = useBannerSettled();
   const isOpen = (e: Episode) => access.subscribed || !isEarly(e, now);
 
   // Without an episode in the URL the visitor picks up where they were: the same episode part way through,
@@ -190,8 +191,10 @@ export function SeriesWatch({ slug, title, genre, cover, episodes, wanted, sheet
                 </Button>
               </div>
             ) : (
-              !banner && (
-                <div className={styles.purse}>
+              // Before the browser state is read the row is there too, hidden in CSS unless the banner is off,
+              // so a visitor who dismissed the banner sees the row from the first paint.
+              (!banner || !settled) && (
+                <div className={styles.purse} data-fallback={settled ? undefined : ""}>
                   <Button variant="quiet" size="small" onClick={() => setSheet("subscribe")} data-access-control>
                     Subscribe
                   </Button>
