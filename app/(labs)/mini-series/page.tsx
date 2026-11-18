@@ -6,6 +6,7 @@ import { BackLink } from "@/components/labs/BackLink";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { Library, type Title } from "@/components/labs/Library";
+import { EarlyAccessBanner } from "@/components/labs/access/Banner";
 import { genres, series, seriesBySlug } from "@/lib/labs/series";
 import t from "@/components/labs/Title.module.css";
 import styles from "./library.module.css";
@@ -55,6 +56,8 @@ export default async function LibraryPage({ searchParams }: Props) {
             </div>
           </div>
         </section>
+
+        <EarlyAccessBanner layout="wide" />
 
         <Library titles={titles} genres={genres} initial={genre} />
 

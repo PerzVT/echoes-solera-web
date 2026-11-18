@@ -25,8 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * A series page. With episodes it is the design's Watch frame: the player and its rail, and the side panel
  * with the series, the episode chips and what plays next. Without episodes it is the hero alone.
- * Deep links: `?ep=N` opens an episode (locked ones show the locked screen), `&t=S` starts at S seconds,
- * and `state=unlock|wallet|topup|how` opens that early-access screen.
+ * Deep links: `?ep=N` opens an episode (locked ones show the locked screen with its timer), `&t=S` starts at
+ * S seconds, and `state=subscribe|manage|how` opens that early-access screen. The coin version's
+ * `state=unlock|topup|wallet` land on subscribe, subscribe and manage.
  */
 export default async function SeriesPage({ params, searchParams }: Props) {
   const s = seriesBySlug((await params).slug);
@@ -54,6 +55,7 @@ export default async function SeriesPage({ params, searchParams }: Props) {
             wanted={wanted}
             sheet={asSheet(query.state)}
             t={Number.isFinite(start) && start > 0 ? start : undefined}
+            now={Date.now()}
             base={base}
             seriesHref="/mini-series"
             backLabel="All mini-series"

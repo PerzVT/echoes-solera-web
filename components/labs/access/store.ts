@@ -3,34 +3,26 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * Early access, coins and watch progress for the mini-series pages.
- * Everything lives in this browser behind these few calls, so a real account backend can replace
- * the store without touching the components: swap `read`, `write` and the action bodies.
+ * The early-access subscription and watch progress for the mini-series pages.
+ * A mock: everything lives in this browser and subscribing is instant, with no payment taken.
+ * A real billing backend replaces `read`, `write`, `subscribe` and `cancel`; the components only
+ * call `useAccess`, `subscribe`, `cancel` and the progress helpers.
  */
-
-export type Receipt = {
-  id: string;
-  kind: "unlock" | "coins";
-  title: string;
-  coins: number;
-  /** Milliseconds since the epoch. */
-  at: number;
-};
 
 export type Progress = { t: number; d: number; at: number };
 
 export type AccessState = {
-  balance: number;
-  /** Episode keys, `${slug}:${number}`. */
-  unlocked: string[];
+  subscribed: boolean;
+  /** When the subscription started, in milliseconds since the epoch. Null when not subscribed. */
+  since: number | null;
+  /** Keyed by episode, `${slug}:${number}`. */
   progress: Record<string, Progress>;
   /** Episode keys, most recent last. */
   history: string[];
-  receipts: Receipt[];
 };
 
 const KEY = "nl-access-v1";
-const EMPTY: AccessState = { balance: 0, unlocked: [], progress: {}, history: [], receipts: [] };
+const EMPTY: AccessState = { subscribed: false, since: null, progress: {}, history: [] };
 
 export const episodeKey = (slug: string, number: number) => `${slug}:${number}`;
 
@@ -38,17 +30,18 @@ let state: AccessState = EMPTY;
 let loaded = false;
 const listeners = new Set<() => void>();
 
+// The coin fields an earlier version kept under the same key are dropped on the next write.
 function read(): AccessState {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return EMPTY;
     const s = JSON.parse(raw) as Partial<AccessState>;
+    const subscribed = s.subscribed === true;
     return {
-      balance: Number.isFinite(s.balance) ? Number(s.balance) : 0,
-      unlocked: Array.isArray(s.unlocked) ? s.unlocked : [],
+      subscribed,
+      since: subscribed && Number.isFinite(s.since) ? Number(s.since) : null,
       progress: s.progress && typeof s.progress === "object" ? s.progress : {},
       history: Array.isArray(s.history) ? s.history : [],
-      receipts: Array.isArray(s.receipts) ? s.receipts : [],
     };
   } catch {
     return EMPTY;
@@ -75,7 +68,7 @@ function set(next: AccessState, persist = true) {
   listeners.forEach((l) => l());
 }
 
-function subscribe(l: () => void) {
+function listen(l: () => void) {
   ensure();
   listeners.add(l);
   const onStorage = (e: StorageEvent) => {
@@ -96,36 +89,30 @@ const serverSnapshot = () => EMPTY;
 
 /** The current access state. Renders the empty state on the server and on the first client pass. */
 export function useAccess() {
-  return useSyncExternalStore(subscribe, snapshot, serverSnapshot);
+  return useSyncExternalStore(listen, snapshot, serverSnapshot);
 }
 
-const id = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Date.now() + Math.random()));
-
-/** Adds coins to the balance. No payment is taken. */
-export function addCoins(coins: number) {
-  ensure();
-  set({
-    ...state,
-    balance: state.balance + coins,
-    receipts: [...state.receipts, { id: id(), kind: "coins", title: `${coins} ${coins === 1 ? "coin" : "coins"} added`, coins, at: Date.now() }],
-  });
+const noop = () => () => {};
+/** False on the server and the first client pass, true once the browser state has been read. */
+export function useAccessReady() {
+  return useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
 }
 
-/**
- * Unlocks an early episode. When the balance is short, the missing coins are added first,
- * the way the earlier mock's checkout added exactly the shortfall.
- */
-export function unlock(key: string, price: number, title: string) {
+/** Starts the subscription. Instant in the mock: no payment is taken. */
+export function subscribe() {
   ensure();
-  if (state.unlocked.includes(key)) return;
-  const short = Math.max(0, price - state.balance);
-  if (short) addCoins(short);
-  set({
-    ...state,
-    balance: state.balance - price,
-    unlocked: [...state.unlocked, key],
-    receipts: [...state.receipts, { id: id(), kind: "unlock", title, coins: price, at: Date.now() }],
-  });
+  if (state.subscribed) return;
+  set({ ...state, subscribed: true, since: Date.now() });
+}
+
+/** Ends the subscription at once. Early episodes lock again until their release dates. */
+export function cancel() {
+  ensure();
+  set({ ...state, subscribed: false, since: null });
 }
 
 let lastWrite = 0;

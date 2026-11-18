@@ -8,16 +8,25 @@ export type Episode = {
   video: string;
   poster: string;
   seconds: number;
-  /** Early access: the episode is out before its free release and unlocks for `price` coins. */
-  early?: boolean;
-  /** The early-access price in coins. Set only when `early` is. */
-  price?: number;
+  /**
+   * The public release date, `YYYY-MM-DD`, from midnight UTC. Before it the episode is early access:
+   * subscribers can watch it, everyone else sees when it unlocks. After it the episode is free for everyone.
+   */
+  releases: string;
 };
 
-/** The early-access price of one episode, in coins. Same as the earlier media-preview mock. */
-export const EARLY_PRICE = 1;
-/** How many of the newest episodes in a finished series are early access. */
-const EARLY_COUNT = 2;
+/**
+ * Release dates of the newest episodes, last first, in every finished series. The episodes before them
+ * came out a week apart, ending a week before the first date here.
+ */
+const UPCOMING = ["2026-12-01", "2026-11-24"];
+const DAY = 86_400_000;
+const isoDay = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+
+/** When an episode becomes free for everyone, in milliseconds since the epoch. */
+export const releaseTime = (e: Pick<Episode, "releases">) => Date.parse(`${e.releases}T00:00:00Z`);
+/** True while an episode is early access at `now`: out for subscribers, not yet released to everyone. */
+export const isEarly = (e: Pick<Episode, "releases">, now: number) => releaseTime(e) > now;
 
 /** A still shown on a series page: a cover variant or a character sheet. */
 export type Still = { src: string; alt: string; width: number; height: number };
@@ -74,16 +83,18 @@ const finished: Record<string, [title: string, seconds: number][]> = {
 
 const cut = (slug: string): Episode[] => {
   const all = finished[slug] ?? [];
+  const lastFirst = Date.parse(`${UPCOMING[UPCOMING.length - 1]}T00:00:00Z`);
   return all.map(([title, seconds], i) => {
     const n = String(i + 1).padStart(2, "0");
-    const early = i >= all.length - EARLY_COUNT;
+    const fromEnd = all.length - 1 - i;
+    const releases = UPCOMING[fromEnd] ?? isoDay(lastFirst - (fromEnd - UPCOMING.length + 1) * 7 * DAY);
     return {
       number: i + 1,
       title,
       video: `${L}/${slug}/episodes/ep-${n}.mp4`,
       poster: `${L}/${slug}/episodes/ep-${n}.webp`,
       seconds,
-      ...(early ? { early: true, price: EARLY_PRICE } : {}),
+      releases,
     };
   });
 };
