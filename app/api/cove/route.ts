@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     if (!isToken(fields.t)) return fail("bad_request", 400);
     if (fields.leave === true) {
       if (Object.keys(fields).length !== 2) return fail("bad_request", 400);
-      await leave(address(request), fields.t);
+      await leave(fields.t);
       return answer({ left: true });
     }
     if (fields.leave !== undefined || fields.join !== undefined) return fail("bad_request", 400);

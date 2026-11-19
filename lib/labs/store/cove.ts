@@ -11,7 +11,7 @@
  * clock is due to move on adds one compare-and-set update. The game's one-off messages (join, chat, print...) add a
  * statement each. Rules and checks live in lib/labs/cove/room.ts.
  */
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, createHmac, randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -62,8 +62,15 @@ export const MAX_ACTIONS = 4;
 
 const LIVE = (now: string, alias: string) => `${alias}.seen > ${now} - ${DROP_MS}`;
 const hash = (s: string) => createHash("sha256").update(s).digest("hex");
-/** The client address, hashed so the tables never hold an IP. */
-export const addressKey = (address: string) => "a:" + hash("nl-cove:" + address).slice(0, 32);
+/**
+ * The client address, keyed with the site's secret so the tables never hold an IP and the stored value cannot be
+ * turned back into one by hashing every address.
+ */
+export const addressKey = (address: string) =>
+  "a:" + createHmac("sha256", process.env.AUTH_SECRET || "nl-cove").update(address).digest("hex").slice(0, 32);
+/** Reports kept at most, and for how long: the table is public-writable, so it has a ceiling. */
+const REPORT_ROWS = 2000;
+const REPORT_KEEP_MS = 30 * 24 * 60 * 60 * 1000;
 const num = (v: unknown) => Number(v);
 
 /**
@@ -258,7 +265,8 @@ async function act(tokenHash: string, action: Action, move: Move | null, now: nu
     case "report":
       try {
         const [row] = await sql(
-          `with tgt as (
+          `with old as (delete from nl_cove_reports where at < $4::bigint - ${REPORT_KEEP_MS}),
+            tgt as (
               select t.id, t.token_hash, t.name0, t.name1, t.room, t.inst from nl_cove_visitors t
               where t.id = $2 and ${LIVE("$4::bigint", "t")}
             ),
@@ -274,7 +282,7 @@ async function act(tokenHash: string, action: Action, move: Move | null, now: nu
                 coalesce(($5::text[])[tgt.name0 + 1] || ' ' || ($6::text[])[tgt.name1 + 1], 'Visitor'), $3,
                 (select coalesce(json_agg(json_build_object('seq', e.seq, 'type', e.type, 'player', e.player, 'arg', e.arg, 'at', e.at) order by e.seq), '[]'::json)
                   from nl_cove_events e where e.room = me.room and e.inst = me.inst)
-              from me, tgt returning id
+              from me, tgt where (select count(*) from nl_cove_reports) < ${REPORT_ROWS} returning id
             )
           select (select id from ins) as id`,
           [tokenHash, action.target, action.reason, now, ADJECTIVES, NOUNS],
@@ -318,6 +326,11 @@ async function act(tokenHash: string, action: Action, move: Move | null, now: nu
 export async function tick(address: string, token: string, move: Move | null, actions: Action[]): Promise<Tick> {
   const tokenHash = hash(token);
   const replies: Reply[] = [];
+  // The address pays for its one-off messages before any of them runs.
+  if (actions.length) {
+    const [paid] = await sql(`with ${ADDR_BUCKET} select tokens from lim`, [addressKey(address), Date.now(), actions.length]);
+    if (num(paid?.tokens) < 0) return { kind: "limited" };
+  }
   for (const action of actions) {
     const reply = await act(tokenHash, action, move, Date.now());
     if (reply) replies.push(reply);
@@ -462,14 +475,8 @@ async function advance(roomId: RoomId, inst: number, room: Row, players: Player[
 
 /**
  * A visitor closing the game leaves at once instead of after DROP_MS. A seat it held frees on the next tick, as
- * the room server's leave() does. The address bucket goes too when no other visitor from that address is live.
+ * the room server's leave() does. The address bucket stays, so leaving never refunds what the address has spent.
  */
-export async function leave(address: string, token: string): Promise<void> {
-  const key = addressKey(address);
-  await sql(
-    `with gone as (delete from nl_cove_visitors where token_hash = $2 returning id)
-    delete from nl_cove_limits where key = $1
-      and not exists (select 1 from nl_cove_visitors w where w.addr = $1 and w.token_hash <> $2 and ${LIVE("$3::bigint", "w")})`,
-    [key, hash(token), Date.now()],
-  );
+export async function leave(token: string): Promise<void> {
+  await sql(`delete from nl_cove_visitors where token_hash = $1`, [hash(token)]);
 }
