@@ -68,8 +68,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" },
-      // Solera: First Arrival is the story lab's player; the site lists it beside the visual novel.
-      { source: "/visual-novel/first-arrival", destination: "/studio/story-lab-8f3c2a" },
     ];
   },
   // Videos are not in the repo or the deployment. Each lives in the Vercel Blob store under the path it had
