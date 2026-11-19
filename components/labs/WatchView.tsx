@@ -4,7 +4,6 @@ import { ButtonLink } from "./Button";
 import { Icon } from "./Icon";
 import { Nav } from "./Nav";
 import { VerticalPlayer } from "./VerticalPlayer";
-import title from "./Title.module.css";
 import styles from "./WatchView.module.css";
 
 export type WatchItem = {

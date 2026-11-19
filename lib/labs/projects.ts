@@ -112,7 +112,7 @@ export const projects: Project[] = [
     // A screentone over the dark ground, as in the kit's manga patterns.
     backdrop:
       "radial-gradient(circle at 1px 1px, rgb(246 243 236 / 0.07) 1px, transparent 1.6px) 0 0 / 7px 7px, linear-gradient(120deg, #0d1016 0%, #171c25 100%)",
-    // Codex's manga home concept (homepage-art-v04 manga-hero): the three leads drawn as one torn page,
+    // The manga home concept (homepage-art-v04 manga-hero): the three leads drawn as one torn page,
     // over a wall of Golden Ticket pages that runs the width of the stage.
     wall: {
       kind: "pages",

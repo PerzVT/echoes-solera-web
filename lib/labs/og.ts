@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-/** Link-preview images, 1200 x 630 PNG, one per project, built from Codex's brand/og layouts. */
+/** Link-preview images, 1200 x 630 PNG, one per project, built from the brand/og layouts. */
 export type OgImage =
   | "default"
   | "anime"

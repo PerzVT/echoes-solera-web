@@ -1,4 +1,4 @@
-import { SkHeading, SkHeroCopy, SkTiles, SkTitlePage } from "@/components/labs/fx/PageSkeleton";
+import { SkHeroCopy, SkTiles, SkTitlePage } from "@/components/labs/fx/PageSkeleton";
 import { Skeleton } from "@/components/labs/fx/Skeleton";
 import lib from "@/components/labs/Library.module.css";
 import styles from "./library.module.css";

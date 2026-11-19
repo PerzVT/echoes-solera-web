@@ -40,12 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
 
 # Dev artifacts
-.claude/
-.superpowers/
-docs/superpowers/
 
 # Creator data saved on a developer machine
 /.data/

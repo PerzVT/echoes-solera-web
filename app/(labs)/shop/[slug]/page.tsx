@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Icon } from "@/components/labs/Icon";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { gallerySize, productBySlug, products, sameWorld } from "@/lib/labs/shop";

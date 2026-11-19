@@ -388,7 +388,6 @@ function useCycle(count: number, ms: number, active: boolean) {
 /* Cooking ---------------------------------------------------------------------------------------- */
 
 const stillOf = (slug: string) => releases.find((r) => r.poster.endsWith(`/${slug}.webp`))?.poster ?? `/labs/cooking/stills/${slug}.webp`;
-const DISHES = releases.map((r) => r.dish);
 
 /** Whole pictures that each fill the stage: the Akane kitchen and two rows of episode stills. */
 const KITCHEN: ({ kind: "art"; src: string } | { kind: "dishes"; items: string[] } | { kind: "stills"; items: string[] })[] = [

@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
-import Link from "next/link";
-import { Icon } from "@/components/labs/Icon";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
 import { products } from "@/lib/labs/shop";

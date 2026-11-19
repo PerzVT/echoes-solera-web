@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Picture as Image } from "@/components/labs/fx/Picture";
-import Link from "next/link";
 import { ButtonLink } from "@/components/labs/Button";
 import { Nav } from "@/components/labs/Nav";
 import { Reveal } from "@/components/labs/fx/Reveal";
@@ -84,7 +83,7 @@ export default function TidebellCove() {
           <Reveal as="ul" stagger className={styles.places}>
             {w.places.map((p) => (
               <li key={p.src}>
-                {/* Codex's postcard fronts (worlds/postcards), built here: the plate on cream with the cove's name. */}
+                {/* The postcard fronts (worlds/postcards), built here: the plate on cream with the cove's name. */}
                 <figure className={styles.postcard}>
                   <span className={styles.postcardArt}>
                     <Image src={p.src} alt={`Postcard of the ${p.caption.toLowerCase()}`} fill sizes="(max-width: 900px) 100vw, 440px" />

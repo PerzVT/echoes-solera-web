@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CardCollection } from "@/components/labs/CardCollection";
-import { Icon } from "@/components/labs/Icon";
 import { Nav } from "@/components/labs/Nav";
 import t from "@/components/labs/Title.module.css";
 import styles from "./cards.module.css";

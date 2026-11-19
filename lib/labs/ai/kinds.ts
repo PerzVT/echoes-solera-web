@@ -21,7 +21,7 @@ import type {
 import { MAX_OUTPUT_TOKENS, imageModel, textModel } from "./config";
 import { currentBlocks, finishedJob, loadEpisode, seriesSheets, styleText, type SheetRef } from "./context";
 import { imageEstimate, textEstimate } from "./cost";
-import { SCHEMAS, type TextKind } from "./schemas";
+import { type TextKind } from "./schemas";
 import { METHOD } from "./prompts/method";
 import { SCREENPLAY } from "./prompts/screenplay";
 import { REVISE } from "./prompts/revise";
