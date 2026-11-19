@@ -66,7 +66,11 @@ const nextConfig: NextConfig = {
   // into every server function. Functions fetch those pictures from the site instead, so public/ stays out.
   outputFileTracingExcludes: { "/**": ["./public/**"] },
   async rewrites() {
-    return [{ source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" }];
+    return [
+      { source: "/assets/wardrobe/:file", destination: "/labs/worlds/play/assets/wardrobe/:file" },
+      // Solera: First Arrival is the story lab's player; the site lists it beside the visual novel.
+      { source: "/visual-novel/first-arrival", destination: "/studio/story-lab-8f3c2a" },
+    ];
   },
   // Videos are not in the repo or the deployment. Each lives in the Vercel Blob store under the path it had
   // in public/, so every .mp4 address on the site is sent there. A new video is uploaded to the store at

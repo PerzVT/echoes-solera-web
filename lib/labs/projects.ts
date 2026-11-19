@@ -125,6 +125,7 @@ export const projects: Project[] = [
     name: "Visual novel",
     line: "Turn a story into a visual novel with branches.",
     primary: { label: "Play After Hours", href: "/visual-novel/after-hours" },
+    secondary: { label: "Play Solera: First Arrival", href: "/visual-novel/first-arrival" },
     tone: "dark",
     // The title art: the four leads outside the store in the rain.
     bg: `${L}/visual-novel/after-hours/ui/title.webp`,
