@@ -7,14 +7,14 @@ const title = "Solera: First Arrival";
 
 export const metadata: Metadata = { title, ...og(title, "visual-novel") };
 
-/** The story lab's branching adventure, played inside the site: the player is its own document in a frame. */
+/** The story lab's branching adventure, played inside the site: the player is its own document in a frame. `?site` hides its presenter tools, which stay at the studio address. */
 export default function FirstArrival() {
   return (
     <div className={styles.page}>
       <Nav />
       <main id="main" className={styles.play}>
         <h1 className={styles.title}>{title}</h1>
-        <iframe className={styles.frame} src="/story-lab/solera/index.html" title={title} allow="fullscreen; autoplay" allowFullScreen />
+        <iframe className={styles.frame} src="/story-lab/solera/index.html?site" title={title} allow="fullscreen; autoplay" allowFullScreen />
       </main>
     </div>
   );
