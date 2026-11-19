@@ -23,6 +23,7 @@ export const metadata: Metadata = {
       { url: "/labs/brand/mark-ink.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
       { url: "/labs/brand/mark-paper.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
     ],
+    apple: [{ url: "/labs/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 

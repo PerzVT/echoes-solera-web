@@ -38,9 +38,11 @@ export function og(title: string, image: OgImage = "default", description = SITE
 /**
  * The deployed host: an explicit site address, else the Vercel project's production domain (preview
  * hosts can sit behind deployment protection, which link previews cannot get past), else the
- * deployment's own host, else the local dev server.
+ * deployment's own host, else the local dev server. The staging branch has its own public domain, and the
+ * production domain does not serve this site's files yet, so staging's previews point at staging.
  */
-const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+const onStaging = process.env.VERCEL_ENV === "preview" && process.env.VERCEL_GIT_COMMIT_REF === "staging";
+const vercelHost = onStaging ? "staging.9livesinnovation.com" : (process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL);
 export const SITE_URL = new URL(
   process.env.NEXT_PUBLIC_SITE_URL ?? (vercelHost ? `https://${vercelHost}` : "http://localhost:3210"),
 );
